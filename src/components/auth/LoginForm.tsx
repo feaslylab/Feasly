@@ -63,7 +63,7 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
         <div>
           <CardTitle className="text-2xl font-semibold">Welcome Back</CardTitle>
           <CardDescription className="text-muted-foreground mt-2">
-            Sign in to your project management account
+            Sign in to your Feasly account
           </CardDescription>
         </div>
       </CardHeader>
