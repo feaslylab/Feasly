@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
 import { AuthPage } from "@/pages/Auth";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
+import NewProject from "./pages/NewProject";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,7 +35,7 @@ const AppRoutes = () => {
       </Route>
       <Route path="/projects" element={<AppLayout />}>
         <Route index element={<div className="p-6">Projects page coming soon...</div>} />
-        <Route path="new" element={<div className="p-6">New project page coming soon...</div>} />
+        <Route path="new" element={<NewProject />} />
         <Route path=":id" element={<div className="p-6">Project details coming soon...</div>} />
       </Route>
       <Route path="/settings" element={<AppLayout />}>
