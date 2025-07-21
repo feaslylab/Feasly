@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download, FileDown, Copy, Link, Globe } from "lucide-react";
+import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download, FileDown, Copy, Link, Globe, Monitor } from "lucide-react";
 import * as XLSX from "xlsx";
 import { calculateFinancialMetrics } from "@/lib/financialCalculations";
 import jsPDF from "jspdf";
@@ -39,6 +39,7 @@ interface Project {
   updated_at: string;
   user_id: string;
   is_public: boolean;
+  is_demo: boolean;
 }
 
 interface Asset {
@@ -708,6 +709,37 @@ const ProjectDetails = () => {
     }
   };
 
+  const toggleDemoMode = async (isDemo: boolean) => {
+    if (!project || !canManageTeam) return;
+
+    try {
+      const { error } = await supabase
+        .from("projects")
+        .update({ is_demo: isDemo })
+        .eq("id", project.id);
+
+      if (error) throw error;
+
+      // Refresh project data
+      await queryClient.invalidateQueries({ queryKey: ["project", id] });
+
+      toast({
+        title: isDemo ? "Demo Mode Enabled" : "Demo Mode Disabled",
+        description: isDemo 
+          ? "Demo mode enabled — this project can now be viewed at /demo"
+          : "This project is no longer available in demo mode.",
+      });
+
+    } catch (error) {
+      console.error("Error updating demo mode:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update demo mode. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const trackExportHistory = async (projectId: string, scenarioId: string | null, exportType: 'pdf' | 'excel', filename: string) => {
     if (!user || !scenarioId) return;
 
@@ -845,6 +877,41 @@ const ProjectDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Demo Mode Toggle */}
+      {canManageTeam && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Monitor className="w-5 h-5" />
+              Demo Mode
+            </CardTitle>
+            <CardDescription>
+              Allow this project to be displayed as a public demo at /demo
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="demo-toggle" className="text-base">
+                  Enable Demo Mode
+                </Label>
+                <div className="text-sm text-muted-foreground">
+                  {project.is_demo 
+                    ? "This project is available as a public demo"
+                    : "Project is not available in demo mode"
+                  }
+                </div>
+              </div>
+              <Switch
+                id="demo-toggle"
+                checked={project.is_demo}
+                onCheckedChange={toggleDemoMode}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Public Showcase Toggle */}
       {canManageTeam && (

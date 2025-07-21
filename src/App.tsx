@@ -11,6 +11,7 @@ import NewProject from "./pages/NewProject";
 import ProjectDetails from "./pages/ProjectDetails";
 import ProjectView from "./pages/ProjectView";
 import ProjectPublic from "./pages/ProjectPublic";
+import DemoProject from "./pages/DemoProject";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +43,7 @@ const AppRoutes = () => {
         <Route path=":id" element={<ProjectDetails />} />
         <Route path=":id/view" element={<ProjectView />} />
       </Route>
+      <Route path="/demo" element={<DemoProject />} />
       <Route path="/projects/:id/public" element={<ProjectPublic />} />
       <Route path="/settings" element={<AppLayout />}>
         <Route index element={<div className="p-6">Settings page coming soon...</div>} />
