@@ -1,4 +1,4 @@
-import { Building2, BarChart3, FolderOpen, Settings, LogOut, Plus, User } from "lucide-react";
+import { Building2, BarChart3, FolderOpen, Settings, LogOut, Plus, User, Building, DollarSign, TrendingUp } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -12,6 +12,11 @@ import { cn } from "@/lib/utils";
 const navigation = [
   { nameKey: "nav.dashboard", href: "/dashboard", icon: BarChart3 },
   { nameKey: "nav.projects", href: "/projects", icon: FolderOpen },
+  { nameKey: "nav.model", href: "/model", icon: Building },
+  { nameKey: "nav.flow", href: "/flow", icon: BarChart3 },
+  { nameKey: "nav.finance", href: "/finance", icon: DollarSign },
+  { nameKey: "nav.consolidate", href: "/consolidate", icon: FolderOpen },
+  { nameKey: "nav.insights", href: "/insights", icon: TrendingUp },
   { nameKey: "nav.settings", href: "/settings", icon: Settings },
 ];
 

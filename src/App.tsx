@@ -14,6 +14,11 @@ import ProjectDetails from "./pages/ProjectDetails";
 import ProjectView from "./pages/ProjectView";
 import ProjectPublic from "./pages/ProjectPublic";
 import DemoProject from "./pages/DemoProject";
+import FeaslyModel from "./pages/FeaslyModel";
+import FeaslyFlow from "./pages/FeaslyFlow";
+import FeaslyFinance from "./pages/FeaslyFinance";
+import FeaslyConsolidate from "./pages/FeaslyConsolidate";
+import FeaslyInsights from "./pages/FeaslyInsights";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +49,21 @@ const AppRoutes = () => {
         <Route path="new" element={<NewProject />} />
         <Route path=":id" element={<ProjectDetails />} />
         <Route path=":id/view" element={<ProjectView />} />
+      </Route>
+      <Route path="/model" element={<AppLayout />}>
+        <Route index element={<FeaslyModel />} />
+      </Route>
+      <Route path="/flow" element={<AppLayout />}>
+        <Route index element={<FeaslyFlow />} />
+      </Route>
+      <Route path="/finance" element={<AppLayout />}>
+        <Route index element={<FeaslyFinance />} />
+      </Route>
+      <Route path="/consolidate" element={<AppLayout />}>
+        <Route index element={<FeaslyConsolidate />} />
+      </Route>
+      <Route path="/insights" element={<AppLayout />}>
+        <Route index element={<FeaslyInsights />} />
       </Route>
       <Route path="/demo" element={<DemoProject />} />
       <Route path="/projects/:id/public" element={<ProjectPublic />} />

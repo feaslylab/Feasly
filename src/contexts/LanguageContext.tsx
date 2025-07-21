@@ -45,6 +45,40 @@ const translations = {
     'dashboard.noProjectsYet': 'No projects yet',
     'dashboard.createFirstProject': 'Create your first project to get started with financial modeling.',
     
+    // Feasly Modules
+    'nav.model': 'Feasly Model',
+    'nav.flow': 'Feasly Flow', 
+    'nav.finance': 'Feasly Finance',
+    'nav.consolidate': 'Feasly Consolidate',
+    'nav.insights': 'Feasly Insights',
+    
+    // Feasly Model
+    'feasly.model.title': 'Feasly Model',
+    'feasly.model.description': 'Development feasibility engine for planning, input, and analysis.',
+    'feasly.model.inputs': 'Feasly Model Inputs',
+    'feasly.model.scenarios': 'Feasly Model Scenarios',
+    'feasly.model.kpis': 'Feasly Model KPIs',
+    
+    // Feasly Flow
+    'feasly.flow.title': 'Feasly Flow',
+    'feasly.flow.description': 'Workflow management and process optimization.',
+    'feasly.flow.coming_soon': 'Coming Soon',
+    
+    // Feasly Finance
+    'feasly.finance.title': 'Feasly Finance',
+    'feasly.finance.description': 'Financial modeling and analysis tools.',
+    'feasly.finance.coming_soon': 'Coming Soon',
+    
+    // Feasly Consolidate
+    'feasly.consolidate.title': 'Feasly Consolidate',
+    'feasly.consolidate.description': 'Data consolidation and portfolio management.',
+    'feasly.consolidate.coming_soon': 'Coming Soon',
+    
+    // Feasly Insights
+    'feasly.insights.title': 'Feasly Insights',
+    'feasly.insights.description': 'Advanced analytics and insights dashboard.',
+    'feasly.insights.coming_soon': 'Coming Soon',
+    
     // Common
     'common.loading': 'Loading...',
     'common.save': 'Save',
@@ -219,6 +253,40 @@ const translations = {
     'dashboard.allTime': 'كل الأوقات',
     'dashboard.noProjectsYet': 'لا توجد مشاريع بعد',
     'dashboard.createFirstProject': 'أنشئ مشروعك الأول للبدء في النمذجة المالية.',
+    
+    // Feasly Modules
+    'nav.model': 'نموذج فيزلي',
+    'nav.flow': 'تدفق فيزلي',
+    'nav.finance': 'مالية فيزلي',
+    'nav.consolidate': 'توحيد فيزلي',
+    'nav.insights': 'رؤى فيزلي',
+    
+    // Feasly Model
+    'feasly.model.title': 'نموذج فيزلي',
+    'feasly.model.description': 'محرك الجدوى التطويرية للتخطيط والإدخال والتحليل.',
+    'feasly.model.inputs': 'مدخلات نموذج فيزلي',
+    'feasly.model.scenarios': 'سيناريوهات نموذج فيزلي',
+    'feasly.model.kpis': 'مؤشرات أداء نموذج فيزلي',
+    
+    // Feasly Flow
+    'feasly.flow.title': 'تدفق فيزلي',
+    'feasly.flow.description': 'إدارة سير العمل وتحسين العمليات.',
+    'feasly.flow.coming_soon': 'قريباً',
+    
+    // Feasly Finance
+    'feasly.finance.title': 'مالية فيزلي',
+    'feasly.finance.description': 'أدوات النمذجة المالية والتحليل.',
+    'feasly.finance.coming_soon': 'قريباً',
+    
+    // Feasly Consolidate
+    'feasly.consolidate.title': 'توحيد فيزلي',
+    'feasly.consolidate.description': 'توحيد البيانات وإدارة المحفظة.',
+    'feasly.consolidate.coming_soon': 'قريباً',
+    
+    // Feasly Insights
+    'feasly.insights.title': 'رؤى فيزلي',
+    'feasly.insights.description': 'لوحة تحكم التحليلات المتقدمة والرؤى.',
+    'feasly.insights.coming_soon': 'قريباً',
     
     // Common
     'common.loading': 'جاري التحميل...',
