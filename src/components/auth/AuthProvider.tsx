@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
+import { toast } from "@/hooks/use-toast";
 
 interface AuthContextType {
   user: User | null;
@@ -27,6 +28,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastActivity, setLastActivity] = useState(Date.now());
 
   useEffect(() => {
     // Get initial session
@@ -34,6 +36,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      if (session) {
+        setLastActivity(Date.now());
+      }
     });
 
     // Listen for auth changes
@@ -43,13 +48,59 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      if (session) {
+        setLastActivity(Date.now());
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
+  // Auto logout after 4 hours of inactivity for security
+  useEffect(() => {
+    if (!user) return;
+
+    const updateActivity = () => {
+      setLastActivity(Date.now());
+    };
+
+    // Listen for user activity
+    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+    events.forEach(event => {
+      document.addEventListener(event, updateActivity, true);
+    });
+
+    // Check for inactivity every minute
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const timeSinceLastActivity = now - lastActivity;
+      const fourHours = 4 * 60 * 60 * 1000; // 4 hours in milliseconds
+
+      if (timeSinceLastActivity > fourHours) {
+        console.log('Auto logout due to inactivity');
+        toast({
+          title: "Session Expired",
+          description: "You have been logged out due to inactivity for security reasons.",
+          variant: "destructive",
+        });
+        supabase.auth.signOut();
+      }
+    }, 60000); // Check every minute
+
+    return () => {
+      events.forEach(event => {
+        document.removeEventListener(event, updateActivity, true);
+      });
+      clearInterval(interval);
+    };
+  }, [user, lastActivity]);
+
   const signOut = async () => {
     await supabase.auth.signOut();
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
   };
 
   const value = {

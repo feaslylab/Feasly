@@ -20,6 +20,7 @@ export const Sidebar = () => {
 
   const handleSignOut = async () => {
     await signOut();
+    // Navigation will be handled automatically by the auth state change
   };
 
   return (

@@ -21,6 +21,9 @@ const translations = {
     'nav.newProject': 'New Project',
     'nav.signOut': 'Sign Out',
     
+    // Auth
+    'auth.loggedIn': 'Logged in',
+    
     // Common
     'common.loading': 'Loading...',
     'common.save': 'Save',
@@ -176,6 +179,9 @@ const translations = {
     'nav.settings': 'الإعدادات',
     'nav.newProject': 'مشروع جديد',
     'nav.signOut': 'تسجيل الخروج',
+    
+    // Auth  
+    'auth.loggedIn': 'مسجل الدخول',
     
     // Common
     'common.loading': 'جاري التحميل...',
