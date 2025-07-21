@@ -18,6 +18,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import { ImportFromExcel } from "@/components/import/ImportFromExcel";
 import { DashboardExport } from "@/components/dashboard/DashboardExport";
+import { TeamActivityLog } from "@/components/dashboard/TeamActivityLog";
 import { calculateFinancialMetrics, FinancialMetrics } from "@/lib/financialCalculations";
 
 interface DashboardStats {
@@ -925,6 +926,9 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       )}
+
+      {/* Team Activity Log */}
+      <TeamActivityLog filters={filters} />
 
       {/* Recent Projects */}
       <Card className="border-border shadow-soft">
