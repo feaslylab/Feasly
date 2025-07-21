@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download, FileDown } from "lucide-react";
+import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download, FileDown, Copy } from "lucide-react";
 import * as XLSX from "xlsx";
 import { calculateFinancialMetrics } from "@/lib/financialCalculations";
 import jsPDF from "jspdf";
@@ -20,6 +20,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 
 interface Project {
   id: string;
@@ -52,7 +56,11 @@ const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   const [selectedScenarioId, setSelectedScenarioId] = useState<string | null>(null);
+  const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false);
+  const [newProjectName, setNewProjectName] = useState("");
+  const [isDuplicating, setIsDuplicating] = useState(false);
 
   const { data: project, isLoading, error } = useQuery({
     queryKey: ["project", id],
@@ -387,6 +395,149 @@ const ProjectDetails = () => {
     doc.save(filename);
   };
 
+  const duplicateProject = async () => {
+    if (!project || !newProjectName.trim() || !user) return;
+
+    try {
+      setIsDuplicating(true);
+
+      // Step 1: Create new project
+      const { data: newProject, error: projectError } = await supabase
+        .from("projects")
+        .insert({
+          name: newProjectName.trim(),
+          description: project.description,
+          start_date: project.start_date,
+          end_date: project.end_date,
+          user_id: user.id,
+        })
+        .select()
+        .single();
+
+      if (projectError) throw projectError;
+
+      // Step 2: Clone all assets and create mapping
+      const assetMapping = new Map<string, string>(); // old asset ID -> new asset ID
+
+      if (assets && assets.length > 0) {
+        const assetsToClone = assets.map(asset => ({
+          project_id: newProject.id,
+          name: asset.name,
+          type: asset.type,
+          gfa_sqm: asset.gfa_sqm,
+          construction_cost_aed: asset.construction_cost_aed,
+          annual_operating_cost_aed: asset.annual_operating_cost_aed,
+          annual_revenue_potential_aed: asset.annual_revenue_potential_aed,
+          occupancy_rate_percent: asset.occupancy_rate_percent,
+          cap_rate_percent: asset.cap_rate_percent,
+          development_timeline_months: asset.development_timeline_months,
+          stabilization_period_months: asset.stabilization_period_months,
+        }));
+
+        const { data: newAssets, error: assetsError } = await supabase
+          .from("assets")
+          .insert(assetsToClone)
+          .select();
+
+        if (assetsError) throw assetsError;
+
+        // Create asset mapping
+        assets.forEach((oldAsset, index) => {
+          if (newAssets && newAssets[index]) {
+            assetMapping.set(oldAsset.id, newAssets[index].id);
+          }
+        });
+      }
+
+      // Step 3: Clone all scenarios and create mapping
+      const scenarioMapping = new Map<string, string>(); // old scenario ID -> new scenario ID
+
+      if (scenarios && scenarios.length > 0) {
+        const scenariosToClone = scenarios.map(scenario => ({
+          project_id: newProject.id,
+          name: scenario.name,
+          type: scenario.type,
+          is_base: scenario.is_base,
+        }));
+
+        const { data: newScenarios, error: scenariosError } = await supabase
+          .from("scenarios")
+          .insert(scenariosToClone)
+          .select();
+
+        if (scenariosError) throw scenariosError;
+
+        // Create scenario mapping
+        scenarios.forEach((oldScenario, index) => {
+          if (newScenarios && newScenarios[index]) {
+            scenarioMapping.set(oldScenario.id, newScenarios[index].id);
+          }
+        });
+      }
+
+      // Step 4: Clone all scenario overrides with proper mappings
+      if (scenarioMapping.size > 0 && assetMapping.size > 0) {
+        // Get all overrides for all scenarios in the original project
+        const { data: allOverrides, error: overridesError } = await supabase
+          .from("scenario_overrides")
+          .select("*")
+          .in("scenario_id", Array.from(scenarioMapping.keys()));
+
+        if (overridesError) throw overridesError;
+
+        if (allOverrides && allOverrides.length > 0) {
+          const overridesToClone = allOverrides
+            .filter(override => 
+              scenarioMapping.has(override.scenario_id) && 
+              assetMapping.has(override.asset_id)
+            )
+            .map(override => ({
+              scenario_id: scenarioMapping.get(override.scenario_id)!,
+              asset_id: assetMapping.get(override.asset_id)!,
+              field_name: override.field_name,
+              override_value: override.override_value,
+            }));
+
+          if (overridesToClone.length > 0) {
+            const { error: insertOverridesError } = await supabase
+              .from("scenario_overrides")
+              .insert(overridesToClone);
+
+            if (insertOverridesError) throw insertOverridesError;
+          }
+        }
+      }
+
+      // Success - show toast and redirect to new project
+      toast({
+        title: "Project Duplicated",
+        description: `"${newProjectName}" has been created successfully.`,
+      });
+
+      // Reset dialog state
+      setIsDuplicateDialogOpen(false);
+      setNewProjectName("");
+
+      // Redirect to new project
+      navigate(`/projects/${newProject.id}`);
+
+    } catch (error) {
+      console.error("Error duplicating project:", error);
+      toast({
+        title: "Error",
+        description: "Failed to duplicate project. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDuplicating(false);
+    }
+  };
+
+  const handleDuplicateClick = () => {
+    setNewProjectName(`${project.name} Copy`);
+    setIsDuplicateDialogOpen(true);
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Header */}
@@ -408,6 +559,52 @@ const ProjectDetails = () => {
             </p>
           </div>
           <div className="flex gap-3">
+            <Dialog open={isDuplicateDialogOpen} onOpenChange={setIsDuplicateDialogOpen}>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  onClick={handleDuplicateClick}
+                  className="flex items-center gap-2"
+                >
+                  <Copy className="w-4 h-4" />
+                  Duplicate Project
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Duplicate Project</DialogTitle>
+                  <DialogDescription>
+                    Create a copy of this project with all its assets, scenarios, and override values.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="project-name">New Project Name</Label>
+                    <Input
+                      id="project-name"
+                      value={newProjectName}
+                      onChange={(e) => setNewProjectName(e.target.value)}
+                      placeholder="Enter project name"
+                    />
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsDuplicateDialogOpen(false)}
+                    disabled={isDuplicating}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={duplicateProject}
+                    disabled={!newProjectName.trim() || isDuplicating}
+                  >
+                    {isDuplicating ? "Duplicating..." : "Duplicate Project"}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
             {selectedScenario && assets && assets.length > 0 && (
               <>
                 <Button
