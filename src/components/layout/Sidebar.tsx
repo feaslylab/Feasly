@@ -56,7 +56,7 @@ export const Sidebar = () => {
           >
             <NavLink to="/projects/new">
               <Plus className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-              {t('newProject', 'common')}
+              {t('nav.newProject')}
             </NavLink>
           </Button>
         </div>
@@ -78,7 +78,7 @@ export const Sidebar = () => {
               }
             >
               <item.icon className="w-5 h-5" />
-              {t(item.nameKey, 'common')}
+              {t(`nav.${item.nameKey}`)}
             </NavLink>
           ))}
         </nav>
@@ -103,7 +103,7 @@ export const Sidebar = () => {
                 </div>
                 <div className="flex-1 min-w-0 text-left">
                   <p className="font-medium text-foreground truncate text-sm">
-                    {user?.user_metadata?.full_name || t('account', 'auth')}
+                    {user?.user_metadata?.full_name || t('auth.account')}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
                     {user?.email}
@@ -118,17 +118,17 @@ export const Sidebar = () => {
             side="top"
           >
             <div className="px-2 py-1.5">
-              <p className="text-sm font-medium">{user?.user_metadata?.full_name || t('user', 'auth')}</p>
+              <p className="text-sm font-medium">{user?.user_metadata?.full_name || t('auth.user')}</p>
               <p className="text-xs text-muted-foreground">{user?.email}</p>
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">
               <User className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-              {t('viewAccount', 'auth')}
+              {t('auth.viewAccount')}
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">
               <Settings className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-              {t('settings', 'common')}
+              {t('nav.settings')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem 
@@ -136,7 +136,7 @@ export const Sidebar = () => {
               onClick={handleSignOut}
             >
               <LogOut className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-              {t('signOut', 'auth')}
+              {t('auth.signOut')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

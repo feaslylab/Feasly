@@ -1,7 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect, useMemo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNamespaceLoader } from '@/hooks/useNamespaceLoader';
-import '@/lib/i18n'; // Initialize i18n
+import React, { createContext, useContext, useState, ReactNode, useEffect, useMemo } from 'react';
 
 export type Language = 'en' | 'ar';
 
@@ -9,79 +6,131 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   isRTL: boolean;
-  t: (key: string, namespace?: string) => string;
+  t: (key: string) => string;
   isLoading: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+// Import the original translations for now to fix the immediate issue
+const translations = {
+  en: {
+    // Auth
+    'auth.login': 'Log In',
+    'auth.signup': 'Sign Up', 
+    'auth.email': 'Email',
+    'auth.password': 'Password',
+    'auth.confirmPassword': 'Confirm Password',
+    'auth.fullName': 'Full Name',
+    'auth.enterEmail': 'Enter your email',
+    'auth.enterPassword': 'Enter your password',
+    'auth.createPassword': 'Create a password',
+    'auth.confirmYourPassword': 'Confirm your password',
+    'auth.enterFullName': 'Enter your full name',
+    'auth.showPassword': 'Show password',
+    'auth.hidePassword': 'Hide password',
+    'auth.alreadyHaveAccount': 'Already have an account?',
+    'auth.dontHaveAccount': "Don't have an account?",
+    'auth.signInHere': 'Sign in here',
+    'auth.signUpHere': 'Sign up here',
+    'auth.welcomeBack': 'Welcome Back',
+    'auth.loginToAccount': 'Log in to your account',
+    'auth.createAccount': 'Create your account',
+    'auth.getStarted': 'Get started with your financial modeling platform',
+    'auth.loggedIn': 'Logged in',
+    'auth.viewAccount': 'View Account',
+    'auth.account': 'Account',
+    'auth.user': 'User',
+    'auth.signOut': 'Sign Out',
+    
+    // Navigation
+    'nav.dashboard': 'Dashboard',
+    'nav.projects': 'Projects',
+    'nav.settings': 'Settings',
+    'nav.newProject': 'New Project',
+    'nav.model': 'Feasly Model',
+    'nav.flow': 'Feasly Flow',
+    'nav.finance': 'Feasly Finance',
+    'nav.consolidate': 'Feasly Consolidate',
+    'nav.insights': 'Feasly Insights',
+    
+    // Common
+    'common.loading': 'Loading...',
+    'common.save': 'Save',
+    'common.cancel': 'Cancel',
+    'common.edit': 'Edit',
+    'common.delete': 'Delete',
+  },
+  ar: {
+    // Auth
+    'auth.login': 'تسجيل الدخول',
+    'auth.signup': 'إنشاء حساب',
+    'auth.email': 'البريد الإلكتروني',
+    'auth.password': 'كلمة المرور',
+    'auth.confirmPassword': 'تأكيد كلمة المرور',
+    'auth.fullName': 'الاسم الكامل',
+    'auth.enterEmail': 'أدخل بريدك الإلكتروني',
+    'auth.enterPassword': 'أدخل كلمة المرور',
+    'auth.createPassword': 'إنشاء كلمة مرور',
+    'auth.confirmYourPassword': 'تأكيد كلمة المرور',
+    'auth.enterFullName': 'أدخل اسمك الكامل',
+    'auth.showPassword': 'إظهار كلمة المرور',
+    'auth.hidePassword': 'إخفاء كلمة المرور',
+    'auth.alreadyHaveAccount': 'هل لديك حساب بالفعل؟',
+    'auth.dontHaveAccount': 'ليس لديك حساب؟',
+    'auth.signInHere': 'سجل دخولك هنا',
+    'auth.signUpHere': 'أنشئ حسابك هنا',
+    'auth.welcomeBack': 'مرحباً بعودتك',
+    'auth.loginToAccount': 'سجل دخولك إلى حسابك',
+    'auth.createAccount': 'أنشئ حسابك',
+    'auth.getStarted': 'ابدأ مع منصة النمذجة المالية',
+    'auth.loggedIn': 'مسجل الدخول',
+    'auth.viewAccount': 'عرض الحساب',
+    'auth.account': 'الحساب',
+    'auth.user': 'المستخدم',
+    'auth.signOut': 'تسجيل الخروج',
+    
+    // Navigation  
+    'nav.dashboard': 'لوحة التحكم',
+    'nav.projects': 'المشاريع',
+    'nav.settings': 'الإعدادات',
+    'nav.newProject': 'مشروع جديد',
+    'nav.model': 'نموذج فيزلي',
+    'nav.flow': 'تدفق فيزلي',
+    'nav.finance': 'مالية فيزلي',
+    'nav.consolidate': 'توحيد فيزلي',
+    'nav.insights': 'رؤى فيزلي',
+    
+    // Common
+    'common.loading': 'جاري التحميل...',
+    'common.save': 'حفظ',
+    'common.cancel': 'إلغاء',
+    'common.edit': 'تحرير',
+    'common.delete': 'حذف',
+  }
+};
 
 interface LanguageProviderProps {
   children: ReactNode;
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  const { t, i18n, ready } = useTranslation();
-  const { loadNamespacesForRoute } = useNamespaceLoader();
-  const [isLoading, setIsLoading] = useState(!ready);
+  const [language, setLanguageState] = useState<Language>('en');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Get current language from i18n
-  const language = (i18n.language || 'en') as Language;
-  
   const isRTL = useMemo(() => language === 'ar', [language]);
 
-  // Memoized translation function with namespace support
-  const translateFunction = useCallback((key: string, namespace?: string) => {
-    // If explicit namespace provided, use it
-    if (namespace) {
-      const result = t(key, { ns: namespace });
-      return result !== key ? result : key;
-    }
-    
-    // Handle dotted keys (auth.email, nav.dashboard, etc.)
-    if (key.includes('.')) {
-      const parts = key.split('.');
-      
-      if (parts.length === 2) {
-        // Simple case: namespace.key (e.g., auth.email)
-        const [ns, k] = parts;
-        const result = t(k, { ns });
-        console.log(`Translating ${key}: ${ns}.${k} = ${result}`);
-        return result !== k ? result : key;
-      } 
-      else if (parts.length >= 3 && parts[0] === 'feasly') {
-        // Feasly modules: feasly.module.key
-        const ns = `feasly.${parts[1]}`;
-        const k = parts.slice(2).join('.');
-        const result = t(k, { ns });
-        console.log(`Translating ${key}: ${ns}.${k} = ${result}`);
-        return result !== k ? result : key;
-      }
-    }
-    
-    // Try default translation (no explicit namespace)
-    const result = t(key);
-    console.log(`Default translation ${key} = ${result}`);
-    return result !== key ? result : key;
-  }, [t]);
-
-  const setLanguage = useCallback(async (lang: Language) => {
+  const setLanguage = (lang: Language) => {
     setIsLoading(true);
-    try {
-      await i18n.changeLanguage(lang);
-      // Update HTML dir attribute
-      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-      document.documentElement.lang = lang;
-    } catch (error) {
-      console.error('Failed to change language:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [i18n]);
+    setLanguageState(lang);
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.documentElement.lang = lang;
+    setIsLoading(false);
+  };
 
-  // Update loading state when i18n ready state changes
-  useEffect(() => {
-    setIsLoading(!ready);
-  }, [ready]);
+  const t = (key: string) => {
+    return translations[language][key as keyof typeof translations[Language]] || key;
+  };
 
   // Set initial HTML attributes
   useEffect(() => {
@@ -89,14 +138,14 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     document.documentElement.lang = language;
   }, [isRTL, language]);
 
-  // Memoize context value to prevent unnecessary re-renders
+  // Memoize context value
   const contextValue = useMemo(() => ({
     language,
     setLanguage,
     isRTL,
-    t: translateFunction,
+    t,
     isLoading,
-  }), [language, setLanguage, isRTL, translateFunction, isLoading]);
+  }), [language, setLanguage, isRTL, t, isLoading]);
 
   return (
     <LanguageContext.Provider value={contextValue}>
@@ -108,7 +157,6 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (!context) {
-    // Provide a fallback instead of throwing an error
     console.warn('useLanguage called outside LanguageProvider, using fallback');
     return {
       language: 'en' as Language,
