@@ -18,6 +18,8 @@ export type MonthlyCashflow = {
   zakatDue: number;
   vatOnCosts: number;
   vatRecoverable: number;
+  escrowReserved: number;
+  escrowReleased: number;
 };
 
 export type CashflowGrid = {
@@ -339,6 +341,24 @@ export function buildScenarioGrid(
     allocatePhasedEquity(equityNeeded, months, constructionCostAllocation, landCostAllocation, softCostAllocation) :
     allocateCostOverMonths(equityNeeded, months);
 
+  // Calculate escrow reserves if required
+  const escrowReserveAllocation: Record<string, number> = {};
+  const escrowReleaseAllocation: Record<string, number> = {};
+  
+  if (input.escrow_required && (input.escrow_percent || 0) > 0) {
+    const escrowReserve = totalCost * ((input.escrow_percent || 0) / 100);
+    
+    // Reserve escrow in first month
+    if (months.length > 0) {
+      escrowReserveAllocation[months[0]] = escrowReserve;
+    }
+    
+    // Release escrow in final month
+    if (months.length > 0) {
+      escrowReleaseAllocation[months[months.length - 1]] = escrowReserve;
+    }
+  }
+
   // Build monthly cashflow
   let cumulativeCashBalance = 0;
   
@@ -351,6 +371,8 @@ export function buildScenarioGrid(
     const loanRepayment = loanSchedule.loanRepayment[month] || 0;
     const equityInjected = equityAllocation[month] || 0;
     const revenue = revenueAllocation[month] || 0;
+    const escrowReserved = escrowReserveAllocation[month] || 0;
+    const escrowReleased = escrowReleaseAllocation[month] || 0;
     
     // Calculate VAT
     const vatOnCosts = input.vat_applicable ? 
@@ -363,9 +385,9 @@ export function buildScenarioGrid(
     const zakatDue = input.zakat_applicable ? 
       calculateZakat(profit, input.zakat_rate_percent || 0) : 0;
     
-    // Calculate net cashflow
-    const cashIn = loanDrawn + equityInjected + revenue + vatRecoverable;
-    const cashOut = constructionCost + landCost + softCosts + loanInterest + loanRepayment + zakatDue + vatOnCosts;
+    // Calculate net cashflow (including escrow)
+    const cashIn = loanDrawn + equityInjected + revenue + vatRecoverable + escrowReleased;
+    const cashOut = constructionCost + landCost + softCosts + loanInterest + loanRepayment + zakatDue + vatOnCosts + escrowReserved;
     const netCashflow = cashIn - cashOut;
     
     // Update cumulative cash balance
@@ -387,6 +409,8 @@ export function buildScenarioGrid(
       zakatDue,
       vatOnCosts,
       vatRecoverable,
+      escrowReserved,
+      escrowReleased,
     };
   });
 }
@@ -462,6 +486,8 @@ export async function saveCashflowToDatabase(
           zakat_due: cashflow.zakatDue,
           vat_on_costs: cashflow.vatOnCosts,
           vat_recoverable: cashflow.vatRecoverable,
+          escrow_reserved: cashflow.escrowReserved,
+          escrow_released: cashflow.escrowReleased,
           version_label: versionLabel,
           is_latest: true,
         });
@@ -539,6 +565,8 @@ export async function loadCashflowFromDatabase(
         zakatDue: Number(record.zakat_due),
         vatOnCosts: Number(record.vat_on_costs || 0),
         vatRecoverable: Number(record.vat_recoverable || 0),
+        escrowReserved: Number(record.escrow_reserved || 0),
+        escrowReleased: Number(record.escrow_released || 0),
       };
       
       const scenarioKey = record.scenario as 'base' | 'optimistic' | 'pessimistic' | 'custom';

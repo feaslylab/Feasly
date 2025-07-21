@@ -175,6 +175,8 @@ export type Database = {
           construction_cost: number | null
           created_at: string
           equity_injected: number | null
+          escrow_released: number | null
+          escrow_reserved: number | null
           id: string
           is_latest: boolean
           land_cost: number | null
@@ -199,6 +201,8 @@ export type Database = {
           construction_cost?: number | null
           created_at?: string
           equity_injected?: number | null
+          escrow_released?: number | null
+          escrow_reserved?: number | null
           id?: string
           is_latest?: boolean
           land_cost?: number | null
@@ -223,6 +227,8 @@ export type Database = {
           construction_cost?: number | null
           created_at?: string
           equity_injected?: number | null
+          escrow_released?: number | null
+          escrow_reserved?: number | null
           id?: string
           is_latest?: boolean
           land_cost?: number | null

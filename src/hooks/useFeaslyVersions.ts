@@ -113,6 +113,9 @@ export function useFeaslyVersions(projectId: string | undefined) {
       const totalZakat = data.reduce((sum, month) => sum + month.zakatDue, 0);
       const totalVatPaid = data.reduce((sum, month) => sum + month.vatOnCosts, 0);
       const totalVatRecovered = data.reduce((sum, month) => sum + month.vatRecoverable, 0);
+      const totalEscrowReserved = data.reduce((sum, month) => sum + month.escrowReserved, 0);
+      const totalEscrowReleased = data.reduce((sum, month) => sum + month.escrowReleased, 0);
+      const netEscrowImpact = totalEscrowReleased - totalEscrowReserved;
 
       return {
         totalCosts,
@@ -123,6 +126,9 @@ export function useFeaslyVersions(projectId: string | undefined) {
         totalZakat,
         totalVatPaid,
         totalVatRecovered,
+        totalEscrowReserved,
+        totalEscrowReleased,
+        netEscrowImpact,
         timelineMonths: data.length,
       };
     },

@@ -42,6 +42,7 @@ export const feaslyModelSchema = z.object({
   vat_applicable: z.boolean().default(false),
   vat_rate: z.number().min(0).max(100).optional(),
   escrow_required: z.boolean().default(false),
+  escrow_percent: z.number().min(0).max(100).optional(),
   
   // Funding & Capital
   funding_type: z.string().optional(),
