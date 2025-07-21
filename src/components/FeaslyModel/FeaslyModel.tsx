@@ -42,8 +42,8 @@ export default function FeaslyModel() {
   const { toast } = useToast();
   const [activeScenario, setActiveScenario] = useState<ScenarioType>("base");
   
-  // For demo purposes, using a mock project ID
-  const projectId = "demo-project-123";
+  // Use existing project ID from the database
+  const projectId = "bee8e7de-357f-4334-a591-978ebb11f446";
   const { milestones } = useMilestones(projectId);
   
   // Use versioning hook instead of the old calculation hook
