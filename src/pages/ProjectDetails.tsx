@@ -16,6 +16,7 @@ import { ScenarioSelector } from "@/components/scenarios/ScenarioSelector";
 import { FinancialSummaryCards } from "@/components/financial/FinancialSummaryCards";
 import { ProjectTeam } from "@/components/projects/ProjectTeam";
 import { ProjectAnalytics } from "@/components/projects/ProjectAnalytics";
+import { ExportHistory } from "@/components/projects/ExportHistory";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -1150,6 +1151,13 @@ const ProjectDetails = () => {
             </Card>
           )}
         </TabsContent>
+
+        {/* Export History Section - Only visible to Owners and Editors */}
+        {canExport && (
+          <div className="mt-6">
+            <ExportHistory projectId={id || ""} />
+          </div>
+        )}
       </Tabs>
     </div>
   );
