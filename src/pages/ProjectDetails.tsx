@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download } from "lucide-react";
 import * as XLSX from "xlsx";
+import { calculateFinancialMetrics } from "@/lib/financialCalculations";
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -165,29 +166,35 @@ const ProjectDetails = () => {
 
     // Fetch scenario overrides for the selected scenario
     const { data: overrides } = await supabase
-      .from("scenario_asset_overrides")
+      .from("scenario_overrides")
       .select("*")
       .eq("scenario_id", selectedScenarioId);
+
+    // Calculate financial metrics using the same logic as summary cards
+    const metrics = calculateFinancialMetrics(assets, overrides || []);
 
     // Create workbook
     const workbook = XLSX.utils.book_new();
     
-    // Prepare data for export
+    // === Assets Data Worksheet ===
     const excelData = assets.map(asset => {
       // Find override values for this asset in the selected scenario
-      const override = overrides?.find(o => o.asset_id === asset.id);
+      const getOverrideValue = (fieldName: string) => {
+        const override = overrides?.find(o => o.asset_id === asset.id && o.field_name === fieldName);
+        return override ? override.override_value : null;
+      };
       
       return {
         "Asset Name": asset.name,
         "Type": asset.type,
-        "GFA (sqm)": override?.gfa_sqm || asset.gfa_sqm,
-        "Construction Cost (AED)": override?.construction_cost_aed || asset.construction_cost_aed,
-        "Annual Revenue Potential (AED)": override?.annual_revenue_potential_aed || asset.annual_revenue_potential_aed,
-        "Annual Operating Cost (AED)": override?.annual_operating_cost_aed || asset.annual_operating_cost_aed,
-        "Occupancy Rate (%)": override?.occupancy_rate_percent || asset.occupancy_rate_percent,
-        "Cap Rate (%)": override?.cap_rate_percent || asset.cap_rate_percent,
-        "Development Timeline (months)": override?.development_timeline_months || asset.development_timeline_months,
-        "Stabilization Period (months)": override?.stabilization_period_months || asset.stabilization_period_months,
+        "GFA (sqm)": getOverrideValue('gfa_sqm') || asset.gfa_sqm,
+        "Construction Cost (AED)": getOverrideValue('construction_cost_aed') || asset.construction_cost_aed,
+        "Annual Revenue Potential (AED)": getOverrideValue('annual_revenue_potential_aed') || asset.annual_revenue_potential_aed,
+        "Annual Operating Cost (AED)": getOverrideValue('annual_operating_cost_aed') || asset.annual_operating_cost_aed,
+        "Occupancy Rate (%)": getOverrideValue('occupancy_rate_percent') || asset.occupancy_rate_percent,
+        "Cap Rate (%)": getOverrideValue('cap_rate_percent') || asset.cap_rate_percent,
+        "Development Timeline (months)": getOverrideValue('development_timeline_months') || asset.development_timeline_months,
+        "Stabilization Period (months)": getOverrideValue('stabilization_period_months') || asset.stabilization_period_months,
       };
     });
 
@@ -200,11 +207,51 @@ const ProjectDetails = () => {
 
     const finalData = [...headerData, ...excelData];
 
-    // Create worksheet
-    const worksheet = XLSX.utils.json_to_sheet(finalData);
-    
-    // Add worksheet to workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Assets Export");
+    // Create Assets worksheet
+    const assetsWorksheet = XLSX.utils.json_to_sheet(finalData);
+    XLSX.utils.book_append_sheet(workbook, assetsWorksheet, "Assets");
+
+    // === Summary Worksheet ===
+    const formatCurrency = (amount: number) => {
+      return new Intl.NumberFormat('en-AE', {
+        style: 'currency',
+        currency: 'AED',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(amount);
+    };
+
+    const formatPercentage = (value: number) => {
+      return `${value.toFixed(1)}%`;
+    };
+
+    const formatYears = (years: number) => {
+      if (years < 0) return "No payback";
+      if (years > 10) return ">10 years";
+      return `${years.toFixed(1)} years`;
+    };
+
+    const projectDurationMonths = project.start_date && project.end_date
+      ? Math.ceil((new Date(project.end_date).getTime() - new Date(project.start_date).getTime()) / (1000 * 60 * 60 * 24 * 30))
+      : 0;
+
+    const summaryData = [
+      { "Metric": "Project Name", "Value": project.name },
+      { "Metric": "Scenario Name", "Value": selectedScenario.name },
+      { "Metric": "", "Value": "" }, // Empty row
+      { "Metric": "Total Construction Cost (AED)", "Value": formatCurrency(metrics.totalConstructionCost) },
+      { "Metric": "Total Annual Revenue (AED)", "Value": formatCurrency(metrics.totalRevenue) },
+      { "Metric": "Total Annual Operating Cost (AED)", "Value": formatCurrency(metrics.totalOperatingCost) },
+      { "Metric": "Profit Margin (%)", "Value": formatPercentage(metrics.profitMargin) },
+      { "Metric": "IRR (%)", "Value": formatPercentage(metrics.irr) },
+      { "Metric": "Payback Period (years)", "Value": formatYears(metrics.paybackPeriod) },
+      { "Metric": "Number of Assets", "Value": assets.length.toString() },
+      { "Metric": "Project Duration (months)", "Value": projectDurationMonths > 0 ? projectDurationMonths.toString() : "Not set" },
+    ];
+
+    // Create Summary worksheet
+    const summaryWorksheet = XLSX.utils.json_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(workbook, summaryWorksheet, "Summary");
 
     // Generate filename
     const filename = `${project.name}-${selectedScenario.name}.xlsx`;
