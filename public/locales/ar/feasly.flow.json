@@ -40,16 +40,5 @@
   "sync_success_desc": "تم مزامنة بيانات المراحل مع نموذج فيزلي",
   "sync_error": "خطأ في المزامنة",
   "sync_error_desc": "فشل في مزامنة البيانات مع نموذج فيزلي",
-  "no_phases_to_sync": "لا توجد مراحل متاحة للمزامنة",
-  "project_phases": "مراحل المشروع",
-  "duration": "المدة",
-  "gfa": "المساحة المبنية",
-  "cost": "التكلفة",
-  "dates": "التواريخ",
-  "depends_on": "يعتمد على",
-  "summary_metrics": "مقاييس الملخص",
-  "project_summary": "ملخص المشروع",
-  "phases_configured": "مراحل مكونة",
-  "ready_for_timeline": "جاهز لتحليل الجدول الزمني",
-  "use_in_model": "استخدام في نموذج فيزلي"
+  "no_phases_to_sync": "لا توجد مراحل متاحة للمزامنة"
 }
