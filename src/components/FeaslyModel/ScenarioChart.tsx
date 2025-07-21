@@ -84,13 +84,13 @@ export function ScenarioChart() {
   };
 
   return (
-    <Card>
+    <Card className="feasly-chart-card">
       <CardHeader>
         <div className="flex items-center space-x-2">
           <BarChart3 className="h-5 w-5 text-primary" />
-          <CardTitle>{t('scenario_chart')}</CardTitle>
+          <CardTitle className="feasly-title">{t('scenario_chart')}</CardTitle>
         </div>
-        <CardDescription>
+        <CardDescription className="feasly-description">
           Compare financial metrics across different scenarios
         </CardDescription>
       </CardHeader>
