@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import i18n from '@/lib/i18n';
 
 export type Language = 'en' | 'ar';
@@ -7,7 +8,6 @@ interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => Promise<void>;
   isRTL: boolean;
-  t: (key: string, options?: any) => string;
   isLoading: boolean;
 }
 
@@ -21,7 +21,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const [language, setLanguageState] = useState<Language>('en');
   const [isLoading, setIsLoading] = useState(false);
 
-  const isRTL = useMemo(() => language === 'ar', [language]);
+  const isRTL = language === 'ar';
 
   const setLanguage = async (lang: Language) => {
     setIsLoading(true);
@@ -38,44 +38,27 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     }
   };
 
-  const t = (key: string, options?: any): string => {
-    const result = i18n.t(key, options);
-    return typeof result === 'string' ? result : key;
-  };
-
-  // Set initial HTML attributes and load saved language
+  // Initialize language from localStorage or browser
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language || 'en';
-    if (savedLanguage !== language) {
-      setLanguage(savedLanguage);
+    const savedLanguage = localStorage.getItem('language') as Language;
+    const browserLanguage = navigator.language.split('-')[0] as Language;
+    const initialLanguage = savedLanguage || (browserLanguage === 'ar' ? 'ar' : 'en');
+    
+    if (initialLanguage !== language) {
+      setLanguage(initialLanguage);
     } else {
-      document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-      document.documentElement.lang = language;
+      setLanguageState(initialLanguage);
+      document.documentElement.dir = initialLanguage === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = initialLanguage;
     }
   }, []);
 
-  // Update HTML attributes when language changes
-  useEffect(() => {
-    document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
-    document.documentElement.lang = language;
-  }, [isRTL, language]);
-
-  // Sync with i18next language changes
-  useEffect(() => {
-    // Set initial language from i18next
-    if (i18n.language) {
-      setLanguageState(i18n.language as Language);
-    }
-  }, []);
-
-  // Memoize context value
-  const contextValue = useMemo(() => ({
+  const contextValue = {
     language,
     setLanguage,
     isRTL,
-    t,
     isLoading,
-  }), [language, setLanguage, isRTL, t, isLoading]);
+  };
 
   return (
     <LanguageContext.Provider value={contextValue}>
@@ -87,18 +70,13 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (!context) {
-    console.warn('useLanguage called outside LanguageProvider, using fallback');
-    // Fallback to i18next directly if context is not available
+    // Fallback for when context is not available
     return {
       language: (i18n.language as Language) || 'en',
-      setLanguage: async (lang: Language) => { 
+      setLanguage: async (lang: Language) => {
         await i18n.changeLanguage(lang);
       },
       isRTL: i18n.language === 'ar',
-      t: (key: string, options?: any) => {
-        const result = i18n.t(key, options);
-        return typeof result === 'string' ? result : key;
-      },
       isLoading: false,
     };
   }

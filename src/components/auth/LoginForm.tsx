@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +22,8 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { t, isRTL } = useLanguage();
+  const { t } = useTranslation('auth');
+  const { isRTL } = useLanguage();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,20 +66,20 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
           <Building2 className="w-6 h-6 text-primary-foreground" />
         </div>
         <div>
-          <CardTitle className="text-2xl font-semibold">{t('auth.welcomeBack')}</CardTitle>
+          <CardTitle className="text-2xl font-semibold">{t('welcomeBack')}</CardTitle>
           <CardDescription className="text-muted-foreground mt-2">
-            {t('auth.loginToAccount')}
+            {t('loginToAccount')}
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email" className={cn(isRTL && "text-right")}>{t('auth.email')}</Label>
+            <Label htmlFor="email" className={cn(isRTL && "text-right")}>{t('email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder={t('auth.enterEmail')}
+              placeholder={t('enterEmail')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -87,12 +89,12 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="password" className={cn(isRTL && "text-right")}>{t('auth.password')}</Label>
+            <Label htmlFor="password" className={cn(isRTL && "text-right")}>{t('password')}</Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder={t('auth.enterPassword')}
+                placeholder={t('enterPassword')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -123,20 +125,20 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
             className="w-full h-11 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
             disabled={isLoading}
           >
-            {isLoading ? t('common.loading') : t('auth.login')}
+            {isLoading ? "Loading..." : t('login')}
           </Button>
         </form>
 
         <div className="mt-6">
           <Separator className="my-4" />
           <p className={cn("text-center text-sm text-muted-foreground", isRTL && "text-right")}>
-            {t('auth.dontHaveAccount')}{" "}
+            {t('dontHaveAccount')}{" "}
             <Button
               variant="link"
               className="p-0 h-auto font-medium text-primary hover:text-primary-dark"
               onClick={onToggleMode}
             >
-              {t('auth.signUpHere')}
+              {t('signUpHere')}
             </Button>
           </p>
         </div>
