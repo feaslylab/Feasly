@@ -1,0 +1,39 @@
+{
+  "title": "تنبيهات الحافظة",
+  "description": "مراقبة مؤشرات الصحة المالية عبر جميع المشاريع",
+  
+  "total_projects": "إجمالي المشاريع",
+  "critical_projects": "المشاريع الحرجة",
+  "warning_projects": "مشاريع التحذير", 
+  "healthy_projects": "المشاريع الصحية",
+  
+  "search_projects": "البحث في المشاريع...",
+  "filter_scenario": "تصفية حسب السيناريو",
+  "all_scenarios": "جميع السيناريوهات",
+  "scenario_base": "الأساسي",
+  "scenario_optimistic": "التفاؤلي",
+  "scenario_pessimistic": "التشاؤمي",
+  
+  "sort_by": "ترتيب حسب",
+  "sort_by_risk": "مستوى المخاطر",
+  "sort_by_name": "اسم المشروع",
+  "sort_by_alerts": "عدد التنبيهات",
+  
+  "export_csv": "تصدير CSV",
+  
+  "no_projects_found": "لم يتم العثور على مشاريع",
+  "no_projects_description": "لا توجد مشاريع تطابق المرشحات الحالية. حاول تعديل معايير البحث.",
+  
+  "alert_types": {
+    "profit_margin": "هامش الربح",
+    "roi": "العائد على الاستثمار",
+    "cash_balance": "الرصيد النقدي",
+    "negative_cashflow": "التدفق النقدي السالب"
+  },
+  
+  "severity_levels": {
+    "red": "حرج",
+    "yellow": "تحذير", 
+    "green": "صحي"
+  }
+}

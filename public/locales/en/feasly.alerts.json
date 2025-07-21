@@ -1,0 +1,39 @@
+{
+  "title": "Portfolio Alerts",
+  "description": "Monitor financial health indicators across all projects",
+  
+  "total_projects": "Total Projects",
+  "critical_projects": "Critical Projects",
+  "warning_projects": "Warning Projects", 
+  "healthy_projects": "Healthy Projects",
+  
+  "search_projects": "Search projects...",
+  "filter_scenario": "Filter by Scenario",
+  "all_scenarios": "All Scenarios",
+  "scenario_base": "Base",
+  "scenario_optimistic": "Optimistic",
+  "scenario_pessimistic": "Pessimistic",
+  
+  "sort_by": "Sort By",
+  "sort_by_risk": "Risk Level",
+  "sort_by_name": "Project Name",
+  "sort_by_alerts": "Alert Count",
+  
+  "export_csv": "Export CSV",
+  
+  "no_projects_found": "No Projects Found",
+  "no_projects_description": "No projects match your current filters. Try adjusting your search criteria.",
+  
+  "alert_types": {
+    "profit_margin": "Profit Margin",
+    "roi": "Return on Investment",
+    "cash_balance": "Cash Balance",
+    "negative_cashflow": "Negative Cashflow"
+  },
+  
+  "severity_levels": {
+    "red": "Critical",
+    "yellow": "Warning", 
+    "green": "Healthy"
+  }
+}

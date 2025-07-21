@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, TrendingUp, Building, DollarSign, BarChart3, FolderOpen, Upload, Filter } from "lucide-react";
+import { Plus, TrendingUp, Building, DollarSign, BarChart3, FolderOpen, Upload, Filter, AlertTriangle } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import {
   DropdownMenu,
@@ -19,6 +19,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ImportFromExcel } from "@/components/import/ImportFromExcel";
 import { DashboardExport } from "@/components/dashboard/DashboardExport";
 import { TeamActivityLog } from "@/components/dashboard/TeamActivityLog";
+import { AlertsSummaryCard } from "@/components/dashboard/AlertsSummaryCard";
 import { calculateFinancialMetrics, FinancialMetrics } from "@/lib/financialCalculations";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "react-i18next";
@@ -932,6 +933,9 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       )}
+
+      {/* Portfolio Alerts Summary */}
+      <AlertsSummaryCard />
 
       {/* Team Activity Log */}
       <TeamActivityLog filters={filters} />

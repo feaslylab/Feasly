@@ -29,6 +29,7 @@
   "finance": "مالية فيزلي",
   "consolidate": "توحيد فيزلي",
   "insights": "رؤى فيزلي",
+  "alerts": "تنبيهات الحافظة",
   "nav": {
     "dashboard": "لوحة التحكم",
     "projects": "المشاريع",
@@ -37,6 +38,7 @@
     "finance": "مالية فيزلي",
     "consolidate": "توحيد فيزلي",
     "insights": "رؤى فيزلي",
+    "alerts": "تنبيهات الحافظة",
     "settings": "الإعدادات",
     "newProject": "مشروع جديد"
   },
@@ -62,6 +64,9 @@
     },
     "insights": {
       "title": "رؤى فيزلي"
+    },
+    "alerts": {
+      "title": "تنبيهات الحافظة"
     }
   }
 }

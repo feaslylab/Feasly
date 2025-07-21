@@ -1,4 +1,4 @@
-import { Building2, BarChart3, FolderOpen, Settings, LogOut, Plus, User, Building, DollarSign, TrendingUp } from "lucide-react";
+import { Building2, BarChart3, FolderOpen, Settings, LogOut, Plus, User, Building, DollarSign, TrendingUp, AlertTriangle } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -18,6 +18,7 @@ const navigation = [
   { nameKey: "finance", href: "/feasly-finance", icon: DollarSign },
   { nameKey: "consolidate", href: "/feasly-consolidate", icon: FolderOpen },
   { nameKey: "insights", href: "/feasly-insights", icon: TrendingUp },
+  { nameKey: "alerts", href: "/feasly-alerts", icon: AlertTriangle },
   { nameKey: "settings", href: "/settings", icon: Settings },
 ];
 
@@ -28,6 +29,7 @@ const getModuleTitle = (pathname: string, t: any) => {
   if (pathname.startsWith('/feasly-finance')) return t('title', { ns: 'feasly.finance' });
   if (pathname.startsWith('/feasly-consolidate')) return t('title', { ns: 'feasly.consolidate' });
   if (pathname.startsWith('/feasly-insights')) return t('title', { ns: 'feasly.insights' });
+  if (pathname.startsWith('/feasly-alerts')) return t('title', { ns: 'feasly.alerts' });
   if (pathname.startsWith('/dashboard')) return t('nav.dashboard', { ns: 'common' });
   if (pathname.startsWith('/projects')) return t('nav.projects', { ns: 'common' });
   if (pathname.startsWith('/settings')) return t('nav.settings', { ns: 'common' });

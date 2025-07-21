@@ -20,6 +20,7 @@ import FeaslyFlow from "./pages/FeaslyFlow";
 import FeaslyFinance from "./pages/FeaslyFinance";
 import FeaslyConsolidate from "./pages/FeaslyConsolidate";
 import FeaslyInsights from "./pages/FeaslyInsights";
+import FeaslyAlerts from "./pages/FeaslyAlerts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -79,6 +80,14 @@ const AppRoutes = () => {
         } />
       </Route>
       <Route path="/insights" element={<Navigate to="/feasly-insights" replace />} />
+      <Route path="/feasly-alerts" element={<AppLayout />}>
+        <Route index element={
+          <ErrorBoundary>
+            <FeaslyAlerts />
+          </ErrorBoundary>
+        } />
+      </Route>
+      <Route path="/alerts" element={<Navigate to="/feasly-alerts" replace />} />
       <Route path="/demo" element={<DemoProject />} />
       <Route path="/projects/:id/public" element={<ProjectPublic />} />
       <Route path="/settings" element={<AppLayout />}>

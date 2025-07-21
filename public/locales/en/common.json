@@ -29,6 +29,7 @@
   "finance": "Feasly Finance",
   "consolidate": "Feasly Consolidate", 
   "insights": "Feasly Insights",
+  "alerts": "Portfolio Alerts",
   "nav": {
     "dashboard": "Dashboard",
     "projects": "Projects",
@@ -37,6 +38,7 @@
     "finance": "Feasly Finance",
     "consolidate": "Feasly Consolidate",
     "insights": "Feasly Insights",
+    "alerts": "Portfolio Alerts",
     "settings": "Settings",
     "newProject": "New Project"
   },
@@ -62,6 +64,9 @@
     },
     "insights": {
       "title": "Feasly Insights"
+    },
+    "alerts": {
+      "title": "Portfolio Alerts"
     }
   }
 }
