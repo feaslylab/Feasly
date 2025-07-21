@@ -13,6 +13,7 @@ interface DashboardStats {
   totalProjects: number;
   totalAssets: number;
   totalValue: number;
+  totalRevenue: number;
   avgIRR: number;
 }
 
@@ -30,6 +31,7 @@ export default function Dashboard() {
     totalProjects: 0,
     totalAssets: 0,
     totalValue: 0,
+    totalRevenue: 0,
     avgIRR: 0,
   });
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
@@ -57,7 +59,8 @@ export default function Dashboard() {
           created_at,
           assets (
             id,
-            construction_cost_aed
+            construction_cost_aed,
+            annual_revenue_potential_aed
           )
         `)
         .eq('user_id', user?.id)
@@ -70,14 +73,18 @@ export default function Dashboard() {
       const totalProjects = projects?.length || 0;
       let totalAssets = 0;
       let totalValue = 0;
+      let totalRevenue = 0;
 
       const recentProjectsData: RecentProject[] = projects?.map(project => {
         const assetCount = project.assets?.length || 0;
         const projectValue = project.assets?.reduce((sum, asset) => 
           sum + (asset.construction_cost_aed || 0), 0) || 0;
+        const projectRevenue = project.assets?.reduce((sum, asset) => 
+          sum + (asset.annual_revenue_potential_aed || 0), 0) || 0;
         
         totalAssets += assetCount;
         totalValue += projectValue;
+        totalRevenue += projectRevenue;
 
         return {
           id: project.id,
@@ -93,6 +100,7 @@ export default function Dashboard() {
         totalProjects,
         totalAssets,
         totalValue,
+        totalRevenue,
         avgIRR: 12.5, // Placeholder - would calculate from financial scenarios
       });
       setRecentProjects(recentProjectsData);
@@ -172,7 +180,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <Card className="border-border shadow-soft">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -219,6 +227,26 @@ export default function Dashboard() {
             </p>
           </CardContent>
         </Card>
+
+        {/* Estimated Revenue Card - Only show if there's revenue */}
+        {stats.totalRevenue > 0 && (
+          <Card className="border-border shadow-soft">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Estimated Revenue
+              </CardTitle>
+              <DollarSign className="h-4 w-4 text-green-600" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-green-600">
+                {formatCurrency(stats.totalRevenue)}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Annual revenue potential
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="border-border shadow-soft">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
