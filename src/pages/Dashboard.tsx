@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Plus, TrendingUp, Building, DollarSign, BarChart3, FolderOpen, Upload } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { NavLink } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -116,6 +117,18 @@ export default function Dashboard() {
     }
   };
 
+  // Generate 12-month revenue projection data
+  const generateRevenueProjection = () => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthlyRevenue = stats.totalRevenue / 12;
+    
+    return months.map((month, index) => ({
+      month,
+      cumulativeRevenue: monthlyRevenue * (index + 1),
+      monthlyRevenue: monthlyRevenue,
+    }));
+  };
+
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-AE', {
       style: 'currency',
@@ -125,12 +138,40 @@ export default function Dashboard() {
     }).format(amount);
   };
 
+  const formatCurrencyShort = (amount: number) => {
+    return new Intl.NumberFormat('en-AE', {
+      style: 'currency',
+      currency: 'AED',
+      notation: 'compact',
+      maximumFractionDigits: 1,
+    }).format(amount);
+  };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
     });
+  };
+
+  // Custom tooltip for the chart
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0].payload;
+      return (
+        <div className="bg-background border border-border rounded-lg p-3 shadow-medium">
+          <p className="text-sm font-medium text-foreground">{`${label}`}</p>
+          <p className="text-sm text-muted-foreground">
+            Monthly: {formatCurrency(data.monthlyRevenue)}
+          </p>
+          <p className="text-sm text-primary">
+            Cumulative: {formatCurrency(data.cumulativeRevenue)}
+          </p>
+        </div>
+      );
+    }
+    return null;
   };
 
   if (isLoading) {
@@ -331,6 +372,46 @@ export default function Dashboard() {
           )}
         </CardContent>
       </Card>
+
+      {/* Revenue Projection Chart - Only show if there's revenue */}
+      {stats.totalRevenue > 0 && (
+        <Card className="border-border shadow-soft">
+          <CardHeader>
+            <CardTitle className="text-foreground">Revenue Projection</CardTitle>
+            <CardDescription>
+              12-month cumulative revenue projection based on annual estimates
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={generateRevenueProjection()}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="month" 
+                    className="text-muted-foreground"
+                    tick={{ fontSize: 12 }}
+                  />
+                  <YAxis 
+                    className="text-muted-foreground"
+                    tick={{ fontSize: 12 }}
+                    tickFormatter={formatCurrencyShort}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Line 
+                    type="monotone" 
+                    dataKey="cumulativeRevenue" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={3}
+                    dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, stroke: "hsl(var(--primary))", strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
