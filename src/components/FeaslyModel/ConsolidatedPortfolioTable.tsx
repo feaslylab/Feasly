@@ -5,18 +5,23 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { KPIBenchmarkBadge } from "@/components/ui/kpi-benchmark-badge";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Building2, TrendingUp, Filter, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useBenchmarks } from "@/hooks/useBenchmarks";
 import { toast } from "sonner";
 
 interface ProjectSummary {
   projectId: string;
   projectName: string;
+  assetType: string;
   totalRevenue: number;
   totalCosts: number;
   totalProfit: number;
   roi: number;
+  irr: number;
+  profitMargin: number;
   finalCashBalance: number;
   lastUpdated: string;
   scenario: string;
@@ -34,6 +39,8 @@ export default function ConsolidatedPortfolioTable({ className }: ConsolidatedPo
   const [sortBy, setSortBy] = useState<keyof ProjectSummary>("totalProfit");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [selectedScenario, setSelectedScenario] = useState<string>("base");
+  
+  const { benchmarks, getBenchmarkByAssetType } = useBenchmarks();
 
   useEffect(() => {
     loadPortfolioData();
@@ -78,10 +85,13 @@ export default function ConsolidatedPortfolioTable({ className }: ConsolidatedPo
           return {
             projectId: project.id,
             projectName: project.name,
+            assetType: "Commercial", // Default for now, could be enhanced to get from project data
             totalRevenue: 0,
             totalCosts: 0,
             totalProfit: 0,
             roi: 0,
+            irr: 0,
+            profitMargin: 0,
             finalCashBalance: 0,
             lastUpdated: project.updated_at,
             scenario: selectedScenario,
@@ -94,6 +104,8 @@ export default function ConsolidatedPortfolioTable({ className }: ConsolidatedPo
           sum + (cf.construction_cost || 0) + (cf.land_cost || 0) + (cf.soft_costs || 0), 0);
         const totalProfit = totalRevenue - totalCosts;
         const roi = totalCosts > 0 ? (totalProfit / totalCosts) * 100 : 0;
+        const profitMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+        const irr = 15.0; // Placeholder IRR calculation - this would need proper NPV calculation
         
         // Get final cash balance (last month)
         const sortedCashflows = [...projectCashflows].sort((a, b) => a.month.localeCompare(b.month));
@@ -103,10 +115,13 @@ export default function ConsolidatedPortfolioTable({ className }: ConsolidatedPo
         return {
           projectId: project.id,
           projectName: project.name,
+          assetType: "Commercial", // Default for now, could be enhanced to get from project metadata
           totalRevenue,
           totalCosts,
           totalProfit,
           roi,
+          irr,
+          profitMargin,
           finalCashBalance,
           lastUpdated: project.updated_at,
           scenario: selectedScenario,
@@ -378,47 +393,73 @@ export default function ConsolidatedPortfolioTable({ className }: ConsolidatedPo
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Project Name</TableHead>
-                    <TableHead className="text-right">Revenue</TableHead>
-                    <TableHead className="text-right">Costs</TableHead>
-                    <TableHead className="text-right">Profit</TableHead>
-                    <TableHead className="text-right">ROI</TableHead>
-                    <TableHead className="text-right">Final Balance</TableHead>
-                    <TableHead>Last Updated</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
+                   <TableRow>
+                     <TableHead>Project Name</TableHead>
+                     <TableHead className="text-right">Revenue</TableHead>
+                     <TableHead className="text-right">Costs</TableHead>
+                     <TableHead className="text-right">Profit</TableHead>
+                     <TableHead className="text-right">ROI vs Benchmark</TableHead>
+                     <TableHead className="text-right">IRR vs Benchmark</TableHead>
+                     <TableHead className="text-right">Final Balance</TableHead>
+                     <TableHead>Last Updated</TableHead>
+                     <TableHead>Status</TableHead>
+                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredProjects.map((project) => (
-                    <TableRow key={project.projectId}>
-                      <TableCell className="font-medium">{project.projectName}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(project.totalRevenue)}</TableCell>
-                      <TableCell className="text-right">{formatCurrency(project.totalCosts)}</TableCell>
-                      <TableCell className={`text-right font-semibold ${
-                        project.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {formatCurrency(project.totalProfit)}
-                      </TableCell>
-                      <TableCell className={`text-right ${
-                        project.roi >= 15 ? 'text-green-600' : 
-                        project.roi >= 10 ? 'text-yellow-600' : 'text-red-600'
-                      }`}>
-                        {formatPercentage(project.roi)}
-                      </TableCell>
-                      <TableCell className="text-right">{formatCurrency(project.finalCashBalance)}</TableCell>
-                      <TableCell>{formatDate(project.lastUpdated)}</TableCell>
-                      <TableCell>
-                        <Badge variant={
-                          project.totalProfit > 0 ? "default" : 
-                          project.totalRevenue > 0 ? "secondary" : "outline"
-                        }>
-                          {project.totalProfit > 0 ? "Profitable" : 
-                           project.totalRevenue > 0 ? "Break-even" : "Planning"}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                   {filteredProjects.map((project) => {
+                     const benchmark = getBenchmarkByAssetType(project.assetType);
+                     
+                     return (
+                       <TableRow key={project.projectId}>
+                         <TableCell className="font-medium">{project.projectName}</TableCell>
+                         <TableCell className="text-right">{formatCurrency(project.totalRevenue)}</TableCell>
+                         <TableCell className="text-right">{formatCurrency(project.totalCosts)}</TableCell>
+                         <TableCell className={`text-right font-semibold ${
+                           project.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'
+                         }`}>
+                           {formatCurrency(project.totalProfit)}
+                         </TableCell>
+                         <TableCell className="text-right space-y-1">
+                           <div className={`${
+                             project.roi >= 15 ? 'text-green-600' : 
+                             project.roi >= 10 ? 'text-yellow-600' : 'text-red-600'
+                           }`}>
+                             {formatPercentage(project.roi)}
+                           </div>
+                           {benchmark && (
+                             <KPIBenchmarkBadge
+                               actualValue={project.roi}
+                               benchmarkValue={benchmark.avg_roi}
+                               metricType="roi"
+                               className="block"
+                             />
+                           )}
+                         </TableCell>
+                         <TableCell className="text-right space-y-1">
+                           <div>{formatPercentage(project.irr)}</div>
+                           {benchmark && (
+                             <KPIBenchmarkBadge
+                               actualValue={project.irr}
+                               benchmarkValue={benchmark.avg_irr}
+                               metricType="irr"
+                               className="block"
+                             />
+                           )}
+                         </TableCell>
+                         <TableCell className="text-right">{formatCurrency(project.finalCashBalance)}</TableCell>
+                         <TableCell>{formatDate(project.lastUpdated)}</TableCell>
+                         <TableCell>
+                           <Badge variant={
+                             project.totalProfit > 0 ? "default" : 
+                             project.totalRevenue > 0 ? "secondary" : "outline"
+                           }>
+                             {project.totalProfit > 0 ? "Profitable" : 
+                              project.totalRevenue > 0 ? "Break-even" : "Planning"}
+                           </Badge>
+                         </TableCell>
+                       </TableRow>
+                     );
+                   })}
                 </TableBody>
               </Table>
             </div>

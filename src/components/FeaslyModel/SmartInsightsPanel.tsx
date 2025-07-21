@@ -1,8 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { KPIBenchmarkBadge } from "@/components/ui/kpi-benchmark-badge";
 import { AlertTriangle, CheckCircle, XCircle, Info } from "lucide-react";
 import { useFeaslyCalculation } from "@/hooks/useFeaslyCalculation";
+import { useBenchmarks } from "@/hooks/useBenchmarks";
 
 interface SmartInsightsPanelProps {
   projectId?: string;
@@ -43,11 +45,13 @@ const severityConfig = {
 
 export default function SmartInsightsPanel({ projectId }: SmartInsightsPanelProps) {
   const { compareScenarios, getScenarioSummary, hasData } = useFeaslyCalculation(projectId);
+  const { getBenchmarkByAssetType } = useBenchmarks();
 
   const generateInsights = (): Insight[] => {
     if (!hasData) return [];
 
     const insights: Insight[] = [];
+    const benchmark = getBenchmarkByAssetType("Commercial"); // Default to Commercial for now
     const scenarios = compareScenarios();
 
     scenarios.forEach(({ scenario, summary, data }) => {
@@ -171,6 +175,41 @@ export default function SmartInsightsPanel({ projectId }: SmartInsightsPanelProp
           }).format(profitDifference)} between best and worst scenarios`,
           severity: "info",
           value: "High Risk"
+        });
+      }
+    }
+
+    // Benchmark comparison insights
+    const baseSummary = getScenarioSummary("base");
+    if (benchmark && baseSummary) {
+      const roiVariance = ((baseSummary.totalProfit / (baseSummary.totalCosts || 1)) * 100) - benchmark.avg_roi;
+      const profitMarginVariance = baseSummary.profitMargin - benchmark.avg_profit_margin;
+      
+      if (roiVariance > 5) {
+        insights.push({
+          title: "Excellent ROI Performance",
+          description: `Your project's ROI is ${roiVariance.toFixed(1)}% above industry benchmark for commercial projects.`,
+          severity: "success",
+          value: `+${roiVariance.toFixed(1)}%`,
+          scenario: "base"
+        });
+      } else if (roiVariance < -5) {
+        insights.push({
+          title: "ROI Below Benchmark",
+          description: `Your project's ROI is ${Math.abs(roiVariance).toFixed(1)}% below industry benchmark. Consider cost optimization.`,
+          severity: "warning",
+          value: `${roiVariance.toFixed(1)}%`,
+          scenario: "base"
+        });
+      }
+      
+      if (profitMarginVariance > 3) {
+        insights.push({
+          title: "Strong Profit Margins",
+          description: `Your profit margin exceeds industry benchmark by ${profitMarginVariance.toFixed(1)}%.`,
+          severity: "success",
+          value: `+${profitMarginVariance.toFixed(1)}%`,
+          scenario: "base"
         });
       }
     }

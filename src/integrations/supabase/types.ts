@@ -139,6 +139,36 @@ export type Database = {
           },
         ]
       }
+      feasly_benchmarks: {
+        Row: {
+          asset_type: string
+          avg_irr: number
+          avg_profit_margin: number
+          avg_roi: number
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          asset_type: string
+          avg_irr: number
+          avg_profit_margin: number
+          avg_roi: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          asset_type?: string
+          avg_irr?: number
+          avg_profit_margin?: number
+          avg_roi?: number
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       feasly_cashflows: {
         Row: {
           cash_balance: number | null
