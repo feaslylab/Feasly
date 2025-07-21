@@ -28,5 +28,40 @@
   "flow": "تدفق فيزلي",
   "finance": "مالية فيزلي",
   "consolidate": "توحيد فيزلي",
-  "insights": "رؤى فيزلي"
+  "insights": "رؤى فيزلي",
+  "nav": {
+    "dashboard": "لوحة التحكم",
+    "projects": "المشاريع",
+    "model": "نموذج فيزلي",
+    "flow": "تدفق فيزلي", 
+    "finance": "مالية فيزلي",
+    "consolidate": "توحيد فيزلي",
+    "insights": "رؤى فيزلي",
+    "settings": "الإعدادات",
+    "newProject": "مشروع جديد"
+  },
+  "auth": {
+    "account": "الحساب"
+  },
+  "settings": {
+    "theme": "المظهر",
+    "language": "اللغة"
+  },
+  "feasly": {
+    "model": {
+      "title": "نموذج فيزلي"
+    },
+    "flow": {
+      "title": "تدفق فيزلي"
+    },
+    "finance": {
+      "title": "مالية فيزلي"
+    },
+    "consolidate": {
+      "title": "توحيد فيزلي"
+    },
+    "insights": {
+      "title": "رؤى فيزلي"
+    }
+  }
 }

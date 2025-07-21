@@ -1,4 +1,53 @@
 {
   "title": "Feasly Flow",
-  "description": "Cashflow analysis and projections"
+  "description": "Cashflow analysis and projections",
+  
+  "sync_error": "Sync Error",
+  "sync_success": "Sync Success",
+  "sync_success_desc": "Phase data has been successfully synchronized with Feasly Model",
+  "sync_error_desc": "Failed to synchronize phase data",
+  "no_phases_to_sync": "No phases available to synchronize",
+  
+  "add_phase": "Add Phase",
+  "edit_phase": "Edit Phase",
+  "update_phase": "Update Phase",
+  "phase_form_desc": "Define project phases with timeline and cost details",
+  
+  "phase_name": "Phase Name",
+  "phase_name_placeholder": "Enter phase name",
+  "starts_after": "Starts After",
+  "starts_after_tooltip": "Select which phase must complete before this phase can start",
+  "select_preceding_phase": "Select preceding phase",
+  "no_dependency": "No dependency",
+  "start_date": "Start Date",
+  "select_date": "Select date",
+  "duration_months": "Duration (Months)",
+  "calculated_end_date": "Calculated End Date",
+  "auto_calculated": "Automatically calculated",
+  "gfa_sqm": "GFA (sqm)",
+  "land_area_sqm": "Land Area (sqm)",
+  "phase_cost": "Phase Cost",
+  "cancel": "Cancel",
+  
+  "project_phases": "Project Phases",
+  "phases_list_desc": "Overview of all configured phases",
+  "edit": "Edit",
+  "duration": "Duration",
+  "months": "months",
+  "gfa": "GFA",
+  "cost": "Cost",
+  "dates": "Dates",
+  "depends_on": "Depends on",
+  
+  "summary_metrics": "Summary Metrics",
+  "total_phases": "Total Phases",
+  "total_gfa": "Total GFA",
+  "total_cost": "Total Cost",
+  "total_duration": "Total Duration",
+  
+  "validation_issues": "Validation Issues",
+  "project_summary": "Project Summary",
+  "phases_configured": "phases configured",
+  "ready_for_timeline": "Ready for timeline generation",
+  "use_in_model": "Use in Feasly Model"
 }

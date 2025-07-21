@@ -1,4 +1,54 @@
 {
   "title": "Feasly Insights",
-  "description": "Advanced analytics and insights for your portfolio"
+  "description": "Advanced analytics and insights for your portfolio",
+  
+  "portfolio_overview": "Portfolio Overview",
+  "project_analytics": "Project Analytics",
+  "performance_metrics": "Performance Metrics",
+  "market_analysis": "Market Analysis",
+  "risk_assessment": "Risk Assessment",
+  
+  "filters": "Filters",
+  "filter_by_status": "Filter by Status",
+  "filter_by_country": "Filter by Country",
+  "filter_by_currency": "Filter by Currency",
+  "all_statuses": "All Statuses",
+  "all_countries": "All Countries",
+  "all_currencies": "All Currencies",
+  
+  "date_range": "Date Range",
+  "from_date": "From",
+  "to_date": "To",
+  "apply_filters": "Apply Filters",
+  "clear_filters": "Clear Filters",
+  
+  "kpi_overview": "KPI Overview",
+  "total_projects": "Total Projects",
+  "total_investment": "Total Investment",
+  "total_revenue": "Total Revenue",
+  "average_irr": "Average IRR",
+  "average_roi": "Average ROI",
+  "total_profit": "Total Profit",
+  
+  "performance_trends": "Performance Trends",
+  "project_comparison": "Project Comparison",
+  "geographical_distribution": "Geographical Distribution",
+  "status_breakdown": "Status Breakdown",
+  
+  "export_insights": "Export Insights",
+  "generate_report": "Generate Report",
+  "download_data": "Download Data",
+  
+  "no_data": "No Data Available",
+  "no_projects": "No projects found matching the current filters",
+  "loading": "Loading insights...",
+  
+  "high_performance": "High Performance",
+  "moderate_performance": "Moderate Performance", 
+  "low_performance": "Low Performance",
+  
+  "project_details": "Project Details",
+  "financial_metrics": "Financial Metrics",
+  "timeline_progress": "Timeline Progress",
+  "risk_factors": "Risk Factors"
 }

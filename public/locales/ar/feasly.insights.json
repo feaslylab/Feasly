@@ -1,4 +1,54 @@
 {
   "title": "رؤى فيزلي",
-  "description": "تحليلات ورؤى متقدمة لمحفظتك"
+  "description": "تحليلات ورؤى متقدمة لمحفظتك",
+  
+  "portfolio_overview": "نظرة عامة على المحفظة",
+  "project_analytics": "تحليلات المشروع",
+  "performance_metrics": "مقاييس الأداء",
+  "market_analysis": "تحليل السوق",
+  "risk_assessment": "تقييم المخاطر",
+  
+  "filters": "المرشحات",
+  "filter_by_status": "تصفية حسب الحالة",
+  "filter_by_country": "تصفية حسب البلد",
+  "filter_by_currency": "تصفية حسب العملة",
+  "all_statuses": "جميع الحالات",
+  "all_countries": "جميع البلدان",
+  "all_currencies": "جميع العملات",
+  
+  "date_range": "نطاق التاريخ",
+  "from_date": "من",
+  "to_date": "إلى",
+  "apply_filters": "تطبيق المرشحات",
+  "clear_filters": "مسح المرشحات",
+  
+  "kpi_overview": "نظرة عامة على مؤشرات الأداء",
+  "total_projects": "إجمالي المشاريع",
+  "total_investment": "إجمالي الاستثمار",
+  "total_revenue": "إجمالي الإيرادات",
+  "average_irr": "متوسط معدل العائد الداخلي",
+  "average_roi": "متوسط العائد على الاستثمار",
+  "total_profit": "إجمالي الربح",
+  
+  "performance_trends": "اتجاهات الأداء",
+  "project_comparison": "مقارنة المشاريع",
+  "geographical_distribution": "التوزيع الجغرافي",
+  "status_breakdown": "تفصيل الحالة",
+  
+  "export_insights": "تصدير الرؤى",
+  "generate_report": "إنشاء تقرير",
+  "download_data": "تحميل البيانات",
+  
+  "no_data": "لا توجد بيانات متاحة",
+  "no_projects": "لم يتم العثور على مشاريع تطابق المرشحات الحالية",
+  "loading": "جاري تحميل الرؤى...",
+  
+  "high_performance": "أداء عالي",
+  "moderate_performance": "أداء متوسط", 
+  "low_performance": "أداء منخفض",
+  
+  "project_details": "تفاصيل المشروع",
+  "financial_metrics": "المقاييس المالية",
+  "timeline_progress": "تقدم الجدول الزمني",
+  "risk_factors": "عوامل المخاطر"
 }
