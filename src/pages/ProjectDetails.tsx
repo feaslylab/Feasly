@@ -346,6 +346,9 @@ const ProjectDetails = () => {
 
     // Save file
     XLSX.writeFile(workbook, filename);
+
+    // Track export in history
+    await trackExportHistory(project.id, selectedScenarioId, 'excel', filename);
   };
 
   const downloadPDFReport = async () => {
@@ -471,6 +474,9 @@ const ProjectDetails = () => {
     // Generate filename and save
     const filename = `${project.name}-${selectedScenario.name}.pdf`;
     doc.save(filename);
+
+    // Track export in history
+    await trackExportHistory(project.id, selectedScenarioId, 'pdf', filename);
   };
 
   const duplicateProject = async () => {
@@ -698,6 +704,30 @@ const ProjectDetails = () => {
         description: "Failed to update project visibility. Please try again.",
         variant: "destructive",
       });
+    }
+  };
+
+  const trackExportHistory = async (projectId: string, scenarioId: string | null, exportType: 'pdf' | 'excel', filename: string) => {
+    if (!user || !scenarioId) return;
+
+    try {
+      const { error } = await supabase
+        .from('export_history')
+        .insert({
+          project_id: projectId,
+          user_id: user.id,
+          scenario_id: scenarioId,
+          export_type: exportType,
+          filename: filename,
+        });
+
+      if (error) {
+        console.error('Error tracking export history:', error);
+        // Don't show error to user as this is background tracking
+      }
+    } catch (error) {
+      console.error('Error tracking export history:', error);
+      // Don't show error to user as this is background tracking
     }
   };
 
