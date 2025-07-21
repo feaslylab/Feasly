@@ -238,6 +238,36 @@ export type Database = {
         }
         Relationships: []
       }
+      feasly_comments: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          project_id: string
+          section_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          id?: string
+          project_id: string
+          section_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          project_id?: string
+          section_key?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       feasly_modules: {
         Row: {
           enabled_at: string | null

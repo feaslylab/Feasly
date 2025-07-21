@@ -157,7 +157,7 @@ export default function FeaslyModel() {
                 </div>
 
                 {/* Comments Panel */}
-                <CommentingPanel />
+                <CommentingPanel projectId={undefined} />
 
                 {/* Action Buttons - Hidden in Preview Mode */}
                 {!previewMode && (
