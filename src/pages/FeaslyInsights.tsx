@@ -355,11 +355,11 @@ export default function FeaslyInsights() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">
-              {t('feasly.insights.title') || 'Feasly Insights'}
+              {t('title') || 'Feasly Insights'}
               <Badge className="ml-3 bg-blue-100 text-blue-800">v2 - Advanced Analytics</Badge>
             </h1>
             <p className="text-muted-foreground">
-              {t('feasly.insights.description') || 'Advanced analytics and insights for your portfolio'}
+              {t('description') || 'Advanced analytics and insights for your portfolio'}
             </p>
           </div>
           <ExportEngine 

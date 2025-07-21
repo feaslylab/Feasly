@@ -183,8 +183,8 @@ export default function FeaslyFlow() {
   const syncToFeaslyModel = () => {
     if (phases.length === 0) {
       toast({
-        title: t('feasly.flow.sync_error'),
-        description: t('feasly.flow.no_phases_to_sync'),
+        title: t('sync_error'),
+        description: t('no_phases_to_sync'),
         variant: "destructive",
       });
       return;
@@ -213,13 +213,13 @@ export default function FeaslyFlow() {
       localStorage.setItem('feasly_model_from_flow', JSON.stringify(syncData));
       
       toast({
-        title: t('feasly.flow.sync_success'),
-        description: t('feasly.flow.sync_success_desc'),
+        title: t('sync_success'),
+        description: t('sync_success_desc'),
       });
     } catch (error) {
       toast({
-        title: t('feasly.flow.sync_error'),
-        description: t('feasly.flow.sync_error_desc'),
+        title: t('sync_error'),
+        description: t('sync_error_desc'),
         variant: "destructive",
       });
     }
@@ -267,9 +267,9 @@ export default function FeaslyFlow() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
           <Clock className="h-8 w-8" />
-          {t('feasly.flow.title')}
+          {t('title')}
         </h1>
-        <p className="text-muted-foreground">{t('feasly.flow.description')}</p>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-3">
@@ -280,9 +280,9 @@ export default function FeaslyFlow() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Plus className="h-5 w-5" />
-                {editingPhase ? t('feasly.flow.edit_phase') : t('feasly.flow.add_phase')}
+                {editingPhase ? t('edit_phase') : t('add_phase')}
               </CardTitle>
-              <CardDescription>{t('feasly.flow.phase_form_desc')}</CardDescription>
+              <CardDescription>{t('phase_form_desc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Form {...form}>
@@ -294,9 +294,9 @@ export default function FeaslyFlow() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>{t('feasly.flow.phase_name')}</FormLabel>
+                        <FormLabel>{t('phase_name')}</FormLabel>
                         <FormControl>
-                          <Input placeholder={t('feasly.flow.phase_name_placeholder')} {...field} />
+                          <Input placeholder={t('phase_name_placeholder')} {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -310,14 +310,14 @@ export default function FeaslyFlow() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="flex items-center gap-2">
-                          {t('feasly.flow.starts_after')}
+                          {t('starts_after')}
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger>
                                 <Info className="h-4 w-4 text-muted-foreground" />
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>{t('feasly.flow.starts_after_tooltip')}</p>
+                                <p>{t('starts_after_tooltip')}</p>
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
@@ -331,11 +331,11 @@ export default function FeaslyFlow() {
                         >
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder={t('feasly.flow.select_preceding_phase')} />
+                              <SelectValue placeholder={t('select_preceding_phase')} />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="none">{t('feasly.flow.no_dependency')}</SelectItem>
+                            <SelectItem value="none">{t('no_dependency')}</SelectItem>
                             {phases.filter(p => p.id !== editingPhase).map((phase) => (
                               <SelectItem key={phase.id} value={phase.id}>
                                 {phase.name}
@@ -355,8 +355,8 @@ export default function FeaslyFlow() {
                       name="startDate"
                       render={({ field }) => (
                         <FormItem className="flex flex-col">
-                          <FormLabel>{t('feasly.flow.start_date')}</FormLabel>
-                          <DatePickerField field={field} placeholder={t('feasly.flow.select_date')} />
+                          <FormLabel>{t('start_date')}</FormLabel>
+                          <DatePickerField field={field} placeholder={t('select_date')} />
                           <FormMessage />
                         </FormItem>
                       )}
@@ -367,7 +367,7 @@ export default function FeaslyFlow() {
                       name="duration"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('feasly.flow.duration_months')}</FormLabel>
+                          <FormLabel>{t('duration_months')}</FormLabel>
                           <FormControl>
                             <Input 
                               type="number" 
@@ -383,12 +383,12 @@ export default function FeaslyFlow() {
 
                     {/* Calculated End Date */}
                     <div className="space-y-2">
-                      <FormLabel>{t('feasly.flow.calculated_end_date')}</FormLabel>
+                      <FormLabel>{t('calculated_end_date')}</FormLabel>
                       <Input 
                         value={calculatedEndDate ? format(calculatedEndDate, "PPP") : ""} 
                         disabled
                         className="bg-muted"
-                        placeholder={t('feasly.flow.auto_calculated')}
+                        placeholder={t('auto_calculated')}
                       />
                     </div>
                   </div>
@@ -400,7 +400,7 @@ export default function FeaslyFlow() {
                       name="gfa"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('feasly.flow.gfa_sqm')}</FormLabel>
+                          <FormLabel>{t('gfa_sqm')}</FormLabel>
                           <FormControl>
                             <Input 
                               type="number" 
@@ -418,7 +418,7 @@ export default function FeaslyFlow() {
                       name="landArea"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('feasly.flow.land_area_sqm')}</FormLabel>
+                          <FormLabel>{t('land_area_sqm')}</FormLabel>
                           <FormControl>
                             <Input 
                               type="number" 
@@ -436,7 +436,7 @@ export default function FeaslyFlow() {
                       name="phaseCost"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t('feasly.flow.phase_cost')} ({currency})</FormLabel>
+                          <FormLabel>{t('phase_cost')} ({currency})</FormLabel>
                           <FormControl>
                             <Input 
                               type="number" 
@@ -453,7 +453,7 @@ export default function FeaslyFlow() {
                   {/* Form Actions */}
                   <div className="flex gap-2">
                     <Button type="submit">
-                      {editingPhase ? t('feasly.flow.update_phase') : t('feasly.flow.add_phase')}
+                      {editingPhase ? t('update_phase') : t('add_phase')}
                     </Button>
                     {editingPhase && (
                       <Button 
@@ -464,7 +464,7 @@ export default function FeaslyFlow() {
                           form.reset();
                         }}
                       >
-                        {t('feasly.flow.cancel')}
+                        {t('cancel')}
                       </Button>
                     )}
                   </div>
@@ -477,8 +477,8 @@ export default function FeaslyFlow() {
           {phases.length > 0 && (
             <Card className="mt-6">
               <CardHeader>
-                <CardTitle>{t('feasly.flow.project_phases')}</CardTitle>
-                <CardDescription>{t('feasly.flow.phases_list_desc')}</CardDescription>
+                 <CardTitle>{t('project_phases')}</CardTitle>
+                 <CardDescription>{t('phases_list_desc')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -498,7 +498,7 @@ export default function FeaslyFlow() {
                             variant="outline"
                             onClick={() => editPhase(phase.id)}
                           >
-                            {t('feasly.flow.edit')}
+                            {t('edit')}
                           </Button>
                           <Button
                             size="sm"
@@ -512,19 +512,19 @@ export default function FeaslyFlow() {
                       
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
                         <div>
-                          <p className="font-medium">{t('feasly.flow.duration')}</p>
-                          <p>{phase.duration} {t('feasly.flow.months')}</p>
+                           <p className="font-medium">{t('duration')}</p>
+                           <p>{phase.duration} {t('months')}</p>
                         </div>
                         <div>
-                          <p className="font-medium">{t('feasly.flow.gfa')}</p>
+                          <p className="font-medium">{t('gfa')}</p>
                           <p>{phase.gfa.toLocaleString()} sqm</p>
                         </div>
                         <div>
-                          <p className="font-medium">{t('feasly.flow.cost')}</p>
+                          <p className="font-medium">{t('cost')}</p>
                           <p>{currency} {phase.phaseCost.toLocaleString()}</p>
                         </div>
                         <div>
-                          <p className="font-medium">{t('feasly.flow.dates')}</p>
+                          <p className="font-medium">{t('dates')}</p>
                           <p>
                             {phase.startDate ? format(phase.startDate, "MMM dd") : "--"} → {" "}
                             {phase.endDate ? format(phase.endDate, "MMM dd") : "--"}
@@ -534,7 +534,7 @@ export default function FeaslyFlow() {
 
                       {phase.startsAfter && (
                         <div className="mt-2 text-xs text-muted-foreground">
-                          <p>{t('feasly.flow.depends_on')}: {phases.find(p => p.id === phase.startsAfter)?.name}</p>
+                          <p>{t('depends_on')}: {phases.find(p => p.id === phase.startsAfter)?.name}</p>
                         </div>
                       )}
                     </div>
@@ -551,29 +551,29 @@ export default function FeaslyFlow() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BarChart3 className="h-5 w-5" />
-                {t('feasly.flow.summary_metrics')}
+                {t('summary_metrics')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">{t('feasly.flow.total_phases')}</span>
+                  <span className="text-sm text-muted-foreground">{t('total_phases')}</span>
                   <span className="font-medium">{phases.length}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">{t('feasly.flow.total_gfa')}</span>
+                  <span className="text-sm text-muted-foreground">{t('total_gfa')}</span>
                   <span className="font-medium">{totalGFA.toLocaleString()} sqm</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">{t('feasly.flow.total_cost')}</span>
+                  <span className="text-sm text-muted-foreground">{t('total_cost')}</span>
                   <span className="font-medium">{currency} {totalCost.toLocaleString()}</span>
                 </div>
                 
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">{t('feasly.flow.total_duration')}</span>
-                  <span className="font-medium">{totalDuration} {t('feasly.flow.months')}</span>
+                   <span className="text-sm text-muted-foreground">{t('total_duration')}</span>
+                   <span className="font-medium">{totalDuration} {t('months')}</span>
                 </div>
               </div>
             </CardContent>
@@ -585,7 +585,7 @@ export default function FeaslyFlow() {
               <CardHeader>
                 <CardTitle className="text-destructive flex items-center gap-2">
                   <Info className="h-5 w-5" />
-                  {t('feasly.flow.validation_issues')}
+                  {t('validation_issues')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -604,12 +604,12 @@ export default function FeaslyFlow() {
               <CardHeader>
                 <CardTitle className="text-green-700 flex items-center gap-2">
                   <Calculator className="h-5 w-5" />
-                  {t('feasly.flow.project_summary')}
+                  {t('project_summary')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-sm text-green-700">
-                <p>{phases.length} {t('feasly.flow.phases_configured')}</p>
-                <p>{t('feasly.flow.ready_for_timeline')}</p>
+                 <p>{phases.length} {t('phases_configured')}</p>
+                 <p>{t('ready_for_timeline')}</p>
               </CardContent>
             </Card>
           )}
@@ -622,7 +622,7 @@ export default function FeaslyFlow() {
               size="lg"
             >
               <ArrowRight className="mr-2 h-4 w-4" />
-              {t('feasly.flow.use_in_model')}
+              {t('use_in_model')}
             </Button>
           )}
         </div>

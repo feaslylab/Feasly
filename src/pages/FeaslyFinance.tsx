@@ -91,15 +91,15 @@ export default function FeaslyFinance() {
 
   // Pie chart data
   const pieData = [
-    { name: t('feasly.finance.equity'), value: watchEquity, color: '#3b82f6' },
-    { name: t('feasly.finance.debt'), value: watchDebt, color: '#ef4444' },
+    { name: t('equity'), value: watchEquity, color: '#3b82f6' },
+    { name: t('debt'), value: watchDebt, color: '#ef4444' },
   ].filter(item => item.value > 0);
 
   // Waterfall placeholder data
   const waterfallData = [
-    { tier: 1, returnType: t('feasly.finance.preferred_return'), threshold: `${form.watch("preferred_irr")}%`, share: "100%" },
-    { tier: 2, returnType: t('feasly.finance.return_of_capital'), threshold: "100%", share: "100%" },
-    { tier: 3, returnType: t('feasly.finance.promoted_interest'), threshold: `${form.watch("hurdle_irr")}%`, share: "80% / 20%" },
+    { tier: 1, returnType: t('preferred_return'), threshold: `${form.watch("preferred_irr")}%`, share: "100%" },
+    { tier: 2, returnType: t('return_of_capital'), threshold: "100%", share: "100%" },
+    { tier: 3, returnType: t('promoted_interest'), threshold: `${form.watch("hurdle_irr")}%`, share: "80% / 20%" },
   ];
 
   // Prefill logic from localStorage
@@ -122,8 +122,8 @@ export default function FeaslyFinance() {
         }
 
         toast({
-          title: t('feasly.finance.model_data_loaded'),
-          description: t('feasly.finance.model_data_loaded_desc'),
+          title: t('model_data_loaded'),
+          description: t('model_data_loaded_desc'),
         });
       } catch (error) {
         console.error('Error loading model data:', error);
@@ -136,8 +136,8 @@ export default function FeaslyFinance() {
     console.log("Finance data:", data);
     
     toast({
-      title: t('feasly.finance.data_saved'),
-      description: t('feasly.finance.data_saved_desc'),
+      title: t('data_saved'),
+      description: t('data_saved_desc'),
     });
   };
 
@@ -146,9 +146,9 @@ export default function FeaslyFinance() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
           <DollarSign className="h-8 w-8" />
-          {t('feasly.finance.title')}
+          {t('title')}
         </h1>
-        <p className="text-muted-foreground">{t('feasly.finance.description')}</p>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       <Form {...form}>
@@ -160,9 +160,9 @@ export default function FeaslyFinance() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <PieChartIcon className="h-5 w-5" />
-                  {t('feasly.finance.capital_structure')}
+                  {t('capital_structure')}
                 </CardTitle>
-                <CardDescription>{t('feasly.finance.capital_structure_desc')}</CardDescription>
+                <CardDescription>{t('capital_structure_desc')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 
@@ -173,14 +173,14 @@ export default function FeaslyFinance() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
-                        {t('feasly.finance.equity_amount')}
+                        {t('equity_amount')}
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger>
                               <Info className="h-4 w-4 text-muted-foreground" />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>{t('feasly.finance.equity_amount_tooltip')}</p>
+                              <p>{t('equity_amount_tooltip')}</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -205,14 +205,14 @@ export default function FeaslyFinance() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
-                        {t('feasly.finance.debt_amount')}
+                        {t('debt_amount')}
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger>
                               <Info className="h-4 w-4 text-muted-foreground" />
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>{t('feasly.finance.debt_amount_tooltip')}</p>
+                              <p>{t('debt_amount_tooltip')}</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -233,18 +233,18 @@ export default function FeaslyFinance() {
                 {/* Capital Structure Summary */}
                 {totalCapital > 0 && (
                   <div className="space-y-3 p-4 bg-muted rounded-lg">
-                    <h4 className="font-medium">{t('feasly.finance.capital_summary')}</h4>
+                    <h4 className="font-medium">{t('capital_summary')}</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">{t('feasly.finance.equity_percentage')}</span>
+                        <span className="text-muted-foreground">{t('equity_percentage')}</span>
                         <span className="font-medium text-blue-600">{equityPercentage.toFixed(1)}%</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">{t('feasly.finance.debt_percentage')}</span>
+                        <span className="text-muted-foreground">{t('debt_percentage')}</span>
                         <span className="font-medium text-red-600">{debtPercentage.toFixed(1)}%</span>
                       </div>
                       <div className="flex justify-between border-t pt-2">
-                        <span className="text-muted-foreground">{t('feasly.finance.total_capital')}</span>
+                        <span className="text-muted-foreground">{t('total_capital')}</span>
                         <span className="font-bold">{watchCurrency} {totalCapital.toLocaleString()}</span>
                       </div>
                     </div>
@@ -284,9 +284,9 @@ export default function FeaslyFinance() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CreditCard className="h-5 w-5" />
-                  {t('feasly.finance.debt_details')}
+                  {t('debt_details')}
                 </CardTitle>
-                <CardDescription>{t('feasly.finance.debt_details_desc')}</CardDescription>
+                <CardDescription>{t('debt_details_desc')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 
@@ -296,7 +296,7 @@ export default function FeaslyFinance() {
                   name="interest_rate"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('feasly.finance.interest_rate')} (%)</FormLabel>
+                      <FormLabel>{t('interest_rate')} (%)</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -316,7 +316,7 @@ export default function FeaslyFinance() {
                   name="loan_term_years"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('feasly.finance.loan_term_years')}</FormLabel>
+                      <FormLabel>{t('loan_term_years')}</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -336,7 +336,7 @@ export default function FeaslyFinance() {
                   name="grace_period_months"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('feasly.finance.grace_period_months')}</FormLabel>
+                      <FormLabel>{t('grace_period_months')}</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -355,7 +355,7 @@ export default function FeaslyFinance() {
                   name="repayment_type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('feasly.finance.repayment_type')}</FormLabel>
+                      <FormLabel>{t('repayment_type')}</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
@@ -363,8 +363,8 @@ export default function FeaslyFinance() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="amortized">{t('feasly.finance.amortized')}</SelectItem>
-                          <SelectItem value="bullet">{t('feasly.finance.bullet')}</SelectItem>
+                          <SelectItem value="amortized">{t('amortized')}</SelectItem>
+                          <SelectItem value="bullet">{t('bullet')}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -375,22 +375,22 @@ export default function FeaslyFinance() {
                 {/* Monthly Payment Calculation */}
                 {watchDebt > 0 && (
                   <div className="space-y-3 p-4 bg-muted rounded-lg">
-                    <h4 className="font-medium">{t('feasly.finance.payment_calculation')}</h4>
+                    <h4 className="font-medium">{t('payment_calculation')}</h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">{t('feasly.finance.monthly_payment')}</span>
+                        <span className="text-muted-foreground">{t('monthly_payment')}</span>
                         <span className="font-bold">{watchCurrency} {monthlyPayment.toLocaleString()}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-muted-foreground">{t('feasly.finance.payment_type')}</span>
+                        <span className="text-muted-foreground">{t('payment_type')}</span>
                         <span className="font-medium">
-                          {watchRepaymentType === "bullet" ? t('feasly.finance.interest_only') : t('feasly.finance.principal_interest')}
+                          {watchRepaymentType === "bullet" ? t('interest_only') : t('principal_interest')}
                         </span>
                       </div>
                       {watchGracePeriod > 0 && (
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">{t('feasly.finance.grace_period')}</span>
-                          <span className="font-medium">{watchGracePeriod} {t('feasly.finance.months')}</span>
+                          <span className="text-muted-foreground">{t('grace_period')}</span>
+                          <span className="font-medium">{watchGracePeriod} {t('months')}</span>
                         </div>
                       )}
                     </div>
@@ -404,9 +404,9 @@ export default function FeaslyFinance() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <TrendingUp className="h-5 w-5" />
-                  {t('feasly.finance.return_waterfall')}
+                  {t('return_waterfall')}
                 </CardTitle>
-                <CardDescription>{t('feasly.finance.waterfall_desc')}</CardDescription>
+                <CardDescription>{t('waterfall_desc')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 
@@ -416,7 +416,7 @@ export default function FeaslyFinance() {
                   name="preferred_irr"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('feasly.finance.preferred_irr')} (%)</FormLabel>
+                      <FormLabel>{t('preferred_irr')} (%)</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -436,7 +436,7 @@ export default function FeaslyFinance() {
                   name="hurdle_irr"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t('feasly.finance.hurdle_irr')} (%)</FormLabel>
+                      <FormLabel>{t('hurdle_irr')} (%)</FormLabel>
                       <FormControl>
                         <Input 
                           type="number" 
@@ -452,14 +452,14 @@ export default function FeaslyFinance() {
 
                 {/* Waterfall Table */}
                 <div className="space-y-2">
-                  <h4 className="font-medium">{t('feasly.finance.distribution_waterfall')}</h4>
+                  <h4 className="font-medium">{t('distribution_waterfall')}</h4>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>{t('feasly.finance.tier')}</TableHead>
-                        <TableHead>{t('feasly.finance.return_type')}</TableHead>
-                        <TableHead>{t('feasly.finance.threshold')}</TableHead>
-                        <TableHead>{t('feasly.finance.share')}</TableHead>
+                        <TableHead>{t('tier')}</TableHead>
+                        <TableHead>{t('return_type')}</TableHead>
+                        <TableHead>{t('threshold')}</TableHead>
+                        <TableHead>{t('share')}</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -476,7 +476,7 @@ export default function FeaslyFinance() {
                 </div>
 
                 <div className="p-3 bg-muted rounded-lg text-sm text-muted-foreground">
-                  <p>{t('feasly.finance.waterfall_note')}</p>
+                  <p>{t('waterfall_note')}</p>
                 </div>
               </CardContent>
             </Card>

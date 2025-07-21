@@ -13,9 +13,9 @@ export default function FeaslyConsolidate() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
           <BarChart3 className="h-8 w-8" />
-          {t('feasly.consolidate.title')}
+          {t('title')}
         </h1>
-        <p className="text-muted-foreground">{t('feasly.consolidate.description')}</p>
+        <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
       <ConsolidatedPortfolioTable />
