@@ -15,6 +15,7 @@ import { AssetsList } from "@/components/assets/AssetsList";
 import { ScenarioSelector } from "@/components/scenarios/ScenarioSelector";
 import { FinancialSummaryCards } from "@/components/financial/FinancialSummaryCards";
 import { ProjectTeam } from "@/components/projects/ProjectTeam";
+import { ProjectAnalytics } from "@/components/projects/ProjectAnalytics";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -993,21 +994,25 @@ const ProjectDetails = () => {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Financial Analytics</CardTitle>
-              <CardDescription>Detailed analysis and projections</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-12">
-                <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">Analytics Coming Soon</h3>
-                <p className="text-muted-foreground">
-                  Add assets to see detailed financial analytics and projections
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          {assets && assets.length > 0 ? (
+            <ProjectAnalytics projectId={id || ""} assets={assets} />
+          ) : (
+            <Card>
+              <CardHeader>
+                <CardTitle>Financial Analytics</CardTitle>
+                <CardDescription>Detailed analysis and projections</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-12">
+                  <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">Analytics Coming Soon</h3>
+                  <p className="text-muted-foreground">
+                    Add assets to see detailed financial analytics and projections
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
       </Tabs>
     </div>
