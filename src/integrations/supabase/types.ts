@@ -394,6 +394,60 @@ export type Database = {
           },
         ]
       }
+      project_contractors: {
+        Row: {
+          actual_completion: string | null
+          amount: number
+          contact_email: string | null
+          contact_person: string | null
+          created_at: string
+          expected_completion: string | null
+          id: string
+          name: string
+          notes: string | null
+          phase: string
+          project_id: string
+          risk_rating: string
+          start_date: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          actual_completion?: string | null
+          amount: number
+          contact_email?: string | null
+          contact_person?: string | null
+          created_at?: string
+          expected_completion?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phase: string
+          project_id: string
+          risk_rating?: string
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          actual_completion?: string | null
+          amount?: number
+          contact_email?: string | null
+          contact_person?: string | null
+          created_at?: string
+          expected_completion?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phase?: string
+          project_id?: string
+          risk_rating?: string
+          start_date?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       project_milestones: {
         Row: {
           created_at: string

@@ -22,6 +22,9 @@ import { SensitivityAnalysis } from "./SensitivityAnalysis";
 import { ScenarioChart } from "./ScenarioChart";
 import { TimelineGantt } from "./TimelineGantt";
 import { TimelineSummaryPanel } from "./TimelineSummaryPanel";
+import { ContractorBreakdown } from "./ContractorBreakdown";
+import { VendorRiskSummary } from "./VendorRiskSummary";
+import { ContractorWarnings } from "./ContractorWarnings";
 import { useMilestones } from "@/hooks/useMilestones";
 import { CommentingPanel } from "./CommentingPanel";
 import CashflowTable from "./CashflowTable";
@@ -173,6 +176,20 @@ export default function FeaslyModel() {
                   
                   {/* NEW: Scenario Comparison Chart */}
                   <ScenarioComparisonChart />
+                </div>
+
+                {/* Vendor & Delivery Risk - Always Visible */}
+                <div className="space-y-6">
+                  <h2 className="text-xl font-semibold">👥 Vendor & Delivery Risk</h2>
+                  
+                  {/* Vendor Risk Summary */}
+                  <VendorRiskSummary projectId={projectId} />
+                  
+                  {/* Contractor Breakdown Table */}
+                  <ContractorBreakdown projectId={projectId} />
+                  
+                  {/* Smart Vendor Warnings */}
+                  <ContractorWarnings projectId={projectId} />
                 </div>
 
                 {/* Results & Insights - Always Visible */}
