@@ -35,10 +35,10 @@ export function ScenariosSection() {
   };
 
   const scenarios = [
-    { key: "base" as ScenarioType, label: t('feasly.model.scenario_base'), color: "bg-blue-500" },
-    { key: "optimistic" as ScenarioType, label: t('feasly.model.scenario_optimistic'), color: "bg-green-500" },
-    { key: "pessimistic" as ScenarioType, label: t('feasly.model.scenario_pessimistic'), color: "bg-red-500" },
-    { key: "custom" as ScenarioType, label: t('feasly.model.scenario_custom'), color: "bg-purple-500" },
+    { key: "base" as ScenarioType, label: t('scenario_base'), color: "bg-blue-500" },
+    { key: "optimistic" as ScenarioType, label: t('scenario_optimistic'), color: "bg-green-500" },
+    { key: "pessimistic" as ScenarioType, label: t('scenario_pessimistic'), color: "bg-red-500" },
+    { key: "custom" as ScenarioType, label: t('scenario_custom'), color: "bg-purple-500" },
   ];
 
   const getScenarioValue = (scenario: ScenarioType, field: keyof ScenarioOverrides) => {
@@ -100,24 +100,24 @@ export function ScenariosSection() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {t('feasly.model.editing_scenario')}: {scenarios.find(s => s.key === scenario)?.label}
+              {t('editing_scenario')}: {scenarios.find(s => s.key === scenario)?.label}
             </DialogTitle>
             <DialogDescription>
-              {t('feasly.model.scenario_override_note')}
+              {t('scenario_override_note')}
             </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="construction_cost_override">
-                {t('feasly.model.override_construction_cost')}
+                {t('override_construction_cost')}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Info className="inline h-4 w-4 ml-1 text-muted-foreground" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{t('feasly.model.override_construction_cost_tooltip')}</p>
-                      <p>{t('feasly.model.base_value')}: {baseValues.construction_cost.toLocaleString()}</p>
+                      <p>{t('override_construction_cost_tooltip')}</p>
+                      <p>{t('base_value')}: {baseValues.construction_cost.toLocaleString()}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -136,15 +136,15 @@ export function ScenariosSection() {
 
             <div>
               <Label htmlFor="land_cost_override">
-                {t('feasly.model.override_land_cost')}
+                {t('override_land_cost')}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Info className="inline h-4 w-4 ml-1 text-muted-foreground" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{t('feasly.model.override_land_cost_tooltip')}</p>
-                      <p>{t('feasly.model.base_value')}: {baseValues.land_cost.toLocaleString()}</p>
+                      <p>{t('override_land_cost_tooltip')}</p>
+                      <p>{t('base_value')}: {baseValues.land_cost.toLocaleString()}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -163,15 +163,15 @@ export function ScenariosSection() {
 
             <div>
               <Label htmlFor="revenue_override">
-                {t('feasly.model.override_revenue')}
+                {t('override_revenue')}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Info className="inline h-4 w-4 ml-1 text-muted-foreground" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{t('feasly.model.override_revenue_tooltip')}</p>
-                      <p>{t('feasly.model.base_value')}: {baseValues.average_sale_price.toLocaleString()}</p>
+                      <p>{t('override_revenue_tooltip')}</p>
+                      <p>{t('base_value')}: {baseValues.average_sale_price.toLocaleString()}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -190,15 +190,15 @@ export function ScenariosSection() {
 
             <div>
               <Label htmlFor="yield_override">
-                {t('feasly.model.override_yield_estimate')}
+                {t('override_yield_estimate')}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Info className="inline h-4 w-4 ml-1 text-muted-foreground" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{t('feasly.model.override_yield_estimate_tooltip')}</p>
-                      <p>{t('feasly.model.base_value')}: {baseValues.yield_estimate}%</p>
+                      <p>{t('override_yield_estimate_tooltip')}</p>
+                      <p>{t('base_value')}: {baseValues.yield_estimate}%</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -217,15 +217,15 @@ export function ScenariosSection() {
 
             <div>
               <Label htmlFor="irr_override">
-                {t('feasly.model.override_target_irr')}
+                {t('override_target_irr')}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Info className="inline h-4 w-4 ml-1 text-muted-foreground" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{t('feasly.model.override_target_irr_tooltip')}</p>
-                      <p>{t('feasly.model.base_value')}: {baseValues.target_irr}%</p>
+                      <p>{t('override_target_irr_tooltip')}</p>
+                      <p>{t('base_value')}: {baseValues.target_irr}%</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -244,15 +244,15 @@ export function ScenariosSection() {
 
             <div>
               <Label htmlFor="lease_override">
-                {t('feasly.model.override_lease_rate')}
+                {t('override_lease_rate')}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Info className="inline h-4 w-4 ml-1 text-muted-foreground" />
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{t('feasly.model.override_lease_rate_tooltip')}</p>
-                      <p>{t('feasly.model.base_value')}: {baseValues.expected_lease_rate.toLocaleString()}</p>
+                      <p>{t('override_lease_rate_tooltip')}</p>
+                      <p>{t('base_value')}: {baseValues.expected_lease_rate.toLocaleString()}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -292,10 +292,10 @@ export function ScenariosSection() {
       <CardHeader>
         <div className="flex items-center space-x-2">
           <TrendingUp className="h-5 w-5 text-primary" />
-          <CardTitle>{t('feasly.model.scenario_analysis')}</CardTitle>
+          <CardTitle>{t('scenario_analysis')}</CardTitle>
         </div>
         <CardDescription>
-          {t('feasly.model.scenario_analysis_desc')}
+          {t('scenario_analysis_desc')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -307,7 +307,7 @@ export function ScenariosSection() {
                 {scenario.label}
                 {Object.keys(scenarioOverrides[scenario.key]).length > 0 && (
                   <Badge variant="secondary" className="ml-2 text-xs">
-                    {t('feasly.model.override_active')}
+                    {t('override_active')}
                   </Badge>
                 )}
               </TabsTrigger>
@@ -334,7 +334,7 @@ export function ScenariosSection() {
                         onClick={() => setEditingScenario(scenario.key)}
                       >
                         <Edit className="h-4 w-4 mr-2" />
-                        {t('feasly.model.edit_scenario')}
+                        {t('edit_scenario')}
                       </Button>
                     </>
                   )}

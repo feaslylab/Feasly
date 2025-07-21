@@ -83,7 +83,7 @@ export function FinancialInputs() {
               name="construction_cost"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.construction_cost')}</FormLabel>
+                  <FormLabel>{t('construction_cost')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -104,7 +104,7 @@ export function FinancialInputs() {
               name="soft_costs"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.soft_costs')}</FormLabel>
+                  <FormLabel>{t('soft_costs')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -125,7 +125,7 @@ export function FinancialInputs() {
               name="marketing_cost"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.marketing_cost')}</FormLabel>
+                  <FormLabel>{t('marketing_cost')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -147,14 +147,14 @@ export function FinancialInputs() {
               render={({ field }) => (
                 <FormItem>
                   <div className="flex items-center space-x-2">
-                    <FormLabel>{t('feasly.model.contingency_percent')}</FormLabel>
+                    <FormLabel>{t('contingency_percent')}</FormLabel>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Info className="h-4 w-4 text-muted-foreground" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p>{t('feasly.model.contingency_value')}: {contingencyValue.toLocaleString()}</p>
+                          <p>{t('contingency_value')}: {contingencyValue.toLocaleString()}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -206,10 +206,10 @@ export function FinancialInputs() {
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">
-                      {t('feasly.model.zakat_applicable')}
+                      {t('zakat_applicable')}
                     </FormLabel>
                     <div className="text-sm text-muted-foreground">
-                      {t('feasly.model.zakat_applicable_desc')}
+                      {t('zakat_applicable_desc')}
                     </div>
                   </div>
                   <FormControl>
@@ -252,10 +252,10 @@ export function FinancialInputs() {
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
                     <FormLabel className="text-base">
-                      {t('feasly.model.escrow_required')}
+                      {t('escrow_required')}
                     </FormLabel>
                     <div className="text-sm text-muted-foreground">
-                      {t('feasly.model.escrow_required_desc')}
+                      {t('escrow_required_desc')}
                     </div>
                   </div>
                   <FormControl>
@@ -275,7 +275,7 @@ export function FinancialInputs() {
               name="zakat_rate_percent"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.zakat_rate_percent')}</FormLabel>
+                  <FormLabel>{t('zakat_rate_percent')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -357,9 +357,9 @@ export function FinancialInputs() {
       {/* Funding & Capital */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('feasly.model.funding_capital')}</CardTitle>
+          <CardTitle>{t('funding_capital')}</CardTitle>
           <CardDescription>
-            {t('feasly.model.funding_capital_desc')}
+            {t('funding_capital_desc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -369,7 +369,7 @@ export function FinancialInputs() {
               name="funding_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.funding_type')}</FormLabel>
+                  <FormLabel>{t('funding_type')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -394,7 +394,7 @@ export function FinancialInputs() {
               name="total_funding"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.total_funding')}</FormLabel>
+                  <FormLabel>{t('total_funding')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -415,7 +415,7 @@ export function FinancialInputs() {
               name="equity_contribution"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.equity_contribution')}</FormLabel>
+                  <FormLabel>{t('equity_contribution')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -436,7 +436,7 @@ export function FinancialInputs() {
               name="loan_amount"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.loan_amount')}</FormLabel>
+                  <FormLabel>{t('loan_amount')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -457,7 +457,7 @@ export function FinancialInputs() {
               name="interest_rate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.interest_rate')}</FormLabel>
+                  <FormLabel>{t('interest_rate')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -479,7 +479,7 @@ export function FinancialInputs() {
               name="loan_term_years"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.loan_term_years')}</FormLabel>
+                  <FormLabel>{t('loan_term_years')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -500,7 +500,7 @@ export function FinancialInputs() {
               name="grace_period_months"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.grace_period_months')}</FormLabel>
+                  <FormLabel>{t('grace_period_months')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -521,7 +521,7 @@ export function FinancialInputs() {
               name="loan_repayment_type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.loan_repayment_type')}</FormLabel>
+                  <FormLabel>{t('loan_repayment_type')}</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
@@ -547,9 +547,9 @@ export function FinancialInputs() {
       {/* Revenue Projections */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('feasly.model.revenue_projections')}</CardTitle>
+          <CardTitle>{t('revenue_projections')}</CardTitle>
           <CardDescription>
-            {t('feasly.model.revenue_projections_desc')}
+            {t('revenue_projections_desc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -559,7 +559,7 @@ export function FinancialInputs() {
               name="average_sale_price"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.average_sale_price')}</FormLabel>
+                  <FormLabel>{t('average_sale_price')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -580,7 +580,7 @@ export function FinancialInputs() {
               name="expected_sale_rate_sqm_per_month"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.expected_sale_rate')}</FormLabel>
+                  <FormLabel>{t('expected_sale_rate')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -601,7 +601,7 @@ export function FinancialInputs() {
               name="expected_lease_rate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.expected_lease_rate')}</FormLabel>
+                  <FormLabel>{t('expected_lease_rate')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -622,7 +622,7 @@ export function FinancialInputs() {
               name="yield_estimate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.yield_estimate')}</FormLabel>
+                  <FormLabel>{t('yield_estimate')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -644,7 +644,7 @@ export function FinancialInputs() {
               name="target_irr"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.target_irr')}</FormLabel>
+                  <FormLabel>{t('target_irr')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
@@ -666,7 +666,7 @@ export function FinancialInputs() {
               name="target_roi"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.target_roi')}</FormLabel>
+                  <FormLabel>{t('target_roi')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"

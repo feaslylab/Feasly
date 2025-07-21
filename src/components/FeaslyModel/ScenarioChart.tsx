@@ -88,7 +88,7 @@ export function ScenarioChart() {
       <CardHeader>
         <div className="flex items-center space-x-2">
           <BarChart3 className="h-5 w-5 text-primary" />
-          <CardTitle>{t('feasly.model.scenario_comparison')}</CardTitle>
+          <CardTitle>{t('scenario_chart')}</CardTitle>
         </div>
         <CardDescription>
           Compare financial metrics across different scenarios

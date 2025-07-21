@@ -110,7 +110,7 @@ export function KPIResults() {
             <CardContent className="pt-6">
               <div className="flex items-center space-x-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{t('feasly.model.kpi_total_cost')}</span>
+                <span className="text-sm font-medium">{t('kpi_total_cost')}</span>
               </div>
               <div className="text-2xl font-bold mt-2">
                 {formatAmount(kpiResults.total_cost)}
@@ -125,7 +125,7 @@ export function KPIResults() {
             <CardContent className="pt-6">
               <div className="flex items-center space-x-2">
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{t('feasly.model.kpi_total_revenue')}</span>
+                <span className="text-sm font-medium">{t('kpi_total_revenue')}</span>
               </div>
               <div className="text-2xl font-bold mt-2">
                 {formatAmount(kpiResults.total_revenue)}
@@ -140,7 +140,7 @@ export function KPIResults() {
             <CardContent className="pt-6">
               <div className="flex items-center space-x-2">
                 <TrendingUp className={`h-4 w-4 ${kpiResults.profit >= 0 ? 'text-green-500' : 'text-red-500'}`} />
-                <span className="text-sm font-medium">{t('feasly.model.kpi_profit')}</span>
+                <span className="text-sm font-medium">{t('kpi_profit')}</span>
               </div>
               <div className={`text-2xl font-bold mt-2 ${kpiResults.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {formatAmount(kpiResults.profit)}
@@ -156,7 +156,7 @@ export function KPIResults() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-muted/50 rounded-lg p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{t('feasly.model.kpi_profit_margin')}</span>
+              <span className="text-sm font-medium">{t('kpi_profit_margin')}</span>
               <Percent className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className={`text-lg font-bold ${getStatusColor(kpiResults.profit_margin, { good: 20, fair: 10 })}`}>
@@ -173,7 +173,7 @@ export function KPIResults() {
 
           <div className="bg-muted/50 rounded-lg p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{t('feasly.model.kpi_roi')}</span>
+              <span className="text-sm font-medium">{t('kpi_roi')}</span>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className={`text-lg font-bold ${getStatusColor(kpiResults.roi, { good: 15, fair: 8 })}`}>
@@ -190,7 +190,7 @@ export function KPIResults() {
 
           <div className="bg-muted/50 rounded-lg p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{t('feasly.model.kpi_irr')}</span>
+              <span className="text-sm font-medium">{t('kpi_irr')}</span>
               <BarChart className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className={`text-lg font-bold ${getStatusColor(kpiResults.irr, { good: 12, fair: 8 })}`}>
@@ -207,7 +207,7 @@ export function KPIResults() {
 
           <div className="bg-muted/50 rounded-lg p-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">{t('feasly.model.kpi_payback_period')}</span>
+              <span className="text-sm font-medium">{t('kpi_payback_period')}</span>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </div>
             <div className={`text-lg font-bold ${getStatusColor(10 - kpiResults.payback_period, { good: 5, fair: 2 })}`}>
@@ -260,7 +260,7 @@ export function KPIResults() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">{t('feasly.model.zakat_due')}</span>
+                <span className="text-sm font-medium">{t('zakat_due')}</span>
                 <span className="text-lg font-bold text-primary">
                   {formatAmount(kpiResults.zakat_due)}
                 </span>
