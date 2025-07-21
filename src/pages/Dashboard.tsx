@@ -2,8 +2,16 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, TrendingUp, Building, DollarSign, BarChart3, FolderOpen, Upload } from "lucide-react";
+import { Plus, TrendingUp, Building, DollarSign, BarChart3, FolderOpen, Upload, Filter } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { NavLink } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -36,6 +44,16 @@ interface Asset {
   };
 }
 
+interface FilterState {
+  projectId: string | null; // null means "All Projects"
+  dateRange: 30 | 90 | 365 | null; // null means "All Time"
+}
+
+interface Project {
+  id: string;
+  name: string;
+}
+
 interface ProjectInsights {
   highestRevenueAsset: Asset | null;
   averageRevenuePerAsset: number;
@@ -61,6 +79,11 @@ export default function Dashboard() {
     averageRevenuePerAsset: 0,
     topProjects: [],
   });
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [filters, setFilters] = useState<FilterState>({
+    projectId: null,
+    dateRange: null,
+  });
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -68,15 +91,31 @@ export default function Dashboard() {
   useEffect(() => {
     if (user) {
       fetchDashboardData();
+      fetchProjectsList();
     }
-  }, [user]);
+  }, [user, filters]); // Re-fetch when filters change
+
+  const fetchProjectsList = async () => {
+    try {
+      const { data: projectsData, error } = await supabase
+        .from('projects')
+        .select('id, name')
+        .eq('user_id', user?.id)
+        .order('name');
+
+      if (error) throw error;
+      setProjects(projectsData || []);
+    } catch (error) {
+      console.error('Error fetching projects list:', error);
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
 
-      // Fetch projects with asset counts
-      const { data: projects, error: projectsError } = await supabase
+      // Build query with filters
+      let query = supabase
         .from('projects')
         .select(`
           id,
@@ -89,9 +128,23 @@ export default function Dashboard() {
             annual_revenue_potential_aed
           )
         `)
-        .eq('user_id', user?.id)
+        .eq('user_id', user?.id);
+
+      // Apply project filter if selected
+      if (filters.projectId) {
+        query = query.eq('id', filters.projectId);
+      }
+
+      // Apply date filter if selected
+      if (filters.dateRange) {
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - filters.dateRange);
+        query = query.gte('created_at', daysAgo.toISOString());
+      }
+
+      const { data: projects, error: projectsError } = await query
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(filters.projectId ? 1 : 5); // If filtering by project, get just that one
 
       if (projectsError) throw projectsError;
 
@@ -147,8 +200,8 @@ export default function Dashboard() {
 
   const fetchPortfolioInsights = async () => {
     try {
-      // Fetch all assets with project names for insights
-      const { data: assets, error: assetsError } = await supabase
+      // Build assets query with filters
+      let query = supabase
         .from('assets')
         .select(`
           id,
@@ -157,10 +210,13 @@ export default function Dashboard() {
           project_id,
           projects (
             id,
-            name
+            name,
+            created_at
           )
         `)
         .order('annual_revenue_potential_aed', { ascending: false });
+
+      const { data: assets, error: assetsError } = await query;
 
       if (assetsError) throw assetsError;
 
@@ -173,10 +229,27 @@ export default function Dashboard() {
         return;
       }
 
-      // Filter assets that belong to the current user's projects
-      const userAssets = assets.filter(asset => asset.projects);
+      // Filter assets based on current filters
+      let filteredAssets = assets.filter(asset => asset.projects);
 
-      if (userAssets.length === 0) {
+      // Apply project filter
+      if (filters.projectId) {
+        filteredAssets = filteredAssets.filter(asset => 
+          (asset.projects as any)?.id === filters.projectId
+        );
+      }
+
+      // Apply date filter to projects
+      if (filters.dateRange) {
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - filters.dateRange);
+        filteredAssets = filteredAssets.filter(asset => {
+          const projectCreatedAt = new Date((asset.projects as any)?.created_at);
+          return projectCreatedAt >= daysAgo;
+        });
+      }
+
+      if (filteredAssets.length === 0) {
         setInsights({
           highestRevenueAsset: null,
           averageRevenuePerAsset: 0,
@@ -186,15 +259,15 @@ export default function Dashboard() {
       }
 
       // Find highest revenue asset
-      const highestRevenueAsset = userAssets[0];
+      const highestRevenueAsset = filteredAssets[0];
 
       // Calculate average revenue per asset
-      const totalRevenue = userAssets.reduce((sum, asset) => sum + (asset.annual_revenue_potential_aed || 0), 0);
-      const averageRevenuePerAsset = userAssets.length > 0 ? totalRevenue / userAssets.length : 0;
+      const totalRevenue = filteredAssets.reduce((sum, asset) => sum + (asset.annual_revenue_potential_aed || 0), 0);
+      const averageRevenuePerAsset = filteredAssets.length > 0 ? totalRevenue / filteredAssets.length : 0;
 
       // Group by project and calculate totals
       const projectRevenues = new Map();
-      userAssets.forEach(asset => {
+      filteredAssets.forEach(asset => {
         const project = asset.projects as any;
         const projectId = project?.id;
         const projectName = project?.name;
@@ -235,10 +308,22 @@ export default function Dashboard() {
     }
   };
 
-  // Generate 12-month revenue projection data
+  // Generate 12-month revenue projection data with date filtering
   const generateRevenueProjection = () => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const monthlyRevenue = stats.totalRevenue / 12;
+    let monthlyRevenue = stats.totalRevenue / 12;
+    
+    // If date range filter is applied, adjust the projection
+    if (filters.dateRange && filters.dateRange < 365) {
+      const monthsInRange = Math.ceil(filters.dateRange / 30);
+      monthlyRevenue = stats.totalRevenue / monthsInRange;
+      
+      return months.slice(0, monthsInRange).map((month, index) => ({
+        month,
+        cumulativeRevenue: monthlyRevenue * (index + 1),
+        monthlyRevenue: monthlyRevenue,
+      }));
+    }
     
     return months.map((month, index) => ({
       month,
@@ -292,6 +377,23 @@ export default function Dashboard() {
     return null;
   };
 
+  const getFilterLabel = () => {
+    const parts = [];
+    
+    if (filters.projectId) {
+      const project = projects.find(p => p.id === filters.projectId);
+      parts.push(project?.name || 'Selected Project');
+    } else {
+      parts.push('All Projects');
+    }
+    
+    if (filters.dateRange) {
+      parts.push(`Last ${filters.dateRange} days`);
+    }
+    
+    return parts.join(' • ');
+  };
+
   if (isLoading) {
     return (
       <div className="p-6">
@@ -317,7 +419,68 @@ export default function Dashboard() {
             Welcome back! Here's an overview of your projects and portfolio.
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          {/* Filter Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Filter className="w-4 h-4" />
+                {getFilterLabel()}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              align="end" 
+              className="w-64 bg-background border border-border shadow-lg z-50"
+            >
+              <DropdownMenuLabel>Filter Dashboard</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuLabel className="text-xs text-muted-foreground">Projects</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => setFilters(prev => ({ ...prev, projectId: null }))}
+                className={`cursor-pointer ${!filters.projectId ? 'bg-accent' : ''}`}
+              >
+                All Projects
+              </DropdownMenuItem>
+              {projects.map(project => (
+                <DropdownMenuItem
+                  key={project.id}
+                  onClick={() => setFilters(prev => ({ ...prev, projectId: project.id }))}
+                  className={`cursor-pointer ${filters.projectId === project.id ? 'bg-accent' : ''}`}
+                >
+                  {project.name}
+                </DropdownMenuItem>
+              ))}
+              
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-xs text-muted-foreground">Date Range</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => setFilters(prev => ({ ...prev, dateRange: null }))}
+                className={`cursor-pointer ${!filters.dateRange ? 'bg-accent' : ''}`}
+              >
+                All Time
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setFilters(prev => ({ ...prev, dateRange: 30 }))}
+                className={`cursor-pointer ${filters.dateRange === 30 ? 'bg-accent' : ''}`}
+              >
+                Last 30 days
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setFilters(prev => ({ ...prev, dateRange: 90 }))}
+                className={`cursor-pointer ${filters.dateRange === 90 ? 'bg-accent' : ''}`}
+              >
+                Last 90 days
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setFilters(prev => ({ ...prev, dateRange: 365 }))}
+                className={`cursor-pointer ${filters.dateRange === 365 ? 'bg-accent' : ''}`}
+              >
+                Last 365 days
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <ImportFromExcel 
             trigger={
               <Button variant="outline" className="flex items-center gap-2">
