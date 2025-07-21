@@ -35,22 +35,36 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       return t(key, { ns: namespace });
     }
     
-    // Smart namespace detection for backward compatibility
+    // For backward compatibility, try to translate the key as-is first
+    const translated = t(key);
+    if (translated !== key) {
+      return translated;
+    }
+    
+    // If that fails and key contains dots, try namespace detection
     if (key.includes('.')) {
       const parts = key.split('.');
       if (parts.length >= 2) {
-        const possibleNamespace = parts[0] === 'feasly' ? `feasly.${parts[1]}` : parts[0];
-        const restKey = parts.slice(parts[0] === 'feasly' ? 2 : 1).join('.');
+        // Check for feasly.module patterns
+        if (parts[0] === 'feasly' && parts.length >= 3) {
+          const possibleNamespace = `feasly.${parts[1]}`;
+          const restKey = parts.slice(2).join('.');
+          if (i18n.hasResourceBundle(language, possibleNamespace)) {
+            return t(restKey, { ns: possibleNamespace });
+          }
+        }
         
-        // Check if this namespace exists
+        // Check for direct namespace patterns (auth.key, common.key, etc.)
+        const possibleNamespace = parts[0];
+        const restKey = parts.slice(1).join('.');
         if (i18n.hasResourceBundle(language, possibleNamespace)) {
           return t(restKey, { ns: possibleNamespace });
         }
       }
     }
     
-    // Fallback to default translation or return key
-    return t(key) || key;
+    // Final fallback
+    return key;
   }, [t, i18n, language]);
 
   const setLanguage = useCallback(async (lang: Language) => {
