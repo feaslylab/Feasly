@@ -35,37 +35,50 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       return t(key, { ns: namespace });
     }
     
-    // For backward compatibility, try to translate the key as-is first
-    const translated = t(key);
-    if (translated !== key) {
-      return translated;
-    }
-    
-    // If that fails and key contains dots, try namespace detection
+    // Handle dotted keys by extracting namespace and key
     if (key.includes('.')) {
       const parts = key.split('.');
+      
       if (parts.length >= 2) {
-        // Check for feasly.module patterns
+        let ns = '';
+        let actualKey = '';
+        
+        // Handle feasly.module.key pattern
         if (parts[0] === 'feasly' && parts.length >= 3) {
-          const possibleNamespace = `feasly.${parts[1]}`;
-          const restKey = parts.slice(2).join('.');
-          if (i18n.hasResourceBundle(language, possibleNamespace)) {
-            return t(restKey, { ns: possibleNamespace });
-          }
+          ns = `feasly.${parts[1]}`;
+          actualKey = parts.slice(2).join('.');
+        } 
+        // Handle namespace.key pattern (auth.email, nav.dashboard, etc.)
+        else {
+          ns = parts[0];
+          actualKey = parts.slice(1).join('.');
         }
         
-        // Check for direct namespace patterns (auth.key, common.key, etc.)
-        const possibleNamespace = parts[0];
-        const restKey = parts.slice(1).join('.');
-        if (i18n.hasResourceBundle(language, possibleNamespace)) {
-          return t(restKey, { ns: possibleNamespace });
+        // Try to translate with the detected namespace
+        try {
+          const translated = t(actualKey, { ns });
+          if (translated !== actualKey) {
+            return translated;
+          }
+        } catch (error) {
+          console.warn(`Translation failed for key: ${actualKey} in namespace: ${ns}`);
         }
       }
     }
     
-    // Final fallback
+    // Try default translation without namespace
+    try {
+      const translated = t(key);
+      if (translated !== key) {
+        return translated;
+      }
+    } catch (error) {
+      // Ignore
+    }
+    
+    // Return the original key if no translation found
     return key;
-  }, [t, i18n, language]);
+  }, [t]);
 
   const setLanguage = useCallback(async (lang: Language) => {
     setIsLoading(true);
