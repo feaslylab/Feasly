@@ -9,15 +9,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, 
-  LineChart, Line, ScatterChart, Scatter, Cell, Tooltip as RechartsTooltip, Legend
-} from "recharts";
-import { 
-  Building2, DollarSign, TrendingUp, TrendingDown, AlertTriangle, 
-  Target, Users, PieChart, FileDown, Share2, CalendarIcon,
-  Lightbulb, Shield, Search, BarChart3, Map
-} from "lucide-react";
+import { CalendarIcon } from "lucide-react";
 import { format, subMonths, isWithinInterval } from "date-fns";
 import type { DateRange } from "react-day-picker";
 
@@ -27,6 +19,12 @@ import { ProjectDrillDown } from "@/components/insights/ProjectDrillDown";
 import { NaturalLanguageSummary } from "@/components/insights/NaturalLanguageSummary";
 import { GeographicMap } from "@/components/insights/GeographicMap";
 import { FilterPresets } from "@/components/insights/FilterPresets";
+
+// Import modular FeaslyInsights components
+import ScenarioTabs from "@/components/FeaslyInsights/ScenarioTabs";
+import InsightSummaryPanel from "@/components/FeaslyInsights/InsightSummaryPanel";
+import ScenarioCharts from "@/components/FeaslyInsights/ScenarioCharts";
+import AIInsightsPanel from "@/components/FeaslyInsights/AIInsightsPanel";
 
 // Mock project data structure
 interface Project {
@@ -255,95 +253,6 @@ export default function FeaslyInsights() {
     };
   }, [filteredProjects]);
 
-  // Chart data preparations
-  const bubbleChartData = filteredProjects.map(p => ({
-    name: p.name,
-    x: p.irr,
-    y: p.roi,
-    z: p.totalGFA / 1000, // Scale down for visualization
-    status: p.status,
-    id: p.id
-  }));
-
-  const lineChartData = useMemo(() => {
-    const monthlyData: Record<string, { month: string; revenue: number; cost: number }> = {};
-    
-    filteredProjects.forEach(project => {
-      const monthKey = format(project.createdAt, 'yyyy-MM');
-      if (!monthlyData[monthKey]) {
-        monthlyData[monthKey] = {
-          month: format(project.createdAt, 'MMM yyyy'),
-          revenue: 0,
-          cost: 0
-        };
-      }
-      monthlyData[monthKey].revenue += project.estimatedRevenue;
-      monthlyData[monthKey].cost += project.constructionCost;
-    });
-
-    return Object.values(monthlyData).sort((a, b) => a.month.localeCompare(b.month));
-  }, [filteredProjects]);
-
-  const scenarioComparisonData = useMemo(() => {
-    const scenarios = ['Base', 'Optimistic', 'Pessimistic', 'Custom'];
-    return scenarios.map(scenario => {
-      const scenarioProjects = filteredProjects.filter(p => p.scenario === scenario);
-      const avgIRR = scenarioProjects.length > 0 ? 
-        scenarioProjects.reduce((sum, p) => sum + p.irr, 0) / scenarioProjects.length : 0;
-      const totalNetProfit = scenarioProjects.reduce((sum, p) => sum + p.netProfit, 0);
-      const totalRevenue = scenarioProjects.reduce((sum, p) => sum + p.estimatedRevenue, 0);
-      
-      return {
-        scenario,
-        irr: avgIRR,
-        netProfit: totalNetProfit / 1000000, // In millions
-        revenue: totalRevenue / 1000000 // In millions
-      };
-    });
-  }, [filteredProjects]);
-
-  const topProjectsData = filteredProjects
-    .sort((a, b) => b.irr - a.irr)
-    .slice(0, 5)
-    .map(p => ({
-      name: p.name,
-      irr: p.irr,
-      id: p.id
-    }));
-
-  // AI Insight calculations
-  const topOpportunities = filteredProjects
-    .filter(p => p.irr > 18 && p.netProfit > 5000000)
-    .sort((a, b) => b.irr - a.irr)
-    .slice(0, 3);
-
-  const riskAlerts = filteredProjects
-    .filter(p => p.roi < 5 || p.profitMargin < 10 || p.netProfit < 0);
-
-  const dataGaps = filteredProjects
-    .filter(p => !p.totalGFA || !p.estimatedRevenue || !p.constructionCost);
-
-  const scenarioSensitivity = filteredProjects.filter(p => {
-    const optimisticVersion = projects.find(op => 
-      op.name === p.name && op.scenario === 'Optimistic'
-    );
-    return optimisticVersion && optimisticVersion.irr >= p.irr * 1.2;
-  });
-
-  const getIRRColor = (irr: number) => {
-    if (irr >= 20) return 'text-green-600';
-    if (irr >= 15) return 'text-yellow-600';
-    return 'text-red-600';
-  };
-
-  const getRiskLevelColor = (level: string) => {
-    switch (level) {
-      case 'Low': return 'bg-green-100 text-green-800';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800';
-      case 'High': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   const handleProjectClick = (project: Project) => {
     setSelectedProject(project);
@@ -465,222 +374,19 @@ export default function FeaslyInsights() {
       </Card>
 
       {/* KPI Metrics Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
-            <Building2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{kpiMetrics.totalProjects}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total GFA</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {new Intl.NumberFormat().format(kpiMetrics.totalGFA)} sqm
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Construction Cost</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(kpiMetrics.totalConstructionCost)}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Estimated Revenue</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {formatCurrency(kpiMetrics.totalEstimatedRevenue)}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className={cn("text-2xl font-bold", kpiMetrics.totalNetProfit < 0 ? "text-red-600" : "text-green-600")}>
-              {formatCurrency(kpiMetrics.totalNetProfit)}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average IRR</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className={cn("text-2xl font-bold", getIRRColor(kpiMetrics.avgIRR))}>
-              {kpiMetrics.avgIRR.toFixed(1)}%
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average ROI</CardTitle>
-            <PieChart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{kpiMetrics.avgROI.toFixed(1)}%</div>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Risk Level</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <Badge className={getRiskLevelColor(kpiMetrics.riskLevel)}>
-              {kpiMetrics.riskLevel}
-            </Badge>
-          </CardContent>
-        </Card>
-      </div>
+      <InsightSummaryPanel 
+        summary={kpiMetrics} 
+        currency={currencyFormat} 
+        formatCurrency={formatCurrency}
+      />
 
       {/* Tabbed Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview">Charts Overview</TabsTrigger>
-          <TabsTrigger value="geographic">Geographic View</TabsTrigger>
-          <TabsTrigger value="insights">AI Insights</TabsTrigger>
-        </TabsList>
-        
+      <ScenarioTabs activeScenario={activeTab} setActiveScenario={setActiveTab}>
         <TabsContent value="overview" className="space-y-6">
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* IRR vs ROI Bubble Chart */}
-            <Card className="cursor-pointer hover:shadow-md transition-shadow">
-              <CardHeader>
-                <CardTitle>IRR vs ROI Analysis</CardTitle>
-                <CardDescription>Bubble size represents GFA. Click projects for details.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <ScatterChart data={bubbleChartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="x" name="IRR" unit="%" />
-                    <YAxis dataKey="y" name="ROI" unit="%" />
-                    <RechartsTooltip 
-                      cursor={{ strokeDasharray: '3 3' }}
-                      content={({ active, payload }) => {
-                        if (active && payload && payload[0]) {
-                          const data = payload[0].payload;
-                          return (
-                            <div className="bg-white p-3 border rounded shadow-lg">
-                              <p className="font-medium">{data.name}</p>
-                              <p>IRR: {data.x}%</p>
-                              <p>ROI: {data.y}%</p>
-                              <p>Status: {data.status}</p>
-                              <p className="text-xs text-muted-foreground mt-1">Click to view details</p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Scatter 
-                      dataKey="z" 
-                      fill="hsl(var(--primary))" 
-                      onClick={(data) => {
-                        const project = filteredProjects.find(p => p.id === data.id);
-                        if (project) handleProjectClick(project);
-                      }}
-                    />
-                  </ScatterChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* Revenue vs Cost Timeline */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Revenue vs Cost Timeline</CardTitle>
-                <CardDescription>Monthly cumulative values</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={lineChartData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <RechartsTooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" name="Revenue" />
-                    <Line type="monotone" dataKey="cost" stroke="hsl(var(--destructive))" name="Cost" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* Scenario Comparison */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Scenario Comparison</CardTitle>
-                <CardDescription>IRR and profit by scenario type</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={scenarioComparisonData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="scenario" />
-                    <YAxis />
-                    <RechartsTooltip />
-                    <Legend />
-                    <Bar dataKey="irr" fill="hsl(var(--primary))" name="IRR %" />
-                    <Bar dataKey="netProfit" fill="hsl(var(--secondary))" name="Net Profit (M)" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-
-            {/* Top Projects */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Top 5 Projects by IRR</CardTitle>
-                <CardDescription>Highest performing projects - click to view details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={topProjectsData} layout="horizontal">
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis dataKey="name" type="category" width={120} />
-                    <RechartsTooltip />
-                    <Bar 
-                      dataKey="irr" 
-                      fill="hsl(var(--primary))"
-                      onClick={(data) => {
-                        const project = filteredProjects.find(p => p.id === data.id);
-                        if (project) handleProjectClick(project);
-                      }}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </div>
+          <ScenarioCharts 
+            projects={filteredProjects} 
+            onProjectClick={handleProjectClick}
+          />
         </TabsContent>
 
         <TabsContent value="geographic" className="space-y-6">
@@ -692,113 +398,13 @@ export default function FeaslyInsights() {
         </TabsContent>
 
         <TabsContent value="insights" className="space-y-6">
-          {/* AI Insight Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="border-green-200">
-              <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-                <Lightbulb className="h-5 w-5 text-green-600 mr-2" />
-                <CardTitle className="text-sm font-medium text-green-800">Top Opportunities</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {topOpportunities.length > 0 ? (
-                  <div className="space-y-2">
-                    {topOpportunities.map(project => (
-                      <div 
-                        key={project.id} 
-                        className="text-sm cursor-pointer hover:bg-green-50 p-2 rounded"
-                        onClick={() => handleProjectClick(project)}
-                      >
-                        <div className="font-medium">{project.name}</div>
-                        <div className="text-green-600">IRR: {project.irr.toFixed(1)}%</div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">No high-opportunity projects found</p>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="border-red-200">
-              <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-                <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
-                <CardTitle className="text-sm font-medium text-red-800">Risk Alerts</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {riskAlerts.length > 0 ? (
-                  <div className="space-y-2">
-                    {riskAlerts.slice(0, 3).map(project => (
-                      <div 
-                        key={project.id} 
-                        className="text-sm cursor-pointer hover:bg-red-50 p-2 rounded"
-                        onClick={() => handleProjectClick(project)}
-                      >
-                        <div className="font-medium">{project.name}</div>
-                        <div className="text-red-600">
-                          {project.netProfit < 0 ? 'Negative profit' : 
-                           project.roi < 5 ? 'Low ROI' : 'Low margin'}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">No risk alerts</p>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="border-yellow-200">
-              <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-                <Search className="h-5 w-5 text-yellow-600 mr-2" />
-                <CardTitle className="text-sm font-medium text-yellow-800">Data Gaps</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {dataGaps.length > 0 ? (
-                  <div className="space-y-2">
-                    {dataGaps.slice(0, 3).map(project => (
-                      <div 
-                        key={project.id} 
-                        className="text-sm cursor-pointer hover:bg-yellow-50 p-2 rounded"
-                        onClick={() => handleProjectClick(project)}
-                      >
-                        <div className="font-medium">{project.name}</div>
-                        <div className="text-yellow-600">Missing key data</div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">All data complete</p>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="border-blue-200">
-              <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-                <TrendingUp className="h-5 w-5 text-blue-600 mr-2" />
-                <CardTitle className="text-sm font-medium text-blue-800">Scenario Sensitivity</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {scenarioSensitivity.length > 0 ? (
-                  <div className="space-y-2">
-                    {scenarioSensitivity.slice(0, 3).map(project => (
-                      <div 
-                        key={project.id} 
-                        className="text-sm cursor-pointer hover:bg-blue-50 p-2 rounded"
-                        onClick={() => handleProjectClick(project)}
-                      >
-                        <div className="font-medium">{project.name}</div>
-                        <div className="text-blue-600">High sensitivity</div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Low scenario sensitivity</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+          <AIInsightsPanel 
+            projects={filteredProjects}
+            allProjects={projects}
+            onProjectClick={handleProjectClick}
+          />
         </TabsContent>
-      </Tabs>
+      </ScenarioTabs>
 
       {/* Project Drill-Down Modal */}
       <ProjectDrillDown

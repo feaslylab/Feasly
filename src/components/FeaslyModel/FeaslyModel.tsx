@@ -29,7 +29,7 @@ import { useMilestones } from "@/hooks/useMilestones";
 import { CommentingPanel } from "./CommentingPanel";
 import CashflowTable from "./CashflowTable";
 import ScenarioComparisonChart from "./ScenarioComparisonChart";
-import { SmartExplainerPanel } from "./SmartExplainerPanel";
+import { SmartExplainerPanel } from "../FeaslyInsights/SmartExplainerPanel";
 import ExportPDFReport from "./ExportPDFReport";
 import { VersionSelector } from "./VersionSelector";
 import { CashflowVarianceChart } from "./CashflowVarianceChart";
