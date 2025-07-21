@@ -139,6 +139,69 @@ export type Database = {
           },
         ]
       }
+      feasly_cashflows: {
+        Row: {
+          cash_balance: number | null
+          construction_cost: number | null
+          created_at: string
+          equity_injected: number | null
+          id: string
+          land_cost: number | null
+          loan_drawn: number | null
+          loan_interest: number | null
+          loan_repayment: number | null
+          month: string
+          net_cashflow: number | null
+          profit: number | null
+          project_id: string
+          revenue: number | null
+          scenario: string
+          soft_costs: number | null
+          updated_at: string
+          zakat_due: number | null
+        }
+        Insert: {
+          cash_balance?: number | null
+          construction_cost?: number | null
+          created_at?: string
+          equity_injected?: number | null
+          id?: string
+          land_cost?: number | null
+          loan_drawn?: number | null
+          loan_interest?: number | null
+          loan_repayment?: number | null
+          month: string
+          net_cashflow?: number | null
+          profit?: number | null
+          project_id: string
+          revenue?: number | null
+          scenario: string
+          soft_costs?: number | null
+          updated_at?: string
+          zakat_due?: number | null
+        }
+        Update: {
+          cash_balance?: number | null
+          construction_cost?: number | null
+          created_at?: string
+          equity_injected?: number | null
+          id?: string
+          land_cost?: number | null
+          loan_drawn?: number | null
+          loan_interest?: number | null
+          loan_repayment?: number | null
+          month?: string
+          net_cashflow?: number | null
+          profit?: number | null
+          project_id?: string
+          revenue?: number | null
+          scenario?: string
+          soft_costs?: number | null
+          updated_at?: string
+          zakat_due?: number | null
+        }
+        Relationships: []
+      }
       feasly_modules: {
         Row: {
           enabled_at: string | null
