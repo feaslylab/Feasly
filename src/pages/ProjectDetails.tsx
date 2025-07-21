@@ -2,7 +2,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText } from "lucide-react";
+import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download } from "lucide-react";
+import * as XLSX from "xlsx";
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -159,6 +160,59 @@ const ProjectDetails = () => {
     return format(new Date(dateString), "MMM dd, yyyy");
   };
 
+  const exportToExcel = async () => {
+    if (!project || !selectedScenario || !assets) return;
+
+    // Fetch scenario overrides for the selected scenario
+    const { data: overrides } = await supabase
+      .from("scenario_asset_overrides")
+      .select("*")
+      .eq("scenario_id", selectedScenarioId);
+
+    // Create workbook
+    const workbook = XLSX.utils.book_new();
+    
+    // Prepare data for export
+    const excelData = assets.map(asset => {
+      // Find override values for this asset in the selected scenario
+      const override = overrides?.find(o => o.asset_id === asset.id);
+      
+      return {
+        "Asset Name": asset.name,
+        "Type": asset.type,
+        "GFA (sqm)": override?.gfa_sqm || asset.gfa_sqm,
+        "Construction Cost (AED)": override?.construction_cost_aed || asset.construction_cost_aed,
+        "Annual Revenue Potential (AED)": override?.annual_revenue_potential_aed || asset.annual_revenue_potential_aed,
+        "Annual Operating Cost (AED)": override?.annual_operating_cost_aed || asset.annual_operating_cost_aed,
+        "Occupancy Rate (%)": override?.occupancy_rate_percent || asset.occupancy_rate_percent,
+        "Cap Rate (%)": override?.cap_rate_percent || asset.cap_rate_percent,
+        "Development Timeline (months)": override?.development_timeline_months || asset.development_timeline_months,
+        "Stabilization Period (months)": override?.stabilization_period_months || asset.stabilization_period_months,
+      };
+    });
+
+    // Add project and scenario information at the top
+    const headerData = [
+      { "Asset Name": "Project:", "Type": project.name },
+      { "Asset Name": "Scenario:", "Type": selectedScenario.name },
+      { "Asset Name": "", "Type": "" }, // Empty row
+    ];
+
+    const finalData = [...headerData, ...excelData];
+
+    // Create worksheet
+    const worksheet = XLSX.utils.json_to_sheet(finalData);
+    
+    // Add worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Assets Export");
+
+    // Generate filename
+    const filename = `${project.name}-${selectedScenario.name}.xlsx`;
+
+    // Save file
+    XLSX.writeFile(workbook, filename);
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Header */}
@@ -179,7 +233,19 @@ const ProjectDetails = () => {
               {project.description || "No description provided"}
             </p>
           </div>
-          {id && <AddAssetForm projectId={id} />}
+          <div className="flex gap-3">
+            {selectedScenario && assets && assets.length > 0 && (
+              <Button
+                variant="outline"
+                onClick={exportToExcel}
+                className="flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Export to Excel
+              </Button>
+            )}
+            {id && <AddAssetForm projectId={id} />}
+          </div>
         </div>
       </div>
 
