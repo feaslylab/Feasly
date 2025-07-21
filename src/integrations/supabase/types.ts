@@ -139,6 +139,30 @@ export type Database = {
           },
         ]
       }
+      feasly_modules: {
+        Row: {
+          enabled_at: string | null
+          id: string
+          is_enabled: boolean | null
+          module_name: string
+          user_id: string | null
+        }
+        Insert: {
+          enabled_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          module_name: string
+          user_id?: string | null
+        }
+        Update: {
+          enabled_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          module_name?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       financial_summaries: {
         Row: {
           computed_at: string | null
