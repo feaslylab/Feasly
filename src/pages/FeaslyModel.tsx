@@ -142,6 +142,46 @@ export default function FeaslyModel() {
   const totalFundingSources = (watchEquityContribution || 0) + (watchLoanAmount || 0);
   const fundingGap = (watchTotalFunding || 0) - totalFundingSources;
 
+  // Helper function to get scenario-aware values
+  const getScenarioValue = (baseValue: number | undefined, overrideKey: string): number => {
+    const override = scenarioOverrides[activeScenario]?.[overrideKey];
+    return override !== undefined ? override : (baseValue || 0);
+  };
+
+  // Calculate KPIs based on active scenario
+  const scenarioLandCost = getScenarioValue(watchLandCost, 'land_cost');
+  const scenarioConstructionCost = getScenarioValue(watchConstructionCost, 'construction_cost');
+  const scenarioAverageSalePrice = getScenarioValue(form.watch("average_sale_price"), 'average_sale_price');
+  const scenarioYieldEstimate = getScenarioValue(form.watch("yield_estimate"), 'yield_estimate');
+  const scenarioTargetIRR = getScenarioValue(form.watch("target_irr"), 'target_irr');
+  const scenarioLeaseRate = getScenarioValue(form.watch("expected_lease_rate"), 'expected_lease_rate');
+
+  // KPI Calculations
+  const scenarioTotalCost = scenarioLandCost + scenarioConstructionCost + (watchSoftCosts || 0) + (watchMarketingCost || 0) + contingencyValue;
+  const scenarioTotalRevenue = scenarioAverageSalePrice * (watchTotalGfa || 0);
+  const scenarioProfit = scenarioTotalRevenue - scenarioTotalCost;
+  const scenarioProfitMargin = scenarioTotalRevenue > 0 ? (scenarioProfit / scenarioTotalRevenue) * 100 : 0;
+  const scenarioROI = scenarioTotalCost > 0 ? (scenarioProfit / scenarioTotalCost) * 100 : 0;
+  const paybackPeriod = scenarioLeaseRate > 0 && watchTotalGfa ? (scenarioTotalCost / (scenarioLeaseRate * watchTotalGfa * 12)) : 0;
+  
+  // Zakat calculation
+  const zakatDue = watchZakat && watchContingencyPercent ? scenarioProfit * ((form.watch("zakat_rate_percent") || 2.5) / 100) : 0;
+
+  // Helper function for KPI color coding
+  const getKPIColor = (value: number, type: 'irr' | 'roi' | 'margin' | 'payback') => {
+    switch (type) {
+      case 'irr':
+      case 'roi':
+        return value >= 15 ? 'text-green-600' : value >= 10 ? 'text-yellow-600' : 'text-red-600';
+      case 'margin':
+        return value >= 20 ? 'text-green-600' : value >= 10 ? 'text-yellow-600' : 'text-red-600';
+      case 'payback':
+        return value <= 5 ? 'text-green-600' : value <= 10 ? 'text-yellow-600' : 'text-red-600';
+      default:
+        return 'text-foreground';
+    }
+  };
+
   const onSubmit = (data: FormData) => {
     console.log("Form submitted:", data);
     // Handle form submission here
@@ -1033,7 +1073,280 @@ export default function FeaslyModel() {
                   />
                 </div>
               </CardContent>
-            </Card>
+          </Card>
+
+          {/* 8. KPI Results Section */}
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                {t('feasly.model.scenario_results')}
+              </CardTitle>
+              <CardDescription>
+                {t('feasly.model.scenario_results_desc')} {
+                  activeScenario === 'base' ? t('feasly.model.scenario_base') :
+                  activeScenario === 'optimistic' ? t('feasly.model.scenario_optimistic') :
+                  activeScenario === 'pessimistic' ? t('feasly.model.scenario_pessimistic') :
+                  t('feasly.model.scenario_custom')
+                }
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                
+                {/* IRR Card */}
+                <Card className="animate-fade-in">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                      {t('feasly.model.kpi_irr')}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('feasly.model.kpi_irr_tooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className={cn("text-2xl font-bold", getKPIColor(scenarioTargetIRR, 'irr'))}>
+                      {scenarioTargetIRR.toFixed(1)}%
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {scenarioTargetIRR >= 15 ? t('feasly.model.excellent') : 
+                       scenarioTargetIRR >= 10 ? t('feasly.model.good') : t('feasly.model.needs_improvement')}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Payback Period Card */}
+                <Card className="animate-fade-in">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                      {t('feasly.model.kpi_payback_period')}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('feasly.model.kpi_payback_period_tooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className={cn("text-2xl font-bold", getKPIColor(paybackPeriod, 'payback'))}>
+                      {paybackPeriod > 0 ? `${paybackPeriod.toFixed(1)}` : '--'}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {paybackPeriod > 0 ? `${t('feasly.model.years')}` : t('feasly.model.insufficient_data')}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Total Revenue Card */}
+                <Card className="animate-fade-in">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                      {t('feasly.model.kpi_total_revenue')}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('feasly.model.kpi_total_revenue_tooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {watchCurrencyCode || 'AED'} {scenarioTotalRevenue.toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {scenarioAverageSalePrice.toLocaleString()} × {(watchTotalGfa || 0).toLocaleString()} sqm
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Total Cost Card */}
+                <Card className="animate-fade-in">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                      {t('feasly.model.kpi_total_cost')}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('feasly.model.kpi_total_cost_tooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="text-2xl font-bold text-red-600">
+                      {watchCurrencyCode || 'AED'} {scenarioTotalCost.toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {t('feasly.model.includes_contingency')}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Profit Margin Card */}
+                <Card className="animate-fade-in">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                      {t('feasly.model.kpi_profit_margin')}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('feasly.model.kpi_profit_margin_tooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className={cn("text-2xl font-bold", getKPIColor(scenarioProfitMargin, 'margin'))}>
+                      {scenarioProfitMargin.toFixed(1)}%
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {scenarioProfitMargin >= 20 ? t('feasly.model.excellent') : 
+                       scenarioProfitMargin >= 10 ? t('feasly.model.good') : t('feasly.model.needs_improvement')}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* ROI Card */}
+                <Card className="animate-fade-in">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                      {t('feasly.model.kpi_roi')}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('feasly.model.kpi_roi_tooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className={cn("text-2xl font-bold", getKPIColor(scenarioROI, 'roi'))}>
+                      {scenarioROI.toFixed(1)}%
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {scenarioROI >= 15 ? t('feasly.model.excellent') : 
+                       scenarioROI >= 10 ? t('feasly.model.good') : t('feasly.model.needs_improvement')}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Net Profit Card */}
+                <Card className="animate-fade-in">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm font-medium flex items-center gap-2">
+                      {t('feasly.model.kpi_net_profit')}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('feasly.model.kpi_net_profit_tooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className={cn("text-2xl font-bold", scenarioProfit >= 0 ? "text-green-600" : "text-red-600")}>
+                      {watchCurrencyCode || 'AED'} {scenarioProfit.toLocaleString()}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {scenarioProfit >= 0 ? t('feasly.model.profitable') : t('feasly.model.loss')}
+                    </p>
+                  </CardContent>
+                </Card>
+
+                {/* Zakat Card (only if enabled) */}
+                {watchZakat && zakatDue > 0 && (
+                  <Card className="animate-fade-in">
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-sm font-medium flex items-center gap-2">
+                        {t('feasly.model.kpi_zakat_payable')}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Info className="h-4 w-4 text-muted-foreground" />
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t('feasly.model.kpi_zakat_payable_tooltip')}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="text-2xl font-bold text-purple-600">
+                        {watchCurrencyCode || 'AED'} {zakatDue.toLocaleString()}
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {(form.watch("zakat_rate_percent") || 2.5)}% {t('feasly.model.of_profit')}
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+
+              </div>
+
+              {/* Scenario Comparison Summary */}
+              {(scenarioTotalRevenue > 0 || scenarioTotalCost > 0) && (
+                <div className="mt-6 p-4 bg-muted rounded-lg animate-fade-in">
+                  <h4 className="font-medium mb-3">{t('feasly.model.financial_summary')}</h4>
+                  <div className="grid gap-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{t('feasly.model.total_investment')}:</span>
+                      <span className="font-medium">{watchCurrencyCode || 'AED'} {scenarioTotalCost.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">{t('feasly.model.expected_revenue')}:</span>
+                      <span className="font-medium">{watchCurrencyCode || 'AED'} {scenarioTotalRevenue.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between border-t pt-2">
+                      <span className="text-muted-foreground">{t('feasly.model.net_profit')}:</span>
+                      <span className={cn("font-bold", scenarioProfit >= 0 ? "text-green-600" : "text-red-600")}>
+                        {watchCurrencyCode || 'AED'} {scenarioProfit.toLocaleString()}
+                      </span>
+                    </div>
+                    {watchZakat && zakatDue > 0 && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">{t('feasly.model.zakat_due')}:</span>
+                        <span className="font-medium text-purple-600">{watchCurrencyCode || 'AED'} {zakatDue.toLocaleString()}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           </div>
 
