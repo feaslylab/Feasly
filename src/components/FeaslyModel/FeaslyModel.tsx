@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
@@ -30,7 +31,8 @@ import { CashflowVarianceChart } from "./CashflowVarianceChart";
 import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
 
 export default function FeaslyModel() {
-  const { t, isRTL } = useLanguage();
+  const { isRTL } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const { toast } = useToast();
   const [activeScenario, setActiveScenario] = useState<ScenarioType>("base");
   

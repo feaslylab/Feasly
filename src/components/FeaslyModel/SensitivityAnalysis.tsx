@@ -1,5 +1,5 @@
 import { useFormContext } from "react-hook-form";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +7,7 @@ import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 import type { FeaslyModelFormData, ScenarioType } from "./types";
 
 export function SensitivityAnalysis() {
-  const { t } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const form = useFormContext<FeaslyModelFormData>();
 
   // Watch base values

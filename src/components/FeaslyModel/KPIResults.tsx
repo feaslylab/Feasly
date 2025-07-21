@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useFormContext } from "react-hook-form";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -9,7 +9,7 @@ import { formatCurrency, formatCurrencyCompact } from "@/lib/currencyUtils";
 import type { FeaslyModelFormData, KPIResults } from "./types";
 
 export function KPIResults() {
-  const { t } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const form = useFormContext<FeaslyModelFormData>();
 
   // Watch form values for real-time calculations

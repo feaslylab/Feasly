@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -10,7 +10,7 @@ interface PreviewToggleProps {
 }
 
 export function PreviewToggle({ children }: PreviewToggleProps) {
-  const { t } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const [previewMode, setPreviewMode] = useState(false);
 
   return (

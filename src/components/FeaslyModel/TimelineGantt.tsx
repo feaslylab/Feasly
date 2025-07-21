@@ -1,12 +1,12 @@
 import { useFormContext } from "react-hook-form";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock } from "lucide-react";
 import { format, differenceInDays, isValid } from "date-fns";
 import type { FeaslyModelFormData } from "./types";
 
 export function TimelineGantt() {
-  const { t } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const form = useFormContext<FeaslyModelFormData>();
 
   // Watch timeline dates

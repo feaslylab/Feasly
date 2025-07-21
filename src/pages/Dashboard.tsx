@@ -21,6 +21,7 @@ import { DashboardExport } from "@/components/dashboard/DashboardExport";
 import { TeamActivityLog } from "@/components/dashboard/TeamActivityLog";
 import { calculateFinancialMetrics, FinancialMetrics } from "@/lib/financialCalculations";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 
 interface DashboardStats {
@@ -77,7 +78,8 @@ interface ProjectInsights {
 }
 
 export default function Dashboard() {
-  const { t, isRTL } = useLanguage();
+  const { isRTL } = useLanguage();
+  const { t } = useTranslation('common');
   const [stats, setStats] = useState<DashboardStats>({
     totalProjects: 0,
     totalAssets: 0,

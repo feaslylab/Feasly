@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +13,7 @@ import { TrendingUp, Edit, Info } from "lucide-react";
 import type { FeaslyModelFormData, ScenarioType, ScenarioOverrides } from "./types";
 
 export function ScenariosSection() {
-  const { t } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const form = useFormContext<FeaslyModelFormData>();
   const [activeScenario, setActiveScenario] = useState<ScenarioType>("base");
   const [editingScenario, setEditingScenario] = useState<ScenarioType | null>(null);

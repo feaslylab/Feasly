@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,7 @@ export function VersionSelector({
   onVersionSelect,
   onCalculateWithVersion,
 }: VersionSelectorProps) {
-  const { t } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newVersionLabel, setNewVersionLabel] = useState("");
 

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -35,7 +36,8 @@ const getModuleTitle = (pathname: string, t: (key: string) => string) => {
 
 export const Sidebar = () => {
   const { signOut, user } = useAuth();
-  const { t, isRTL } = useLanguage();
+  const { isRTL } = useLanguage();
+  const { t } = useTranslation('common');
   const location = useLocation();
   
   const currentModuleTitle = getModuleTitle(location.pathname, t);

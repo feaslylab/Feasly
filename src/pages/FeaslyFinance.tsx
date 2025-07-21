@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -37,7 +38,8 @@ const financeSchema = z.object({
 type FinanceFormData = z.infer<typeof financeSchema>;
 
 export default function FeaslyFinance() {
-  const { t, isRTL } = useLanguage();
+  const { isRTL } = useLanguage();
+  const { t } = useTranslation('feasly.finance');
   const { toast } = useToast();
   
   const form = useForm<FinanceFormData>({

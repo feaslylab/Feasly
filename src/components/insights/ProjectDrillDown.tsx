@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 
 interface Project {
   id: string;
@@ -45,7 +46,8 @@ export const ProjectDrillDown = ({
   formatCurrency, 
   allProjects 
 }: ProjectDrillDownProps) => {
-  const { t, isRTL } = useLanguage();
+  const { isRTL } = useLanguage();
+  const { t } = useTranslation('feasly.insights');
 
   if (!project) return null;
 

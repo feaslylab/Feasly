@@ -1,4 +1,5 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -43,7 +44,8 @@ const phaseSchema = z.object({
 type PhaseFormData = z.infer<typeof phaseSchema>;
 
 export default function FeaslyFlow() {
-  const { t, isRTL } = useLanguage();
+  const { isRTL } = useLanguage();
+  const { t } = useTranslation('feasly.flow');
   const { toast } = useToast();
   const [phases, setPhases] = useState<Phase[]>([]);
   const [editingPhase, setEditingPhase] = useState<string | null>(null);

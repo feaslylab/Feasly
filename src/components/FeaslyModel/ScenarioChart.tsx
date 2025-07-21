@@ -1,12 +1,12 @@
 import { useFormContext } from "react-hook-form";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { BarChart3 } from "lucide-react";
 import type { FeaslyModelFormData, ScenarioType } from "./types";
 
 export function ScenarioChart() {
-  const { t } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const form = useFormContext<FeaslyModelFormData>();
 
   // Watch key values for calculations

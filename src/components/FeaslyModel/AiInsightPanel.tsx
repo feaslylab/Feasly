@@ -1,5 +1,5 @@
 import { useFormContext } from "react-hook-form";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Brain, AlertTriangle, TrendingDown, Calculator, Ruler, Percent } from "lucide-react";
@@ -13,7 +13,7 @@ interface Insight {
 }
 
 export function AiInsightPanel() {
-  const { t } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const form = useFormContext<FeaslyModelFormData>();
 
   // Watch key fields for real-time insights

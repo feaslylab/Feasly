@@ -1,5 +1,5 @@
 import { useFormContext } from "react-hook-form";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FileText, FileSpreadsheet } from "lucide-react";
@@ -10,7 +10,7 @@ import * as XLSX from "xlsx";
 import type { FeaslyModelFormData } from "./types";
 
 export function ExportPanel() {
-  const { t } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const { toast } = useToast();
   const form = useFormContext<FeaslyModelFormData>();
 

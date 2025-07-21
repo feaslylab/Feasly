@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -22,7 +22,7 @@ interface CommentingPanelProps {
 }
 
 export function CommentingPanel({ projectId }: CommentingPanelProps) {
-  const { t } = useLanguage();
+  const { t } = useTranslation('feasly.model');
   const { toast } = useToast();
   
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});

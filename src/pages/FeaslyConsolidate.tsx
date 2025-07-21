@@ -1,10 +1,12 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import ConsolidatedPortfolioTable from "@/components/FeaslyModel/ConsolidatedPortfolioTable";
 import { BarChart3 } from "lucide-react";
 
 export default function FeaslyConsolidate() {
-  const { t, isRTL } = useLanguage();
+  const { isRTL } = useLanguage();
+  const { t } = useTranslation('feasly.consolidate');
 
   return (
     <div className={cn("px-4 py-6 md:px-8 lg:px-12 max-w-screen-xl mx-auto", isRTL && "rtl")} dir={isRTL ? "rtl" : "ltr"}>

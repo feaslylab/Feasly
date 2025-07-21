@@ -7,9 +7,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Globe, Languages } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslation } from "react-i18next";
 
 export const LanguageSwitcher = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation('common');
 
   return (
     <DropdownMenu>
