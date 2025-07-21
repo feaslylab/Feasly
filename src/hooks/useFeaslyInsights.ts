@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -65,7 +65,7 @@ export const useFeaslyInsights = (projectId?: string) => {
         .select('id')
         .eq('project_id', projectId)
         .eq('scenario', scenario)
-        .single();
+        .maybeSingle();
 
       const payload = {
         project_id: projectId,
@@ -114,12 +114,19 @@ export const useFeaslyInsights = (projectId?: string) => {
     }
   });
 
-  // Generate insights based on form data
-  const generateInsights = useCallback((formData: any, scenarios: string[] = ['Base', 'Optimistic', 'Pessimistic']): Record<string, InsightItem[]> => {
+  // Generate insights based on form data - memoized properly
+  const generateInsights = useCallback((formData: any): Record<string, InsightItem[]> => {
     const insights: Record<string, InsightItem[]> = {};
+    const scenarios = ['Base', 'Optimistic', 'Pessimistic'];
 
     scenarios.forEach(scenario => {
       const scenarioInsights: InsightItem[] = [];
+
+      // Only generate insights if we have meaningful data
+      if (!formData || Object.keys(formData).length === 0) {
+        insights[scenario] = scenarioInsights;
+        return;
+      }
 
       // Example insight generation logic
       const totalRevenue = formData.assets?.reduce((sum: number, asset: any) => 
@@ -158,7 +165,7 @@ export const useFeaslyInsights = (projectId?: string) => {
           description: `Profit margin of ${profitMargin.toFixed(1)}% may indicate tight cost control needed`,
           value: `${profitMargin.toFixed(1)}%`
         });
-      } else if (profitMargin <= 0) {
+      } else if (profitMargin <= 0 && totalRevenue > 0) {
         scenarioInsights.push({
           id: `margin-${scenario}`,
           type: 'risk',
@@ -184,7 +191,7 @@ export const useFeaslyInsights = (projectId?: string) => {
     });
 
     return insights;
-  }, []);
+  }, []); // Empty dependency array is correct here - function is pure
 
   const saveInsights = saveInsightsMutation.mutate;
   const isSaving = saveInsightsMutation.isPending;

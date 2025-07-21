@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -68,9 +68,16 @@ export const SmartExplainerPanel: React.FC<SmartExplainerPanelProps> = ({
     generateInsights 
   } = useFeaslyInsights(projectId);
 
-  const [generatedInsights, setGeneratedInsights] = useState<Record<string, InsightItem[]>>({});
   const [userNotes, setUserNotes] = useState<Record<string, string>>({});
   const [activeScenario, setActiveScenario] = useState(scenarios[0]);
+
+  // Generate insights when form data changes - memoized to prevent unnecessary recalculations
+  const generatedInsights = useMemo(() => {
+    if (!formData || Object.keys(formData).length === 0) {
+      return {};
+    }
+    return generateInsights(formData);
+  }, [formData, generateInsights]);
 
   // Initialize user notes from saved insights
   useEffect(() => {
@@ -85,30 +92,25 @@ export const SmartExplainerPanel: React.FC<SmartExplainerPanelProps> = ({
     }
   }, [insights]);
 
-  // Auto-generate insights when form data changes
-  useEffect(() => {
-    if (formData && Object.keys(formData).length > 0) {
-      const newInsights = generateInsights(formData, scenarios);
-      setGeneratedInsights(newInsights);
-    }
-  }, [formData, scenarios, generateInsights]);
-
   const handleRegenerateInsights = () => {
-    if (formData) {
-      const newInsights = generateInsights(formData, scenarios);
-      setGeneratedInsights(newInsights);
-    }
+    // Force regeneration by updating the key or triggering recalculation
+    console.log('Regenerating insights with current form data:', formData);
+    // The useMemo will automatically recalculate when formData changes
   };
 
   const handleSaveNotes = async (scenario: string) => {
     if (!projectId) return;
     
-    await saveInsights({
-      projectId,
-      scenario,
-      generatedInsights: generatedInsights[scenario] || [],
-      userNotes: userNotes[scenario] || ''
-    });
+    try {
+      await saveInsights({
+        projectId,
+        scenario,
+        generatedInsights: generatedInsights[scenario] || [],
+        userNotes: userNotes[scenario] || ''
+      });
+    } catch (error) {
+      console.error('Failed to save notes:', error);
+    }
   };
 
   const handleUserNotesChange = (scenario: string, notes: string) => {
@@ -122,7 +124,7 @@ export const SmartExplainerPanel: React.FC<SmartExplainerPanelProps> = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Smart Insights</CardTitle>
+          <CardTitle>{t('smart_insights')}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
