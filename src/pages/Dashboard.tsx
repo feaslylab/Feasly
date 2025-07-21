@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, TrendingUp, Building, DollarSign, BarChart3, FolderOpen } from "lucide-react";
+import { Plus, TrendingUp, Building, DollarSign, BarChart3, FolderOpen, Upload } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
+import { ImportFromExcel } from "@/components/import/ImportFromExcel";
 
 interface DashboardStats {
   totalProjects: number;
@@ -150,15 +151,25 @@ export default function Dashboard() {
             Welcome back! Here's an overview of your projects and portfolio.
           </p>
         </div>
-        <Button 
-          asChild
-          className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
-        >
-          <NavLink to="/projects/new">
-            <Plus className="w-4 h-4 mr-2" />
-            New Project
-          </NavLink>
-        </Button>
+        <div className="flex gap-3">
+          <ImportFromExcel 
+            trigger={
+              <Button variant="outline" className="flex items-center gap-2">
+                <Upload className="w-4 h-4" />
+                Import from Excel
+              </Button>
+            }
+          />
+          <Button 
+            asChild
+            className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
+          >
+            <NavLink to="/projects/new">
+              <Plus className="w-4 h-4 mr-2" />
+              New Project
+            </NavLink>
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}
