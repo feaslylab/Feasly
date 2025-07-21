@@ -15,7 +15,7 @@ import ProjectView from "./pages/ProjectView";
 import ProjectPublic from "./pages/ProjectPublic";
 import DemoProject from "./pages/DemoProject";
 import FeaslyModel from "./pages/FeaslyModel";
-import FeaslyFlowTest from "./pages/FeaslyFlowTest";
+import FeaslyFlow from "./pages/FeaslyFlow";
 import FeaslyFinance from "./pages/FeaslyFinance";
 import FeaslyConsolidate from "./pages/FeaslyConsolidate";
 import FeaslyInsights from "./pages/FeaslyInsights";
@@ -55,7 +55,7 @@ const AppRoutes = () => {
       </Route>
       <Route path="/model" element={<Navigate to="/feasly-model" replace />} />
       <Route path="/feasly-flow" element={<AppLayout />}>
-        <Route index element={<FeaslyFlowTest />} />
+        <Route index element={<FeaslyFlow />} />
       </Route>
       <Route path="/flow" element={<Navigate to="/feasly-flow" replace />} />
       <Route path="/feasly-finance" element={<AppLayout />}>
