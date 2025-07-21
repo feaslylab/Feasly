@@ -9,11 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CalendarIcon, Building2, Calendar as CalendarIconLucide, DollarSign, TrendingUp, MapPin, Clock, Info } from "lucide-react";
+import { CalendarIcon, Building2, Calendar as CalendarIconLucide, DollarSign, TrendingUp, MapPin, Clock, Info, Layers } from "lucide-react";
 import { format, addMonths } from "date-fns";
 import { useState } from "react";
 
@@ -81,6 +82,15 @@ type FormData = z.infer<typeof formSchema>;
 export default function FeaslyModel() {
   const { t, isRTL } = useLanguage();
   const [phases, setPhases] = useState<Array<{ phase_name: string; phase_start: Date | null; phase_end: Date | null; gfa_percent: number }>>([]);
+  
+  // Scenario state management
+  const [activeScenario, setActiveScenario] = useState<string>("base");
+  const [scenarioOverrides, setScenarioOverrides] = useState<Record<string, Record<string, number>>>({
+    base: {},
+    optimistic: {},
+    pessimistic: {},
+    custom: {}
+  });
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -1026,6 +1036,315 @@ export default function FeaslyModel() {
             </Card>
 
           </div>
+
+          {/* 7. Scenario Toggle Section */}
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Layers className="h-5 w-5" />
+                {t('feasly.model.scenarios')}
+              </CardTitle>
+              <CardDescription>{t('feasly.model.scenarios_desc')}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs value={activeScenario} onValueChange={setActiveScenario} className="w-full">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger 
+                    value="base" 
+                    className="data-[state=active]:bg-blue-500 data-[state=active]:text-white"
+                  >
+                    {t('feasly.model.scenario_base')}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="optimistic"
+                    className="data-[state=active]:bg-green-500 data-[state=active]:text-white"
+                  >
+                    {t('feasly.model.scenario_optimistic')}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="pessimistic"
+                    className="data-[state=active]:bg-red-500 data-[state=active]:text-white"
+                  >
+                    {t('feasly.model.scenario_pessimistic')}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="custom"
+                    className="data-[state=active]:bg-purple-500 data-[state=active]:text-white"
+                  >
+                    {t('feasly.model.scenario_custom')}
+                  </TabsTrigger>
+                </TabsList>
+
+                <div className="mt-6">
+                  <div className="mb-4 p-3 bg-muted rounded-lg">
+                    <p className="text-sm font-medium">
+                      {t('feasly.model.editing_scenario')}: {
+                        activeScenario === 'base' ? t('feasly.model.scenario_base') :
+                        activeScenario === 'optimistic' ? t('feasly.model.scenario_optimistic') :
+                        activeScenario === 'pessimistic' ? t('feasly.model.scenario_pessimistic') :
+                        t('feasly.model.scenario_custom')
+                      }
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {t('feasly.model.scenario_override_note')}
+                    </p>
+                  </div>
+
+                  <TabsContent value={activeScenario} className="space-y-6">
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                      
+                      {/* Construction Cost Override */}
+                      <div className="space-y-2">
+                        <FormLabel className="flex items-center gap-2">
+                          {t('feasly.model.override_construction_cost')}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="h-4 w-4 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{t('feasly.model.override_construction_cost_tooltip')}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </FormLabel>
+                        <Input
+                          type="number"
+                          placeholder={`${t('feasly.model.base_value')}: ${watchCurrencyCode || 'AED'} ${(watchConstructionCost || 0).toLocaleString()}`}
+                          value={scenarioOverrides[activeScenario]?.construction_cost || ''}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            setScenarioOverrides(prev => ({
+                              ...prev,
+                              [activeScenario]: {
+                                ...prev[activeScenario],
+                                construction_cost: isNaN(value) ? undefined : value
+                              }
+                            }));
+                          }}
+                        />
+                        {scenarioOverrides[activeScenario]?.construction_cost && (
+                          <div className="text-xs text-muted-foreground">
+                            {t('feasly.model.override_active')}: {watchCurrencyCode || 'AED'} {scenarioOverrides[activeScenario].construction_cost.toLocaleString()}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Land Cost Override */}
+                      <div className="space-y-2">
+                        <FormLabel className="flex items-center gap-2">
+                          {t('feasly.model.override_land_cost')}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="h-4 w-4 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{t('feasly.model.override_land_cost_tooltip')}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </FormLabel>
+                        <Input
+                          type="number"
+                          placeholder={`${t('feasly.model.base_value')}: ${watchCurrencyCode || 'AED'} ${(watchLandCost || 0).toLocaleString()}`}
+                          value={scenarioOverrides[activeScenario]?.land_cost || ''}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            setScenarioOverrides(prev => ({
+                              ...prev,
+                              [activeScenario]: {
+                                ...prev[activeScenario],
+                                land_cost: isNaN(value) ? undefined : value
+                              }
+                            }));
+                          }}
+                        />
+                        {scenarioOverrides[activeScenario]?.land_cost && (
+                          <div className="text-xs text-muted-foreground">
+                            {t('feasly.model.override_active')}: {watchCurrencyCode || 'AED'} {scenarioOverrides[activeScenario].land_cost.toLocaleString()}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Revenue Override (Average Sale Price) */}
+                      <div className="space-y-2">
+                        <FormLabel className="flex items-center gap-2">
+                          {t('feasly.model.override_revenue')}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="h-4 w-4 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{t('feasly.model.override_revenue_tooltip')}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </FormLabel>
+                        <Input
+                          type="number"
+                          placeholder={`${t('feasly.model.base_value')}: ${watchCurrencyCode || 'AED'} ${(form.watch("average_sale_price") || 0).toLocaleString()}`}
+                          value={scenarioOverrides[activeScenario]?.average_sale_price || ''}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            setScenarioOverrides(prev => ({
+                              ...prev,
+                              [activeScenario]: {
+                                ...prev[activeScenario],
+                                average_sale_price: isNaN(value) ? undefined : value
+                              }
+                            }));
+                          }}
+                        />
+                        {scenarioOverrides[activeScenario]?.average_sale_price && (
+                          <div className="text-xs text-muted-foreground">
+                            {t('feasly.model.override_active')}: {watchCurrencyCode || 'AED'} {scenarioOverrides[activeScenario].average_sale_price.toLocaleString()}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Yield Estimate Override */}
+                      <div className="space-y-2">
+                        <FormLabel className="flex items-center gap-2">
+                          {t('feasly.model.override_yield_estimate')}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="h-4 w-4 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{t('feasly.model.override_yield_estimate_tooltip')}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </FormLabel>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          placeholder={`${t('feasly.model.base_value')}: ${(form.watch("yield_estimate") || 0)}%`}
+                          value={scenarioOverrides[activeScenario]?.yield_estimate || ''}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            setScenarioOverrides(prev => ({
+                              ...prev,
+                              [activeScenario]: {
+                                ...prev[activeScenario],
+                                yield_estimate: isNaN(value) ? undefined : value
+                              }
+                            }));
+                          }}
+                        />
+                        {scenarioOverrides[activeScenario]?.yield_estimate && (
+                          <div className="text-xs text-muted-foreground">
+                            {t('feasly.model.override_active')}: {scenarioOverrides[activeScenario].yield_estimate}%
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Target IRR Override */}
+                      <div className="space-y-2">
+                        <FormLabel className="flex items-center gap-2">
+                          {t('feasly.model.override_target_irr')}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="h-4 w-4 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{t('feasly.model.override_target_irr_tooltip')}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </FormLabel>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          placeholder={`${t('feasly.model.base_value')}: ${(form.watch("target_irr") || 0)}%`}
+                          value={scenarioOverrides[activeScenario]?.target_irr || ''}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            setScenarioOverrides(prev => ({
+                              ...prev,
+                              [activeScenario]: {
+                                ...prev[activeScenario],
+                                target_irr: isNaN(value) ? undefined : value
+                              }
+                            }));
+                          }}
+                        />
+                        {scenarioOverrides[activeScenario]?.target_irr && (
+                          <div className="text-xs text-muted-foreground">
+                            {t('feasly.model.override_active')}: {scenarioOverrides[activeScenario].target_irr}%
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Expected Lease Rate Override */}
+                      <div className="space-y-2">
+                        <FormLabel className="flex items-center gap-2">
+                          {t('feasly.model.override_lease_rate')}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="h-4 w-4 text-muted-foreground" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{t('feasly.model.override_lease_rate_tooltip')}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </FormLabel>
+                        <Input
+                          type="number"
+                          placeholder={`${t('feasly.model.base_value')}: ${watchCurrencyCode || 'AED'} ${(form.watch("expected_lease_rate") || 0).toLocaleString()}`}
+                          value={scenarioOverrides[activeScenario]?.expected_lease_rate || ''}
+                          onChange={(e) => {
+                            const value = parseFloat(e.target.value);
+                            setScenarioOverrides(prev => ({
+                              ...prev,
+                              [activeScenario]: {
+                                ...prev[activeScenario],
+                                expected_lease_rate: isNaN(value) ? undefined : value
+                              }
+                            }));
+                          }}
+                        />
+                        {scenarioOverrides[activeScenario]?.expected_lease_rate && (
+                          <div className="text-xs text-muted-foreground">
+                            {t('feasly.model.override_active')}: {watchCurrencyCode || 'AED'} {scenarioOverrides[activeScenario].expected_lease_rate.toLocaleString()}
+                          </div>
+                        )}
+                      </div>
+
+                    </div>
+
+                    {/* Scenario Summary */}
+                    {Object.keys(scenarioOverrides[activeScenario] || {}).length > 0 && (
+                      <div className="mt-6 p-4 bg-muted rounded-lg">
+                        <h4 className="font-medium mb-2">{t('feasly.model.scenario_summary')}</h4>
+                        <div className="space-y-1 text-sm">
+                          {Object.entries(scenarioOverrides[activeScenario] || {}).map(([key, value]) => {
+                            if (value !== undefined) {
+                              const isPercentage = key.includes('yield') || key.includes('irr');
+                              const displayValue = isPercentage ? `${value}%` : `${watchCurrencyCode || 'AED'} ${value.toLocaleString()}`;
+                              return (
+                                <p key={key} className="text-muted-foreground">
+                                  • {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}: {displayValue}
+                                </p>
+                              );
+                            }
+                            return null;
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                  </TabsContent>
+                </div>
+              </Tabs>
+            </CardContent>
+          </Card>
 
           <div className="flex justify-end space-x-4 pt-6">
             <Button type="button" variant="outline">{t('feasly.model.save_draft')}</Button>
