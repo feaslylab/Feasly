@@ -27,6 +27,10 @@
   "model": "Feasly Model",
   "flow": "Feasly Flow",
   "finance": "Feasly Finance",
-  "consolidate": "Feasly Consolidate", 
-  "insights": "Feasly Insights"
+  "consolidate": "Feasly Consolidate",
+  "insights": "Feasly Insights",
+  "settings": {
+    "theme": "Theme",
+    "language": "Language"
+  }
 }

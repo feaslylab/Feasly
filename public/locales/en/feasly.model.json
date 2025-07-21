@@ -107,13 +107,9 @@
     "saving": "Saving project...",
     "loading": "Loading project data...",
     "exporting": "Generating export..."
-  }
-  "title": "Feasly Model",
-  "description": "Development feasibility engine for planning, input, and analysis.",
+  },
   "inputs": "Feasly Model Inputs",
-  "scenarios": "Feasly Model Scenarios",
   "scenarios_desc": "Compare different scenarios and assumptions",
-  "kpis": "Feasly Model KPIs",
   "flow_data_loaded": "Flow Data Loaded",
   "flow_data_loaded_desc": "Phase data from Feasly Flow has been automatically applied.",
   "flow_data_available": "Flow Data Available",
@@ -125,7 +121,6 @@
   "project_metadata_desc": "Basic project information and location details",
   "project_name": "Project Name",
   "project_name_placeholder": "Enter project name",
-  "description": "Description",
   "description_placeholder": "Enter project description",
   "sponsor_name": "Sponsor Name",
   "land_owner": "Land Owner",
@@ -237,5 +232,6 @@
   "save_draft": "Save Draft",
   "generate_model": "Generate Model",
   "export_data": "Export Data",
-  "reset_form": "Reset Form"
+  "reset_form": "Reset Form",
+  "preview_toggle": "Preview Mode"
 }
