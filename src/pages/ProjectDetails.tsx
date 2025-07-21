@@ -2,9 +2,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download } from "lucide-react";
+import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download, FileDown } from "lucide-react";
 import * as XLSX from "xlsx";
 import { calculateFinancialMetrics } from "@/lib/financialCalculations";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -260,6 +262,131 @@ const ProjectDetails = () => {
     XLSX.writeFile(workbook, filename);
   };
 
+  const downloadPDFReport = async () => {
+    if (!project || !selectedScenario || !assets) return;
+
+    // Fetch scenario overrides for the selected scenario
+    const { data: overrides } = await supabase
+      .from("scenario_overrides")
+      .select("*")
+      .eq("scenario_id", selectedScenarioId);
+
+    // Calculate financial metrics using the same logic as summary cards
+    const metrics = calculateFinancialMetrics(assets, overrides || []);
+
+    // Create PDF document
+    const doc = new jsPDF();
+    
+    // Set font
+    doc.setFont("helvetica");
+    
+    // Title
+    doc.setFontSize(20);
+    doc.text("Project Financial Report", 20, 30);
+    
+    // Project and Scenario Info
+    doc.setFontSize(14);
+    doc.text(`Project: ${project.name}`, 20, 50);
+    doc.text(`Scenario: ${selectedScenario.name}`, 20, 65);
+    
+    // Financial Summary Section
+    doc.setFontSize(16);
+    doc.text("Financial Summary", 20, 90);
+    
+    const formatCurrency = (amount: number) => {
+      return new Intl.NumberFormat('en-AE', {
+        style: 'currency',
+        currency: 'AED',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(amount);
+    };
+
+    const formatPercentage = (value: number) => {
+      return `${value.toFixed(1)}%`;
+    };
+
+    const formatYears = (years: number) => {
+      if (years < 0) return "No payback";
+      if (years > 10) return ">10 years";
+      return `${years.toFixed(1)} years`;
+    };
+
+    const projectDurationMonths = project.start_date && project.end_date
+      ? Math.ceil((new Date(project.end_date).getTime() - new Date(project.start_date).getTime()) / (1000 * 60 * 60 * 24 * 30))
+      : 0;
+
+    // Financial Summary Table
+    const summaryData = [
+      ["Total Construction Cost", formatCurrency(metrics.totalConstructionCost)],
+      ["Total Annual Revenue", formatCurrency(metrics.totalRevenue)],
+      ["Total Annual Operating Cost", formatCurrency(metrics.totalOperatingCost)],
+      ["Profit Margin", formatPercentage(metrics.profitMargin)],
+      ["IRR (10-year)", formatPercentage(metrics.irr)],
+      ["Payback Period", formatYears(metrics.paybackPeriod)],
+      ["Number of Assets", assets.length.toString()],
+      ["Project Duration", projectDurationMonths > 0 ? `${projectDurationMonths} months` : "Not set"],
+    ];
+
+    autoTable(doc, {
+      startY: 100,
+      head: [["Metric", "Value"]],
+      body: summaryData,
+      theme: "grid",
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [66, 139, 202] },
+      margin: { left: 20, right: 20 },
+    });
+
+    // Assets Section
+    const finalY = (doc as any).lastAutoTable.finalY || 100;
+    doc.setFontSize(16);
+    doc.text("Assets Details", 20, finalY + 30);
+
+    // Prepare assets data with scenario overrides
+    const assetsTableData = assets.map(asset => {
+      const getOverrideValue = (fieldName: string) => {
+        const override = overrides?.find(o => o.asset_id === asset.id && o.field_name === fieldName);
+        return override ? override.override_value : null;
+      };
+
+      return [
+        asset.name,
+        asset.type,
+        (getOverrideValue('gfa_sqm') || asset.gfa_sqm).toLocaleString(),
+        formatCurrency(getOverrideValue('construction_cost_aed') || asset.construction_cost_aed),
+        formatCurrency(getOverrideValue('annual_revenue_potential_aed') || asset.annual_revenue_potential_aed),
+        formatCurrency(getOverrideValue('annual_operating_cost_aed') || asset.annual_operating_cost_aed),
+        `${getOverrideValue('occupancy_rate_percent') || asset.occupancy_rate_percent}%`,
+        `${getOverrideValue('cap_rate_percent') || asset.cap_rate_percent}%`,
+      ];
+    });
+
+    autoTable(doc, {
+      startY: finalY + 40,
+      head: [["Asset Name", "Type", "GFA (sqm)", "Construction Cost", "Revenue Potential", "Operating Cost", "Occupancy %", "Cap Rate %"]],
+      body: assetsTableData,
+      theme: "grid",
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [66, 139, 202] },
+      margin: { left: 20, right: 20 },
+      columnStyles: {
+        0: { cellWidth: 25 },
+        1: { cellWidth: 20 },
+        2: { cellWidth: 15 },
+        3: { cellWidth: 25 },
+        4: { cellWidth: 25 },
+        5: { cellWidth: 25 },
+        6: { cellWidth: 15 },
+        7: { cellWidth: 15 },
+      },
+    });
+
+    // Generate filename and save
+    const filename = `${project.name}-${selectedScenario.name}.pdf`;
+    doc.save(filename);
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Header */}
@@ -282,14 +409,24 @@ const ProjectDetails = () => {
           </div>
           <div className="flex gap-3">
             {selectedScenario && assets && assets.length > 0 && (
-              <Button
-                variant="outline"
-                onClick={exportToExcel}
-                className="flex items-center gap-2"
-              >
-                <Download className="w-4 h-4" />
-                Export to Excel
-              </Button>
+              <>
+                <Button
+                  variant="outline"
+                  onClick={downloadPDFReport}
+                  className="flex items-center gap-2"
+                >
+                  <FileDown className="w-4 h-4" />
+                  Download PDF
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={exportToExcel}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  Export to Excel
+                </Button>
+              </>
             )}
             {id && <AddAssetForm projectId={id} />}
           </div>
