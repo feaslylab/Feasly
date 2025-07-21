@@ -25,11 +25,11 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className={cn("flex h-full flex-col bg-card border-border", isRTL ? "border-l" : "border-r")}>
-      {/* Top Section */}
-      <div className="flex-1 flex flex-col min-h-0">
+    <div className={cn("h-screen flex flex-col bg-card border-border", isRTL ? "border-l" : "border-r")}>
+      {/* Top Section - Fixed */}
+      <div className="flex-shrink-0">
         {/* Logo */}
-        <div className="flex h-16 items-center gap-3 px-6 border-b border-border flex-shrink-0">
+        <div className="flex h-16 items-center gap-3 px-6 border-b border-border">
           <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
             <Building2 className="w-5 h-5 text-primary-foreground" />
           </div>
@@ -44,7 +44,7 @@ export const Sidebar = () => {
         </div>
 
         {/* Quick Action */}
-        <div className="p-4 flex-shrink-0">
+        <div className="p-4">
           <Button 
             asChild
             className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
@@ -55,9 +55,11 @@ export const Sidebar = () => {
             </NavLink>
           </Button>
         </div>
+      </div>
 
-        {/* Navigation - Scrollable */}
-        <nav className="flex-1 px-4 space-y-1 overflow-y-auto min-h-0">
+      {/* Middle Section - Scrollable Navigation */}
+      <div className="flex-1 overflow-hidden">
+        <nav className="h-full px-4 py-2 space-y-1 overflow-y-auto">
           {navigation.map((item) => (
             <NavLink
               key={item.nameKey}
