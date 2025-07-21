@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, 
   LineChart, Line, ScatterChart, Scatter, Cell, Tooltip as RechartsTooltip, Legend
@@ -15,10 +15,17 @@ import {
 import { 
   Building2, DollarSign, TrendingUp, TrendingDown, AlertTriangle, 
   Target, Users, PieChart, FileDown, Share2, CalendarIcon,
-  Lightbulb, Shield, Search, BarChart3
+  Lightbulb, Shield, Search, BarChart3, Map
 } from "lucide-react";
 import { format, subMonths, isWithinInterval } from "date-fns";
 import type { DateRange } from "react-day-picker";
+
+// Import new components
+import { ExportEngine } from "@/components/insights/ExportEngine";
+import { ProjectDrillDown } from "@/components/insights/ProjectDrillDown";
+import { NaturalLanguageSummary } from "@/components/insights/NaturalLanguageSummary";
+import { GeographicMap } from "@/components/insights/GeographicMap";
+import { FilterPresets } from "@/components/insights/FilterPresets";
 
 // Mock project data structure
 interface Project {
@@ -125,6 +132,23 @@ const generateDummyData = (): Project[] => [
     scenario: 'Base',
     country: 'UAE',
     city: 'Dubai'
+  },
+  {
+    id: '6',
+    name: 'Office Tower Alpha',
+    totalGFA: 40000,
+    constructionCost: 150000000,
+    estimatedRevenue: 200000000,
+    irr: 18.7,
+    roi: 33.3,
+    profitMargin: 25.0,
+    netProfit: 50000000,
+    status: 'Construction',
+    currency: 'AED',
+    createdAt: new Date(2024, 4, 1),
+    scenario: 'Base',
+    country: 'UAE',
+    city: 'Abu Dhabi'
   }
 ];
 
@@ -157,6 +181,23 @@ export default function FeaslyInsights() {
     to: new Date()
   });
   const [currencyFormat, setCurrencyFormat] = useState('AED');
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [activeTab, setActiveTab] = useState('overview');
+
+  // Handle filter changes from FilterPresets
+  const handleFiltersChange = (filters: {
+    scenarioFilter: string;
+    statusFilter: string;
+    countryFilter: string;
+    dateRange: DateRange | undefined;
+    currencyFormat: string;
+  }) => {
+    setScenarioFilter(filters.scenarioFilter);
+    setStatusFilter(filters.statusFilter);
+    setCountryFilter(filters.countryFilter);
+    setDateRange(filters.dateRange);
+    setCurrencyFormat(filters.currencyFormat);
+  };
 
   // Filter projects based on current filters
   const filteredProjects = useMemo(() => {
@@ -218,7 +259,8 @@ export default function FeaslyInsights() {
     x: p.irr,
     y: p.roi,
     z: p.totalGFA / 1000, // Scale down for visualization
-    status: p.status
+    status: p.status,
+    id: p.id
   }));
 
   const lineChartData = useMemo(() => {
@@ -263,7 +305,8 @@ export default function FeaslyInsights() {
     .slice(0, 5)
     .map(p => ({
       name: p.name,
-      irr: p.irr
+      irr: p.irr,
+      id: p.id
     }));
 
   // AI Insight calculations
@@ -300,103 +343,128 @@ export default function FeaslyInsights() {
     }
   };
 
+  const handleProjectClick = (project: Project) => {
+    setSelectedProject(project);
+  };
+
   return (
     <div className={cn("p-6 space-y-6", isRTL && "rtl")} dir={isRTL ? "rtl" : "ltr"}>
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold">{t('feasly.insights.title') || 'Feasly Insights'}</h1>
-        <p className="text-muted-foreground">
-          {t('feasly.insights.description') || 'Advanced analytics and insights for your portfolio'}
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">
+              {t('feasly.insights.title') || 'Feasly Insights'}
+              <Badge className="ml-3 bg-blue-100 text-blue-800">v2 - Advanced Analytics</Badge>
+            </h1>
+            <p className="text-muted-foreground">
+              {t('feasly.insights.description') || 'Advanced analytics and insights for your portfolio'}
+            </p>
+          </div>
+          <ExportEngine 
+            projects={filteredProjects}
+            kpiMetrics={kpiMetrics}
+            currencyFormat={currencyFormat}
+            formatCurrency={formatCurrency}
+          />
+        </div>
       </div>
+
+      {/* Natural Language Summary */}
+      <NaturalLanguageSummary 
+        projects={filteredProjects}
+        kpiMetrics={kpiMetrics}
+        formatCurrency={formatCurrency}
+      />
 
       {/* Filter Panel */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Filters</CardTitle>
+          <CardTitle className="text-lg">Filters & Presets</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            <Select value={scenarioFilter} onValueChange={setScenarioFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Scenario Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Scenarios</SelectItem>
-                <SelectItem value="Base">Base</SelectItem>
-                <SelectItem value="Optimistic">Optimistic</SelectItem>
-                <SelectItem value="Pessimistic">Pessimistic</SelectItem>
-                <SelectItem value="Custom">Custom</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <Select value={scenarioFilter} onValueChange={setScenarioFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Scenario Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Scenarios</SelectItem>
+                  <SelectItem value="Base">Base</SelectItem>
+                  <SelectItem value="Optimistic">Optimistic</SelectItem>
+                  <SelectItem value="Pessimistic">Pessimistic</SelectItem>
+                  <SelectItem value="Custom">Custom</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="Planning">Planning</SelectItem>
-                <SelectItem value="Development">Development</SelectItem>
-                <SelectItem value="Construction">Construction</SelectItem>
-                <SelectItem value="Completed">Completed</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="Planning">Planning</SelectItem>
+                  <SelectItem value="Development">Development</SelectItem>
+                  <SelectItem value="Construction">Construction</SelectItem>
+                  <SelectItem value="Completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Select value={countryFilter} onValueChange={setCountryFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Location" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                <SelectItem value="UAE">UAE</SelectItem>
-              </SelectContent>
-            </Select>
+              <Select value={countryFilter} onValueChange={setCountryFilter}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Location" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Locations</SelectItem>
+                  <SelectItem value="UAE">UAE</SelectItem>
+                </SelectContent>
+              </Select>
 
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline" className="justify-start text-left font-normal">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange?.from ? format(dateRange.from, "PPP") : "Pick a date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="range"
-                  selected={dateRange}
-                  onSelect={(range) => setDateRange(range || { from: undefined, to: undefined })}
-                  numberOfMonths={2}
-                />
-              </PopoverContent>
-            </Popover>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="justify-start text-left font-normal">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {dateRange?.from ? format(dateRange.from, "PPP") : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="range"
+                    selected={dateRange}
+                    onSelect={(range) => setDateRange(range)}
+                    numberOfMonths={2}
+                  />
+                </PopoverContent>
+              </Popover>
 
-            <Select value={currencyFormat} onValueChange={setCurrencyFormat}>
-              <SelectTrigger>
-                <SelectValue placeholder="Currency" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="AED">AED</SelectItem>
-                <SelectItem value="USD">USD</SelectItem>
-                <SelectItem value="EUR">EUR</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
-                <FileDown className="h-4 w-4 mr-2" />
-                Export
-              </Button>
-              <Button variant="outline" size="sm">
-                <Share2 className="h-4 w-4 mr-2" />
-                Share
-              </Button>
+              <Select value={currencyFormat} onValueChange={setCurrencyFormat}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Currency" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="AED">AED</SelectItem>
+                  <SelectItem value="USD">USD</SelectItem>
+                  <SelectItem value="EUR">EUR</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+
+            {/* Filter Presets */}
+            <FilterPresets
+              scenarioFilter={scenarioFilter}
+              statusFilter={statusFilter}
+              countryFilter={countryFilter}
+              dateRange={dateRange}
+              currencyFormat={currencyFormat}
+              onFiltersChange={handleFiltersChange}
+            />
           </div>
         </CardContent>
       </Card>
 
       {/* KPI Metrics Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -406,7 +474,7 @@ export default function FeaslyInsights() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total GFA</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
@@ -418,7 +486,7 @@ export default function FeaslyInsights() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Construction Cost</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -430,7 +498,7 @@ export default function FeaslyInsights() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Estimated Revenue</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -442,7 +510,7 @@ export default function FeaslyInsights() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Net Profit</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -454,7 +522,7 @@ export default function FeaslyInsights() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Average IRR</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
@@ -466,7 +534,7 @@ export default function FeaslyInsights() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Average ROI</CardTitle>
             <PieChart className="h-4 w-4 text-muted-foreground" />
@@ -476,7 +544,7 @@ export default function FeaslyInsights() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Risk Level</CardTitle>
             <Shield className="h-4 w-4 text-muted-foreground" />
@@ -489,178 +557,255 @@ export default function FeaslyInsights() {
         </Card>
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* IRR vs ROI Bubble Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle>IRR vs ROI Analysis</CardTitle>
-            <CardDescription>Bubble size represents GFA</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <ScatterChart data={bubbleChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="x" name="IRR" unit="%" />
-                <YAxis dataKey="y" name="ROI" unit="%" />
-                <RechartsTooltip cursor={{ strokeDasharray: '3 3' }} />
-                <Scatter dataKey="z" fill="hsl(var(--primary))" />
-              </ScatterChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+      {/* Tabbed Content */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="overview">Charts Overview</TabsTrigger>
+          <TabsTrigger value="geographic">Geographic View</TabsTrigger>
+          <TabsTrigger value="insights">AI Insights</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="overview" className="space-y-6">
+          {/* Charts Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* IRR vs ROI Bubble Chart */}
+            <Card className="cursor-pointer hover:shadow-md transition-shadow">
+              <CardHeader>
+                <CardTitle>IRR vs ROI Analysis</CardTitle>
+                <CardDescription>Bubble size represents GFA. Click projects for details.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <ScatterChart data={bubbleChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="x" name="IRR" unit="%" />
+                    <YAxis dataKey="y" name="ROI" unit="%" />
+                    <RechartsTooltip 
+                      cursor={{ strokeDasharray: '3 3' }}
+                      content={({ active, payload }) => {
+                        if (active && payload && payload[0]) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-white p-3 border rounded shadow-lg">
+                              <p className="font-medium">{data.name}</p>
+                              <p>IRR: {data.x}%</p>
+                              <p>ROI: {data.y}%</p>
+                              <p>Status: {data.status}</p>
+                              <p className="text-xs text-muted-foreground mt-1">Click to view details</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Scatter 
+                      dataKey="z" 
+                      fill="hsl(var(--primary))" 
+                      onClick={(data) => {
+                        const project = filteredProjects.find(p => p.id === data.id);
+                        if (project) handleProjectClick(project);
+                      }}
+                    />
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-        {/* Revenue vs Cost Timeline */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Revenue vs Cost Timeline</CardTitle>
-            <CardDescription>Monthly cumulative values</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={lineChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <RechartsTooltip />
-                <Legend />
-                <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" name="Revenue" />
-                <Line type="monotone" dataKey="cost" stroke="hsl(var(--destructive))" name="Cost" />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+            {/* Revenue vs Cost Timeline */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Revenue vs Cost Timeline</CardTitle>
+                <CardDescription>Monthly cumulative values</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={lineChartData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <RechartsTooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" name="Revenue" />
+                    <Line type="monotone" dataKey="cost" stroke="hsl(var(--destructive))" name="Cost" />
+                  </LineChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-        {/* Scenario Comparison */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Scenario Comparison</CardTitle>
-            <CardDescription>IRR and profit by scenario type</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={scenarioComparisonData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="scenario" />
-                <YAxis />
-                <RechartsTooltip />
-                <Legend />
-                <Bar dataKey="irr" fill="hsl(var(--primary))" name="IRR %" />
-                <Bar dataKey="netProfit" fill="hsl(var(--secondary))" name="Net Profit (M)" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
+            {/* Scenario Comparison */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Scenario Comparison</CardTitle>
+                <CardDescription>IRR and profit by scenario type</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={scenarioComparisonData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="scenario" />
+                    <YAxis />
+                    <RechartsTooltip />
+                    <Legend />
+                    <Bar dataKey="irr" fill="hsl(var(--primary))" name="IRR %" />
+                    <Bar dataKey="netProfit" fill="hsl(var(--secondary))" name="Net Profit (M)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
 
-        {/* Top Projects */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Top 5 Projects by IRR</CardTitle>
-            <CardDescription>Highest performing projects</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={topProjectsData} layout="horizontal">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" />
-                <YAxis dataKey="name" type="category" width={120} />
-                <RechartsTooltip />
-                <Bar dataKey="irr" fill="hsl(var(--primary))" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
+            {/* Top Projects */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Top 5 Projects by IRR</CardTitle>
+                <CardDescription>Highest performing projects - click to view details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={topProjectsData} layout="horizontal">
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis dataKey="name" type="category" width={120} />
+                    <RechartsTooltip />
+                    <Bar 
+                      dataKey="irr" 
+                      fill="hsl(var(--primary))"
+                      onClick={(data) => {
+                        const project = filteredProjects.find(p => p.id === data.id);
+                        if (project) handleProjectClick(project);
+                      }}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
 
-      {/* AI Insight Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="border-green-200">
-          <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-            <Lightbulb className="h-5 w-5 text-green-600 mr-2" />
-            <CardTitle className="text-sm font-medium text-green-800">Top Opportunities</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {topOpportunities.length > 0 ? (
-              <div className="space-y-2">
-                {topOpportunities.map(project => (
-                  <div key={project.id} className="text-sm">
-                    <div className="font-medium">{project.name}</div>
-                    <div className="text-green-600">IRR: {project.irr.toFixed(1)}%</div>
+        <TabsContent value="geographic" className="space-y-6">
+          <GeographicMap
+            projects={filteredProjects}
+            formatCurrency={formatCurrency}
+            onProjectClick={handleProjectClick}
+          />
+        </TabsContent>
+
+        <TabsContent value="insights" className="space-y-6">
+          {/* AI Insight Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="border-green-200">
+              <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+                <Lightbulb className="h-5 w-5 text-green-600 mr-2" />
+                <CardTitle className="text-sm font-medium text-green-800">Top Opportunities</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {topOpportunities.length > 0 ? (
+                  <div className="space-y-2">
+                    {topOpportunities.map(project => (
+                      <div 
+                        key={project.id} 
+                        className="text-sm cursor-pointer hover:bg-green-50 p-2 rounded"
+                        onClick={() => handleProjectClick(project)}
+                      >
+                        <div className="font-medium">{project.name}</div>
+                        <div className="text-green-600">IRR: {project.irr.toFixed(1)}%</div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">No high-opportunity projects found</p>
-            )}
-          </CardContent>
-        </Card>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No high-opportunity projects found</p>
+                )}
+              </CardContent>
+            </Card>
 
-        <Card className="border-red-200">
-          <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-            <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
-            <CardTitle className="text-sm font-medium text-red-800">Risk Alerts</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {riskAlerts.length > 0 ? (
-              <div className="space-y-2">
-                {riskAlerts.slice(0, 3).map(project => (
-                  <div key={project.id} className="text-sm">
-                    <div className="font-medium">{project.name}</div>
-                    <div className="text-red-600">
-                      {project.netProfit < 0 ? 'Negative profit' : 
-                       project.roi < 5 ? 'Low ROI' : 'Low margin'}
-                    </div>
+            <Card className="border-red-200">
+              <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+                <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
+                <CardTitle className="text-sm font-medium text-red-800">Risk Alerts</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {riskAlerts.length > 0 ? (
+                  <div className="space-y-2">
+                    {riskAlerts.slice(0, 3).map(project => (
+                      <div 
+                        key={project.id} 
+                        className="text-sm cursor-pointer hover:bg-red-50 p-2 rounded"
+                        onClick={() => handleProjectClick(project)}
+                      >
+                        <div className="font-medium">{project.name}</div>
+                        <div className="text-red-600">
+                          {project.netProfit < 0 ? 'Negative profit' : 
+                           project.roi < 5 ? 'Low ROI' : 'Low margin'}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">No risk alerts</p>
-            )}
-          </CardContent>
-        </Card>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No risk alerts</p>
+                )}
+              </CardContent>
+            </Card>
 
-        <Card className="border-yellow-200">
-          <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-            <Search className="h-5 w-5 text-yellow-600 mr-2" />
-            <CardTitle className="text-sm font-medium text-yellow-800">Data Gaps</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {dataGaps.length > 0 ? (
-              <div className="space-y-2">
-                {dataGaps.slice(0, 3).map(project => (
-                  <div key={project.id} className="text-sm">
-                    <div className="font-medium">{project.name}</div>
-                    <div className="text-yellow-600">Missing key data</div>
+            <Card className="border-yellow-200">
+              <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+                <Search className="h-5 w-5 text-yellow-600 mr-2" />
+                <CardTitle className="text-sm font-medium text-yellow-800">Data Gaps</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {dataGaps.length > 0 ? (
+                  <div className="space-y-2">
+                    {dataGaps.slice(0, 3).map(project => (
+                      <div 
+                        key={project.id} 
+                        className="text-sm cursor-pointer hover:bg-yellow-50 p-2 rounded"
+                        onClick={() => handleProjectClick(project)}
+                      >
+                        <div className="font-medium">{project.name}</div>
+                        <div className="text-yellow-600">Missing key data</div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">All data complete</p>
-            )}
-          </CardContent>
-        </Card>
+                ) : (
+                  <p className="text-sm text-muted-foreground">All data complete</p>
+                )}
+              </CardContent>
+            </Card>
 
-        <Card className="border-blue-200">
-          <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-            <TrendingUp className="h-5 w-5 text-blue-600 mr-2" />
-            <CardTitle className="text-sm font-medium text-blue-800">Scenario Sensitivity</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {scenarioSensitivity.length > 0 ? (
-              <div className="space-y-2">
-                {scenarioSensitivity.slice(0, 3).map(project => (
-                  <div key={project.id} className="text-sm">
-                    <div className="font-medium">{project.name}</div>
-                    <div className="text-blue-600">High sensitivity</div>
+            <Card className="border-blue-200">
+              <CardHeader className="flex flex-row items-center space-y-0 pb-2">
+                <TrendingUp className="h-5 w-5 text-blue-600 mr-2" />
+                <CardTitle className="text-sm font-medium text-blue-800">Scenario Sensitivity</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {scenarioSensitivity.length > 0 ? (
+                  <div className="space-y-2">
+                    {scenarioSensitivity.slice(0, 3).map(project => (
+                      <div 
+                        key={project.id} 
+                        className="text-sm cursor-pointer hover:bg-blue-50 p-2 rounded"
+                        onClick={() => handleProjectClick(project)}
+                      >
+                        <div className="font-medium">{project.name}</div>
+                        <div className="text-blue-600">High sensitivity</div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">Low scenario sensitivity</p>
-            )}
-          </CardContent>
-        </Card>
-      </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground">Low scenario sensitivity</p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      {/* Project Drill-Down Modal */}
+      <ProjectDrillDown
+        project={selectedProject}
+        open={!!selectedProject}
+        onClose={() => setSelectedProject(null)}
+        formatCurrency={formatCurrency}
+        allProjects={projects}
+      />
     </div>
   );
 }
