@@ -24,6 +24,26 @@ const translations = {
     // Auth
     'auth.loggedIn': 'Logged in',
     'auth.viewAccount': 'View Account',
+    'auth.account': 'Account',
+    'auth.user': 'User',
+    
+    // Dashboard
+    'dashboard.title': 'Dashboard',
+    'dashboard.welcome': 'Welcome back! Here\'s an overview of your projects and portfolio.',
+    'dashboard.totalProjects': 'Total Projects',
+    'dashboard.totalAssets': 'Total Assets',
+    'dashboard.portfolioValue': 'Portfolio Value',
+    'dashboard.estimatedRevenue': 'Estimated Revenue',
+    'dashboard.avgIRR': 'Avg. IRR',
+    'dashboard.kpiComparison': 'KPI Comparison',
+    'dashboard.portfolioInsights': 'Portfolio Insights',
+    'dashboard.recentProjects': 'Recent Projects',
+    'dashboard.revenueProjection': 'Revenue Projection',
+    'dashboard.filter': 'Filter Dashboard',
+    'dashboard.allProjects': 'All Projects',
+    'dashboard.allTime': 'All Time',
+    'dashboard.noProjectsYet': 'No projects yet',
+    'dashboard.createFirstProject': 'Create your first project to get started with financial modeling.',
     
     // Common
     'common.loading': 'Loading...',
@@ -70,11 +90,6 @@ const translations = {
     'auth.loginToAccount': 'Log in to your account to continue',
     'auth.createAccount': 'Create your account',
     'auth.getStarted': 'Get started with your financial modeling platform',
-    
-    // Dashboard
-    'dashboard.title': 'Dashboard',
-    'dashboard.welcome': 'Welcome to your dashboard',
-    'dashboard.recentProjects': 'Recent Projects',
     'dashboard.quickActions': 'Quick Actions',
     
     // Projects
@@ -184,6 +199,26 @@ const translations = {
     // Auth  
     'auth.loggedIn': 'مسجل الدخول',
     'auth.viewAccount': 'عرض الحساب',
+    'auth.account': 'الحساب',
+    'auth.user': 'المستخدم',
+    
+    // Dashboard
+    'dashboard.title': 'لوحة التحكم',
+    'dashboard.welcome': 'مرحباً بعودتك! إليك نظرة عامة على مشاريعك ومحفظتك.',
+    'dashboard.totalProjects': 'إجمالي المشاريع',
+    'dashboard.totalAssets': 'إجمالي الأصول',
+    'dashboard.portfolioValue': 'قيمة المحفظة',
+    'dashboard.estimatedRevenue': 'الإيرادات المقدرة',
+    'dashboard.avgIRR': 'متوسط معدل العائد الداخلي',
+    'dashboard.kpiComparison': 'مقارنة مؤشرات الأداء الرئيسية',
+    'dashboard.portfolioInsights': 'رؤى المحفظة',
+    'dashboard.recentProjects': 'المشاريع الحديثة',
+    'dashboard.revenueProjection': 'توقعات الإيرادات',
+    'dashboard.filter': 'تصفية لوحة التحكم',
+    'dashboard.allProjects': 'جميع المشاريع',
+    'dashboard.allTime': 'كل الأوقات',
+    'dashboard.noProjectsYet': 'لا توجد مشاريع بعد',
+    'dashboard.createFirstProject': 'أنشئ مشروعك الأول للبدء في النمذجة المالية.',
     
     // Common
     'common.loading': 'جاري التحميل...',
@@ -230,12 +265,6 @@ const translations = {
     'auth.loginToAccount': 'سجل دخولك إلى حسابك للمتابعة',
     'auth.createAccount': 'إنشاء حسابك',
     'auth.getStarted': 'ابدأ مع منصة النمذجة المالية',
-    
-    // Dashboard
-    'dashboard.title': 'لوحة التحكم',
-    'dashboard.welcome': 'مرحباً بك في لوحة التحكم',
-    'dashboard.recentProjects': 'المشاريع الحديثة',
-    'dashboard.quickActions': 'الإجراءات السريعة',
     
     // Projects
     'projects.title': 'المشاريع',

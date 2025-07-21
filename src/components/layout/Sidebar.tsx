@@ -25,11 +25,11 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className={cn("h-full flex flex-col bg-card border-border relative", isRTL ? "border-l" : "border-r")}>
-      {/* Top Section - Fixed */}
-      <div className="flex-shrink-0">
+    <div className={cn("flex flex-col justify-between h-screen bg-card border-border", isRTL ? "border-l" : "border-r")}>
+      {/* Top Section - Navigation */}
+      <div className="flex flex-col min-h-0">
         {/* Logo */}
-        <div className="flex h-16 items-center gap-3 px-6 border-b border-border">
+        <div className="flex h-16 items-center gap-3 px-6 border-b border-border flex-shrink-0">
           <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
             <Building2 className="w-5 h-5 text-primary-foreground" />
           </div>
@@ -44,7 +44,7 @@ export const Sidebar = () => {
         </div>
 
         {/* Quick Action */}
-        <div className="p-4">
+        <div className="p-4 flex-shrink-0">
           <Button 
             asChild
             className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
@@ -55,11 +55,9 @@ export const Sidebar = () => {
             </NavLink>
           </Button>
         </div>
-      </div>
 
-      {/* Middle Section - Scrollable Navigation with padding for bottom user section */}
-      <div className="flex-1 overflow-hidden pb-20">
-        <nav className="h-full px-4 py-2 space-y-1 overflow-y-auto">
+        {/* Navigation - Scrollable if needed */}
+        <nav className="flex-1 px-4 py-2 space-y-1 overflow-y-auto min-h-0">
           {navigation.map((item) => (
             <NavLink
               key={item.nameKey}
@@ -81,8 +79,8 @@ export const Sidebar = () => {
         </nav>
       </div>
 
-      {/* Bottom User Section - Absolutely Positioned, Always Visible */}
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border bg-card/95 backdrop-blur-sm">
+      {/* Bottom User Section - Always Visible */}
+      <div className="p-4 border-t border-border flex-shrink-0">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -100,7 +98,7 @@ export const Sidebar = () => {
                 </div>
                 <div className="flex-1 min-w-0 text-left">
                   <p className="font-medium text-foreground truncate text-sm">
-                    {user?.user_metadata?.full_name || "Account"}
+                    {user?.user_metadata?.full_name || t('auth.account')}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
                     {user?.email}
@@ -115,7 +113,7 @@ export const Sidebar = () => {
             side="top"
           >
             <div className="px-2 py-1.5">
-              <p className="text-sm font-medium">{user?.user_metadata?.full_name || "User"}</p>
+              <p className="text-sm font-medium">{user?.user_metadata?.full_name || t('auth.user')}</p>
               <p className="text-xs text-muted-foreground">{user?.email}</p>
             </div>
             <DropdownMenuSeparator />
