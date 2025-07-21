@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthPage } from "@/pages/Auth";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
@@ -51,7 +52,11 @@ const AppRoutes = () => {
         <Route path=":id/view" element={<ProjectView />} />
       </Route>
       <Route path="/feasly-model" element={<AppLayout />}>
-        <Route index element={<FeaslyModel />} />
+        <Route index element={
+          <ErrorBoundary>
+            <FeaslyModel />
+          </ErrorBoundary>
+        } />
       </Route>
       <Route path="/model" element={<Navigate to="/feasly-model" replace />} />
       <Route path="/feasly-flow" element={<AppLayout />}>
@@ -67,7 +72,11 @@ const AppRoutes = () => {
       </Route>
       <Route path="/consolidate" element={<Navigate to="/feasly-consolidate" replace />} />
       <Route path="/feasly-insights" element={<AppLayout />}>
-        <Route index element={<FeaslyInsights />} />
+        <Route index element={
+          <ErrorBoundary>
+            <FeaslyInsights />
+          </ErrorBoundary>
+        } />
       </Route>
       <Route path="/insights" element={<Navigate to="/feasly-insights" replace />} />
       <Route path="/demo" element={<DemoProject />} />

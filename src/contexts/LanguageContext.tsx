@@ -64,18 +64,10 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   // Sync with i18next language changes
   useEffect(() => {
-    const handleLanguageChange = (lng: string) => {
-      setLanguageState(lng as Language);
-    };
-
-    i18nInstance.on('languageChanged', handleLanguageChange);
-    
     // Set initial language from i18next
-    setLanguageState(i18nInstance.language as Language);
-
-    return () => {
-      i18nInstance.off('languageChanged', handleLanguageChange);
-    };
+    if (i18nInstance.language) {
+      setLanguageState(i18nInstance.language as Language);
+    }
   }, [i18nInstance]);
 
   // Memoize context value
