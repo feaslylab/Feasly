@@ -17,6 +17,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import { ImportFromExcel } from "@/components/import/ImportFromExcel";
+import { DashboardExport } from "@/components/dashboard/DashboardExport";
 
 interface DashboardStats {
   totalProjects: number;
@@ -480,6 +481,12 @@ export default function Dashboard() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
+          <DashboardExport 
+            filters={filters}
+            stats={stats}
+            projects={projects}
+          />
 
           <ImportFromExcel 
             trigger={
