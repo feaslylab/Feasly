@@ -109,6 +109,7 @@ const ProjectDetails = () => {
     }
   }, [scenarios, selectedScenarioId]);
 
+  const selectedScenario = scenarios?.find(s => s.id === selectedScenarioId) || null;
   const totalAssets = assets?.length || 0;
   const totalValue = assets?.reduce((sum, asset) => sum + asset.construction_cost_aed, 0) || 0;
 
@@ -337,7 +338,7 @@ const ProjectDetails = () => {
               {id && <AddAssetForm projectId={id} />}
             </CardHeader>
             <CardContent>
-              {id && <AssetsList projectId={id} selectedScenarioId={selectedScenarioId} />}
+              {id && <AssetsList projectId={id} selectedScenarioId={selectedScenarioId} selectedScenario={selectedScenario} />}
             </CardContent>
           </Card>
         </TabsContent>

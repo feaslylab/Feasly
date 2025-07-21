@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Building2, DollarSign, TrendingUp, Calendar } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EditScenarioValuesForm } from "@/components/scenarios/EditScenarioValuesForm";
 
 interface Asset {
   id: string;
@@ -30,9 +31,18 @@ interface ScenarioOverride {
   override_value: number;
 }
 
+interface Scenario {
+  id: string;
+  project_id: string;
+  name: string;
+  type: 'Base Case' | 'Optimistic' | 'Pessimistic';
+  is_base: boolean;
+}
+
 interface AssetsListProps {
   projectId: string;
   selectedScenarioId?: string | null;
+  selectedScenario?: Scenario | null;
 }
 
 const formatCurrency = (amount: number) => {
@@ -48,7 +58,7 @@ const formatNumber = (num: number) => {
   return new Intl.NumberFormat('en-US').format(num);
 };
 
-export const AssetsList = ({ projectId, selectedScenarioId }: AssetsListProps) => {
+export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario }: AssetsListProps) => {
   const { data: assets, isLoading, error } = useQuery({
     queryKey: ["assets", projectId],
     queryFn: async () => {
@@ -151,7 +161,16 @@ export const AssetsList = ({ projectId, selectedScenarioId }: AssetsListProps) =
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">{asset.name}</CardTitle>
-              <Badge variant="secondary">{asset.type}</Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary">{asset.type}</Badge>
+                {selectedScenario && !selectedScenario.is_base && selectedScenarioId && (
+                  <EditScenarioValuesForm 
+                    asset={asset}
+                    scenarioId={selectedScenarioId}
+                    scenario={selectedScenario}
+                  />
+                )}
+              </div>
             </div>
             <CardDescription>
               {formatNumber(asset.gfa_sqm)} sqm • {asset.development_timeline_months} months
