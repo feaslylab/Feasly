@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef } from "react";
+import { useFormContext } from "react-hook-form";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -8,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Download, TrendingUp } from "lucide-react";
 import html2canvas from "html2canvas";
 import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
+import { formatCurrency } from "@/lib/currencyUtils";
+import type { FeaslyModelFormData } from "./types";
 
 interface CashflowVarianceChartProps {
   projectId: string;
@@ -34,6 +37,10 @@ export function CashflowVarianceChart({ projectId }: CashflowVarianceChartProps)
   const [selectedMetric, setSelectedMetric] = useState<MetricType>("netCashflow");
   const [chartType, setChartType] = useState<ChartType>("line");
   const chartRef = useRef<HTMLDivElement>(null);
+
+  // Watch currency code from form context
+  const form = useFormContext<FeaslyModelFormData>();
+  const currencyCode = form?.watch("currency_code") || "SAR";
 
   const { 
     getScenarioData,
@@ -115,13 +122,9 @@ export function CashflowVarianceChart({ projectId }: CashflowVarianceChartProps)
     }
   };
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'AED',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
+  // Use currency utility with dynamic currency code
+  const formatAmount = (value: number) => {
+    return formatCurrency(value, { currencyCode });
   };
 
   const CustomTooltip = ({ active, payload, label }: any) => {
@@ -131,7 +134,7 @@ export function CashflowVarianceChart({ projectId }: CashflowVarianceChartProps)
           <p className="font-medium">{label}</p>
           {payload.map((entry: any, index: number) => (
             <p key={index} style={{ color: entry.color }} className="text-sm">
-              {entry.dataKey.charAt(0).toUpperCase() + entry.dataKey.slice(1)}: {formatCurrency(entry.value)}
+              {entry.dataKey.charAt(0).toUpperCase() + entry.dataKey.slice(1)}: {formatAmount(entry.value)}
             </p>
           ))}
         </div>
@@ -238,7 +241,7 @@ export function CashflowVarianceChart({ projectId }: CashflowVarianceChartProps)
                 />
                 <YAxis 
                   tick={{ fontSize: 12 }}
-                  tickFormatter={formatCurrency}
+                  tickFormatter={(value) => formatAmount(value)}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend />
@@ -268,7 +271,7 @@ export function CashflowVarianceChart({ projectId }: CashflowVarianceChartProps)
                 />
                 <YAxis 
                   tick={{ fontSize: 12 }}
-                  tickFormatter={formatCurrency}
+                  tickFormatter={(value) => formatAmount(value)}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Legend />

@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, TrendingUp, TrendingDown, DollarSign, Percent, Clock } from "lucide-react";
+import { formatCurrency, formatCurrencyCompact } from "@/lib/currencyUtils";
 import type { FeaslyModelFormData, KPIResults } from "./types";
 
 export function KPIResults() {
@@ -67,13 +68,10 @@ export function KPIResults() {
     };
   }, [formValues]);
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: formValues.currency_code || 'SAR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(value);
+  // Use dynamic currency formatting
+  const currencyCode = formValues.currency_code || 'SAR';
+  const formatAmount = (value: number) => {
+    return formatCurrency(value, { currencyCode });
   };
 
   const formatPercent = (value: number) => {
@@ -115,7 +113,7 @@ export function KPIResults() {
                 <span className="text-sm font-medium">{t('feasly.model.kpi_total_cost')}</span>
               </div>
               <div className="text-2xl font-bold mt-2">
-                {formatCurrency(kpiResults.total_cost)}
+                {formatAmount(kpiResults.total_cost)}
               </div>
               <div className="text-xs text-muted-foreground mt-1">
                 Including contingency and all costs
@@ -130,7 +128,7 @@ export function KPIResults() {
                 <span className="text-sm font-medium">{t('feasly.model.kpi_total_revenue')}</span>
               </div>
               <div className="text-2xl font-bold mt-2">
-                {formatCurrency(kpiResults.total_revenue)}
+                {formatAmount(kpiResults.total_revenue)}
               </div>
               <div className="text-xs text-muted-foreground mt-1">
                 Expected total project revenue
@@ -145,7 +143,7 @@ export function KPIResults() {
                 <span className="text-sm font-medium">{t('feasly.model.kpi_profit')}</span>
               </div>
               <div className={`text-2xl font-bold mt-2 ${kpiResults.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {formatCurrency(kpiResults.profit)}
+                {formatAmount(kpiResults.profit)}
               </div>
               <div className="text-xs text-muted-foreground mt-1">
                 Net profit after all costs
@@ -264,7 +262,7 @@ export function KPIResults() {
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">{t('feasly.model.zakat_due')}</span>
                 <span className="text-lg font-bold text-primary">
-                  {formatCurrency(kpiResults.zakat_due)}
+                  {formatAmount(kpiResults.zakat_due)}
                 </span>
               </div>
               <div className="text-xs text-muted-foreground mt-1">

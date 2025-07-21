@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Download, RefreshCw, Calculator } from "lucide-react";
 import { useFeaslyCalculation } from "@/hooks/useFeaslyCalculation";
+import { formatCurrency } from "@/lib/currencyUtils";
 import type { FeaslyModelFormData } from "./types";
 import type { MonthlyCashflow } from "@/lib/feaslyCalculationEngine";
 
@@ -35,6 +37,10 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
   const [activeScenario, setActiveScenario] = useState<keyof typeof SCENARIO_LABELS>("base");
   const [expandedCategories, setExpandedCategories] = useState(new Set(["costs", "funding", "revenue"]));
 
+  // Watch currency code from form context
+  const form = useFormContext<FeaslyModelFormData>();
+  const currencyCode = form?.watch("currency_code") || "SAR";
+
   const {
     compareScenarios,
     isLoadingCashflow,
@@ -49,14 +55,9 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
   const activeScenarioData = scenarios.find(s => s.scenario === activeScenario);
   const summary = getScenarioSummary(activeScenario);
 
-  // Format currency in SAR
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-SA', {
-      style: 'currency',
-      currency: 'SAR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+  // Use currency utility with dynamic currency code
+  const formatAmount = (amount: number) => {
+    return formatCurrency(amount, { currencyCode });
   };
 
   // Format percentage
@@ -266,16 +267,16 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                       <div className="text-center p-3 bg-muted/50 rounded-lg">
                         <div className="text-sm text-muted-foreground">Total Revenue</div>
-                        <div className="text-lg font-semibold">{formatCurrency(scenarioSummary.totalRevenue)}</div>
+                        <div className="text-lg font-semibold">{formatAmount(scenarioSummary.totalRevenue)}</div>
                       </div>
                       <div className="text-center p-3 bg-muted/50 rounded-lg">
                         <div className="text-sm text-muted-foreground">Total Costs</div>
-                        <div className="text-lg font-semibold">{formatCurrency(scenarioSummary.totalCosts)}</div>
+                        <div className="text-lg font-semibold">{formatAmount(scenarioSummary.totalCosts)}</div>
                       </div>
                       <div className="text-center p-3 bg-muted/50 rounded-lg">
                         <div className="text-sm text-muted-foreground">Total Profit</div>
                         <div className={`text-lg font-semibold ${scenarioSummary.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                          {formatCurrency(scenarioSummary.totalProfit)}
+                          {formatAmount(scenarioSummary.totalProfit)}
                         </div>
                       </div>
                       <div className="text-center p-3 bg-muted/50 rounded-lg">
@@ -289,11 +290,30 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
                       <div className="grid grid-cols-2 gap-4 mb-6">
                         <div className="text-center p-3 bg-orange-50 border border-orange-200 rounded-lg">
                           <div className="text-sm text-muted-foreground">Total VAT Paid</div>
-                          <div className="text-lg font-semibold text-orange-700">{formatCurrency((scenarioSummary as any).totalVatPaid)}</div>
+                          <div className="text-lg font-semibold text-orange-700">{formatAmount((scenarioSummary as any).totalVatPaid)}</div>
                         </div>
                         <div className="text-center p-3 bg-green-50 border border-green-200 rounded-lg">
                           <div className="text-sm text-muted-foreground">Total VAT Recovered</div>
-                          <div className="text-lg font-semibold text-green-700">{formatCurrency((scenarioSummary as any).totalVatRecovered)}</div>
+                          <div className="text-lg font-semibold text-green-700">{formatAmount((scenarioSummary as any).totalVatRecovered)}</div>
+                        </div>
+                      </div>
+                    )}
+                    {/* Add Escrow Summary if applicable */}
+                    {((scenarioSummary as any).totalEscrowReserved > 0 || (scenarioSummary as any).totalEscrowReleased > 0) && (
+                      <div className="grid grid-cols-3 gap-4 mb-6">
+                        <div className="text-center p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                          <div className="text-sm text-muted-foreground">Escrow Reserved</div>
+                          <div className="text-lg font-semibold text-blue-700">{formatAmount((scenarioSummary as any).totalEscrowReserved)}</div>
+                        </div>
+                        <div className="text-center p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="text-sm text-muted-foreground">Escrow Released</div>
+                          <div className="text-lg font-semibold text-green-700">{formatAmount((scenarioSummary as any).totalEscrowReleased)}</div>
+                        </div>
+                        <div className="text-center p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                          <div className="text-sm text-muted-foreground">Net Escrow Impact</div>
+                          <div className={`text-lg font-semibold ${(scenarioSummary as any).netEscrowImpact >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                            {formatAmount((scenarioSummary as any).netEscrowImpact)}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -339,11 +359,11 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
                                     <TableCell className="pl-8 font-medium">{row.label}</TableCell>
                                     {scenario.data.map((month) => (
                                       <TableCell key={month.month} className="text-right">
-                                        {formatCurrency(month[row.key] as number)}
+                                        {formatAmount(month[row.key] as number)}
                                       </TableCell>
                                     ))}
                                     <TableCell className="text-right font-semibold bg-muted">
-                                      {formatCurrency(total)}
+                                      {formatAmount(total)}
                                     </TableCell>
                                   </TableRow>
                                 );
