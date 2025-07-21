@@ -72,7 +72,7 @@ export default function FeaslyFlow() {
 
   // Update start date when "starts after" changes
   const handleStartsAfterChange = (phaseId: string) => {
-    if (phaseId) {
+    if (phaseId && phaseId !== "none") {
       const precedingPhase = phases.find(p => p.id === phaseId);
       if (precedingPhase?.endDate) {
         form.setValue("startDate", precedingPhase.endDate);
@@ -91,7 +91,7 @@ export default function FeaslyFlow() {
       gfa: data.gfa,
       landArea: data.landArea,
       phaseCost: data.phaseCost,
-      startsAfter: data.startsAfter,
+      startsAfter: data.startsAfter === "none" ? undefined : data.startsAfter,
     };
 
     setPhases(prev => [...prev, newPhase]);
@@ -109,7 +109,7 @@ export default function FeaslyFlow() {
       form.setValue("gfa", phase.gfa);
       form.setValue("landArea", phase.landArea);
       form.setValue("phaseCost", phase.phaseCost);
-      form.setValue("startsAfter", phase.startsAfter || "");
+      form.setValue("startsAfter", phase.startsAfter || "none");
     }
   };
 
@@ -127,7 +127,7 @@ export default function FeaslyFlow() {
               gfa: data.gfa,
               landArea: data.landArea,
               phaseCost: data.phaseCost,
-              startsAfter: data.startsAfter,
+              startsAfter: data.startsAfter === "none" ? undefined : data.startsAfter,
             }
           : phase
       ));
@@ -333,7 +333,7 @@ export default function FeaslyFlow() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">{t('feasly.flow.no_dependency')}</SelectItem>
+                            <SelectItem value="none">{t('feasly.flow.no_dependency')}</SelectItem>
                             {phases.filter(p => p.id !== editingPhase).map((phase) => (
                               <SelectItem key={phase.id} value={phase.id}>
                                 {phase.name}
