@@ -394,6 +394,39 @@ export type Database = {
           },
         ]
       }
+      project_milestones: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          label: string
+          project_id: string
+          status: string
+          target_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          label: string
+          project_id: string
+          status?: string
+          target_date: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          label?: string
+          project_id?: string
+          status?: string
+          target_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       project_team: {
         Row: {
           created_at: string | null

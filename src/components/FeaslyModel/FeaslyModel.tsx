@@ -21,6 +21,8 @@ import { PreviewToggle } from "./PreviewToggle";
 import { SensitivityAnalysis } from "./SensitivityAnalysis";
 import { ScenarioChart } from "./ScenarioChart";
 import { TimelineGantt } from "./TimelineGantt";
+import { TimelineSummaryPanel } from "./TimelineSummaryPanel";
+import { useMilestones } from "@/hooks/useMilestones";
 import { CommentingPanel } from "./CommentingPanel";
 import CashflowTable from "./CashflowTable";
 import ScenarioComparisonChart from "./ScenarioComparisonChart";
@@ -39,6 +41,7 @@ export default function FeaslyModel() {
   
   // For demo purposes, using a mock project ID
   const projectId = "demo-project-123";
+  const { milestones } = useMilestones(projectId);
   
   // Use versioning hook instead of the old calculation hook
   const {
@@ -153,11 +156,14 @@ export default function FeaslyModel() {
                 <div className="space-y-6">
                   <h2 className="text-xl font-semibold">📊 Advanced Analysis</h2>
                   
+                  {/* Timeline Summary Panel */}
+                  <TimelineSummaryPanel milestones={milestones} />
+                  
                   {/* Cashflow Variance Chart */}
                   <CashflowVarianceChart projectId={projectId} />
                   
                   {/* Timeline Gantt */}
-                  <TimelineGantt />
+                  <TimelineGantt projectId={projectId} />
                   
                   {/* Sensitivity Analysis */}
                   <SensitivityAnalysis />
