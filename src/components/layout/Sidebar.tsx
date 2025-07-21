@@ -1,5 +1,5 @@
 import { Building2, BarChart3, FolderOpen, Settings, LogOut, Plus, User, Building, DollarSign, TrendingUp } from "lucide-react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/components/auth/AuthProvider";
@@ -20,9 +20,25 @@ const navigation = [
   { nameKey: "settings", href: "/settings", icon: Settings },
 ];
 
+// Helper function to get module title based on current route
+const getModuleTitle = (pathname: string, t: (key: string) => string) => {
+  if (pathname.startsWith('/feasly-model')) return t('feasly.model.title');
+  if (pathname.startsWith('/feasly-flow')) return t('feasly.flow.title');
+  if (pathname.startsWith('/feasly-finance')) return t('feasly.finance.title');
+  if (pathname.startsWith('/feasly-consolidate')) return t('feasly.consolidate.title');
+  if (pathname.startsWith('/feasly-insights')) return t('feasly.insights.title');
+  if (pathname.startsWith('/dashboard')) return t('nav.dashboard');
+  if (pathname.startsWith('/projects')) return t('nav.projects');
+  if (pathname.startsWith('/settings')) return t('nav.settings');
+  return 'Financial Modeling Platform';
+};
+
 export const Sidebar = () => {
   const { signOut, user } = useAuth();
   const { t, isRTL } = useLanguage();
+  const location = useLocation();
+  
+  const currentModuleTitle = getModuleTitle(location.pathname, t);
 
   const handleSignOut = async () => {
     await signOut();
@@ -33,16 +49,32 @@ export const Sidebar = () => {
     <div className={cn("flex flex-col justify-between h-full bg-card border-border relative", isRTL ? "border-l" : "border-r")}>
       {/* Top Section - Navigation */}
       <div className="flex flex-col min-h-0">
-        {/* Logo */}
+        {/* Logo Header */}
         <div className="flex h-16 items-center gap-3 px-6 border-b border-border flex-shrink-0">
-          <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
+          {/* Feasly Logo */}
+          <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center flex-shrink-0">
             <Building2 className="w-5 h-5 text-primary-foreground" />
           </div>
-          <div className={cn("flex-1", isRTL && "text-right")}>
-            <h1 className="text-lg font-semibold text-foreground">ProjectPro</h1>
-            <p className="text-xs text-muted-foreground">Financial Modeling</p>
+          
+          {/* Brand and Module Title */}
+          <div className={cn("flex-1 min-w-0", isRTL && "text-right")}>
+            <div className="flex items-center gap-2 md:gap-2">
+              <h1 className="text-lg font-bold text-foreground flex-shrink-0">Feasly</h1>
+              <span className="text-muted-foreground hidden sm:block">—</span>
+              <span className="text-sm font-medium text-primary truncate hidden sm:block">
+                {currentModuleTitle}
+              </span>
+            </div>
+            {/* Mobile: Show module title on second line */}
+            <div className="sm:hidden">
+              <p className="text-xs text-primary font-medium truncate leading-tight">
+                {currentModuleTitle}
+              </p>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
+          
+          {/* Controls */}
+          <div className="flex items-center gap-1 flex-shrink-0">
             <ThemeToggle />
             <LanguageSwitcher />
           </div>
