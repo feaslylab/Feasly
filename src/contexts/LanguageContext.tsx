@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useMemo } from 'react';
 
+// Import translations
+import enFeasly from '../translations/en/feasly.json';
+import arFeasly from '../translations/ar/feasly.json';
+
 export type Language = 'en' | 'ar';
 
 interface LanguageContextType {
@@ -12,9 +16,9 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// Simple translations object
-const translations: Record<Language, Record<string, string>> = {
-  en: {
+// Create comprehensive translations object
+const createTranslations = () => {
+  const baseTranslationsEn = {
     // Auth
     'auth.login': 'Log In',
     'auth.signup': 'Sign Up',
@@ -60,268 +64,9 @@ const translations: Record<Language, Record<string, string>> = {
     'common.cancel': 'Cancel',
     'common.edit': 'Edit',
     'common.delete': 'Delete',
-    
-    // Feasly Model
-    'feasly.model.title': 'Feasly Model',
-    'feasly.model.description': 'Development feasibility engine for planning, input, and analysis.',
-    'feasly.model.inputs': 'Feasly Model Inputs',
-    'feasly.model.scenarios': 'Feasly Model Scenarios',
-    'feasly.model.kpis': 'Feasly Model KPIs',
-    'feasly.model.flow_data_loaded': 'Flow Data Loaded',
-    'feasly.model.flow_data_loaded_desc': 'Phase data from Feasly Flow has been automatically applied.',
-    'feasly.model.flow_data_available': 'Flow Data Available',
-    'feasly.model.flow_data_available_desc': 'New phase data from Feasly Flow is available. Choose to apply or keep current values.',
-    'feasly.model.apply_flow_data': 'Apply Flow Data',
-    'feasly.model.flow_data_applied': 'Flow Data Applied',
-    'feasly.model.flow_data_applied_desc': 'Phase data has been successfully applied to your model.',
-    'feasly.model.project_metadata': 'Project Metadata',
-    'feasly.model.project_metadata_desc': 'Basic project information and location details',
-    'feasly.model.project_name': 'Project Name',
-    'feasly.model.project_name_placeholder': 'Enter project name',
-    'feasly.model.project_description': 'Description',
-    'feasly.model.description_placeholder': 'Enter project description',
-    'feasly.model.sponsor_name': 'Sponsor Name',
-    'feasly.model.land_owner': 'Land Owner',
-    'feasly.model.country': 'Country',
-    'feasly.model.select_country': 'Select country',
-    'feasly.model.city': 'City',
-    'feasly.model.planning_stage': 'Planning Stage',
-    'feasly.model.currency_code': 'Currency',
-    'feasly.model.language': 'Language',
-    'feasly.model.timeline_phases': 'Timeline & Phases',
-    'feasly.model.timeline_phases_desc': 'Project schedule and phasing information',
-    'feasly.model.start_date': 'Start Date',
-    'feasly.model.duration_months': 'Duration (Months)',
-    'feasly.model.completion_date': 'Completion Date',
-    'feasly.model.construction_start_date': 'Construction Start Date',
-    'feasly.model.construction_start': 'Construction Start Date',
-    'feasly.model.stabilization_period': 'Stabilization Period (Months)',
-    'feasly.model.phasing_enabled': 'Enable Phasing',
-    'feasly.model.phasing_enabled_desc': 'Break down the project into multiple phases',
-    'feasly.model.site_area_metrics': 'Site & Area Metrics',
-    'feasly.model.site_area_metrics_desc': 'Land and building area calculations',
-    'feasly.model.site_area_sqm': 'Site Area (sqm)',
-    'feasly.model.total_gfa_sqm': 'Total GFA (sqm)',
-    'feasly.model.efficiency_ratio': 'Efficiency Ratio (%)',
-    'feasly.model.far_ratio': 'FAR Ratio',
-    'feasly.model.height_stories': 'Height (Stories)',
-    'feasly.model.plot_number': 'Plot Number',
-    'feasly.model.buildable_ratio': 'Buildable Ratio',
-    'feasly.model.calculated_end_date': 'Calculated End Date',
-    'feasly.model.calculated_end_date_tooltip': 'Automatically calculated based on start date and duration',
-    'feasly.model.select_date': 'Select date',
-    'feasly.model.financial_inputs': 'Financial Inputs',
-    'feasly.model.financial_inputs_desc': 'Project costs and investment details',
-    'feasly.model.land_cost': 'Land Cost',
-    'feasly.model.construction_cost': 'Construction Cost',
-    'feasly.model.soft_costs': 'Soft Costs',
-    'feasly.model.marketing_cost': 'Marketing Cost',
-    'feasly.model.contingency_percent': 'Contingency (%)',
-    'feasly.model.contingency_value': 'Contingency Value',
-    'feasly.model.total_investment': 'Total Investment',
-    'feasly.model.zakat_applicable': 'Zakat Applicable',
-    'feasly.model.zakat_rate_percent': 'Zakat Rate (%)',
-    'feasly.model.escrow_required': 'Escrow Required',
-    'feasly.model.funding_capital': 'Funding & Capital',
-    'feasly.model.funding_capital_desc': 'Funding sources and capital structure',
-    'feasly.model.funding_type': 'Funding Type',
-    'feasly.model.total_funding': 'Total Funding',
-    'feasly.model.equity_contribution': 'Equity Contribution',
-    'feasly.model.loan_amount': 'Loan Amount',
-    'feasly.model.funding_gap': 'Funding Gap',
-    'feasly.model.interest_rate': 'Interest Rate (%)',
-    'feasly.model.loan_term_years': 'Loan Term (Years)',
-    'feasly.model.grace_period_months': 'Grace Period (Months)',
-    'feasly.model.loan_repayment_type': 'Loan Repayment Type',
-    'feasly.model.revenue_projections': 'Revenue Projections',
-    'feasly.model.revenue_projections_desc': 'Sales and revenue estimates',
-    'feasly.model.average_sale_price': 'Average Sale Price',
-    'feasly.model.expected_sale_rate': 'Expected Sale Rate (sqm/month)',
-    'feasly.model.expected_lease_rate': 'Expected Lease Rate',
-    'feasly.model.yield_estimate': 'Yield Estimate (%)',
-    'feasly.model.target_irr': 'Target IRR (%)',
-    'feasly.model.target_roi': 'Target ROI (%)',
-    'feasly.model.scenario_analysis': 'Scenario Analysis',
-    'feasly.model.scenario_analysis_desc': 'Compare different scenarios and assumptions',
-    'feasly.model.scenario_base': 'Base',
-    'feasly.model.scenario_optimistic': 'Optimistic',
-    'feasly.model.scenario_pessimistic': 'Pessimistic',
-    'feasly.model.scenario_custom': 'Custom',
-    'feasly.model.edit_scenario': 'Edit Scenario',
-    'feasly.model.kpi_dashboard': 'KPI Dashboard',
-    'feasly.model.kpi_dashboard_desc': 'Key performance indicators and financial metrics',
-    'feasly.model.total_cost': 'Total Cost',
-    'feasly.model.total_revenue': 'Total Revenue',
-    'feasly.model.profit': 'Profit',
-    'feasly.model.profit_margin': 'Profit Margin (%)',
-    'feasly.model.roi': 'ROI (%)',
-    'feasly.model.irr': 'IRR (%)',
-    'feasly.model.payback_period': 'Payback Period (Years)',
-    'feasly.model.zakat_due': 'Zakat Due',
-    'feasly.model.save_project': 'Save Project',
-    'feasly.model.export_data': 'Export Data',
-    'feasly.model.reset_form': 'Reset Form',
-    'feasly.model.save_draft': 'Save Draft',
-    'feasly.model.generate_model': 'Generate Model',
-    'feasly.model.export_model': 'Export Model',
-    'feasly.model.project_comments': 'Project Comments',
-    'feasly.model.preview_toggle': 'Preview Mode',
-    'feasly.model.kpi_total_cost': 'Total Cost',
-    'feasly.model.kpi_total_revenue': 'Total Revenue',
-    'feasly.model.kpi_profit': 'Profit',
-    'feasly.model.kpi_profit_margin': 'Profit Margin',
-    'feasly.model.kpi_roi': 'ROI',
-    'feasly.model.kpi_irr': 'IRR',
-    'feasly.model.kpi_payback_period': 'Payback Period',
-    'feasly.model.project_timeline': 'Project Timeline',
-    'feasly.model.sensitivity_analysis': 'Sensitivity Analysis',
-    'feasly.model.scenario_comparison': 'Scenario Comparison',
-    'feasly.model.zakat_applicable_desc': 'Apply Zakat calculations to this project',
-    'feasly.model.escrow_required_desc': 'Require escrow account for payments',
+  };
 
-    // Feasly Flow
-    'feasly.flow.title': 'Development Phasing',
-    'feasly.flow.description': 'Plan and organize project phases with detailed timelines and cost breakdown',
-    'feasly.flow.add_phase': 'Add Development Phase',
-    'feasly.flow.edit_phase': 'Edit Phase',
-    'feasly.flow.phase_form_desc': 'Define project phases with timeline and cost details',
-    'feasly.flow.phase_name': 'Phase Name',
-    'feasly.flow.phase_name_placeholder': 'e.g., Foundation & Structure',
-    'feasly.flow.starts_after': 'Starts After',
-    'feasly.flow.starts_after_tooltip': 'Select a phase that must complete before this phase can start',
-    'feasly.flow.select_preceding_phase': 'Select preceding phase',
-    'feasly.flow.no_dependency': 'No dependency',
-    'feasly.flow.start_date': 'Start Date',
-    'feasly.flow.select_date': 'Select start date',
-    'feasly.flow.duration_months': 'Duration (Months)',
-    'feasly.flow.calculated_end_date': 'Calculated End Date',
-    'feasly.flow.auto_calculated': 'Auto-calculated',
-    'feasly.flow.gfa_sqm': 'GFA (sqm)',
-    'feasly.flow.land_area_sqm': 'Land Area (sqm)',
-    'feasly.flow.phase_cost': 'Phase Cost',
-    'feasly.flow.update_phase': 'Update Phase',
-    'feasly.flow.cancel': 'Cancel',
-    'feasly.flow.project_phases': 'Project Phases',
-    'feasly.flow.phases_list_desc': 'Current project phases and timeline',
-    'feasly.flow.edit': 'Edit',
-    'feasly.flow.duration': 'Duration',
-    'feasly.flow.months': 'months',
-    'feasly.flow.gfa': 'GFA',
-    'feasly.flow.cost': 'Cost',
-    'feasly.flow.dates': 'Dates',
-    'feasly.flow.depends_on': 'Depends on',
-    'feasly.flow.summary_metrics': 'Phase Summary',
-    'feasly.flow.total_phases': 'Total Phases',
-    'feasly.flow.total_gfa': 'Total GFA',
-    'feasly.flow.total_cost': 'Total Cost',
-    'feasly.flow.total_duration': 'Total Duration',
-    'feasly.flow.validation_issues': 'Validation Issues',
-    'feasly.flow.project_summary': 'Project Summary',
-    'feasly.flow.phases_configured': 'phases configured',
-    'feasly.flow.ready_for_timeline': 'Ready for timeline analysis',
-    'feasly.flow.use_in_model': 'Sync to Feasly Model',
-    'feasly.flow.sync_success': 'Sync Successful',
-    'feasly.flow.sync_success_desc': 'Phase data has been synced to Feasly Model',
-    'feasly.flow.sync_error': 'Sync Error',
-    'feasly.flow.sync_error_desc': 'Failed to sync data to Feasly Model',
-    'feasly.flow.no_phases_to_sync': 'No phases available to sync',
-
-    // Feasly Finance
-    'feasly.finance.title': 'Capital Structure & Debt Settings',
-    'feasly.finance.description': 'Define your project\'s financing structure, debt terms, and return waterfall',
-    'feasly.finance.capital_structure': 'Capital Structure',
-    'feasly.finance.capital_structure_desc': 'Define equity and debt split for your project',
-    'feasly.finance.equity_amount': 'Equity Amount',
-    'feasly.finance.equity_amount_tooltip': 'Total equity contribution from sponsors and investors',
-    'feasly.finance.debt_amount': 'Debt Amount',
-    'feasly.finance.debt_amount_tooltip': 'Total debt financing from banks or lenders',
-    'feasly.finance.capital_summary': 'Capital Summary',
-    'feasly.finance.equity_percentage': 'Equity %',
-    'feasly.finance.debt_percentage': 'Debt %',
-    'feasly.finance.total_capital': 'Total Capital',
-    'feasly.finance.equity': 'Equity',
-    'feasly.finance.debt': 'Debt',
-    'feasly.finance.debt_details': 'Debt Details',
-    'feasly.finance.debt_details_desc': 'Configure loan terms and repayment structure',
-    'feasly.finance.interest_rate': 'Interest Rate',
-    'feasly.finance.loan_term_years': 'Loan Term (Years)',
-    'feasly.finance.grace_period_months': 'Grace Period (Months)',
-    'feasly.finance.repayment_type': 'Repayment Type',
-    'feasly.finance.amortized': 'Amortized',
-    'feasly.finance.bullet': 'Bullet Payment',
-    'feasly.finance.payment_calculation': 'Payment Calculation',
-    'feasly.finance.monthly_payment': 'Monthly Payment',
-    'feasly.finance.payment_type': 'Payment Type',
-    'feasly.finance.interest_only': 'Interest Only',
-    'feasly.finance.principal_interest': 'Principal + Interest',
-    'feasly.finance.grace_period': 'Grace Period',
-    'feasly.finance.months': 'months',
-    'feasly.finance.return_waterfall': 'Return Waterfall',
-    'feasly.finance.waterfall_desc': 'Set up IRR-based profit distribution waterfall',
-    'feasly.finance.preferred_irr': 'Preferred IRR',
-    'feasly.finance.hurdle_irr': 'Hurdle IRR',
-    'feasly.finance.distribution_waterfall': 'Distribution Waterfall',
-    'feasly.finance.tier': 'Tier',
-    'feasly.finance.return_type': 'Return Type',
-    'feasly.finance.threshold': 'Threshold',
-    'feasly.finance.share': 'Share',
-    'feasly.finance.preferred_return': 'Preferred Return',
-    'feasly.finance.return_of_capital': 'Return of Capital',
-    'feasly.finance.promoted_interest': 'Promoted Interest',
-    'feasly.finance.waterfall_note': 'This is a sample waterfall structure. You can customize tiers and return distribution.',
-    'feasly.finance.model_data_loaded': 'Model Data Loaded',
-    'feasly.finance.model_data_loaded_desc': 'Financial data has been imported from Feasly Model',
-    'feasly.finance.data_saved': 'Data Saved',
-    'feasly.finance.data_saved_desc': 'Your financing structure has been saved successfully',
-
-    // Feasly Consolidate
-    'feasly.consolidate.title': 'Project Consolidation',
-    'feasly.consolidate.description': 'View portfolio-level summary across multiple developments',
-    'feasly.consolidate.project_portfolio': 'Project Portfolio',
-    'feasly.consolidate.project_portfolio_desc': 'Select projects to include in portfolio analysis',
-    'feasly.consolidate.export': 'Export Portfolio',
-    'feasly.consolidate.select_all': 'Select All',
-    'feasly.consolidate.project_name': 'Project Name',
-    'feasly.consolidate.total_gfa': 'Total GFA',
-    'feasly.consolidate.construction_cost': 'Construction Cost',
-    'feasly.consolidate.estimated_revenue': 'Estimated Revenue',
-    'feasly.consolidate.irr': 'IRR',
-    'feasly.consolidate.status': 'Status',
-    'feasly.consolidate.portfolio_summary': 'Portfolio Summary',
-    'feasly.consolidate.portfolio_summary_desc': 'Aggregated metrics for selected projects',
-    'feasly.consolidate.total_projects': 'Total Projects',
-    'feasly.consolidate.total_cost': 'Total Cost',
-    'feasly.consolidate.total_revenue': 'Total Revenue',
-    'feasly.consolidate.average_irr': 'Average IRR',
-    'feasly.consolidate.profit_margin': 'Profit Margin',
-    'feasly.consolidate.total_net_profit': 'Total Net Profit',
-    'feasly.consolidate.kpi_comparison': 'KPI Comparison',
-    'feasly.consolidate.kpi_comparison_desc': 'Compare key performance indicators across projects',
-    'feasly.consolidate.project': 'Project',
-    'feasly.consolidate.roi': 'ROI',
-    'feasly.consolidate.revenue': 'Revenue',
-    'feasly.consolidate.cost': 'Cost',
-    'feasly.consolidate.net_profit': 'Net Profit',
-    'feasly.consolidate.high_performance': 'High Performance',
-    'feasly.consolidate.moderate_performance': 'Moderate Performance',
-    'feasly.consolidate.low_performance': 'Low Performance',
-    'feasly.consolidate.export_error': 'Export Error',
-    'feasly.consolidate.no_projects_selected': 'Please select at least one project to export',
-    'feasly.consolidate.export_success': 'Export Successful',
-    'feasly.consolidate.export_success_desc': 'Portfolio data has been exported successfully',
-    'feasly.consolidate.no_projects': 'No Projects Available',
-    'feasly.consolidate.no_projects_desc': 'No projects found. Create your first project to get started.',
-    'feasly.consolidate.select_projects_desc': 'Select projects from the table above to view portfolio analysis',
-    'feasly.consolidate.status_planning': 'Planning',
-    'feasly.consolidate.status_development': 'Development',
-    'feasly.consolidate.status_construction': 'Construction',
-    'feasly.consolidate.status_completed': 'Completed',
-
-    // Feasly Insights
-    'feasly.insights.title': 'Portfolio Insights Summary',
-    'feasly.insights.description': 'Advanced analytics and visual KPIs across selected projects',
-  },
-  ar: {
+  const baseTranslationsAr = {
     // Auth
     'auth.login': 'تسجيل الدخول',
     'auth.signup': 'إنشاء حساب',
@@ -367,16 +112,35 @@ const translations: Record<Language, Record<string, string>> = {
     'common.cancel': 'إلغاء',
     'common.edit': 'تحرير',
     'common.delete': 'حذف',
-    
-    // Feasly Model (Arabic)
-    'feasly.model.title': 'نموذج فيزلي',
-    'feasly.model.description': 'محرك الجدوى التطويرية للتخطيط والإدخال والتحليل',
-    'feasly.model.project_metadata': 'بيانات المشروع الأساسية',
-    'feasly.model.project_metadata_desc': 'معلومات المشروع الأساسية وتفاصيل الموقع',
-    'feasly.model.project_name': 'اسم المشروع',
-    'feasly.model.project_name_placeholder': 'أدخل اسم المشروع',
-  }
+  };
+
+  // Convert JSON structure to flat key-value pairs
+  const flattenObject = (obj: any, prefix = '') => {
+    const flattened: Record<string, string> = {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const newKey = prefix ? `${prefix}.${key}` : key;
+        if (typeof obj[key] === 'object' && obj[key] !== null) {
+          Object.assign(flattened, flattenObject(obj[key], newKey));
+        } else {
+          flattened[newKey] = obj[key];
+        }
+      }
+    }
+    return flattened;
+  };
+
+  // Flatten Feasly translations
+  const enFeaslyFlat = flattenObject({ feasly: enFeasly });
+  const arFeaslyFlat = flattenObject({ feasly: arFeasly });
+
+  return {
+    en: { ...baseTranslationsEn, ...enFeaslyFlat },
+    ar: { ...baseTranslationsAr, ...arFeaslyFlat }
+  };
 };
+
+const translations = createTranslations();
 
 interface LanguageProviderProps {
   children: ReactNode;
