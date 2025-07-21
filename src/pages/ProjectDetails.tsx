@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText } from "lucide-react";
 
@@ -7,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AddAssetForm } from "@/components/assets/AddAssetForm";
 import { AssetsList } from "@/components/assets/AssetsList";
+import { ScenarioSelector } from "@/components/scenarios/ScenarioSelector";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,6 +47,7 @@ const ProjectDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [selectedScenarioId, setSelectedScenarioId] = useState<string | null>(null);
 
   const { data: project, isLoading, error } = useQuery({
     queryKey: ["project", id],
@@ -80,6 +83,31 @@ const ProjectDetails = () => {
     },
     enabled: !!id,
   });
+
+  const { data: scenarios } = useQuery({
+    queryKey: ["scenarios", id],
+    queryFn: async () => {
+      if (!id) return [];
+      
+      const { data, error } = await supabase
+        .from("scenarios")
+        .select("*")
+        .eq("project_id", id)
+        .order("is_base", { ascending: false }); // Base scenario first
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!id,
+  });
+
+  // Set default scenario to base case when scenarios are loaded
+  useEffect(() => {
+    if (scenarios && scenarios.length > 0 && !selectedScenarioId) {
+      const baseScenario = scenarios.find(s => s.is_base) || scenarios[0];
+      setSelectedScenarioId(baseScenario.id);
+    }
+  }, [scenarios, selectedScenarioId]);
 
   const totalAssets = assets?.length || 0;
   const totalValue = assets?.reduce((sum, asset) => sum + asset.construction_cost_aed, 0) || 0;
@@ -152,6 +180,17 @@ const ProjectDetails = () => {
           {id && <AddAssetForm projectId={id} />}
         </div>
       </div>
+
+      {/* Scenario Selector */}
+      {id && scenarios && scenarios.length > 0 && (
+        <div className="mb-6">
+          <ScenarioSelector 
+            projectId={id}
+            selectedScenarioId={selectedScenarioId}
+            onScenarioChange={setSelectedScenarioId}
+          />
+        </div>
+      )}
 
       {/* Financial Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -298,7 +337,7 @@ const ProjectDetails = () => {
               {id && <AddAssetForm projectId={id} />}
             </CardHeader>
             <CardContent>
-              {id && <AssetsList projectId={id} />}
+              {id && <AssetsList projectId={id} selectedScenarioId={selectedScenarioId} />}
             </CardContent>
           </Card>
         </TabsContent>

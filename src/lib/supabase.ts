@@ -122,6 +122,7 @@ export type Database = {
           project_id: string;
           name: string;
           type: 'Base Case' | 'Optimistic' | 'Pessimistic';
+          is_base: boolean;
           created_at: string;
           updated_at: string;
         };
@@ -130,6 +131,7 @@ export type Database = {
           project_id: string;
           name: string;
           type: 'Base Case' | 'Optimistic' | 'Pessimistic';
+          is_base?: boolean;
           created_at?: string;
           updated_at?: string;
         };
@@ -138,6 +140,7 @@ export type Database = {
           project_id?: string;
           name?: string;
           type?: 'Base Case' | 'Optimistic' | 'Pessimistic';
+          is_base?: boolean;
           created_at?: string;
           updated_at?: string;
         };

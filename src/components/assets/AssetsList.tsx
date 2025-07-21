@@ -22,8 +22,17 @@ interface Asset {
   updated_at: string;
 }
 
+interface ScenarioOverride {
+  id: string;
+  scenario_id: string;
+  asset_id: string;
+  field_name: string;
+  override_value: number;
+}
+
 interface AssetsListProps {
   projectId: string;
+  selectedScenarioId?: string | null;
 }
 
 const formatCurrency = (amount: number) => {
@@ -39,7 +48,7 @@ const formatNumber = (num: number) => {
   return new Intl.NumberFormat('en-US').format(num);
 };
 
-export const AssetsList = ({ projectId }: AssetsListProps) => {
+export const AssetsList = ({ projectId, selectedScenarioId }: AssetsListProps) => {
   const { data: assets, isLoading, error } = useQuery({
     queryKey: ["assets", projectId],
     queryFn: async () => {
@@ -54,6 +63,31 @@ export const AssetsList = ({ projectId }: AssetsListProps) => {
     },
     enabled: !!projectId,
   });
+
+  const { data: overrides } = useQuery({
+    queryKey: ["scenario-overrides", selectedScenarioId],
+    queryFn: async () => {
+      if (!selectedScenarioId) return [];
+      
+      const { data, error } = await supabase
+        .from("scenario_overrides")
+        .select("*")
+        .eq("scenario_id", selectedScenarioId);
+
+      if (error) throw error;
+      return data as ScenarioOverride[];
+    },
+    enabled: !!selectedScenarioId,
+  });
+
+  // Helper function to get the display value for a field (with override if exists)
+  const getDisplayValue = (asset: Asset, fieldName: string): number => {
+    const override = overrides?.find(o => o.asset_id === asset.id && o.field_name === fieldName);
+    if (override) {
+      return override.override_value;
+    }
+    return asset[fieldName as keyof Asset] as number;
+  };
 
   if (isLoading) {
     return (
@@ -106,7 +140,13 @@ export const AssetsList = ({ projectId }: AssetsListProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {assets.map((asset) => (
+      {assets.map((asset) => {
+        const constructionCost = getDisplayValue(asset, 'construction_cost_aed');
+        const annualRevenue = getDisplayValue(asset, 'annual_revenue_potential_aed');
+        const occupancyRate = getDisplayValue(asset, 'occupancy_rate_percent');
+        const capRate = getDisplayValue(asset, 'cap_rate_percent');
+        
+        return (
         <Card key={asset.id} className="hover:shadow-md transition-shadow">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -124,7 +164,7 @@ export const AssetsList = ({ projectId }: AssetsListProps) => {
                   <DollarSign className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Construction Cost</span>
                 </div>
-                <span className="font-medium">{formatCurrency(asset.construction_cost_aed)}</span>
+                <span className="font-medium">{formatCurrency(constructionCost)}</span>
               </div>
               
               <div className="flex items-center justify-between text-sm">
@@ -132,7 +172,7 @@ export const AssetsList = ({ projectId }: AssetsListProps) => {
                   <TrendingUp className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Annual Revenue</span>
                 </div>
-                <span className="font-medium">{formatCurrency(asset.annual_revenue_potential_aed)}</span>
+                <span className="font-medium">{formatCurrency(annualRevenue)}</span>
               </div>
               
               <div className="flex items-center justify-between text-sm">
@@ -140,7 +180,7 @@ export const AssetsList = ({ projectId }: AssetsListProps) => {
                   <Building2 className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Occupancy Rate</span>
                 </div>
-                <span className="font-medium">{asset.occupancy_rate_percent}%</span>
+                <span className="font-medium">{occupancyRate}%</span>
               </div>
               
               <div className="flex items-center justify-between text-sm">
@@ -148,12 +188,13 @@ export const AssetsList = ({ projectId }: AssetsListProps) => {
                   <Calendar className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Cap Rate</span>
                 </div>
-                <span className="font-medium">{asset.cap_rate_percent}%</span>
+                <span className="font-medium">{capRate}%</span>
               </div>
             </div>
           </CardContent>
         </Card>
-      ))}
+        );
+      })}
     </div>
   );
 };
