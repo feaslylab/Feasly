@@ -61,6 +61,7 @@ export const feaslyModelSchema = z.object({
   yield_estimate: z.number().min(0).max(100).optional(),
   target_irr: z.number().min(0).max(100).optional(),
   target_roi: z.number().min(0).max(100).optional(),
+  revenue_phasing_enabled: z.boolean().default(false),
 });
 
 export type FeaslyModelFormData = z.infer<typeof feaslyModelSchema>;
@@ -71,6 +72,14 @@ export interface Phase {
   phase_start: Date | null;
   phase_end: Date | null;
   gfa_percent: number;
+}
+
+// Revenue segment structure
+export interface RevenueSegment {
+  segment_name: string;
+  share_percent: number;
+  start_offset_month: number;
+  amortize_months: number;
 }
 
 // Scenario types

@@ -20,6 +20,10 @@ export type MonthlyCashflow = {
   vatRecoverable: number;
   escrowReserved: number;
   escrowReleased: number;
+  // Revenue breakdown by segment
+  revenueResidential: number;
+  revenueRetail: number;
+  revenueOffice: number;
 };
 
 export type CashflowGrid = {
