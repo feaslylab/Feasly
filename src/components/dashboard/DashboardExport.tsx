@@ -55,7 +55,7 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
             type,
             gfa_sqm,
             construction_cost_aed,
-            annual_revenue_potential_aed,
+            annual_revenue_aed,
             annual_operating_cost_aed,
             occupancy_rate_percent,
             cap_rate_percent,
@@ -149,7 +149,7 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
       filteredData.forEach(project => {
         const assetCount = project.assets?.length || 0;
         const totalCost = project.assets?.reduce((sum: number, asset: any) => sum + (asset.construction_cost_aed || 0), 0) || 0;
-        const totalRevenue = project.assets?.reduce((sum: number, asset: any) => sum + (asset.annual_revenue_potential_aed || 0), 0) || 0;
+        const totalRevenue = project.assets?.reduce((sum: number, asset: any) => sum + (asset.annual_revenue_aed || 0), 0) || 0;
         const currency = (project as any).currency_code || 'AED';
         
         projectsData.push([
@@ -181,7 +181,7 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
             asset.type,
             asset.gfa_sqm || 0,
             `${currency} ${(asset.construction_cost_aed || 0).toLocaleString()}`,
-            `${currency} ${(asset.annual_revenue_potential_aed || 0).toLocaleString()}`,
+            `${currency} ${(asset.annual_revenue_aed || 0).toLocaleString()}`,
             `${currency} ${(asset.annual_operating_cost_aed || 0).toLocaleString()}`,
             asset.occupancy_rate_percent || 0,
             asset.cap_rate_percent || 0
@@ -275,7 +275,7 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
             project.name,
             project.assets?.length || 0,
             `${currency} ${(project.assets?.reduce((sum: number, asset: any) => sum + (asset.construction_cost_aed || 0), 0) || 0).toLocaleString()}`,
-            `${currency} ${(project.assets?.reduce((sum: number, asset: any) => sum + (asset.annual_revenue_potential_aed || 0), 0) || 0).toLocaleString()}`
+            `${currency} ${(project.assets?.reduce((sum: number, asset: any) => sum + (asset.annual_revenue_aed || 0), 0) || 0).toLocaleString()}`
           ];
         });
         

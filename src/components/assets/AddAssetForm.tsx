@@ -19,7 +19,7 @@ const assetSchema = z.object({
   type: z.enum(["Residential", "Mixed Use", "Retail", "Hospitality", "Infrastructure"]),
   gfa_sqm: z.number().min(1, "GFA must be greater than 0"),
   construction_cost_aed: z.number().min(1, "Construction cost must be greater than 0"),
-  annual_revenue_potential_aed: z.number().min(0, "Annual revenue potential must be 0 or greater"),
+  annual_revenue_aed: z.number().min(0, "Annual revenue potential must be 0 or greater"),
   annual_operating_cost_aed: z.number().min(0, "Operating cost must be 0 or greater"),
   occupancy_rate_percent: z.number().min(0).max(100, "Occupancy rate must be between 0 and 100"),
   cap_rate_percent: z.number().min(0).max(100, "Cap rate must be between 0 and 100"),
@@ -46,7 +46,7 @@ export const AddAssetForm = ({ projectId, trigger }: AddAssetFormProps) => {
       type: "Residential",
       gfa_sqm: 0,
       construction_cost_aed: 0,
-      annual_revenue_potential_aed: 0,
+      annual_revenue_aed: 0,
       annual_operating_cost_aed: 0,
       occupancy_rate_percent: 0,
       cap_rate_percent: 0,
@@ -202,7 +202,7 @@ export const AddAssetForm = ({ projectId, trigger }: AddAssetFormProps) => {
 
                 <FormField
                   control={form.control}
-                  name="annual_revenue_potential_aed"
+                  name="annual_revenue_aed"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Annual Revenue Potential (AED/year)</FormLabel>

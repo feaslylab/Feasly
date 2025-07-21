@@ -14,7 +14,7 @@ export interface Asset {
   gfa_sqm: number;
   construction_cost_aed: number;
   annual_operating_cost_aed: number;
-  annual_revenue_potential_aed: number;
+  annual_revenue_aed: number;
   occupancy_rate_percent: number;
   cap_rate_percent: number;
   development_timeline_months: number;
@@ -109,7 +109,7 @@ export const calculateFinancialMetrics = (
   }, 0);
 
   const totalAnnualRevenue = assets.reduce((sum, asset) => {
-    const revenue = getEffectiveValue(asset, 'annual_revenue_potential_aed', overrides);
+    const revenue = getEffectiveValue(asset, 'annual_revenue_aed', overrides);
     const occupancy = getEffectiveValue(asset, 'occupancy_rate_percent', overrides);
     return sum + (revenue * occupancy / 100);
   }, 0);

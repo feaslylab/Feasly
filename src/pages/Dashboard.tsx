@@ -41,7 +41,7 @@ interface RecentProject {
 interface Asset {
   id: string;
   name: string;
-  annual_revenue_potential_aed: number;
+  annual_revenue_aed: number;
   project: {
     name: string;
   };
@@ -141,7 +141,7 @@ export default function Dashboard() {
           assets (
             id,
             construction_cost_aed,
-            annual_revenue_potential_aed
+            annual_revenue_aed
           )
         `)
         .eq('user_id', user?.id);
@@ -175,7 +175,7 @@ export default function Dashboard() {
         const projectValue = project.assets?.reduce((sum, asset) => 
           sum + (asset.construction_cost_aed || 0), 0) || 0;
         const projectRevenue = project.assets?.reduce((sum, asset) => 
-          sum + (asset.annual_revenue_potential_aed || 0), 0) || 0;
+          sum + (asset.annual_revenue_aed || 0), 0) || 0;
         
         totalAssets += assetCount;
         totalValue += projectValue;
@@ -222,7 +222,7 @@ export default function Dashboard() {
         .select(`
           id,
           name,
-          annual_revenue_potential_aed,
+          annual_revenue_aed,
           project_id,
           projects (
             id,
@@ -230,7 +230,7 @@ export default function Dashboard() {
             created_at
           )
         `)
-        .order('annual_revenue_potential_aed', { ascending: false });
+        .order('annual_revenue_aed', { ascending: false });
 
       const { data: assets, error: assetsError } = await query;
 
@@ -278,7 +278,7 @@ export default function Dashboard() {
       const highestRevenueAsset = filteredAssets[0];
 
       // Calculate average revenue per asset
-      const totalRevenue = filteredAssets.reduce((sum, asset) => sum + (asset.annual_revenue_potential_aed || 0), 0);
+      const totalRevenue = filteredAssets.reduce((sum, asset) => sum + (asset.annual_revenue_aed || 0), 0);
       const averageRevenuePerAsset = filteredAssets.length > 0 ? totalRevenue / filteredAssets.length : 0;
 
       // Group by project and calculate totals
@@ -287,7 +287,7 @@ export default function Dashboard() {
         const project = asset.projects as any;
         const projectId = project?.id;
         const projectName = project?.name;
-        const revenue = asset.annual_revenue_potential_aed || 0;
+        const revenue = asset.annual_revenue_aed || 0;
         
         if (projectId && projectRevenues.has(projectId)) {
           const existing = projectRevenues.get(projectId);
@@ -337,7 +337,7 @@ export default function Dashboard() {
             gfa_sqm,
             construction_cost_aed,
             annual_operating_cost_aed,
-            annual_revenue_potential_aed,
+            annual_revenue_aed,
             occupancy_rate_percent,
             cap_rate_percent,
             development_timeline_months,
@@ -861,7 +861,7 @@ export default function Dashboard() {
                       {insights.highestRevenueAsset.project.name}
                     </div>
                     <div className="text-lg font-bold text-success">
-                      {formatCurrency(insights.highestRevenueAsset.annual_revenue_potential_aed)}
+                      {formatCurrency(insights.highestRevenueAsset.annual_revenue_aed)}
                       <span className="text-xs font-normal text-muted-foreground">/year</span>
                     </div>
                   </div>

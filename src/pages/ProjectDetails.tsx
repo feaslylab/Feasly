@@ -53,7 +53,7 @@ interface Asset {
   gfa_sqm: number;
   construction_cost_aed: number;
   annual_operating_cost_aed: number;
-  annual_revenue_potential_aed: number;
+  annual_revenue_aed: number;
   occupancy_rate_percent: number;
   cap_rate_percent: number;
   development_timeline_months: number;
@@ -282,7 +282,7 @@ const ProjectDetails = () => {
         "Type": asset.type,
         "GFA (sqm)": getOverrideValue('gfa_sqm') || asset.gfa_sqm,
         "Construction Cost (AED)": getOverrideValue('construction_cost_aed') || asset.construction_cost_aed,
-        "Annual Revenue Potential (AED)": getOverrideValue('annual_revenue_potential_aed') || asset.annual_revenue_potential_aed,
+        "Annual Revenue Potential (AED)": getOverrideValue('annual_revenue_aed') || asset.annual_revenue_aed,
         "Annual Operating Cost (AED)": getOverrideValue('annual_operating_cost_aed') || asset.annual_operating_cost_aed,
         "Occupancy Rate (%)": getOverrideValue('occupancy_rate_percent') || asset.occupancy_rate_percent,
         "Cap Rate (%)": getOverrideValue('cap_rate_percent') || asset.cap_rate_percent,
@@ -449,7 +449,7 @@ const ProjectDetails = () => {
         asset.type,
         (getOverrideValue('gfa_sqm') || asset.gfa_sqm).toLocaleString(),
         formatCurrency(getOverrideValue('construction_cost_aed') || asset.construction_cost_aed),
-        formatCurrency(getOverrideValue('annual_revenue_potential_aed') || asset.annual_revenue_potential_aed),
+        formatCurrency(getOverrideValue('annual_revenue_aed') || asset.annual_revenue_aed),
         formatCurrency(getOverrideValue('annual_operating_cost_aed') || asset.annual_operating_cost_aed),
         `${getOverrideValue('occupancy_rate_percent') || asset.occupancy_rate_percent}%`,
         `${getOverrideValue('cap_rate_percent') || asset.cap_rate_percent}%`,
@@ -516,7 +516,7 @@ const ProjectDetails = () => {
           gfa_sqm: asset.gfa_sqm,
           construction_cost_aed: asset.construction_cost_aed,
           annual_operating_cost_aed: asset.annual_operating_cost_aed,
-          annual_revenue_potential_aed: asset.annual_revenue_potential_aed,
+          annual_revenue_aed: asset.annual_revenue_aed,
           occupancy_rate_percent: asset.occupancy_rate_percent,
           cap_rate_percent: asset.cap_rate_percent,
           development_timeline_months: asset.development_timeline_months,

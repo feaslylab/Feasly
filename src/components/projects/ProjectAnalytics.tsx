@@ -32,7 +32,7 @@ interface Asset {
   gfa_sqm: number;
   construction_cost_aed: number;
   annual_operating_cost_aed: number;
-  annual_revenue_potential_aed: number;
+  annual_revenue_aed: number;
   occupancy_rate_percent: number;
   cap_rate_percent: number;
   development_timeline_months: number;

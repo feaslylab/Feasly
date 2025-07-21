@@ -16,7 +16,7 @@ import { Edit3 } from "lucide-react";
 const scenarioValuesSchema = z.object({
   gfa_sqm: z.number().min(1, "GFA must be greater than 0"),
   construction_cost_aed: z.number().min(1, "Construction cost must be greater than 0"),
-  annual_revenue_potential_aed: z.number().min(0, "Annual revenue potential must be 0 or greater"),
+  annual_revenue_aed: z.number().min(0, "Annual revenue potential must be 0 or greater"),
   annual_operating_cost_aed: z.number().min(0, "Operating cost must be 0 or greater"),
   occupancy_rate_percent: z.number().min(0).max(100, "Occupancy rate must be between 0 and 100"),
   cap_rate_percent: z.number().min(0).max(100, "Cap rate must be between 0 and 100"),
@@ -34,7 +34,7 @@ interface Asset {
   gfa_sqm: number;
   construction_cost_aed: number;
   annual_operating_cost_aed: number;
-  annual_revenue_potential_aed: number;
+  annual_revenue_aed: number;
   occupancy_rate_percent: number;
   cap_rate_percent: number;
   development_timeline_months: number;
@@ -101,7 +101,7 @@ export const EditScenarioValuesForm = ({ asset, scenarioId, scenario, trigger }:
     defaultValues: {
       gfa_sqm: getCurrentValue('gfa_sqm'),
       construction_cost_aed: getCurrentValue('construction_cost_aed'),
-      annual_revenue_potential_aed: getCurrentValue('annual_revenue_potential_aed'),
+      annual_revenue_aed: getCurrentValue('annual_revenue_aed'),
       annual_operating_cost_aed: getCurrentValue('annual_operating_cost_aed'),
       occupancy_rate_percent: getCurrentValue('occupancy_rate_percent'),
       cap_rate_percent: getCurrentValue('cap_rate_percent'),
@@ -116,7 +116,7 @@ export const EditScenarioValuesForm = ({ asset, scenarioId, scenario, trigger }:
       form.reset({
         gfa_sqm: getCurrentValue('gfa_sqm'),
         construction_cost_aed: getCurrentValue('construction_cost_aed'),
-        annual_revenue_potential_aed: getCurrentValue('annual_revenue_potential_aed'),
+        annual_revenue_aed: getCurrentValue('annual_revenue_aed'),
         annual_operating_cost_aed: getCurrentValue('annual_operating_cost_aed'),
         occupancy_rate_percent: getCurrentValue('occupancy_rate_percent'),
         cap_rate_percent: getCurrentValue('cap_rate_percent'),
@@ -261,7 +261,7 @@ export const EditScenarioValuesForm = ({ asset, scenarioId, scenario, trigger }:
 
                 <FormField
                   control={form.control}
-                  name="annual_revenue_potential_aed"
+                  name="annual_revenue_aed"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Annual Revenue Potential (AED/year)</FormLabel>

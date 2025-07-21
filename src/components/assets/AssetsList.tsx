@@ -14,7 +14,7 @@ interface Asset {
   gfa_sqm: number;
   construction_cost_aed: number;
   annual_operating_cost_aed: number;
-  annual_revenue_potential_aed: number;
+  annual_revenue_aed: number;
   occupancy_rate_percent: number;
   cap_rate_percent: number;
   development_timeline_months: number;
@@ -153,7 +153,7 @@ export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario, ca
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {assets.map((asset) => {
         const constructionCost = getDisplayValue(asset, 'construction_cost_aed');
-        const annualRevenue = getDisplayValue(asset, 'annual_revenue_potential_aed');
+        const annualRevenue = getDisplayValue(asset, 'annual_revenue_aed');
         const occupancyRate = getDisplayValue(asset, 'occupancy_rate_percent');
         const capRate = getDisplayValue(asset, 'cap_rate_percent');
         

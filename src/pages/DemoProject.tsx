@@ -34,7 +34,7 @@ interface Asset {
   gfa_sqm: number;
   construction_cost_aed: number;
   annual_operating_cost_aed: number;
-  annual_revenue_potential_aed: number;
+  annual_revenue_aed: number;
   occupancy_rate_percent: number;
   cap_rate_percent: number;
   development_timeline_months: number;
@@ -329,7 +329,7 @@ const DemoProject = () => {
                             </td>
                             <td className="p-2 text-right">{asset.gfa_sqm.toLocaleString()}</td>
                             <td className="p-2 text-right">{formatCurrency(asset.construction_cost_aed)}</td>
-                            <td className="p-2 text-right">{formatCurrency(asset.annual_revenue_potential_aed)}</td>
+                            <td className="p-2 text-right">{formatCurrency(asset.annual_revenue_aed)}</td>
                             <td className="p-2 text-right">{asset.occupancy_rate_percent}%</td>
                           </tr>
                         ))}
@@ -364,7 +364,7 @@ const DemoProject = () => {
                             </div>
                             <div>
                               <span className="text-muted-foreground">Annual Revenue:</span>
-                              <div className="font-medium">{formatCurrency(asset.annual_revenue_potential_aed)}</div>
+                              <div className="font-medium">{formatCurrency(asset.annual_revenue_aed)}</div>
                             </div>
                           </div>
                         </CardContent>
