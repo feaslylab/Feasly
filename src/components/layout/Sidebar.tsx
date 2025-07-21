@@ -25,7 +25,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className={cn("h-screen flex flex-col bg-card border-border", isRTL ? "border-l" : "border-r")}>
+    <div className={cn("h-full flex flex-col bg-card border-border relative", isRTL ? "border-l" : "border-r")}>
       {/* Top Section - Fixed */}
       <div className="flex-shrink-0">
         {/* Logo */}
@@ -57,8 +57,8 @@ export const Sidebar = () => {
         </div>
       </div>
 
-      {/* Middle Section - Scrollable Navigation */}
-      <div className="flex-1 overflow-hidden">
+      {/* Middle Section - Scrollable Navigation with padding for bottom user section */}
+      <div className="flex-1 overflow-hidden pb-20">
         <nav className="h-full px-4 py-2 space-y-1 overflow-y-auto">
           {navigation.map((item) => (
             <NavLink
@@ -81,8 +81,8 @@ export const Sidebar = () => {
         </nav>
       </div>
 
-      {/* Bottom User Section - Always Visible */}
-      <div className="p-4 border-t border-border flex-shrink-0">
+      {/* Bottom User Section - Absolutely Positioned, Always Visible */}
+      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border bg-card/95 backdrop-blur-sm">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
