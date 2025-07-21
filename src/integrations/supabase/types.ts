@@ -188,6 +188,9 @@ export type Database = {
           profit: number | null
           project_id: string
           revenue: number | null
+          revenue_office: number | null
+          revenue_residential: number | null
+          revenue_retail: number | null
           scenario: string
           soft_costs: number | null
           updated_at: string
@@ -214,6 +217,9 @@ export type Database = {
           profit?: number | null
           project_id: string
           revenue?: number | null
+          revenue_office?: number | null
+          revenue_residential?: number | null
+          revenue_retail?: number | null
           scenario: string
           soft_costs?: number | null
           updated_at?: string
@@ -240,6 +246,9 @@ export type Database = {
           profit?: number | null
           project_id?: string
           revenue?: number | null
+          revenue_office?: number | null
+          revenue_residential?: number | null
+          revenue_retail?: number | null
           scenario?: string
           soft_costs?: number | null
           updated_at?: string
