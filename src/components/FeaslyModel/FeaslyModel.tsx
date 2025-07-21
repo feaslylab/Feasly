@@ -21,6 +21,7 @@ import { SensitivityAnalysis } from "./SensitivityAnalysis";
 import { ScenarioChart } from "./ScenarioChart";
 import { TimelineGantt } from "./TimelineGantt";
 import { CommentingPanel } from "./CommentingPanel";
+import CashflowTable from "./CashflowTable";
 
 export default function FeaslyModel() {
   const { t, isRTL } = useLanguage();
@@ -124,6 +125,19 @@ export default function FeaslyModel() {
                   
                   {/* KPI Results */}
                   <KPIResults />
+                  
+                  {/* Cashflow Table */}
+                  <CashflowTable 
+                    formData={form.getValues()}
+                    onRecalculate={async (formData) => {
+                      // This will trigger the calculation engine
+                      console.log("Recalculating cashflow with:", formData);
+                      toast({
+                        title: "Cashflow Calculated",
+                        description: "Monthly cashflow projections have been updated.",
+                      });
+                    }}
+                  />
                   
                   {/* Export & AI Insights */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
