@@ -16,7 +16,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CalendarIcon, Building2, Calendar as CalendarIconLucide, DollarSign, TrendingUp, MapPin, Clock, Info, Layers } from "lucide-react";
 import { format, addMonths } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   // Project Metadata
@@ -81,6 +82,7 @@ type FormData = z.infer<typeof formSchema>;
 
 export default function FeaslyModel() {
   const { t, isRTL } = useLanguage();
+  const { toast } = useToast();
   const [phases, setPhases] = useState<Array<{ phase_name: string; phase_start: Date | null; phase_end: Date | null; gfa_percent: number }>>([]);
   
   // Scenario state management
@@ -106,6 +108,80 @@ export default function FeaslyModel() {
       loan_repayment_type: "Amortized",
     },
   });
+
+  // Check for synced data from Feasly Flow on mount
+  useEffect(() => {
+    const syncedData = localStorage.getItem('feasly_model_from_flow');
+    if (syncedData) {
+      try {
+        const data = JSON.parse(syncedData);
+        
+        // Check if form is empty (no user edits yet)
+        const formValues = form.getValues();
+        const isFormEmpty = !formValues.project_name && 
+                           !formValues.total_gfa_sqm && 
+                           !formValues.site_area_sqm && 
+                           !formValues.construction_cost;
+        
+        if (isFormEmpty) {
+          // Prefill form with synced data
+          if (data.total_gfa_sqm) form.setValue("total_gfa_sqm", data.total_gfa_sqm);
+          if (data.site_area_sqm) form.setValue("site_area_sqm", data.site_area_sqm);
+          if (data.construction_cost) form.setValue("construction_cost", data.construction_cost);
+          if (data.duration_months) form.setValue("duration_months", data.duration_months);
+          if (data.currency_code) form.setValue("currency_code", data.currency_code);
+          
+          // Handle dates
+          if (data.start_date) {
+            form.setValue("start_date", new Date(data.start_date));
+          }
+          if (data.completion_date) {
+            form.setValue("completion_date", new Date(data.completion_date));
+          }
+
+          toast({
+            title: t('feasly.model.flow_data_loaded'),
+            description: t('feasly.model.flow_data_loaded_desc'),
+          });
+
+          // Remove the synced data after applying
+          localStorage.removeItem('feasly_model_from_flow');
+        } else {
+          // Form has existing data, just show notification
+          toast({
+            title: t('feasly.model.flow_data_available'),
+            description: t('feasly.model.flow_data_available_desc'),
+            action: (
+              <Button 
+                size="sm" 
+                onClick={() => {
+                  // Apply data anyway (user chose to override)
+                  if (data.total_gfa_sqm) form.setValue("total_gfa_sqm", data.total_gfa_sqm);
+                  if (data.site_area_sqm) form.setValue("site_area_sqm", data.site_area_sqm);
+                  if (data.construction_cost) form.setValue("construction_cost", data.construction_cost);
+                  if (data.duration_months) form.setValue("duration_months", data.duration_months);
+                  if (data.start_date) form.setValue("start_date", new Date(data.start_date));
+                  if (data.completion_date) form.setValue("completion_date", new Date(data.completion_date));
+                  
+                  localStorage.removeItem('feasly_model_from_flow');
+                  
+                  toast({
+                    title: t('feasly.model.flow_data_applied'),
+                    description: t('feasly.model.flow_data_applied_desc'),
+                  });
+                }}
+              >
+                {t('feasly.model.apply_flow_data')}
+              </Button>
+            ),
+          });
+        }
+      } catch (error) {
+        console.error('Error parsing synced data:', error);
+        localStorage.removeItem('feasly_model_from_flow');
+      }
+    }
+  }, [form, toast, t]);
 
   const watchPhasing = form.watch("phasing_enabled");
   const watchZakat = form.watch("zakat_applicable");

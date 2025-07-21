@@ -12,7 +12,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CalendarIcon, Plus, Trash2, Clock, BarChart3, Calculator, Info } from "lucide-react";
+import { CalendarIcon, Plus, Trash2, Clock, BarChart3, Calculator, Info, ArrowRight } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { format, addMonths, isAfter, isBefore } from "date-fns";
 
 // Phase data structure
@@ -43,6 +44,7 @@ type PhaseFormData = z.infer<typeof phaseSchema>;
 
 export default function FeaslyFlow() {
   const { t, isRTL } = useLanguage();
+  const { toast } = useToast();
   const [phases, setPhases] = useState<Phase[]>([]);
   const [editingPhase, setEditingPhase] = useState<string | null>(null);
   const [currency] = useState("AED"); // This could come from project settings
@@ -174,6 +176,52 @@ export default function FeaslyFlow() {
   const totalCost = phases.reduce((sum, phase) => sum + phase.phaseCost, 0);
   const totalDuration = phases.reduce((sum, phase) => sum + phase.duration, 0);
   const validationIssues = validatePhases();
+
+  // Sync to Feasly Model function
+  const syncToFeaslyModel = () => {
+    if (phases.length === 0) {
+      toast({
+        title: t('feasly.flow.sync_error'),
+        description: t('feasly.flow.no_phases_to_sync'),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Calculate sync data
+    const totalSiteArea = phases.reduce((sum, phase) => sum + phase.landArea, 0);
+    const startDates = phases.filter(p => p.startDate).map(p => p.startDate!);
+    const endDates = phases.filter(p => p.endDate).map(p => p.endDate!);
+    
+    const earliestStart = startDates.length > 0 ? new Date(Math.min(...startDates.map(d => d.getTime()))) : null;
+    const latestEnd = endDates.length > 0 ? new Date(Math.max(...endDates.map(d => d.getTime()))) : null;
+
+    const syncData = {
+      total_gfa_sqm: totalGFA,
+      site_area_sqm: totalSiteArea,
+      construction_cost: totalCost,
+      start_date: earliestStart ? earliestStart.toISOString() : null,
+      completion_date: latestEnd ? latestEnd.toISOString() : null,
+      duration_months: totalDuration,
+      currency_code: currency,
+      synced_at: new Date().toISOString(),
+    };
+
+    try {
+      localStorage.setItem('feasly_model_from_flow', JSON.stringify(syncData));
+      
+      toast({
+        title: t('feasly.flow.sync_success'),
+        description: t('feasly.flow.sync_success_desc'),
+      });
+    } catch (error) {
+      toast({
+        title: t('feasly.flow.sync_error'),
+        description: t('feasly.flow.sync_error_desc'),
+        variant: "destructive",
+      });
+    }
+  };
 
   // DatePicker component
   const DatePickerField = ({ field, placeholder }: { field: any; placeholder: string }) => (
@@ -562,6 +610,18 @@ export default function FeaslyFlow() {
                 <p>{t('feasly.flow.ready_for_timeline')}</p>
               </CardContent>
             </Card>
+          )}
+
+          {/* Sync to Feasly Model Button */}
+          {phases.length > 0 && validationIssues.length === 0 && (
+            <Button 
+              onClick={syncToFeaslyModel}
+              className="w-full"
+              size="lg"
+            >
+              <ArrowRight className="mr-2 h-4 w-4" />
+              {t('feasly.flow.use_in_model')}
+            </Button>
           )}
         </div>
       </div>
