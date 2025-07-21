@@ -415,6 +415,10 @@ export function buildScenarioGrid(
       vatRecoverable,
       escrowReserved,
       escrowReleased,
+      // Revenue breakdown by segment (will be populated by revenue phasing logic)
+      revenueResidential: 0,
+      revenueRetail: 0,
+      revenueOffice: 0,
     };
   });
 }
@@ -571,6 +575,10 @@ export async function loadCashflowFromDatabase(
         vatRecoverable: Number(record.vat_recoverable || 0),
         escrowReserved: Number(record.escrow_reserved || 0),
         escrowReleased: Number(record.escrow_released || 0),
+        // Revenue breakdown by segment (fallback to 0 if columns don't exist yet)
+        revenueResidential: Number((record as any).revenue_residential || 0),
+        revenueRetail: Number((record as any).revenue_retail || 0),
+        revenueOffice: Number((record as any).revenue_office || 0),
       };
       
       const scenarioKey = record.scenario as 'base' | 'optimistic' | 'pessimistic' | 'custom';
