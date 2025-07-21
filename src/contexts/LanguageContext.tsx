@@ -23,6 +23,7 @@ const translations = {
     
     // Auth
     'auth.loggedIn': 'Logged in',
+    'auth.viewAccount': 'View Account',
     
     // Common
     'common.loading': 'Loading...',
@@ -182,6 +183,7 @@ const translations = {
     
     // Auth  
     'auth.loggedIn': 'مسجل الدخول',
+    'auth.viewAccount': 'عرض الحساب',
     
     // Common
     'common.loading': 'جاري التحميل...',
