@@ -21,16 +21,47 @@
   "yes": "Yes",
   "no": "No",
   "dashboard": "Dashboard",
-  "projects": "Projects",
+  "projects": "Projects", 
   "settings": "Settings",
   "newProject": "New Project",
   "model": "Feasly Model",
   "flow": "Feasly Flow",
   "finance": "Feasly Finance",
-  "consolidate": "Feasly Consolidate",
+  "consolidate": "Feasly Consolidate", 
   "insights": "Feasly Insights",
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "model": "Feasly Model",
+    "flow": "Feasly Flow", 
+    "finance": "Feasly Finance",
+    "consolidate": "Feasly Consolidate",
+    "insights": "Feasly Insights",
+    "settings": "Settings",
+    "newProject": "New Project"
+  },
+  "auth": {
+    "account": "Account"
+  },
   "settings": {
     "theme": "Theme",
     "language": "Language"
+  },
+  "feasly": {
+    "model": {
+      "title": "Feasly Model"
+    },
+    "flow": {
+      "title": "Feasly Flow"
+    },
+    "finance": {
+      "title": "Feasly Finance"
+    },
+    "consolidate": {
+      "title": "Feasly Consolidate"
+    },
+    "insights": {
+      "title": "Feasly Insights"
+    }
   }
 }
