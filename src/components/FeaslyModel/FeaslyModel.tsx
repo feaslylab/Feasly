@@ -25,11 +25,31 @@ import CashflowTable from "./CashflowTable";
 import ScenarioComparisonChart from "./ScenarioComparisonChart";
 import SmartInsightsPanel from "./SmartInsightsPanel";
 import ExportPDFReport from "./ExportPDFReport";
+import { VersionSelector } from "./VersionSelector";
+import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
 
 export default function FeaslyModel() {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
   const [activeScenario, setActiveScenario] = useState<ScenarioType>("base");
+  
+  // For demo purposes, using a mock project ID
+  const projectId = "demo-project-123";
+  
+  // Use versioning hook instead of the old calculation hook
+  const {
+    cashflowGrid,
+    availableVersions,
+    selectedVersion,
+    currentVersionLabel,
+    isLoadingCashflow,
+    isCalculating,
+    calculateCashflow,
+    switchToVersion,
+    getScenarioData,
+    getScenarioSummary,
+    hasData
+  } = useFeaslyVersions(projectId);
 
   // Initialize form with default values
   const form = useForm<FeaslyModelFormData>({
@@ -44,7 +64,7 @@ export default function FeaslyModel() {
 
   const onSubmit = async (data: FeaslyModelFormData) => {
     try {
-      console.log("Form submitted:", data);
+      await calculateCashflow(data);
       toast({
         title: "Model Generated",
         description: "Your feasibility model has been generated successfully.",
@@ -68,6 +88,11 @@ export default function FeaslyModel() {
     });
   };
 
+  const handleCalculateWithVersion = async (versionLabel: string) => {
+    const formData = form.getValues();
+    await calculateCashflow(formData, versionLabel);
+  };
+
   return (
     <div className={cn("container mx-auto p-6 space-y-6", isRTL && "rtl")}>
       {/* Header */}
@@ -79,6 +104,18 @@ export default function FeaslyModel() {
             {t('feasly.model.description')}
           </p>
         </div>
+      </div>
+
+      {/* Version Selector */}
+      <div className="bg-card border rounded-lg p-4">
+        <VersionSelector
+          availableVersions={availableVersions}
+          selectedVersion={selectedVersion}
+          currentVersionLabel={currentVersionLabel}
+          isLoading={isLoadingCashflow || isCalculating}
+          onVersionSelect={switchToVersion}
+          onCalculateWithVersion={handleCalculateWithVersion}
+        />
       </div>
 
       {/* Form with Preview Toggle */}

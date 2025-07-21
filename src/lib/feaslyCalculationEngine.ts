@@ -25,6 +25,7 @@ export type CashflowGrid = {
   optimistic: MonthlyCashflow[];
   pessimistic: MonthlyCashflow[];
   custom: MonthlyCashflow[];
+  version_label?: string;
 };
 
 export type ScenarioMultipliers = {
@@ -395,7 +396,8 @@ export function buildScenarioGrid(
  */
 export async function generateCashflowGrid(
   input: FeaslyModelFormData,
-  projectId: string
+  projectId: string,
+  versionLabel?: string
 ): Promise<CashflowGrid> {
   const scenarios = ['base', 'optimistic', 'pessimistic', 'custom'] as const;
   const grid: CashflowGrid = {
@@ -403,6 +405,7 @@ export async function generateCashflowGrid(
     optimistic: [],
     pessimistic: [],
     custom: [],
+    version_label: versionLabel || `v${Date.now()}`,
   };
   
   // Generate cashflow for each scenario
@@ -425,17 +428,22 @@ export async function saveCashflowToDatabase(
   grid: CashflowGrid
 ): Promise<void> {
   try {
-    // Delete existing cashflow data for this project
+    const versionLabel = grid.version_label || `v${Date.now()}`;
+    
+    // Mark all previous versions as not latest
     await supabase
       .from('feasly_cashflows')
-      .delete()
+      .update({ is_latest: false })
       .eq('project_id', projectId);
     
     // Prepare data for insertion
     const records: any[] = [];
     
     Object.entries(grid).forEach(([scenario, cashflows]) => {
-      cashflows.forEach(cashflow => {
+      if (scenario === 'version_label') return; // Skip version_label property
+      
+      const cashflowArray = cashflows as MonthlyCashflow[];
+      cashflowArray.forEach(cashflow => {
         records.push({
           project_id: projectId,
           scenario,
@@ -454,6 +462,8 @@ export async function saveCashflowToDatabase(
           zakat_due: cashflow.zakatDue,
           vat_on_costs: cashflow.vatOnCosts,
           vat_recoverable: cashflow.vatRecoverable,
+          version_label: versionLabel,
+          is_latest: true,
         });
       });
     });
@@ -477,14 +487,22 @@ export async function saveCashflowToDatabase(
  * Load cashflow grid from database
  */
 export async function loadCashflowFromDatabase(
-  projectId: string
+  projectId: string,
+  versionLabel?: string
 ): Promise<CashflowGrid | null> {
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('feasly_cashflows')
       .select('*')
-      .eq('project_id', projectId)
-      .order('month');
+      .eq('project_id', projectId);
+    
+    if (versionLabel) {
+      query = query.eq('version_label', versionLabel);
+    } else {
+      query = query.eq('is_latest', true);
+    }
+    
+    const { data, error } = await query.order('month');
     
     if (error) {
       console.error('Error loading cashflow data:', error);
@@ -501,6 +519,7 @@ export async function loadCashflowFromDatabase(
       optimistic: [],
       pessimistic: [],
       custom: [],
+      version_label: data[0]?.version_label || undefined,
     };
     
     data.forEach(record => {
@@ -522,8 +541,9 @@ export async function loadCashflowFromDatabase(
         vatRecoverable: Number(record.vat_recoverable || 0),
       };
       
-      if (grid[record.scenario as keyof CashflowGrid]) {
-        grid[record.scenario as keyof CashflowGrid].push(cashflow);
+      const scenarioKey = record.scenario as 'base' | 'optimistic' | 'pessimistic' | 'custom';
+      if (scenarioKey in grid && Array.isArray(grid[scenarioKey])) {
+        (grid[scenarioKey] as MonthlyCashflow[]).push(cashflow);
       }
     });
     
@@ -531,5 +551,30 @@ export async function loadCashflowFromDatabase(
   } catch (error) {
     console.error('Failed to load cashflow data:', error);
     return null;
+  }
+}
+
+/**
+ * Get list of available versions for a project
+ */
+export async function getProjectVersions(projectId: string): Promise<string[]> {
+  try {
+    const { data, error } = await supabase
+      .from('feasly_cashflows')
+      .select('version_label')
+      .eq('project_id', projectId)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error loading project versions:', error);
+      return [];
+    }
+    
+    // Get unique version labels
+    const versions = [...new Set(data?.map(row => row.version_label).filter(Boolean) || [])];
+    return versions;
+  } catch (error) {
+    console.error('Failed to load project versions:', error);
+    return [];
   }
 }

@@ -4,33 +4,56 @@ import { toast } from 'sonner';
 import {
   generateCashflowGrid,
   loadCashflowFromDatabase,
+  getProjectVersions,
   type CashflowGrid,
   type MonthlyCashflow,
 } from '@/lib/feaslyCalculationEngine';
 import type { FeaslyModelFormData } from '@/components/FeaslyModel/types';
 
-export function useFeaslyCalculation(projectId: string | undefined) {
+export function useFeaslyVersions(projectId: string | undefined) {
   const queryClient = useQueryClient();
+  const [selectedVersion, setSelectedVersion] = useState<string | undefined>();
   const [isCalculating, setIsCalculating] = useState(false);
 
-  // Query to load existing cashflow data
+  // Query to load available versions
+  const {
+    data: availableVersions = [],
+    isLoading: isLoadingVersions,
+  } = useQuery({
+    queryKey: ['feasly-versions', projectId],
+    queryFn: () => (projectId ? getProjectVersions(projectId) : []),
+    enabled: !!projectId,
+  });
+
+  // Query to load cashflow data for selected version
   const {
     data: cashflowGrid,
     isLoading: isLoadingCashflow,
     error: loadError,
   } = useQuery({
-    queryKey: ['feasly-cashflow', projectId],
-    queryFn: () => (projectId ? loadCashflowFromDatabase(projectId) : null),
+    queryKey: ['feasly-cashflow', projectId, selectedVersion],
+    queryFn: () => (projectId ? loadCashflowFromDatabase(projectId, selectedVersion) : null),
     enabled: !!projectId,
   });
 
-  // Mutation to generate new cashflow
+  // Mutation to generate new cashflow with version
   const generateCashflowMutation = useMutation({
-    mutationFn: async ({ formData, projectId }: { formData: FeaslyModelFormData; projectId: string }) => {
-      return generateCashflowGrid(formData, projectId);
+    mutationFn: async ({ 
+      formData, 
+      projectId, 
+      versionLabel 
+    }: { 
+      formData: FeaslyModelFormData; 
+      projectId: string; 
+      versionLabel?: string;
+    }) => {
+      return generateCashflowGrid(formData, projectId, versionLabel);
     },
     onSuccess: (data) => {
-      queryClient.setQueryData(['feasly-cashflow', projectId], data);
+      // Invalidate and refetch versions list
+      queryClient.invalidateQueries({ queryKey: ['feasly-versions', projectId] });
+      // Update current cashflow data
+      queryClient.setQueryData(['feasly-cashflow', projectId, selectedVersion], data);
       toast.success('Cashflow calculated successfully');
     },
     onError: (error) => {
@@ -39,9 +62,9 @@ export function useFeaslyCalculation(projectId: string | undefined) {
     },
   });
 
-  // Calculate cashflow with form data
+  // Calculate cashflow with version label
   const calculateCashflow = useCallback(
-    async (formData: FeaslyModelFormData) => {
+    async (formData: FeaslyModelFormData, versionLabel?: string) => {
       if (!projectId) {
         toast.error('No project selected');
         return;
@@ -49,12 +72,20 @@ export function useFeaslyCalculation(projectId: string | undefined) {
 
       setIsCalculating(true);
       try {
-        await generateCashflowMutation.mutateAsync({ formData, projectId });
+        await generateCashflowMutation.mutateAsync({ formData, projectId, versionLabel });
       } finally {
         setIsCalculating(false);
       }
     },
     [projectId, generateCashflowMutation]
+  );
+
+  // Switch to a different version
+  const switchToVersion = useCallback(
+    (versionLabel: string | undefined) => {
+      setSelectedVersion(versionLabel);
+    },
+    []
   );
 
   // Get scenario data
@@ -112,9 +143,13 @@ export function useFeaslyCalculation(projectId: string | undefined) {
   return {
     // Data
     cashflowGrid,
+    availableVersions,
+    selectedVersion,
+    currentVersionLabel: cashflowGrid?.version_label,
     
     // Loading states
     isLoadingCashflow,
+    isLoadingVersions,
     isCalculating: isCalculating || generateCashflowMutation.isPending,
     
     // Error states
@@ -122,6 +157,7 @@ export function useFeaslyCalculation(projectId: string | undefined) {
     
     // Actions
     calculateCashflow,
+    switchToVersion,
     
     // Utilities
     getScenarioData,
@@ -130,6 +166,6 @@ export function useFeaslyCalculation(projectId: string | undefined) {
     
     // Status checks
     hasData: !!cashflowGrid,
-    isEmpty: !cashflowGrid || Object.values(cashflowGrid).every(arr => arr.length === 0),
+    isEmpty: !cashflowGrid || Object.values(cashflowGrid).filter(item => Array.isArray(item)).every(arr => arr.length === 0),
   };
 }

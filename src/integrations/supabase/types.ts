@@ -176,6 +176,7 @@ export type Database = {
           created_at: string
           equity_injected: number | null
           id: string
+          is_latest: boolean
           land_cost: number | null
           loan_drawn: number | null
           loan_interest: number | null
@@ -190,6 +191,7 @@ export type Database = {
           updated_at: string
           vat_on_costs: number | null
           vat_recoverable: number | null
+          version_label: string
           zakat_due: number | null
         }
         Insert: {
@@ -198,6 +200,7 @@ export type Database = {
           created_at?: string
           equity_injected?: number | null
           id?: string
+          is_latest?: boolean
           land_cost?: number | null
           loan_drawn?: number | null
           loan_interest?: number | null
@@ -212,6 +215,7 @@ export type Database = {
           updated_at?: string
           vat_on_costs?: number | null
           vat_recoverable?: number | null
+          version_label?: string
           zakat_due?: number | null
         }
         Update: {
@@ -220,6 +224,7 @@ export type Database = {
           created_at?: string
           equity_injected?: number | null
           id?: string
+          is_latest?: boolean
           land_cost?: number | null
           loan_drawn?: number | null
           loan_interest?: number | null
@@ -234,6 +239,7 @@ export type Database = {
           updated_at?: string
           vat_on_costs?: number | null
           vat_recoverable?: number | null
+          version_label?: string
           zakat_due?: number | null
         }
         Relationships: []
