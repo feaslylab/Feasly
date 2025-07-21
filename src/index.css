@@ -16,11 +16,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 213 31% 13%;
 
-    /* Professional Blue Palette */
-    --primary: 214 76% 19%;
+    /* Professional Blue Palette - Softened Primary */
+    --primary: 214 50% 35%;
     --primary-foreground: 0 0% 98%;
-    --primary-light: 214 89% 85%;
-    --primary-dark: 214 76% 15%;
+    --primary-light: 214 60% 88%;
+    --primary-dark: 214 55% 25%;
 
     /* Financial Green Accents */
     --success: 142 71% 45%;
@@ -195,5 +195,130 @@
   .rtl input[type="number"]::placeholder,
   .rtl textarea::placeholder {
     text-align: right;
+  }
+}
+
+/* Feasly Global Utility Classes */
+@layer components {
+  /* Layout Containers */
+  .feasly-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .feasly-section {
+    @apply space-y-6 py-6;
+  }
+
+  .feasly-section-lg {
+    @apply space-y-8 py-8;
+  }
+
+  .feasly-page {
+    @apply min-h-screen bg-gradient-to-br from-background to-secondary/20;
+  }
+
+  /* Card Variants */
+  .feasly-card {
+    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200;
+  }
+
+  .feasly-card-elevated {
+    @apply bg-card border border-border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200;
+  }
+
+  .feasly-card-interactive {
+    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200 cursor-pointer;
+  }
+
+  .feasly-chart-card {
+    @apply bg-card border border-border rounded-lg shadow-sm p-6;
+  }
+
+  /* Typography */
+  .feasly-title {
+    @apply text-lg font-bold text-foreground;
+  }
+
+  .feasly-subtitle {
+    @apply text-base font-semibold text-foreground;
+  }
+
+  .feasly-description {
+    @apply text-sm text-muted-foreground leading-relaxed;
+  }
+
+  .feasly-section-title {
+    @apply text-xl font-bold text-foreground mb-2;
+  }
+
+  .feasly-section-description {
+    @apply text-sm text-muted-foreground mb-6;
+  }
+
+  /* Form Elements */
+  .feasly-form-section {
+    @apply space-y-4 p-6;
+  }
+
+  .feasly-form-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+  }
+
+  .feasly-form-grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+
+  /* Buttons */
+  .feasly-button-primary {
+    @apply bg-gradient-to-r from-primary to-primary-dark text-primary-foreground hover:from-primary-dark hover:to-primary shadow-md hover:shadow-lg transition-all duration-200;
+  }
+
+  .feasly-button-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border shadow-sm hover:shadow-md transition-all duration-200;
+  }
+
+  /* Tables */
+  .feasly-table-wrapper {
+    @apply overflow-hidden rounded-lg border border-border shadow-sm;
+  }
+
+  .feasly-table {
+    @apply w-full border-collapse bg-card;
+  }
+
+  /* Charts */
+  .feasly-chart-container {
+    @apply bg-card p-6 rounded-lg border border-border shadow-sm;
+  }
+
+  /* Mobile Responsive */
+  .feasly-mobile-stack {
+    @apply flex flex-col lg:flex-row gap-6;
+  }
+
+  .feasly-mobile-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6;
+  }
+
+  /* Status Indicators */
+  .feasly-status-success {
+    @apply bg-success/10 text-success border-success/20;
+  }
+
+  .feasly-status-warning {
+    @apply bg-warning/10 text-warning border-warning/20;
+  }
+
+  .feasly-status-error {
+    @apply bg-destructive/10 text-destructive border-destructive/20;
+  }
+
+  /* Animations */
+  .feasly-fade-in {
+    @apply animate-fade-in;
+  }
+
+  .feasly-scale-hover {
+    @apply hover:scale-[1.02] transition-transform duration-200;
   }
 }
