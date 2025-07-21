@@ -14,6 +14,7 @@ import { AddAssetForm } from "@/components/assets/AddAssetForm";
 import { AssetsList } from "@/components/assets/AssetsList";
 import { ScenarioSelector } from "@/components/scenarios/ScenarioSelector";
 import { FinancialSummaryCards } from "@/components/financial/FinancialSummaryCards";
+import { ProjectTeam } from "@/components/projects/ProjectTeam";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,6 +34,7 @@ interface Project {
   end_date: string | null;
   created_at: string;
   updated_at: string;
+  user_id: string;
 }
 
 interface Asset {
@@ -726,10 +728,11 @@ const ProjectDetails = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="assets">Assets</TabsTrigger>
           <TabsTrigger value="scenarios">Scenarios</TabsTrigger>
+          <TabsTrigger value="team">Team</TabsTrigger>
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
@@ -817,6 +820,10 @@ const ProjectDetails = () => {
               {id && <AssetsList projectId={id} selectedScenarioId={selectedScenarioId} selectedScenario={selectedScenario} />}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="team" className="space-y-6">
+          <ProjectTeam projectId={id || ""} projectOwnerId={project.user_id} />
         </TabsContent>
 
         <TabsContent value="scenarios" className="space-y-6">
