@@ -16,6 +16,11 @@ import { ScenariosSection } from "./ScenariosSection";
 import { KPIResults } from "./KPIResults";
 import { ExportPanel } from "./ExportPanel";
 import { AiInsightPanel } from "./AiInsightPanel";
+import { PreviewToggle } from "./PreviewToggle";
+import { SensitivityAnalysis } from "./SensitivityAnalysis";
+import { ScenarioChart } from "./ScenarioChart";
+import { TimelineGantt } from "./TimelineGantt";
+import { CommentingPanel } from "./CommentingPanel";
 
 export default function FeaslyModel() {
   const { t, isRTL } = useLanguage();
@@ -72,52 +77,82 @@ export default function FeaslyModel() {
         </div>
       </div>
 
-      {/* Form */}
+      {/* Form with Preview Toggle */}
       <FormProvider {...form}>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            
-            {/* Project Metadata Section */}
-            <ProjectMetadata />
-            
-            {/* Timeline Section */}
-            <TimelineSection />
+          <PreviewToggle>
+            {(previewMode) => (
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                
+                {/* Editable Sections - Hidden in Preview Mode */}
+                {!previewMode && (
+                  <>
+                    {/* Project Metadata Section */}
+                    <ProjectMetadata />
+                    
+                    {/* Timeline Section */}
+                    <TimelineSection />
 
-            {/* Site Metrics Section */}
-            <SiteMetrics />
+                    {/* Site Metrics Section */}
+                    <SiteMetrics />
 
-            {/* Financial Inputs Section */}
-            <FinancialInputs />
+                    {/* Financial Inputs Section */}
+                    <FinancialInputs />
 
-            {/* Scenarios Section */}
-            <ScenariosSection />
+                    {/* Scenarios Section */}
+                    <ScenariosSection />
+                  </>
+                )}
 
-            {/* KPI Results Section */}
-            <KPIResults />
+                {/* Advanced Analysis - Always Visible */}
+                <div className="space-y-6">
+                  <h2 className="text-xl font-semibold">📊 Advanced Analysis</h2>
+                  
+                  {/* Timeline Gantt */}
+                  <TimelineGantt />
+                  
+                  {/* Sensitivity Analysis */}
+                  <SensitivityAnalysis />
+                  
+                  {/* Scenario Comparison Chart */}
+                  <ScenarioChart />
+                </div>
 
-            {/* Export & Insights Section */}
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">📤 Export & Insights</h2>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <ExportPanel />
-                <AiInsightPanel />
-              </div>
-            </div>
+                {/* Results & Insights - Always Visible */}
+                <div className="space-y-6">
+                  <h2 className="text-xl font-semibold">🎯 Results & Insights</h2>
+                  
+                  {/* KPI Results */}
+                  <KPIResults />
+                  
+                  {/* Export & AI Insights */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <ExportPanel />
+                    <AiInsightPanel />
+                  </div>
+                </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-end space-x-4 pt-6">
-              <Button 
-                type="button" 
-                variant="outline" 
-                onClick={onSaveDraft}
-              >
-                {t('feasly.model.save_draft')}
-              </Button>
-              <Button type="submit">
-                {t('feasly.model.generate_model')}
-              </Button>
-            </div>
-          </form>
+                {/* Comments Panel */}
+                <CommentingPanel />
+
+                {/* Action Buttons - Hidden in Preview Mode */}
+                {!previewMode && (
+                  <div className="flex justify-end space-x-4 pt-6">
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={onSaveDraft}
+                    >
+                      {t('feasly.model.save_draft')}
+                    </Button>
+                    <Button type="submit">
+                      {t('feasly.model.generate_model')}
+                    </Button>
+                  </div>
+                )}
+              </form>
+            )}
+          </PreviewToggle>
         </Form>
       </FormProvider>
     </div>
