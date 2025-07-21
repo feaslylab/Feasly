@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const navigation = [
@@ -32,7 +33,10 @@ export const Sidebar = () => {
           <h1 className="text-lg font-semibold text-foreground">ProjectPro</h1>
           <p className="text-xs text-muted-foreground">Financial Modeling</p>
         </div>
-        <LanguageSwitcher />
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <LanguageSwitcher />
+        </div>
       </div>
 
       {/* Quick Action */}
