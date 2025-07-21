@@ -28,6 +28,7 @@ import SmartInsightsPanel from "./SmartInsightsPanel";
 import ExportPDFReport from "./ExportPDFReport";
 import { VersionSelector } from "./VersionSelector";
 import { CashflowVarianceChart } from "./CashflowVarianceChart";
+import ScenarioPlayback from "./ScenarioPlayback";
 import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
 
 export default function FeaslyModel() {
@@ -187,6 +188,9 @@ export default function FeaslyModel() {
                       });
                     }}
                   />
+                  
+                  {/* Scenario Timeline Playback */}
+                  <ScenarioPlayback projectId={projectId} />
                   
                   {/* Smart Insights Panel */}
                   <SmartInsightsPanel />
