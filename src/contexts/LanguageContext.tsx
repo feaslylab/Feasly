@@ -174,7 +174,7 @@ const baseTranslations = {
     'common.no': 'No',
     
     // Auth
-    'auth.login': 'Login',
+    'auth.login': 'Log In',
     'auth.signup': 'Sign Up',
     'auth.email': 'Email',
     'auth.password': 'Password',
@@ -191,8 +191,8 @@ const baseTranslations = {
     'auth.dontHaveAccount': "Don't have an account?",
     'auth.signInHere': 'Sign in here',
     'auth.signUpHere': 'Sign up here',
-    'auth.welcomeBack': 'Welcome back',
-    'auth.loginToAccount': 'Log in to your account to continue',
+    'auth.welcomeBack': 'Welcome Back',
+    'auth.loginToAccount': 'Log in to your account',
     'auth.createAccount': 'Create your account',
     'auth.getStarted': 'Get started with your financial modeling platform',
     'dashboard.quickActions': 'Quick Actions',
@@ -399,9 +399,9 @@ const baseTranslations = {
     'auth.alreadyHaveAccount': 'لديك حساب بالفعل؟',
     'auth.dontHaveAccount': 'ليس لديك حساب؟',
     'auth.signInHere': 'سجل دخولك هنا',
-    'auth.signUpHere': 'أنشئ حسابك هنا',
-    'auth.welcomeBack': 'مرحباً بعودتك',
-    'auth.loginToAccount': 'سجل دخولك إلى حسابك للمتابعة',
+    'auth.signUpHere': 'سجل هنا',
+    'auth.welcomeBack': 'مرحبًا بعودتك',
+    'auth.loginToAccount': 'سجّل الدخول إلى حسابك',
     'auth.createAccount': 'إنشاء حسابك',
     'auth.getStarted': 'ابدأ مع منصة النمذجة المالية',
     
