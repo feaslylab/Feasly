@@ -57,8 +57,7 @@ export default function Dashboard() {
           created_at,
           assets (
             id,
-            construction_cost_aed,
-            annual_revenue_potential_aed
+            construction_cost_aed
           )
         `)
         .eq('user_id', user?.id)
