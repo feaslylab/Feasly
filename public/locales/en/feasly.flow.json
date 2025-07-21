@@ -40,5 +40,16 @@
   "sync_success_desc": "Phase data has been synced to Feasly Model",
   "sync_error": "Sync Error",
   "sync_error_desc": "Failed to sync data to Feasly Model",
-  "no_phases_to_sync": "No phases available to sync"
+  "no_phases_to_sync": "No phases available to sync",
+  "project_phases": "Project Phases",
+  "duration": "Duration",
+  "gfa": "GFA",
+  "cost": "Cost",
+  "dates": "Dates",
+  "depends_on": "Depends on",
+  "summary_metrics": "Summary Metrics",
+  "project_summary": "Project Summary",
+  "phases_configured": "phases configured",
+  "ready_for_timeline": "Ready for timeline analysis",
+  "use_in_model": "Use in Feasly Model"
 }

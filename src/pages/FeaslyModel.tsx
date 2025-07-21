@@ -301,6 +301,22 @@ export default function FeaslyModel() {
     const totalFundingSources = (watchEquityContribution || 0) + (watchLoanAmount || 0);
     const fundingGap = (watchTotalFunding || 0) - totalFundingSources;
 
+    // Calculate buildable ratio
+    const buildableRatio = watchSiteArea && watchTotalGfa ? (watchTotalGfa / watchSiteArea).toFixed(2) : null;
+
+    // Calculate end date
+    const calculatedEndDate = watchStartDate && watchDurationMonths 
+      ? addMonths(watchStartDate, watchDurationMonths) : null;
+
+    // Calculate contingency value and total investment
+    const nonLandCosts = (watchConstructionCost || 0) + (watchSoftCosts || 0) + (watchMarketingCost || 0);
+    const contingencyValue = nonLandCosts * ((watchContingencyPercent || 0) / 100);
+    const totalInvestment = (watchLandCost || 0) + nonLandCosts + contingencyValue;
+
+    // Calculate funding gap
+    const totalFundingSources = (watchEquityContribution || 0) + (watchLoanAmount || 0);
+    const fundingGap = (watchTotalFunding || 0) - totalFundingSources;
+
     return {
       buildableRatio,
       calculatedEndDate,
