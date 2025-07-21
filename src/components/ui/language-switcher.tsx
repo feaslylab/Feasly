@@ -5,30 +5,34 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Languages } from "lucide-react";
-import { useTranslation } from "react-i18next";
+import { Globe, Languages } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const LanguageSwitcher = () => {
-  const { i18n } = useTranslation();
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
           <Languages className="h-4 w-4" />
-          <span className="sr-only">Switch Language</span>
+          <span className="sr-only">{t('settings.language')}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => i18n.changeLanguage('en')}>
-          <span className={`text-sm ${i18n.language === 'en' ? 'font-semibold' : ''}`}>
-            English
-          </span>
+      <DropdownMenuContent align="end" className="w-36 bg-popover border border-border shadow-md z-50">
+        <DropdownMenuItem
+          onClick={() => setLanguage('en')}
+          className={`cursor-pointer ${language === 'en' ? 'bg-accent' : ''}`}
+        >
+          <Globe className="mr-2 h-4 w-4" />
+          English
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => i18n.changeLanguage('ar')}>
-          <span className={`text-sm ${i18n.language === 'ar' ? 'font-semibold' : ''}`}>
-            العربية
-          </span>
+        <DropdownMenuItem
+          onClick={() => setLanguage('ar')}
+          className={`cursor-pointer ${language === 'ar' ? 'bg-accent' : ''}`}
+        >
+          <Globe className="mr-2 h-4 w-4" />
+          العربية
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

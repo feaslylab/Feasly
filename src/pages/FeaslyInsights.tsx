@@ -1,7 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { useNamespaceLoader } from "@/hooks/useNamespaceLoader";
-import { namespaces } from "@/lib/i18n";
+import { useState, useMemo } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -155,14 +153,7 @@ const generateDummyData = (): Project[] => [
 ];
 
 export default function FeaslyInsights() {
-  const { t, i18n } = useTranslation(namespaces.INSIGHTS);
-  const { loadNamespacesForRoute } = useNamespaceLoader();
-  const isRTL = i18n.language === 'ar';
-
-  // Load the insights namespace
-  useEffect(() => {
-    loadNamespacesForRoute('/feasly-insights');
-  }, [loadNamespacesForRoute]);
+  const { t, isRTL } = useLanguage();
   
   // Load projects from localStorage or use dummy data
   const [projects] = useState<Project[]>(() => {
@@ -352,15 +343,6 @@ export default function FeaslyInsights() {
     }
   };
 
-  const translateRiskLevel = (level: string) => {
-    switch (level) {
-      case 'Low': return t('risk_low');
-      case 'Medium': return t('risk_medium');
-      case 'High': return t('risk_high');
-      default: return level;
-    }
-  };
-
   const handleProjectClick = (project: Project) => {
     setSelectedProject(project);
   };
@@ -371,11 +353,11 @@ export default function FeaslyInsights() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">
-              {t('title')}
+              {t('feasly.insights.title') || 'Feasly Insights'}
               <Badge className="ml-3 bg-blue-100 text-blue-800">v2 - Advanced Analytics</Badge>
             </h1>
             <p className="text-muted-foreground">
-              {t('description')}
+              {t('feasly.insights.description') || 'Advanced analytics and insights for your portfolio'}
             </p>
           </div>
           <ExportEngine 
@@ -397,43 +379,43 @@ export default function FeaslyInsights() {
       {/* Filter Panel */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">{t('filters_presets')}</CardTitle>
+          <CardTitle className="text-lg">Filters & Presets</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <Select value={scenarioFilter} onValueChange={setScenarioFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t('scenario_type')} />
+                  <SelectValue placeholder="Scenario Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('all_scenarios')}</SelectItem>
-                  <SelectItem value="Base">{t('base')}</SelectItem>
-                  <SelectItem value="Optimistic">{t('optimistic')}</SelectItem>
-                  <SelectItem value="Pessimistic">{t('pessimistic')}</SelectItem>
-                  <SelectItem value="Custom">{t('custom')}</SelectItem>
+                  <SelectItem value="all">All Scenarios</SelectItem>
+                  <SelectItem value="Base">Base</SelectItem>
+                  <SelectItem value="Optimistic">Optimistic</SelectItem>
+                  <SelectItem value="Pessimistic">Pessimistic</SelectItem>
+                  <SelectItem value="Custom">Custom</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={statusFilter} onValueChange={setStatusFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t('status')} />
+                  <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('all_status')}</SelectItem>
-                  <SelectItem value="Planning">{t('planning')}</SelectItem>
-                  <SelectItem value="Development">{t('development')}</SelectItem>
-                  <SelectItem value="Construction">{t('construction')}</SelectItem>
-                  <SelectItem value="Completed">{t('completed')}</SelectItem>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="Planning">Planning</SelectItem>
+                  <SelectItem value="Development">Development</SelectItem>
+                  <SelectItem value="Construction">Construction</SelectItem>
+                  <SelectItem value="Completed">Completed</SelectItem>
                 </SelectContent>
               </Select>
 
               <Select value={countryFilter} onValueChange={setCountryFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t('location')} />
+                  <SelectValue placeholder="Location" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">{t('all_locations')}</SelectItem>
+                  <SelectItem value="all">All Locations</SelectItem>
                   <SelectItem value="UAE">UAE</SelectItem>
                 </SelectContent>
               </Select>
@@ -442,7 +424,7 @@ export default function FeaslyInsights() {
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="justify-start text-left font-normal">
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dateRange?.from ? format(dateRange.from, "PPP") : t('pick_date')}
+                    {dateRange?.from ? format(dateRange.from, "PPP") : "Pick a date"}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -457,7 +439,7 @@ export default function FeaslyInsights() {
 
               <Select value={currencyFormat} onValueChange={setCurrencyFormat}>
                 <SelectTrigger>
-                  <SelectValue placeholder={t('currency')} />
+                  <SelectValue placeholder="Currency" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="AED">AED</SelectItem>
@@ -484,7 +466,7 @@ export default function FeaslyInsights() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('total_projects')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -494,7 +476,7 @@ export default function FeaslyInsights() {
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('total_gfa')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Total GFA</CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -506,7 +488,7 @@ export default function FeaslyInsights() {
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('construction_cost')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Construction Cost</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -518,7 +500,7 @@ export default function FeaslyInsights() {
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('estimated_revenue')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Estimated Revenue</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -542,7 +524,7 @@ export default function FeaslyInsights() {
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('average_irr')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Average IRR</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -554,7 +536,7 @@ export default function FeaslyInsights() {
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Portfolio ROI</CardTitle>
+            <CardTitle className="text-sm font-medium">Average ROI</CardTitle>
             <PieChart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -564,12 +546,12 @@ export default function FeaslyInsights() {
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('risk_level')}</CardTitle>
+            <CardTitle className="text-sm font-medium">Risk Level</CardTitle>
             <Shield className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <Badge className={getRiskLevelColor(kpiMetrics.riskLevel)}>
-              {translateRiskLevel(kpiMetrics.riskLevel)}
+              {kpiMetrics.riskLevel}
             </Badge>
           </CardContent>
         </Card>
@@ -578,8 +560,8 @@ export default function FeaslyInsights() {
       {/* Tabbed Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
-          <TabsTrigger value="geographic">{t('geographic')}</TabsTrigger>
+          <TabsTrigger value="overview">Charts Overview</TabsTrigger>
+          <TabsTrigger value="geographic">Geographic View</TabsTrigger>
           <TabsTrigger value="insights">AI Insights</TabsTrigger>
         </TabsList>
         
@@ -589,7 +571,7 @@ export default function FeaslyInsights() {
             {/* IRR vs ROI Bubble Chart */}
             <Card className="cursor-pointer hover:shadow-md transition-shadow">
               <CardHeader>
-                <CardTitle>{t('irr_vs_roi_analysis')}</CardTitle>
+                <CardTitle>IRR vs ROI Analysis</CardTitle>
                 <CardDescription>Bubble size represents GFA. Click projects for details.</CardDescription>
               </CardHeader>
               <CardContent>
@@ -632,8 +614,8 @@ export default function FeaslyInsights() {
             {/* Revenue vs Cost Timeline */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('revenue_vs_cost')}</CardTitle>
-                <CardDescription>{t('timeline')}</CardDescription>
+                <CardTitle>Revenue vs Cost Timeline</CardTitle>
+                <CardDescription>Monthly cumulative values</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -653,8 +635,8 @@ export default function FeaslyInsights() {
             {/* Scenario Comparison */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('scenario_comparison')}</CardTitle>
-                <CardDescription>{t('net_profit_by_scenario')}</CardDescription>
+                <CardTitle>Scenario Comparison</CardTitle>
+                <CardDescription>IRR and profit by scenario type</CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -674,7 +656,7 @@ export default function FeaslyInsights() {
             {/* Top Projects */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('top_performing_projects')}</CardTitle>
+                <CardTitle>Top 5 Projects by IRR</CardTitle>
                 <CardDescription>Highest performing projects - click to view details</CardDescription>
               </CardHeader>
               <CardContent>
@@ -713,7 +695,7 @@ export default function FeaslyInsights() {
             <Card className="border-green-200">
               <CardHeader className="flex flex-row items-center space-y-0 pb-2">
                 <Lightbulb className="h-5 w-5 text-green-600 mr-2" />
-                <CardTitle className="text-sm font-medium text-green-800">{t('top_opportunities')}</CardTitle>
+                <CardTitle className="text-sm font-medium text-green-800">Top Opportunities</CardTitle>
               </CardHeader>
               <CardContent>
                 {topOpportunities.length > 0 ? (
@@ -738,7 +720,7 @@ export default function FeaslyInsights() {
             <Card className="border-red-200">
               <CardHeader className="flex flex-row items-center space-y-0 pb-2">
                 <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
-                <CardTitle className="text-sm font-medium text-red-800">{t('risk_alerts')}</CardTitle>
+                <CardTitle className="text-sm font-medium text-red-800">Risk Alerts</CardTitle>
               </CardHeader>
               <CardContent>
                 {riskAlerts.length > 0 ? (
@@ -766,7 +748,7 @@ export default function FeaslyInsights() {
             <Card className="border-yellow-200">
               <CardHeader className="flex flex-row items-center space-y-0 pb-2">
                 <Search className="h-5 w-5 text-yellow-600 mr-2" />
-                <CardTitle className="text-sm font-medium text-yellow-800">{t('data_gaps')}</CardTitle>
+                <CardTitle className="text-sm font-medium text-yellow-800">Data Gaps</CardTitle>
               </CardHeader>
               <CardContent>
                 {dataGaps.length > 0 ? (
@@ -791,7 +773,7 @@ export default function FeaslyInsights() {
             <Card className="border-blue-200">
               <CardHeader className="flex flex-row items-center space-y-0 pb-2">
                 <TrendingUp className="h-5 w-5 text-blue-600 mr-2" />
-                <CardTitle className="text-sm font-medium text-blue-800">{t('scenario_sensitivity')}</CardTitle>
+                <CardTitle className="text-sm font-medium text-blue-800">Scenario Sensitivity</CardTitle>
               </CardHeader>
               <CardContent>
                 {scenarioSensitivity.length > 0 ? (

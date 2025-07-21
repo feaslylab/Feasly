@@ -3,8 +3,7 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { useTranslation } from "react-i18next";
-import { namespaces } from "@/lib/i18n";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -36,8 +35,7 @@ const getModuleTitle = (pathname: string, t: (key: string) => string) => {
 
 export const Sidebar = () => {
   const { signOut, user } = useAuth();
-  const { t, i18n } = useTranslation(namespaces.COMMON);
-  const isRTL = i18n.language === 'ar';
+  const { t, isRTL } = useLanguage();
   const location = useLocation();
   
   const currentModuleTitle = getModuleTitle(location.pathname, t);
