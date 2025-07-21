@@ -137,6 +137,7 @@ export default function Dashboard() {
           name,
           description,
           created_at,
+          currency_code,
           assets (
             id,
             construction_cost_aed,

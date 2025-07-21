@@ -970,6 +970,7 @@ const ProjectDetails = () => {
             selectedScenarioId={selectedScenarioId}
             assets={assets}
             projectCurrency={project?.currency_code || "AED"}
+            showOriginalCurrency={true}
           />
         </div>
       )}
@@ -1259,7 +1260,7 @@ const ProjectDetails = () => {
 
         <TabsContent value="analytics" className="space-y-6">
           {assets && assets.length > 0 ? (
-            <ProjectAnalytics projectId={id || ""} assets={assets} />
+            <ProjectAnalytics projectId={id || ""} assets={assets} projectCurrency={project?.currency_code || "AED"} />
           ) : (
             <Card>
               <CardHeader>

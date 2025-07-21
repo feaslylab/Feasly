@@ -48,6 +48,7 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
           description,
           created_at,
           updated_at,
+          currency_code,
           assets (
             id,
             name,
@@ -142,20 +143,22 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
       
       // Projects sheet
       const projectsData = [
-        ['Project Name', 'Description', 'Asset Count', 'Total Construction Cost', 'Total Revenue Potential', 'Created Date']
+        ['Project Name', 'Description', 'Currency', 'Asset Count', 'Total Construction Cost', 'Total Revenue Potential', 'Created Date']
       ];
       
       filteredData.forEach(project => {
         const assetCount = project.assets?.length || 0;
         const totalCost = project.assets?.reduce((sum: number, asset: any) => sum + (asset.construction_cost_aed || 0), 0) || 0;
         const totalRevenue = project.assets?.reduce((sum: number, asset: any) => sum + (asset.annual_revenue_potential_aed || 0), 0) || 0;
+        const currency = (project as any).currency_code || 'AED';
         
         projectsData.push([
           project.name,
           project.description || '',
+          currency,
           assetCount,
-          totalCost,
-          totalRevenue,
+          `${currency} ${totalCost.toLocaleString()}`,
+          `${currency} ${totalRevenue.toLocaleString()}`,
           new Date(project.created_at).toLocaleDateString()
         ]);
       });
@@ -165,19 +168,21 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
       
       // Assets sheet
       const assetsData = [
-        ['Project', 'Asset Name', 'Type', 'GFA (sqm)', 'Construction Cost (AED)', 'Annual Revenue (AED)', 'Operating Cost (AED)', 'Occupancy Rate (%)', 'Cap Rate (%)']
+        ['Project', 'Currency', 'Asset Name', 'Type', 'GFA (sqm)', 'Construction Cost', 'Annual Revenue', 'Operating Cost', 'Occupancy Rate (%)', 'Cap Rate (%)']
       ];
       
       filteredData.forEach(project => {
+        const currency = (project as any).currency_code || 'AED';
         project.assets?.forEach((asset: any) => {
           assetsData.push([
             project.name,
+            currency,
             asset.name,
             asset.type,
             asset.gfa_sqm || 0,
-            asset.construction_cost_aed || 0,
-            asset.annual_revenue_potential_aed || 0,
-            asset.annual_operating_cost_aed || 0,
+            `${currency} ${(asset.construction_cost_aed || 0).toLocaleString()}`,
+            `${currency} ${(asset.annual_revenue_potential_aed || 0).toLocaleString()}`,
+            `${currency} ${(asset.annual_operating_cost_aed || 0).toLocaleString()}`,
             asset.occupancy_rate_percent || 0,
             asset.cap_rate_percent || 0
           ]);
@@ -246,8 +251,8 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
       const summaryText = [
         `Total Projects: ${stats.totalProjects}`,
         `Total Assets: ${stats.totalAssets}`,
-        `Portfolio Value: ${formatCurrency(stats.totalValue)}`,
-        `Estimated Revenue: ${formatCurrency(stats.totalRevenue)}`,
+        `Note: Financial values shown in each project's native currency`,
+        `Portfolio contains mixed currencies - see detailed breakdown below`,
         `Average IRR: ${stats.avgIRR}%`
       ];
       
@@ -264,12 +269,15 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
         doc.text('Projects Overview', 20, yPosition);
         yPosition += 10;
         
-        const projectsTableData = filteredData.map(project => [
-          project.name,
-          project.assets?.length || 0,
-          formatCurrency(project.assets?.reduce((sum: number, asset: any) => sum + (asset.construction_cost_aed || 0), 0) || 0),
-          formatCurrency(project.assets?.reduce((sum: number, asset: any) => sum + (asset.annual_revenue_potential_aed || 0), 0) || 0)
-        ]);
+        const projectsTableData = filteredData.map(project => {
+          const currency = (project as any).currency_code || 'AED';
+          return [
+            project.name,
+            project.assets?.length || 0,
+            `${currency} ${(project.assets?.reduce((sum: number, asset: any) => sum + (asset.construction_cost_aed || 0), 0) || 0).toLocaleString()}`,
+            `${currency} ${(project.assets?.reduce((sum: number, asset: any) => sum + (asset.annual_revenue_potential_aed || 0), 0) || 0).toLocaleString()}`
+          ];
+        });
         
         (doc as any).autoTable({
           head: [['Project Name', 'Assets', 'Construction Cost', 'Revenue Potential']],

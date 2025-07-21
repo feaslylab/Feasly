@@ -20,6 +20,12 @@ import {
   Legend
 } from "recharts";
 import { TrendingUp, DollarSign, Clock, Calculator } from "lucide-react";
+import { 
+  getExchangeRates, 
+  getExchangeRate, 
+  convertCurrency,
+  type ExchangeRate 
+} from "@/lib/currencyConversion";
 
 interface Asset {
   id: string;
@@ -36,12 +42,11 @@ interface Asset {
 interface ProjectAnalyticsProps {
   projectId: string;
   assets: Asset[];
+  projectCurrency?: string;
 }
 
-const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-AE', {
-    style: 'currency',
-    currency: 'AED',
+const formatCurrency = (amount: number, currency: string = "AED") => {
+  return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(amount);
@@ -65,7 +70,12 @@ const COLORS = {
 
 const PIE_COLORS = ['#3b82f6', '#10b981'];
 
-export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) => {
+export const ProjectAnalytics = ({ projectId, assets, projectCurrency = "AED" }: ProjectAnalyticsProps) => {
+  // Fetch exchange rates
+  const { data: exchangeRates = [] } = useQuery({
+    queryKey: ["exchange-rates"],
+    queryFn: getExchangeRates,
+  });
   // Fetch all scenarios
   const { data: scenarios } = useQuery({
     queryKey: ["scenarios-analytics", projectId],
@@ -213,7 +223,7 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
                     <DollarSign className="w-3 h-3 text-muted-foreground" />
                     <span className="text-xs text-muted-foreground">Revenue</span>
                   </div>
-                  <p className="text-sm font-semibold">{formatCurrency(metrics.totalRevenue)}</p>
+                  <p className="text-sm font-semibold">{projectCurrency} {formatCurrency(metrics.totalRevenue, projectCurrency)}</p>
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-1">
@@ -279,6 +289,11 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
               <DollarSign className="w-5 h-5" />
               Cost Breakdown by Scenario
             </CardTitle>
+            {projectCurrency !== "AED" && exchangeRates.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                Values shown in {projectCurrency} • Exchange rate: {projectCurrency} → AED at {getExchangeRate(projectCurrency, "AED", exchangeRates)}
+              </p>
+            )}
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -306,7 +321,19 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
                             <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                           ))}
                         </Pie>
-                        <Tooltip formatter={(value) => formatCurrency(Number(value))} />
+                        <Tooltip 
+                          formatter={(value) => {
+                            const rate = getExchangeRate(projectCurrency, "AED", exchangeRates);
+                            return [
+                              `${projectCurrency} ${formatCurrency(Number(value), projectCurrency)}${
+                                projectCurrency !== "AED" && rate 
+                                  ? ` ≈ AED ${formatCurrency(convertCurrency(Number(value), projectCurrency, "AED", exchangeRates))}` 
+                                  : ""
+                              }`,
+                              "Value"
+                            ];
+                          }}
+                        />
                         <Legend />
                       </PieChart>
                     </ResponsiveContainer>
@@ -324,15 +351,30 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
               <Calculator className="w-5 h-5" />
               10-Year Cumulative Cash Flow
             </CardTitle>
+            {projectCurrency !== "AED" && exchangeRates.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                Values shown in {projectCurrency} • Exchange rate: {projectCurrency} → AED at {getExchangeRate(projectCurrency, "AED", exchangeRates)}
+              </p>
+            )}
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={250} className="sm:h-[300px]">
               <AreaChart data={cashFlowData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" tickFormatter={(value) => `Y${value}`} />
-                <YAxis tickFormatter={(value) => formatCurrency(value)} />
+                <YAxis tickFormatter={(value) => `${projectCurrency} ${formatCurrency(value, projectCurrency)}`} />
                 <Tooltip 
-                  formatter={(value, name) => [formatCurrency(Number(value)), name]}
+                  formatter={(value, name) => {
+                    const rate = getExchangeRate(projectCurrency, "AED", exchangeRates);
+                    return [
+                      `${projectCurrency} ${formatCurrency(Number(value), projectCurrency)}${
+                        projectCurrency !== "AED" && rate 
+                          ? ` ≈ AED ${formatCurrency(convertCurrency(Number(value), projectCurrency, "AED", exchangeRates))}` 
+                          : ""
+                      }`,
+                      name
+                    ];
+                  }}
                   labelFormatter={(value) => `Year ${value}`}
                 />
                 <Legend />

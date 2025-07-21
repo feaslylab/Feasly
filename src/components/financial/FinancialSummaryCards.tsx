@@ -10,6 +10,7 @@ import {
   convertCurrency, 
   formatCurrencyAmount, 
   getExchangeRates, 
+  getExchangeRate,
   type ExchangeRate 
 } from "@/lib/currencyConversion";
 import { 
@@ -44,6 +45,7 @@ interface FinancialSummaryCardsProps {
   selectedScenarioId?: string | null;
   assets?: Asset[];
   projectCurrency?: string;
+  showOriginalCurrency?: boolean;
 }
 
 const formatCurrency = (amount: number) => {
@@ -69,7 +71,8 @@ export const FinancialSummaryCards = ({
   projectId, 
   selectedScenarioId, 
   assets = [],
-  projectCurrency = "AED"
+  projectCurrency = "AED",
+  showOriginalCurrency = true
 }: FinancialSummaryCardsProps) => {
   const { toast } = useToast();
 
@@ -177,51 +180,57 @@ export const FinancialSummaryCards = ({
   const summaryCards = [
     {
       title: "Total Construction Cost",
-      value: formatCurrencyAmount(
-        convertedMetrics.totalConstructionCost,
-        "AED",
-        projectCurrency !== "AED",
-        metrics.totalConstructionCost,
-        projectCurrency
-      ),
+      value: (() => {
+        const rate = getExchangeRate(projectCurrency, "AED", exchangeRates);
+        return formatCurrencyAmount({
+          amount: metrics.totalConstructionCost,
+          currency: projectCurrency,
+          convertedToAED: showOriginalCurrency && projectCurrency !== "AED" ? convertedMetrics.totalConstructionCost : undefined,
+          showOriginal: showOriginalCurrency,
+          rate: rate || undefined
+        });
+      })(),
       subtitle: `${assets.length} asset${assets.length === 1 ? "" : "s"}`,
       icon: Building2,
       color: "text-blue-600",
     },
     {
       title: "Annual Revenue",
-      value: formatCurrencyAmount(
-        convertedMetrics.totalRevenue,
-        "AED", 
-        projectCurrency !== "AED",
-        metrics.totalRevenue,
-        projectCurrency
-      ),
+      value: (() => {
+        const rate = getExchangeRate(projectCurrency, "AED", exchangeRates);
+        return formatCurrencyAmount({
+          amount: metrics.totalRevenue,
+          currency: projectCurrency,
+          convertedToAED: showOriginalCurrency && projectCurrency !== "AED" ? convertedMetrics.totalRevenue : undefined,
+          showOriginal: showOriginalCurrency,
+          rate: rate || undefined
+        });
+      })(),
       subtitle: "With occupancy rates",
       icon: DollarSign,
       color: "text-green-600",
     },
     {
       title: "Profit Margin",
-      value: formatPercentage(metrics.profitMargin),
+      value: { display: formatPercentage(metrics.profitMargin) },
       subtitle: "After operating costs",
       icon: Percent,
       color: metrics.profitMargin > 0 ? "text-green-600" : "text-red-600",
     },
     {
       title: "IRR (10-year)",
-      value: formatPercentage(convertedMetrics.irr),
+      value: { display: formatPercentage(metrics.irr) },
       subtitle: "Internal rate of return",
       icon: Calculator,
-      color: convertedMetrics.irr > 0 ? "text-green-600" : "text-red-600",
+      color: metrics.irr > 0 ? "text-green-600" : "text-red-600",
     },
     {
       title: "Payback Period",
-      value: formatYears(convertedMetrics.paybackPeriod),
+      value: { display: formatYears(metrics.paybackPeriod) },
       subtitle: "Time to break even",
       icon: Clock,
-      color: convertedMetrics.paybackPeriod > 0 && convertedMetrics.paybackPeriod <= 5 ? "text-green-600" : 
-             convertedMetrics.paybackPeriod > 5 && convertedMetrics.paybackPeriod <= 10 ? "text-yellow-600" : "text-red-600",
+      color: metrics.paybackPeriod > 0 && metrics.paybackPeriod <= 5 ? "text-green-600" : 
+             metrics.paybackPeriod > 5 && metrics.paybackPeriod <= 10 ? "text-yellow-600" : "text-red-600",
     },
   ];
 
@@ -237,14 +246,14 @@ export const FinancialSummaryCards = ({
             </CardHeader>
             <CardContent>
               <div className={`text-xl sm:text-2xl font-bold ${card.color}`}>
-                {card.value}
+                {typeof card.value === 'string' ? card.value : card.value.display}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 {card.subtitle}
               </p>
-              {projectCurrency !== "AED" && (
+              {typeof card.value === 'object' && card.value.footnote && (
                 <p className="text-xs text-muted-foreground italic mt-1">
-                  *Converted to AED
+                  {card.value.footnote}
                 </p>
               )}
             </CardContent>

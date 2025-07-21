@@ -53,14 +53,20 @@ export const convertCurrency = (
   return amount * rate.rate;
 };
 
-// Format currency amount with symbol
-export const formatCurrencyAmount = (
-  amount: number,
-  currency: string,
-  showOriginal: boolean = false,
-  originalAmount?: number,
-  originalCurrency?: string
-): string => {
+// Format currency amount with enhanced options
+export const formatCurrencyAmount = ({
+  amount,
+  currency,
+  convertedToAED,
+  showOriginal = true,
+  rate
+}: {
+  amount: number;
+  currency: string;
+  convertedToAED?: number;
+  showOriginal?: boolean;
+  rate?: number;
+}): { display: string; footnote?: string } => {
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat('en-US', {
       minimumFractionDigits: 0,
@@ -68,13 +74,37 @@ export const formatCurrencyAmount = (
     }).format(num);
   };
 
-  const mainDisplay = `${currency} ${formatNumber(amount)}`;
-  
-  if (showOriginal && originalAmount && originalCurrency && originalCurrency !== currency) {
-    return `${originalCurrency} ${formatNumber(originalAmount)} ≈ ${mainDisplay}`;
+  // If currency is AED, just return the amount
+  if (currency === 'AED') {
+    return { display: `AED ${formatNumber(amount)}` };
   }
-  
-  return mainDisplay;
+
+  // If we don't want to show original, return converted AED
+  if (!showOriginal && convertedToAED) {
+    return { display: `AED ${formatNumber(convertedToAED)}` };
+  }
+
+  // Show original currency as primary with AED footnote
+  const display = `${currency} ${formatNumber(amount)}`;
+  const footnote = convertedToAED && rate 
+    ? `Converted to AED: AED ${formatNumber(convertedToAED)} at ${rate}`
+    : convertedToAED 
+    ? `Converted to AED: AED ${formatNumber(convertedToAED)}`
+    : undefined;
+
+  return { display, footnote };
+};
+
+// Get exchange rate between two currencies
+export const getExchangeRate = (
+  fromCurrency: string,
+  toCurrency: string,
+  exchangeRates: ExchangeRate[]
+): number | null => {
+  const rate = exchangeRates.find(
+    r => r.from_currency === fromCurrency && r.to_currency === toCurrency
+  );
+  return rate ? rate.rate : null;
 };
 
 // Get currency symbol/code display
