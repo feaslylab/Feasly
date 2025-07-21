@@ -1,5 +1,114 @@
 {
   "title": "Feasly Model",
+  "description": "Comprehensive financial modeling and analysis platform",
+  "sections": {
+    "projectMetadata": "Project Metadata",
+    "timeline": "Timeline & Phases",
+    "siteMetrics": "Site & Area Metrics",
+    "financialInputs": "Financial Inputs",
+    "scenarios": "Scenarios Analysis",
+    "results": "Results & KPIs",
+    "export": "Export & Reports"
+  },
+  "projectMetadata": {
+    "projectName": "Project Name",
+    "description": "Description",
+    "location": "Location",
+    "sponsorName": "Sponsor Name",
+    "landOwner": "Land Owner",
+    "country": "Country",
+    "city": "City",
+    "planningStage": "Planning Stage",
+    "currency": "Currency",
+    "language": "Language"
+  },
+  "timeline": {
+    "startDate": "Start Date",
+    "duration": "Duration (Months)",
+    "constructionStart": "Construction Start",
+    "completionDate": "Completion Date",
+    "stabilizationPeriod": "Stabilization Period (Months)",
+    "phasingEnabled": "Enable Phasing"
+  },
+  "siteMetrics": {
+    "siteArea": "Site Area (sqm)",
+    "totalGFA": "Total GFA (sqm)",
+    "efficiencyRatio": "Efficiency Ratio (%)",
+    "farRatio": "FAR Ratio",
+    "heightStories": "Height (Stories)",
+    "plotNumber": "Plot Number",
+    "buildableRatio": "Buildable Ratio (%)"
+  },
+  "financialInputs": {
+    "landCost": "Land Cost",
+    "constructionCost": "Construction Cost",
+    "softCosts": "Soft Costs",
+    "marketingCost": "Marketing Cost",
+    "contingency": "Contingency (%)",
+    "zakatApplicable": "Zakat Applicable",
+    "zakatRate": "Zakat Rate (%)",
+    "vatApplicable": "VAT Applicable",
+    "vatRate": "VAT Rate (%)",
+    "escrowRequired": "Escrow Required",
+    "escrowPercent": "Escrow Percentage (%)",
+    "fundingType": "Funding Type",
+    "totalFunding": "Total Funding",
+    "equityContribution": "Equity Contribution",
+    "loanAmount": "Loan Amount",
+    "interestRate": "Interest Rate (%)",
+    "loanTerm": "Loan Term (Years)",
+    "gracePeriod": "Grace Period (Months)",
+    "repaymentType": "Repayment Type"
+  },
+  "revenue": {
+    "averageSalePrice": "Average Sale Price",
+    "expectedSaleRate": "Expected Sale Rate (sqm/month)",
+    "expectedLeaseRate": "Expected Lease Rate",
+    "yieldEstimate": "Yield Estimate (%)",
+    "targetIRR": "Target IRR (%)",
+    "targetROI": "Target ROI (%)",
+    "revenuePhasingEnabled": "Revenue Phasing Enabled"
+  },
+  "scenarios": {
+    "base": "Base Scenario",
+    "optimistic": "Optimistic Scenario",
+    "pessimistic": "Pessimistic Scenario",
+    "custom": "Custom Scenario"
+  },
+  "kpis": {
+    "totalCost": "Total Cost",
+    "totalRevenue": "Total Revenue",
+    "profit": "Profit",
+    "profitMargin": "Profit Margin (%)",
+    "roi": "Return on Investment (%)",
+    "irr": "Internal Rate of Return (%)",
+    "paybackPeriod": "Payback Period (Years)",
+    "zakatDue": "Zakat Due"
+  },
+  "actions": {
+    "calculate": "Calculate",
+    "recalculate": "Recalculate",
+    "export": "Export",
+    "save": "Save Project",
+    "load": "Load Project",
+    "preview": "Preview",
+    "print": "Print Report"
+  },
+  "validation": {
+    "projectNameRequired": "Project name is required",
+    "invalidCost": "Cost must be a positive number",
+    "invalidPercentage": "Percentage must be between 0 and 100",
+    "invalidDate": "Please select a valid date",
+    "timelineError": "Construction start must be after project start",
+    "fundingError": "Total funding must cover project costs"
+  },
+  "loading": {
+    "calculating": "Calculating financial model...",
+    "saving": "Saving project...",
+    "loading": "Loading project data...",
+    "exporting": "Generating export..."
+  }
+  "title": "Feasly Model",
   "description": "Development feasibility engine for planning, input, and analysis.",
   "inputs": "Feasly Model Inputs",
   "scenarios": "Feasly Model Scenarios",

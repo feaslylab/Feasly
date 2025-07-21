@@ -1,175 +1,82 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect, useMemo } from 'react';
-
-// Import translations
-import enFeasly from '../translations/en/feasly.json';
-import arFeasly from '../translations/ar/feasly.json';
+import { useTranslation } from 'react-i18next';
+import i18n from '@/lib/i18n';
 
 export type Language = 'en' | 'ar';
 
 interface LanguageContextType {
   language: Language;
-  setLanguage: (lang: Language) => void;
+  setLanguage: (lang: Language) => Promise<void>;
   isRTL: boolean;
-  t: (key: string) => string;
+  t: (key: string, options?: any) => string;
   isLoading: boolean;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
-// Create comprehensive translations object
-const createTranslations = () => {
-  const baseTranslationsEn = {
-    // Auth
-    'auth.login': 'Log In',
-    'auth.signup': 'Sign Up',
-    'auth.email': 'Email',
-    'auth.password': 'Password',
-    'auth.confirmPassword': 'Confirm Password',
-    'auth.fullName': 'Full Name',
-    'auth.enterEmail': 'Enter your email',
-    'auth.enterPassword': 'Enter your password',
-    'auth.createPassword': 'Create a password',
-    'auth.confirmYourPassword': 'Confirm your password',
-    'auth.enterFullName': 'Enter your full name',
-    'auth.showPassword': 'Show password',
-    'auth.hidePassword': 'Hide password',
-    'auth.alreadyHaveAccount': 'Already have an account?',
-    'auth.dontHaveAccount': "Don't have an account?",
-    'auth.signInHere': 'Sign in here',
-    'auth.signUpHere': 'Sign up here',
-    'auth.welcomeBack': 'Welcome Back',
-    'auth.loginToAccount': 'Log in to your account',
-    'auth.createAccount': 'Create your account',
-    'auth.getStarted': 'Get started with your financial modeling platform',
-    'auth.loggedIn': 'Logged in',
-    'auth.viewAccount': 'View Account',
-    'auth.account': 'Account',
-    'auth.user': 'User',
-    'auth.signOut': 'Sign Out',
-
-    // Navigation
-    'nav.dashboard': 'Dashboard',
-    'nav.projects': 'Projects',
-    'nav.settings': 'Settings',
-    'nav.newProject': 'New Project',
-    'nav.model': 'Feasly Model',
-    'nav.flow': 'Feasly Flow',
-    'nav.finance': 'Feasly Finance',
-    'nav.consolidate': 'Feasly Consolidate',
-    'nav.insights': 'Feasly Insights',
-
-    // Common
-    'common.loading': 'Loading...',
-    'common.save': 'Save',
-    'common.cancel': 'Cancel',
-    'common.edit': 'Edit',
-    'common.delete': 'Delete',
-  };
-
-  const baseTranslationsAr = {
-    // Auth
-    'auth.login': 'تسجيل الدخول',
-    'auth.signup': 'إنشاء حساب',
-    'auth.email': 'البريد الإلكتروني',
-    'auth.password': 'كلمة المرور',
-    'auth.confirmPassword': 'تأكيد كلمة المرور',
-    'auth.fullName': 'الاسم الكامل',
-    'auth.enterEmail': 'أدخل بريدك الإلكتروني',
-    'auth.enterPassword': 'أدخل كلمة المرور',
-    'auth.createPassword': 'إنشاء كلمة مرور',
-    'auth.confirmYourPassword': 'تأكيد كلمة المرور',
-    'auth.enterFullName': 'أدخل اسمك الكامل',
-    'auth.showPassword': 'إظهار كلمة المرور',
-    'auth.hidePassword': 'إخفاء كلمة المرور',
-    'auth.alreadyHaveAccount': 'هل لديك حساب بالفعل؟',
-    'auth.dontHaveAccount': 'ليس لديك حساب؟',
-    'auth.signInHere': 'سجل دخولك هنا',
-    'auth.signUpHere': 'أنشئ حسابك هنا',
-    'auth.welcomeBack': 'مرحباً بعودتك',
-    'auth.loginToAccount': 'سجل دخولك إلى حسابك',
-    'auth.createAccount': 'أنشئ حسابك',
-    'auth.getStarted': 'ابدأ مع منصة النمذجة المالية',
-    'auth.loggedIn': 'مسجل الدخول',
-    'auth.viewAccount': 'عرض الحساب',
-    'auth.account': 'الحساب',
-    'auth.user': 'المستخدم',
-    'auth.signOut': 'تسجيل الخروج',
-
-    // Navigation
-    'nav.dashboard': 'لوحة التحكم',
-    'nav.projects': 'المشاريع',
-    'nav.settings': 'الإعدادات',
-    'nav.newProject': 'مشروع جديد',
-    'nav.model': 'نموذج فيزلي',
-    'nav.flow': 'تدفق فيزلي',
-    'nav.finance': 'مالية فيزلي',
-    'nav.consolidate': 'توحيد فيزلي',
-    'nav.insights': 'رؤى فيزلي',
-
-    // Common
-    'common.loading': 'جاري التحميل...',
-    'common.save': 'حفظ',
-    'common.cancel': 'إلغاء',
-    'common.edit': 'تحرير',
-    'common.delete': 'حذف',
-  };
-
-  // Convert JSON structure to flat key-value pairs
-  const flattenObject = (obj: any, prefix = '') => {
-    const flattened: Record<string, string> = {};
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const newKey = prefix ? `${prefix}.${key}` : key;
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
-          Object.assign(flattened, flattenObject(obj[key], newKey));
-        } else {
-          flattened[newKey] = obj[key];
-        }
-      }
-    }
-    return flattened;
-  };
-
-  // Flatten Feasly translations
-  const enFeaslyFlat = flattenObject({ feasly: enFeasly });
-  const arFeaslyFlat = flattenObject({ feasly: arFeasly });
-
-  return {
-    en: { ...baseTranslationsEn, ...enFeaslyFlat },
-    ar: { ...baseTranslationsAr, ...arFeaslyFlat }
-  };
-};
-
-const translations = createTranslations();
 
 interface LanguageProviderProps {
   children: ReactNode;
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
+  const { i18n: i18nInstance } = useTranslation();
   const [language, setLanguageState] = useState<Language>('en');
   const [isLoading, setIsLoading] = useState(false);
 
   const isRTL = useMemo(() => language === 'ar', [language]);
 
-  const setLanguage = (lang: Language) => {
+  const setLanguage = async (lang: Language) => {
     setIsLoading(true);
-    setLanguageState(lang);
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = lang;
-    setIsLoading(false);
+    try {
+      await i18nInstance.changeLanguage(lang);
+      setLanguageState(lang);
+      document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      document.documentElement.lang = lang;
+      localStorage.setItem('language', lang);
+    } catch (error) {
+      console.error('Failed to change language:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const t = (key: string): string => {
-    const translation = translations[language]?.[key];
-    return translation || key;
+  const t = (key: string, options?: any): string => {
+    const result = i18nInstance.t(key, options);
+    return typeof result === 'string' ? result : key;
   };
 
-  // Set initial HTML attributes
+  // Set initial HTML attributes and load saved language
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language') as Language || 'en';
+    if (savedLanguage !== language) {
+      setLanguage(savedLanguage);
+    } else {
+      document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+      document.documentElement.lang = language;
+    }
+  }, []);
+
+  // Update HTML attributes when language changes
   useEffect(() => {
     document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
     document.documentElement.lang = language;
   }, [isRTL, language]);
+
+  // Sync with i18next language changes
+  useEffect(() => {
+    const handleLanguageChange = (lng: string) => {
+      setLanguageState(lng as Language);
+    };
+
+    i18nInstance.on('languageChanged', handleLanguageChange);
+    
+    // Set initial language from i18next
+    setLanguageState(i18nInstance.language as Language);
+
+    return () => {
+      i18nInstance.off('languageChanged', handleLanguageChange);
+    };
+  }, [i18nInstance]);
 
   // Memoize context value
   const contextValue = useMemo(() => ({
@@ -178,7 +85,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     isRTL,
     t,
     isLoading,
-  }), [language, isRTL, isLoading]);
+  }), [language, setLanguage, isRTL, t, isLoading]);
 
   return (
     <LanguageContext.Provider value={contextValue}>
@@ -191,11 +98,18 @@ export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (!context) {
     console.warn('useLanguage called outside LanguageProvider, using fallback');
+    // Fallback to i18next directly if context is not available
+    const { t: fallbackT, i18n: fallbackI18n } = useTranslation();
     return {
-      language: 'en' as Language,
-      setLanguage: () => {},
-      isRTL: false,
-      t: (key: string) => key,
+      language: (fallbackI18n.language as Language) || 'en',
+      setLanguage: async (lang: Language) => { 
+        await fallbackI18n.changeLanguage(lang);
+      },
+      isRTL: fallbackI18n.language === 'ar',
+      t: (key: string, options?: any) => {
+        const result = fallbackT(key, options);
+        return typeof result === 'string' ? result : key;
+      },
       isLoading: false,
     };
   }
