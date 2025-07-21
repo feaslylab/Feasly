@@ -1,8 +1,8 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download, FileDown, Copy, Link } from "lucide-react";
+import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download, FileDown, Copy, Link, Globe } from "lucide-react";
 import * as XLSX from "xlsx";
 import { calculateFinancialMetrics } from "@/lib/financialCalculations";
 import jsPDF from "jspdf";
@@ -25,6 +25,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 
 interface Project {
@@ -36,6 +37,7 @@ interface Project {
   created_at: string;
   updated_at: string;
   user_id: string;
+  is_public: boolean;
 }
 
 interface Asset {
@@ -60,6 +62,7 @@ const ProjectDetails = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [selectedScenarioId, setSelectedScenarioId] = useState<string | null>(null);
   const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
@@ -640,6 +643,64 @@ const ProjectDetails = () => {
     }
   };
 
+  const copyPublicLink = async () => {
+    if (!id) return;
+
+    const publicUrl = `${window.location.origin}/projects/${id}/public`;
+    
+    try {
+      await navigator.clipboard.writeText(publicUrl);
+      toast({
+        title: "Public Link Copied",
+        description: "Anyone can view this project showcase without logging in.",
+      });
+    } catch (error) {
+      // Fallback for browsers that don't support clipboard API
+      const textArea = document.createElement("textarea");
+      textArea.value = publicUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      
+      toast({
+        title: "Public Link Copied",
+        description: "Anyone can view this project showcase without logging in.",
+      });
+    }
+  };
+
+  const togglePublicShowcase = async (isPublic: boolean) => {
+    if (!project || !canManageTeam) return;
+
+    try {
+      const { error } = await supabase
+        .from("projects")
+        .update({ is_public: isPublic })
+        .eq("id", project.id);
+
+      if (error) throw error;
+
+      // Refresh project data
+      await queryClient.invalidateQueries({ queryKey: ["project", id] });
+
+      toast({
+        title: isPublic ? "Project Made Public" : "Project Made Private",
+        description: isPublic 
+          ? "Your project is now publicly accessible via the showcase link."
+          : "Your project is no longer publicly accessible.",
+      });
+
+    } catch (error) {
+      console.error("Error updating project visibility:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update project visibility. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Header */}
@@ -719,6 +780,16 @@ const ProjectDetails = () => {
                 Copy Shareable Link
               </Button>
             )}
+            {canManageTeam && project.is_public && (
+              <Button
+                variant="outline"
+                onClick={copyPublicLink}
+                className="flex items-center gap-2"
+              >
+                <Globe className="w-4 h-4" />
+                Copy Public Link
+              </Button>
+            )}
             {canExport && selectedScenario && assets && assets.length > 0 && (
               <>
                 <Button
@@ -743,6 +814,41 @@ const ProjectDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* Public Showcase Toggle */}
+      {canManageTeam && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="w-5 h-5" />
+              Public Showcase
+            </CardTitle>
+            <CardDescription>
+              Make your project publicly accessible without requiring login
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="public-toggle" className="text-base">
+                  Enable Public Access
+                </Label>
+                <div className="text-sm text-muted-foreground">
+                  {project.is_public 
+                    ? "Anyone can view this project without logging in"
+                    : "Project is private and requires team access"
+                  }
+                </div>
+              </div>
+              <Switch
+                id="public-toggle"
+                checked={project.is_public}
+                onCheckedChange={togglePublicShowcase}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Scenario Selector */}
       {id && scenarios && scenarios.length > 0 && (
