@@ -14,6 +14,8 @@ import { SiteMetrics } from "./SiteMetrics";
 import { FinancialInputs } from "./FinancialInputs";
 import { ScenariosSection } from "./ScenariosSection";
 import { KPIResults } from "./KPIResults";
+import { ExportPanel } from "./ExportPanel";
+import { AiInsightPanel } from "./AiInsightPanel";
 
 export default function FeaslyModel() {
   const { t, isRTL } = useLanguage();
@@ -92,6 +94,15 @@ export default function FeaslyModel() {
 
             {/* KPI Results Section */}
             <KPIResults />
+
+            {/* Export & Insights Section */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">📤 Export & Insights</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <ExportPanel />
+                <AiInsightPanel />
+              </div>
+            </div>
 
             {/* Action Buttons */}
             <div className="flex justify-end space-x-4 pt-6">
