@@ -10,6 +10,10 @@ import { cn } from "@/lib/utils";
 import { feaslyModelSchema, type FeaslyModelFormData, type ScenarioType } from "./types";
 import { ProjectMetadata } from "./ProjectMetadata";
 import { TimelineSection } from "./TimelineSection";
+import { SiteMetrics } from "./SiteMetrics";
+import { FinancialInputs } from "./FinancialInputs";
+import { ScenariosSection } from "./ScenariosSection";
+import { KPIResults } from "./KPIResults";
 
 export default function FeaslyModel() {
   const { t, isRTL } = useLanguage();
@@ -77,12 +81,17 @@ export default function FeaslyModel() {
             {/* Timeline Section */}
             <TimelineSection />
 
-            {/* TODO: Add more sections in next phases:
-                - SiteMetrics
-                - FinancialInputs  
-                - ScenariosSection
-                - KPIResults
-            */}
+            {/* Site Metrics Section */}
+            <SiteMetrics />
+
+            {/* Financial Inputs Section */}
+            <FinancialInputs />
+
+            {/* Scenarios Section */}
+            <ScenariosSection />
+
+            {/* KPI Results Section */}
+            <KPIResults />
 
             {/* Action Buttons */}
             <div className="flex justify-end space-x-4 pt-6">
