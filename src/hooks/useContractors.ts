@@ -48,12 +48,26 @@ export const RISK_OPTIONS = [
 export function useContractors(projectId: string) {
   const [contractors, setContractors] = useState<Contractor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const { toast } = useToast();
 
   // Fetch contractors for the project
-  const fetchContractors = async () => {
+  const fetchContractors = async (retry = false) => {
+    // Don't fetch if projectId is not valid
+    if (!projectId || projectId.trim() === '') {
+      console.warn('Invalid projectId provided to useContractors:', projectId);
+      setIsLoading(false);
+      setError('Invalid project ID');
+      return;
+    }
+
     try {
       setIsLoading(true);
+      setError(null);
+      
+      console.log('Fetching contractors for project:', projectId);
+      
       const { data, error } = await supabase
         .from('project_contractors')
         .select('*')
@@ -61,12 +75,26 @@ export function useContractors(projectId: string) {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      
       setContractors((data || []) as Contractor[]);
-    } catch (error) {
+      setRetryCount(0); // Reset retry count on success
+      console.log('Successfully fetched contractors:', data?.length || 0);
+      
+    } catch (error: any) {
       console.error('Error fetching contractors:', error);
+      setError(error.message || 'Failed to load contractors');
+      
+      // Auto-retry for mobile network issues (up to 2 retries)
+      if (!retry && retryCount < 2) {
+        console.log('Retrying contractor fetch...', retryCount + 1);
+        setRetryCount(prev => prev + 1);
+        setTimeout(() => fetchContractors(true), 1000 * (retryCount + 1));
+        return;
+      }
+      
       toast({
         title: 'Error',
-        description: 'Failed to load contractors',
+        description: 'Failed to load contractors. Please check your connection and try again.',
         variant: 'destructive',
       });
     } finally {
@@ -305,14 +333,20 @@ export function useContractors(projectId: string) {
   };
 
   useEffect(() => {
-    if (projectId) {
+    // Only fetch if projectId is valid and not empty
+    if (projectId && projectId.trim() !== '') {
       fetchContractors();
+    } else {
+      setIsLoading(false);
+      setContractors([]);
     }
   }, [projectId]);
 
   return {
     contractors,
     isLoading,
+    error,
+    retryCount,
     createContractor,
     updateContractor,
     deleteContractor,

@@ -104,20 +104,24 @@ export default function FeaslyModel() {
   };
 
   return (
-    <div className={cn("container mx-auto p-6 space-y-6", isRTL && "rtl")}>
+    <div className={cn(
+      "min-h-[100vh] overflow-auto", 
+      "container mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6",
+      isRTL && "rtl"
+    )}>
       {/* Header */}
-      <div className="flex items-center space-x-3 mb-6">
-        <Building2 className="h-8 w-8 text-primary" />
-        <div>
-          <h1 className="text-3xl font-bold">{t('title')}</h1>
-          <p className="text-muted-foreground">
+      <div className="flex items-center space-x-3 mb-4 sm:mb-6">
+        <Building2 className="h-6 w-6 sm:h-8 sm:w-8 text-primary flex-shrink-0" />
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold truncate">{t('title')}</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             {t('description')}
           </p>
         </div>
       </div>
 
       {/* Version Selector */}
-      <div className="bg-card border rounded-lg p-4">
+      <div className="bg-card border rounded-lg p-3 sm:p-4">
         <VersionSelector
           availableVersions={availableVersions}
           selectedVersion={selectedVersion}
@@ -133,7 +137,7 @@ export default function FeaslyModel() {
         <Form {...form}>
           <PreviewToggle>
             {(previewMode) => (
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6 lg:space-y-8">
                 
                 {/* Editable Sections - Hidden in Preview Mode */}
                 {!previewMode && (
@@ -159,8 +163,8 @@ export default function FeaslyModel() {
                 )}
 
                 {/* Advanced Analysis - Always Visible */}
-                <div className="space-y-6">
-                  <h2 className="text-xl font-semibold">📊 Advanced Analysis</h2>
+                <div className="space-y-4 sm:space-y-6">
+                  <h2 className="text-lg sm:text-xl font-semibold">📊 Advanced Analysis</h2>
                   
                   {/* Timeline Summary Panel */}
                   <TimelineSummaryPanel milestones={milestones} />
@@ -182,8 +186,8 @@ export default function FeaslyModel() {
                 </div>
 
                 {/* Vendor & Delivery Risk - Always Visible */}
-                <div className="space-y-6">
-                  <h2 className="text-xl font-semibold">👥 Vendor & Delivery Risk</h2>
+                <div className="space-y-4 sm:space-y-6">
+                  <h2 className="text-lg sm:text-xl font-semibold">👥 Vendor & Delivery Risk</h2>
                   
                   {/* Vendor Risk Summary */}
                   <VendorRiskSummary projectId={projectId} />
@@ -196,8 +200,8 @@ export default function FeaslyModel() {
                 </div>
 
                 {/* Results & Insights - Always Visible */}
-                <div className="space-y-6">
-                  <h2 className="text-xl font-semibold">🎯 Results & Insights</h2>
+                <div className="space-y-4 sm:space-y-6">
+                  <h2 className="text-lg sm:text-xl font-semibold">🎯 Results & Insights</h2>
                   
                   {/* KPI Results */}
                   <KPIResults />
@@ -222,7 +226,7 @@ export default function FeaslyModel() {
                   <SmartExplainerPanel projectId={projectId} />
                   
                   {/* Export & AI Insights */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     <ExportPanel />
                     <AiInsightPanel />
                     <ExportPDFReport formData={form.getValues()} />
@@ -234,15 +238,19 @@ export default function FeaslyModel() {
 
                 {/* Action Buttons - Hidden in Preview Mode */}
                 {!previewMode && (
-                  <div className="flex justify-end space-x-4 pt-6">
+                  <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-4 sm:pt-6">
                     <Button 
                       type="button" 
                       variant="outline" 
                       onClick={onSaveDraft}
+                      className="min-h-[44px] touch-none" // Touch-friendly height
                     >
                       {t('save_draft')}
                     </Button>
-                    <Button type="submit">
+                    <Button 
+                      type="submit"
+                      className="min-h-[44px] touch-none" // Touch-friendly height
+                    >
                       {t('generate_model')}
                     </Button>
                   </div>

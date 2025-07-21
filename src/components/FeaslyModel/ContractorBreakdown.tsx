@@ -11,12 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, Edit2, Trash2, Download, Users, Building2 } from "lucide-react";
+import { Plus, Edit2, Trash2, Download, Users, Building2, AlertCircle, RefreshCw } from "lucide-react";
 import { format } from 'date-fns';
 import { cn } from "@/lib/utils";
 import type { FeaslyModelFormData } from "./types";
 import { useContractors, type Contractor } from "@/hooks/useContractors";
 import { ContractorDialog } from "./ContractorDialog";
+import { ContractorListSkeleton } from "@/components/ui/contractor-loading-skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ContractorBreakdownProps {
   projectId: string;
@@ -30,10 +32,13 @@ export function ContractorBreakdown({ projectId }: ContractorBreakdownProps) {
   const { 
     contractors, 
     isLoading, 
+    error,
+    retryCount,
     createContractor, 
     updateContractor, 
     deleteContractor,
-    exportToCSV
+    exportToCSV,
+    refreshContractors
   } = useContractors(projectId);
 
   const currencyCode = form.watch("currency_code") || "AED";
@@ -128,25 +133,7 @@ export function ContractorBreakdown({ projectId }: ContractorBreakdownProps) {
   };
 
   if (isLoading) {
-    return (
-      <Card>
-        <CardHeader>
-          <div className="flex items-center space-x-2">
-            <Building2 className="h-5 w-5 text-primary" />
-            <CardTitle>Contractor Breakdown</CardTitle>
-          </div>
-          <CardDescription>
-            Track contractor costs, phases, and delivery risk
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-            <p className="text-muted-foreground mt-2">Loading contractors...</p>
-          </div>
-        </CardContent>
-      </Card>
-    );
+    return <ContractorListSkeleton />;
   }
 
   return (
@@ -177,16 +164,36 @@ export function ContractorBreakdown({ projectId }: ContractorBreakdownProps) {
             <Button
               size="sm"
               onClick={handleCreateContractor}
-              className="flex items-center space-x-1"
+              className="flex items-center space-x-1 feasly-touch-target"
             >
               <Plus className="h-3 w-3" />
-              <span>Add Contractor</span>
+              <span className="hidden sm:inline">Add Contractor</span>
+              <span className="sm:hidden">Add</span>
             </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent>
-        {contractors.length === 0 ? (
+        {/* Error handling */}
+        {error && (
+          <Alert className="mb-4 border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription className="flex items-center justify-between">
+              <span>{error}</span>
+              <Button
+                variant="outline" 
+                size="sm"
+                onClick={() => refreshContractors()}
+                className="ml-2 h-6 px-2"
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                Retry
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {contractors.length === 0 && !error ? (
           <div className="text-center py-12">
             <Users className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
             <h3 className="text-lg font-medium mb-2">No contractors added yet</h3>
@@ -211,22 +218,24 @@ export function ContractorBreakdown({ projectId }: ContractorBreakdownProps) {
                         {formatCurrency(contractor.amount)}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-1">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleEditContractor(contractor)}
-                      >
-                        <Edit2 className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleDeleteContractor(contractor)}
-                      >
-                        <Trash2 className="h-3 w-3" />
-                      </Button>
-                    </div>
+                     <div className="flex items-center space-x-1">
+                       <Button
+                         size="sm"
+                         variant="ghost"
+                         onClick={() => handleEditContractor(contractor)}
+                         className="feasly-touch-target"
+                       >
+                         <Edit2 className="h-3 w-3" />
+                       </Button>
+                       <Button
+                         size="sm"
+                         variant="ghost"
+                         onClick={() => handleDeleteContractor(contractor)}
+                         className="feasly-touch-target"
+                       >
+                         <Trash2 className="h-3 w-3" />
+                       </Button>
+                     </div>
                   </div>
                   
                   <div className="flex flex-wrap gap-2">

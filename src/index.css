@@ -131,6 +131,12 @@
 
   body {
     @apply bg-background text-foreground;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+  }
+  
+  /* Mobile viewport optimizations */
+  html {
+    overflow-x: hidden;
   }
   
   /* RTL Support */
@@ -204,6 +210,7 @@
   /* Layout Containers */
   .feasly-container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+    overflow-x: hidden; /* Prevent content overflow */
   }
 
   .feasly-section {
@@ -294,11 +301,32 @@
 
   /* Mobile Responsive */
   .feasly-mobile-stack {
-    @apply flex flex-col lg:flex-row gap-6;
+    @apply flex flex-col lg:flex-row gap-4 sm:gap-6;
   }
 
   .feasly-mobile-grid {
-    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6;
+    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6;
+  }
+  
+  /* Touch-friendly mobile elements */
+  .feasly-touch-target {
+    @apply min-h-[44px] min-w-[44px] touch-none;
+  }
+  
+  /* Mobile-optimized cards */
+  .feasly-card-mobile {
+    @apply bg-card border border-border rounded-lg shadow-sm p-3 sm:p-4 hover:shadow-md transition-shadow duration-200;
+  }
+  
+  /* Responsive text sizes */
+  .feasly-text-responsive {
+    @apply text-sm sm:text-base lg:text-lg;
+  }
+  
+  /* Mobile scrolling improvements */
+  .feasly-scroll-mobile {
+    @apply overflow-y-auto overflow-x-hidden min-h-0 max-h-screen;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
   }
 
   /* Status Indicators */
