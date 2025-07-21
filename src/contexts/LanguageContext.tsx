@@ -1,9 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-// Import external translation files
-import enFeasly from '../translations/en/feasly.json';
-import arFeasly from '../translations/ar/feasly.json';
-
 export type Language = 'en' | 'ar';
 
 interface LanguageContextType {
@@ -56,32 +52,103 @@ const baseTranslations = {
     'nav.consolidate': 'Feasly Consolidate',
     'nav.insights': 'Feasly Insights',
     
-    // Feasly Model
+    // Feasly Model - Extended
     'feasly.model.title': 'Feasly Model',
     'feasly.model.description': 'Development feasibility engine for planning, input, and analysis.',
     'feasly.model.inputs': 'Feasly Model Inputs',
     'feasly.model.scenarios': 'Feasly Model Scenarios',
     'feasly.model.kpis': 'Feasly Model KPIs',
-    
-    // Feasly Flow
+    'feasly.model.flow_data_loaded': 'Flow Data Loaded',
+    'feasly.model.flow_data_loaded_desc': 'Phase data from Feasly Flow has been automatically applied.',
+    'feasly.model.flow_data_available': 'Flow Data Available',
+    'feasly.model.flow_data_available_desc': 'New phase data from Feasly Flow is available. Choose to apply or keep current values.',
+    'feasly.model.apply_flow_data': 'Apply Flow Data',
+    'feasly.model.flow_data_applied': 'Flow Data Applied',
+    'feasly.model.flow_data_applied_desc': 'Phase data has been successfully applied to your model.',
+    'feasly.model.project_metadata': 'Project Metadata',
+    'feasly.model.project_metadata_desc': 'Basic project information and location details',
+    'feasly.model.project_name': 'Project Name',
+    'feasly.model.project_name_placeholder': 'Enter project name',
+    'feasly.model.project_description': 'Description',
+    'feasly.model.description_placeholder': 'Enter project description',
+    'feasly.model.sponsor_name': 'Sponsor Name',
+    'feasly.model.land_owner': 'Land Owner',
+    'feasly.model.country': 'Country',
+    'feasly.model.select_country': 'Select country',
+    'feasly.model.city': 'City',
+
+    // Feasly Flow - Extended
     'feasly.flow.title': 'Feasly Flow',
-    'feasly.flow.description': 'Workflow management and process optimization.',
-    'feasly.flow.coming_soon': 'Coming Soon',
-    
-    // Feasly Finance
+    'feasly.flow.description': 'Workflow management and phased development planning',
+    'feasly.flow.add_phase': 'Add Phase',
+    'feasly.flow.edit_phase': 'Edit Phase',
+    'feasly.flow.phase_form_desc': 'Define project phases with timeline and cost details',
+    'feasly.flow.phase_name': 'Phase Name',
+    'feasly.flow.phase_name_placeholder': 'e.g., Foundation & Structure',
+    'feasly.flow.starts_after': 'Starts After',
+    'feasly.flow.starts_after_tooltip': 'Select a phase that must complete before this phase can start',
+    'feasly.flow.select_preceding_phase': 'Select preceding phase',
+    'feasly.flow.no_dependency': 'No dependency',
+    'feasly.flow.start_date': 'Start Date',
+    'feasly.flow.select_date': 'Select date',
+    'feasly.flow.duration_months': 'Duration (Months)',
+    'feasly.flow.calculated_end_date': 'Calculated End Date',
+    'feasly.flow.auto_calculated': 'Auto-calculated',
+    'feasly.flow.gfa_sqm': 'GFA (sqm)',
+    'feasly.flow.land_area_sqm': 'Land Area (sqm)',
+    'feasly.flow.phase_cost': 'Phase Cost',
+    'feasly.flow.update_phase': 'Update Phase',
+    'feasly.flow.cancel': 'Cancel',
+    'feasly.flow.sync_to_model': 'Sync to Feasly Model',
+    'feasly.flow.sync_success': 'Sync Successful',
+    'feasly.flow.sync_success_desc': 'Phase data has been synced to Feasly Model',
+    'feasly.flow.sync_error': 'Sync Error',
+    'feasly.flow.sync_error_desc': 'Failed to sync data to Feasly Model',
+    'feasly.flow.no_phases_to_sync': 'No phases available to sync',
+
+    // Feasly Finance - Extended  
     'feasly.finance.title': 'Feasly Finance',
-    'feasly.finance.description': 'Financial modeling and analysis tools.',
-    'feasly.finance.coming_soon': 'Coming Soon',
-    
-    // Feasly Consolidate
+    'feasly.finance.description': 'Financial modeling and capital structure analysis',
+    'feasly.finance.capital_structure': 'Capital Structure',
+    'feasly.finance.capital_structure_desc': 'Define funding sources and debt details',
+    'feasly.finance.equity_amount': 'Equity Amount',
+    'feasly.finance.debt_amount': 'Debt Amount',
+    'feasly.finance.total_capital': 'Total Capital',
+    'feasly.finance.equity_percentage': 'Equity %',
+    'feasly.finance.debt_percentage': 'Debt %',
+    'feasly.finance.interest_rate': 'Interest Rate (%)',
+    'feasly.finance.loan_term': 'Loan Term (Years)',
+    'feasly.finance.grace_period': 'Grace Period (Months)',
+    'feasly.finance.repayment_type': 'Repayment Type',
+    'feasly.finance.monthly_payment': 'Monthly Payment',
+
+    // Feasly Consolidate - Extended
     'feasly.consolidate.title': 'Feasly Consolidate',
-    'feasly.consolidate.description': 'Data consolidation and portfolio management.',
-    'feasly.consolidate.coming_soon': 'Coming Soon',
-    
-    // Feasly Insights
+    'feasly.consolidate.description': 'Portfolio management and project consolidation',
+    'feasly.consolidate.project_portfolio': 'Project Portfolio',
+    'feasly.consolidate.select_all': 'Select All',
+    'feasly.consolidate.project_name': 'Project Name',
+    'feasly.consolidate.gfa': 'GFA (sqm)',
+    'feasly.consolidate.construction_cost': 'Construction Cost',
+    'feasly.consolidate.revenue': 'Revenue',
+    'feasly.consolidate.irr': 'IRR',
+    'feasly.consolidate.profit_margin': 'Profit Margin',
+    'feasly.consolidate.net_profit': 'Net Profit',
+    'feasly.consolidate.status': 'Status',
+    'feasly.consolidate.currency': 'Currency',
+    'feasly.consolidate.actions': 'Actions',
+    'feasly.consolidate.high_performance': 'High Performance',
+    'feasly.consolidate.moderate_performance': 'Moderate Performance',
+    'feasly.consolidate.low_performance': 'Low Performance',
+    'feasly.consolidate.export_portfolio': 'Export Portfolio',
+    'feasly.consolidate.export_success': 'Export Successful',
+    'feasly.consolidate.export_success_desc': 'Portfolio data has been exported successfully',
+    'feasly.consolidate.export_error': 'Export Error',
+    'feasly.consolidate.no_projects_selected': 'Please select at least one project to export',
+
+    // Feasly Insights - Extended
     'feasly.insights.title': 'Feasly Insights',
-    'feasly.insights.description': 'Advanced analytics and insights dashboard.',
-    'feasly.insights.coming_soon': 'Coming Soon',
+    'feasly.insights.description': 'Advanced analytics and insights dashboard',
     
     // Common
     'common.loading': 'Loading...',
@@ -436,17 +503,8 @@ const baseTranslations = {
   }
 };
 
-// Merge base translations with Feasly translations
-const translations = {
-  en: {
-    ...baseTranslations.en,
-    feasly: enFeasly
-  },
-  ar: {
-    ...baseTranslations.ar,
-    feasly: arFeasly
-  }
-};
+// Use baseTranslations directly without external files for now
+const translations = baseTranslations;
 
 interface LanguageProviderProps {
   children: ReactNode;
