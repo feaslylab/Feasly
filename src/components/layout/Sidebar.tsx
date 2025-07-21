@@ -3,21 +3,21 @@ import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/components/auth/AuthProvider";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/OptimizedLanguageContext";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { nameKey: "nav.dashboard", href: "/dashboard", icon: BarChart3 },
-  { nameKey: "nav.projects", href: "/projects", icon: FolderOpen },
-  { nameKey: "nav.model", href: "/model", icon: Building },
-  { nameKey: "nav.flow", href: "/flow", icon: BarChart3 },
-  { nameKey: "nav.finance", href: "/finance", icon: DollarSign },
-  { nameKey: "nav.consolidate", href: "/consolidate", icon: FolderOpen },
-  { nameKey: "nav.insights", href: "/insights", icon: TrendingUp },
-  { nameKey: "nav.settings", href: "/settings", icon: Settings },
+  { nameKey: "dashboard", href: "/dashboard", icon: BarChart3 },
+  { nameKey: "projects", href: "/projects", icon: FolderOpen },
+  { nameKey: "model", href: "/feasly-model", icon: Building },
+  { nameKey: "flow", href: "/feasly-flow", icon: BarChart3 },
+  { nameKey: "finance", href: "/feasly-finance", icon: DollarSign },
+  { nameKey: "consolidate", href: "/feasly-consolidate", icon: FolderOpen },
+  { nameKey: "insights", href: "/feasly-insights", icon: TrendingUp },
+  { nameKey: "settings", href: "/settings", icon: Settings },
 ];
 
 export const Sidebar = () => {
@@ -56,7 +56,7 @@ export const Sidebar = () => {
           >
             <NavLink to="/projects/new">
               <Plus className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-              {t('nav.newProject')}
+              {t('newProject', 'common')}
             </NavLink>
           </Button>
         </div>
@@ -78,7 +78,7 @@ export const Sidebar = () => {
               }
             >
               <item.icon className="w-5 h-5" />
-              {t(item.nameKey)}
+              {t(item.nameKey, 'common')}
             </NavLink>
           ))}
         </nav>
@@ -103,7 +103,7 @@ export const Sidebar = () => {
                 </div>
                 <div className="flex-1 min-w-0 text-left">
                   <p className="font-medium text-foreground truncate text-sm">
-                    {user?.user_metadata?.full_name || t('auth.account')}
+                    {user?.user_metadata?.full_name || t('account', 'auth')}
                   </p>
                   <p className="text-xs text-muted-foreground truncate">
                     {user?.email}
@@ -118,17 +118,17 @@ export const Sidebar = () => {
             side="top"
           >
             <div className="px-2 py-1.5">
-              <p className="text-sm font-medium">{user?.user_metadata?.full_name || t('auth.user')}</p>
+              <p className="text-sm font-medium">{user?.user_metadata?.full_name || t('user', 'auth')}</p>
               <p className="text-xs text-muted-foreground">{user?.email}</p>
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">
               <User className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-              {t('auth.viewAccount')}
+              {t('viewAccount', 'auth')}
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">
               <Settings className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-              {t('nav.settings')}
+              {t('settings', 'common')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem 
@@ -136,7 +136,7 @@ export const Sidebar = () => {
               onClick={handleSignOut}
             >
               <LogOut className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-              {t('nav.signOut')}
+              {t('signOut', 'auth')}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

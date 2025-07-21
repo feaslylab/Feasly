@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
-import { LanguageProvider } from "@/contexts/LanguageContext";
+import { LanguageProvider } from "@/contexts/OptimizedLanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthPage } from "@/pages/Auth";
 import { AppLayout } from "@/components/layout/AppLayout";
@@ -50,21 +50,26 @@ const AppRoutes = () => {
         <Route path=":id" element={<ProjectDetails />} />
         <Route path=":id/view" element={<ProjectView />} />
       </Route>
-      <Route path="/model" element={<AppLayout />}>
+      <Route path="/feasly-model" element={<AppLayout />}>
         <Route index element={<FeaslyModel />} />
       </Route>
-      <Route path="/flow" element={<AppLayout />}>
+      <Route path="/model" element={<Navigate to="/feasly-model" replace />} />
+      <Route path="/feasly-flow" element={<AppLayout />}>
         <Route index element={<FeaslyFlow />} />
       </Route>
-      <Route path="/finance" element={<AppLayout />}>
+      <Route path="/flow" element={<Navigate to="/feasly-flow" replace />} />
+      <Route path="/feasly-finance" element={<AppLayout />}>
         <Route index element={<FeaslyFinance />} />
       </Route>
-      <Route path="/consolidate" element={<AppLayout />}>
+      <Route path="/finance" element={<Navigate to="/feasly-finance" replace />} />
+      <Route path="/feasly-consolidate" element={<AppLayout />}>
         <Route index element={<FeaslyConsolidate />} />
       </Route>
-      <Route path="/insights" element={<AppLayout />}>
+      <Route path="/consolidate" element={<Navigate to="/feasly-consolidate" replace />} />
+      <Route path="/feasly-insights" element={<AppLayout />}>
         <Route index element={<FeaslyInsights />} />
       </Route>
+      <Route path="/insights" element={<Navigate to="/feasly-insights" replace />} />
       <Route path="/demo" element={<DemoProject />} />
       <Route path="/projects/:id/public" element={<ProjectPublic />} />
       <Route path="/settings" element={<AppLayout />}>
