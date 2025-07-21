@@ -777,21 +777,21 @@ const ProjectDetails = () => {
           Back to Dashboard
         </Button>
         
-        <div className="flex justify-between items-start">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-6">
           <div>
-            <h1 className="text-3xl font-bold mb-2">{project.name}</h1>
-            <p className="text-muted-foreground text-lg">
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2">{project.name}</h1>
+            <p className="text-muted-foreground text-base sm:text-lg">
               {project.description || "No description provided"}
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             {canDuplicate && (
               <Dialog open={isDuplicateDialogOpen} onOpenChange={setIsDuplicateDialogOpen}>
                 <DialogTrigger asChild>
                   <Button
                     variant="outline"
                     onClick={handleDuplicateClick}
-                    className="flex items-center gap-2"
+                    className="flex items-center gap-2 w-full sm:w-auto"
                   >
                     <Copy className="w-4 h-4" />
                     Duplicate Project
@@ -837,7 +837,7 @@ const ProjectDetails = () => {
               <Button
                 variant="outline"
                 onClick={copyShareableLink}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-full sm:w-auto"
               >
                 <Link className="w-4 h-4" />
                 Copy Shareable Link
@@ -847,7 +847,7 @@ const ProjectDetails = () => {
               <Button
                 variant="outline"
                 onClick={copyPublicLink}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-full sm:w-auto"
               >
                 <Globe className="w-4 h-4" />
                 Copy Public Link
@@ -858,7 +858,7 @@ const ProjectDetails = () => {
                 <Button
                   variant="outline"
                   onClick={downloadPDFReport}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 w-full sm:w-auto"
                 >
                   <FileDown className="w-4 h-4" />
                   Download PDF
@@ -866,7 +866,7 @@ const ProjectDetails = () => {
                 <Button
                   variant="outline"
                   onClick={exportToExcel}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 w-full sm:w-auto"
                 >
                   <Download className="w-4 h-4" />
                   Export to Excel
@@ -972,7 +972,7 @@ const ProjectDetails = () => {
 
       {/* Legacy Summary Cards (keeping for assets count and project timeline) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Assets</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -1009,16 +1009,18 @@ const ProjectDetails = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className={`grid w-full ${canManageTeam ? 'grid-cols-5' : 'grid-cols-4'}`}>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="assets">Assets</TabsTrigger>
-          <TabsTrigger value="scenarios">Scenarios</TabsTrigger>
-          {canManageTeam && <TabsTrigger value="team">Team</TabsTrigger>}
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList className={`grid w-full min-w-fit ${canManageTeam ? 'grid-cols-5' : 'grid-cols-4'} md:w-full`}>
+            <TabsTrigger value="overview" className="whitespace-nowrap">Overview</TabsTrigger>
+            <TabsTrigger value="assets" className="whitespace-nowrap">Assets</TabsTrigger>
+            <TabsTrigger value="scenarios" className="whitespace-nowrap">Scenarios</TabsTrigger>
+            {canManageTeam && <TabsTrigger value="team" className="whitespace-nowrap">Team</TabsTrigger>}
+            <TabsTrigger value="analytics" className="whitespace-nowrap">Analytics</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             {/* Project Information */}
             <Card>
               <CardHeader>

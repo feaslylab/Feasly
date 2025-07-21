@@ -179,9 +179,9 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
   return (
     <div className="space-y-6">
       {/* KPI Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {scenarioMetrics.map((metrics, index) => (
-          <Card key={index} className="relative overflow-hidden">
+          <Card key={index} className="relative overflow-hidden shadow-sm">
             <div 
               className="absolute top-0 left-0 w-full h-1"
               style={{ backgroundColor: COLORS[metrics.type as keyof typeof COLORS] }}
@@ -193,7 +193,7 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
               </div>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div className="space-y-1">
                   <div className="flex items-center gap-1">
                     <TrendingUp className="w-3 h-3 text-muted-foreground" />
@@ -229,7 +229,7 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
       </div>
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
         {/* IRR Comparison Chart */}
         <Card>
           <CardHeader>
@@ -239,7 +239,7 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250} className="sm:h-[300px]">
               <BarChart data={irrData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="scenario" />
@@ -260,7 +260,7 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250} className="sm:h-[300px]">
               <BarChart data={paybackData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="scenario" />
@@ -293,7 +293,7 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
                     <h4 className="text-sm font-medium" style={{ color: COLORS[metrics.type as keyof typeof COLORS] }}>
                       {metrics.type}
                     </h4>
-                    <ResponsiveContainer width="100%" height={120}>
+                    <ResponsiveContainer width="100%" height={100} className="sm:h-[120px]">
                       <PieChart>
                         <Pie
                           data={costData}
@@ -326,7 +326,7 @@ export const ProjectAnalytics = ({ projectId, assets }: ProjectAnalyticsProps) =
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={250} className="sm:h-[300px]">
               <AreaChart data={cashFlowData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" tickFormatter={(value) => `Y${value}`} />

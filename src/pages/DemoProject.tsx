@@ -154,7 +154,7 @@ const DemoProject = () => {
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Demo Mode Banner */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-lg mb-6">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-lg mb-6 mx-4 sm:mx-0">
         <div className="flex items-center gap-2">
           <Monitor className="h-5 w-5" />
           <span className="font-semibold">Demo Mode</span>
@@ -194,8 +194,8 @@ const DemoProject = () => {
       )}
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Assets</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -208,7 +208,7 @@ const DemoProject = () => {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="shadow-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Project Timeline</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -232,13 +232,15 @@ const DemoProject = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="assets">Assets</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto">
+          <TabsList className="grid w-full min-w-fit grid-cols-2 md:w-full">
+            <TabsTrigger value="overview" className="whitespace-nowrap">Overview</TabsTrigger>
+            <TabsTrigger value="assets" className="whitespace-nowrap">Assets</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
             {/* Project Information */}
             <Card>
               <CardHeader>
@@ -304,33 +306,71 @@ const DemoProject = () => {
             </CardHeader>
             <CardContent>
               {assets && assets.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left p-2 font-medium">Name</th>
-                        <th className="text-left p-2 font-medium">Type</th>
-                        <th className="text-right p-2 font-medium">GFA (sqm)</th>
-                        <th className="text-right p-2 font-medium">Construction Cost</th>
-                        <th className="text-right p-2 font-medium">Annual Revenue</th>
-                        <th className="text-right p-2 font-medium">Occupancy %</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {assets.map((asset) => (
-                        <tr key={asset.id} className="border-b hover:bg-muted/50">
-                          <td className="p-2 font-medium">{asset.name}</td>
-                          <td className="p-2">
-                            <Badge variant="outline">{asset.type}</Badge>
-                          </td>
-                          <td className="p-2 text-right">{asset.gfa_sqm.toLocaleString()}</td>
-                          <td className="p-2 text-right">{formatCurrency(asset.construction_cost_aed)}</td>
-                          <td className="p-2 text-right">{formatCurrency(asset.annual_revenue_potential_aed)}</td>
-                          <td className="p-2 text-right">{asset.occupancy_rate_percent}%</td>
+                <div className="space-y-4">
+                  {/* Desktop Table - hidden on mobile */}
+                  <div className="hidden md:block overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left p-2 font-medium">Name</th>
+                          <th className="text-left p-2 font-medium">Type</th>
+                          <th className="text-right p-2 font-medium">GFA (sqm)</th>
+                          <th className="text-right p-2 font-medium">Construction Cost</th>
+                          <th className="text-right p-2 font-medium">Annual Revenue</th>
+                          <th className="text-right p-2 font-medium">Occupancy %</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {assets.map((asset) => (
+                          <tr key={asset.id} className="border-b hover:bg-muted/50">
+                            <td className="p-2 font-medium">{asset.name}</td>
+                            <td className="p-2">
+                              <Badge variant="outline">{asset.type}</Badge>
+                            </td>
+                            <td className="p-2 text-right">{asset.gfa_sqm.toLocaleString()}</td>
+                            <td className="p-2 text-right">{formatCurrency(asset.construction_cost_aed)}</td>
+                            <td className="p-2 text-right">{formatCurrency(asset.annual_revenue_potential_aed)}</td>
+                            <td className="p-2 text-right">{asset.occupancy_rate_percent}%</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Mobile Cards - hidden on desktop */}
+                  <div className="md:hidden space-y-4">
+                    {assets.map((asset) => (
+                      <Card key={asset.id} className="shadow-sm">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between mb-3">
+                            <div>
+                              <h3 className="font-medium text-lg">{asset.name}</h3>
+                              <Badge variant="outline" className="mt-1">{asset.type}</Badge>
+                            </div>
+                          </div>
+                          
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                              <span className="text-muted-foreground">GFA:</span>
+                              <div className="font-medium">{asset.gfa_sqm.toLocaleString()} sqm</div>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Occupancy:</span>
+                              <div className="font-medium">{asset.occupancy_rate_percent}%</div>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Construction Cost:</span>
+                              <div className="font-medium">{formatCurrency(asset.construction_cost_aed)}</div>
+                            </div>
+                            <div>
+                              <span className="text-muted-foreground">Annual Revenue:</span>
+                              <div className="font-medium">{formatCurrency(asset.annual_revenue_potential_aed)}</div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
                 </div>
               ) : (
                 <div className="text-center py-8">

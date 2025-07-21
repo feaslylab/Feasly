@@ -215,6 +215,6 @@ export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario, ca
         </Card>
         );
       })}
-    </div>
+      </div>
   );
 };

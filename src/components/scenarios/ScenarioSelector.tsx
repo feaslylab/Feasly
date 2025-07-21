@@ -179,23 +179,24 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
   const selectedScenario = scenarios.find(s => s.id === selectedScenarioId);
 
   return (
-    <div className="flex items-center space-x-2">
-      <Label className="text-sm font-medium">Scenario:</Label>
-      <Select value={selectedScenarioId || ""} onValueChange={onScenarioChange}>
-        <SelectTrigger className="w-48 bg-background">
-          <SelectValue placeholder="Select scenario">
-            {selectedScenario && (
-              <div className="flex items-center space-x-2">
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-2">
+      <Label className="text-sm font-medium whitespace-nowrap">Scenario:</Label>
+      <div className="flex-1 sm:flex-none">
+        <Select value={selectedScenarioId || ""} onValueChange={onScenarioChange}>
+          <SelectTrigger className="w-full sm:w-64 bg-background">
+            <SelectValue placeholder="Select scenario">
+              {selectedScenario && (
+                <div className="flex items-center space-x-2">
                 {getScenarioIcon(selectedScenario.type)}
                 <span>{selectedScenario.name}</span>
                 <Badge variant={getScenarioBadgeVariant(selectedScenario.type)} className="ml-auto">
                   {selectedScenario.type}
                 </Badge>
               </div>
-            )}
-          </SelectValue>
-        </SelectTrigger>
-        <SelectContent className="bg-background border shadow-md z-50">
+              )}
+            </SelectValue>
+          </SelectTrigger>
+          <SelectContent className="bg-background border shadow-md z-50 max-h-60 overflow-y-auto">
           {scenarios.map((scenario) => (
             <SelectItem key={scenario.id} value={scenario.id}>
               <div className="flex items-center space-x-2 w-full">
@@ -207,9 +208,9 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
               </div>
             </SelectItem>
           ))}
-        </SelectContent>
-      </Select>
-      
+          </SelectContent>
+        </Select>
+      </div>
       {selectedScenarioId && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -217,7 +218,7 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
               variant="outline"
               size="sm"
               onClick={handleDuplicateClick}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 w-full sm:w-auto whitespace-nowrap"
             >
               <Copy className="w-4 h-4" />
               Duplicate
