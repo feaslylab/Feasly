@@ -78,6 +78,8 @@ export function useFeaslyCalculation(projectId: string | undefined) {
       const totalRevenue = data.reduce((sum, month) => sum + month.revenue, 0);
       const totalProfit = totalRevenue - totalCosts;
       const totalZakat = data.reduce((sum, month) => sum + month.zakatDue, 0);
+      const totalVatPaid = data.reduce((sum, month) => sum + month.vatOnCosts, 0);
+      const totalVatRecovered = data.reduce((sum, month) => sum + month.vatRecoverable, 0);
 
       return {
         totalCosts,
@@ -86,6 +88,8 @@ export function useFeaslyCalculation(projectId: string | undefined) {
         profitMargin: totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0,
         finalCashBalance: lastMonth.cashBalance,
         totalZakat,
+        totalVatPaid,
+        totalVatRecovered,
         timelineMonths: data.length,
       };
     },

@@ -16,6 +16,8 @@ export type MonthlyCashflow = {
   netCashflow: number;
   cashBalance: number;
   zakatDue: number;
+  vatOnCosts: number;
+  vatRecoverable: number;
 };
 
 export type CashflowGrid = {
@@ -349,6 +351,11 @@ export function buildScenarioGrid(
     const equityInjected = equityAllocation[month] || 0;
     const revenue = revenueAllocation[month] || 0;
     
+    // Calculate VAT
+    const vatOnCosts = input.vat_applicable ? 
+      ((constructionCost + landCost + softCosts) * (input.vat_rate || 0)) / 100 : 0;
+    const vatRecoverable = vatOnCosts; // Assuming VAT can be fully recovered
+    
     // Calculate profit and zakat
     const totalCosts = constructionCost + landCost + softCosts + loanInterest;
     const profit = revenue - totalCosts;
@@ -356,8 +363,8 @@ export function buildScenarioGrid(
       calculateZakat(profit, input.zakat_rate_percent || 0) : 0;
     
     // Calculate net cashflow
-    const cashIn = loanDrawn + equityInjected + revenue;
-    const cashOut = constructionCost + landCost + softCosts + loanInterest + loanRepayment + zakatDue;
+    const cashIn = loanDrawn + equityInjected + revenue + vatRecoverable;
+    const cashOut = constructionCost + landCost + softCosts + loanInterest + loanRepayment + zakatDue + vatOnCosts;
     const netCashflow = cashIn - cashOut;
     
     // Update cumulative cash balance
@@ -377,6 +384,8 @@ export function buildScenarioGrid(
       netCashflow,
       cashBalance: cumulativeCashBalance,
       zakatDue,
+      vatOnCosts,
+      vatRecoverable,
     };
   });
 }
@@ -443,6 +452,8 @@ export async function saveCashflowToDatabase(
           net_cashflow: cashflow.netCashflow,
           cash_balance: cashflow.cashBalance,
           zakat_due: cashflow.zakatDue,
+          vat_on_costs: cashflow.vatOnCosts,
+          vat_recoverable: cashflow.vatRecoverable,
         });
       });
     });
@@ -507,6 +518,8 @@ export async function loadCashflowFromDatabase(
         netCashflow: Number(record.net_cashflow),
         cashBalance: Number(record.cash_balance),
         zakatDue: Number(record.zakat_due),
+        vatOnCosts: Number(record.vat_on_costs || 0),
+        vatRecoverable: Number(record.vat_recoverable || 0),
       };
       
       if (grid[record.scenario as keyof CashflowGrid]) {

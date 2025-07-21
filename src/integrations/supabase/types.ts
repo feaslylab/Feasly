@@ -158,6 +158,8 @@ export type Database = {
           scenario: string
           soft_costs: number | null
           updated_at: string
+          vat_on_costs: number | null
+          vat_recoverable: number | null
           zakat_due: number | null
         }
         Insert: {
@@ -178,6 +180,8 @@ export type Database = {
           scenario: string
           soft_costs?: number | null
           updated_at?: string
+          vat_on_costs?: number | null
+          vat_recoverable?: number | null
           zakat_due?: number | null
         }
         Update: {
@@ -198,6 +202,8 @@ export type Database = {
           scenario?: string
           soft_costs?: number | null
           updated_at?: string
+          vat_on_costs?: number | null
+          vat_recoverable?: number | null
           zakat_due?: number | null
         }
         Relationships: []

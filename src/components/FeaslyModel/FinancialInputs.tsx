@@ -20,6 +20,7 @@ export function FinancialInputs() {
   const watchMarketingCost = form.watch("marketing_cost") || 0;
   const watchContingencyPercent = form.watch("contingency_percent") || 0;
   const watchZakatApplicable = form.watch("zakat_applicable");
+  const watchVatApplicable = form.watch("vat_applicable");
   const watchEscrowRequired = form.watch("escrow_required");
 
   // Calculate totals
@@ -223,6 +224,29 @@ export function FinancialInputs() {
 
             <FormField
               control={form.control}
+              name="vat_applicable"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      VAT Applicable
+                    </FormLabel>
+                    <div className="text-sm text-muted-foreground">
+                      Apply VAT on construction, land, and soft costs
+                    </div>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="escrow_required"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
@@ -259,6 +283,30 @@ export function FinancialInputs() {
                       max="100"
                       step="0.01"
                       placeholder="2.5"
+                      {...field}
+                      onChange={(e) => field.onChange(Number(e.target.value))}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
+
+          {watchVatApplicable && (
+            <FormField
+              control={form.control}
+              name="vat_rate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>VAT Rate (%)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      placeholder="5"
                       {...field}
                       onChange={(e) => field.onChange(Number(e.target.value))}
                     />

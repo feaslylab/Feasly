@@ -148,6 +148,10 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
         { label: "Loan Repayment", key: "loanRepayment" as keyof MonthlyCashflow },
         { label: "Equity Injected", key: "equityInjected" as keyof MonthlyCashflow },
       ],
+      vat: [
+        { label: "VAT on Costs", key: "vatOnCosts" as keyof MonthlyCashflow },
+        { label: "VAT Recovered", key: "vatRecoverable" as keyof MonthlyCashflow },
+      ],
       revenue: [
         { label: "Revenue", key: "revenue" as keyof MonthlyCashflow },
         { label: "Zakat Due", key: "zakatDue" as keyof MonthlyCashflow },
@@ -258,28 +262,42 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
             return (
               <TabsContent key={scenarioKey} value={scenarioKey}>
                 {scenarioSummary && (
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                    <div className="text-center p-3 bg-muted/50 rounded-lg">
-                      <div className="text-sm text-muted-foreground">Total Revenue</div>
-                      <div className="text-lg font-semibold">{formatCurrency(scenarioSummary.totalRevenue)}</div>
-                    </div>
-                    <div className="text-center p-3 bg-muted/50 rounded-lg">
-                      <div className="text-sm text-muted-foreground">Total Costs</div>
-                      <div className="text-lg font-semibold">{formatCurrency(scenarioSummary.totalCosts)}</div>
-                    </div>
-                    <div className="text-center p-3 bg-muted/50 rounded-lg">
-                      <div className="text-sm text-muted-foreground">Total Profit</div>
-                      <div className={`text-lg font-semibold ${scenarioSummary.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {formatCurrency(scenarioSummary.totalProfit)}
+                  <>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <div className="text-sm text-muted-foreground">Total Revenue</div>
+                        <div className="text-lg font-semibold">{formatCurrency(scenarioSummary.totalRevenue)}</div>
+                      </div>
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <div className="text-sm text-muted-foreground">Total Costs</div>
+                        <div className="text-lg font-semibold">{formatCurrency(scenarioSummary.totalCosts)}</div>
+                      </div>
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <div className="text-sm text-muted-foreground">Total Profit</div>
+                        <div className={`text-lg font-semibold ${scenarioSummary.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {formatCurrency(scenarioSummary.totalProfit)}
+                        </div>
+                      </div>
+                      <div className="text-center p-3 bg-muted/50 rounded-lg">
+                        <div className="text-sm text-muted-foreground">Profit Margin</div>
+                        <div className={`text-lg font-semibold ${scenarioSummary.profitMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {formatPercentage(scenarioSummary.profitMargin)}
+                        </div>
                       </div>
                     </div>
-                    <div className="text-center p-3 bg-muted/50 rounded-lg">
-                      <div className="text-sm text-muted-foreground">Profit Margin</div>
-                      <div className={`text-lg font-semibold ${scenarioSummary.profitMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {formatPercentage(scenarioSummary.profitMargin)}
+                    {((scenarioSummary as any).totalVatPaid > 0 || (scenarioSummary as any).totalVatRecovered > 0) && (
+                      <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="text-center p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                          <div className="text-sm text-muted-foreground">Total VAT Paid</div>
+                          <div className="text-lg font-semibold text-orange-700">{formatCurrency((scenarioSummary as any).totalVatPaid)}</div>
+                        </div>
+                        <div className="text-center p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="text-sm text-muted-foreground">Total VAT Recovered</div>
+                          <div className="text-lg font-semibold text-green-700">{formatCurrency((scenarioSummary as any).totalVatRecovered)}</div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    )}
+                  </>
                 )}
 
                 {scenario?.data && (

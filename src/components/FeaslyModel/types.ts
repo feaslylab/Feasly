@@ -39,6 +39,8 @@ export const feaslyModelSchema = z.object({
   contingency_percent: z.number().min(0).max(100).optional(),
   zakat_applicable: z.boolean().default(false),
   zakat_rate_percent: z.number().min(0).max(100).optional(),
+  vat_applicable: z.boolean().default(false),
+  vat_rate: z.number().min(0).max(100).optional(),
   escrow_required: z.boolean().default(false),
   
   // Funding & Capital
