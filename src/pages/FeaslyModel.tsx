@@ -16,7 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CalendarIcon, Building2, Calendar as CalendarIconLucide, DollarSign, TrendingUp, MapPin, Clock, Info, Layers } from "lucide-react";
 import { format, addMonths } from "date-fns";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
@@ -181,67 +181,192 @@ export default function FeaslyModel() {
         localStorage.removeItem('feasly_model_from_flow');
       }
     }
+  // Optimized useEffect for flow data loading
+  useEffect(() => {
+    const syncedData = localStorage.getItem('feasly_model_from_flow');
+    if (!syncedData) return;
+
+    try {
+      const data = JSON.parse(syncedData);
+      
+      // Check if form is empty (no user edits yet)
+      const formValues = form.getValues();
+      const isFormEmpty = !formValues.project_name && 
+                         !formValues.total_gfa_sqm && 
+                         !formValues.site_area_sqm && 
+                         !formValues.construction_cost;
+      
+      if (isFormEmpty) {
+        // Batch all setValue operations for better performance
+        const updates = [
+          data.total_gfa_sqm && ['total_gfa_sqm', data.total_gfa_sqm],
+          data.site_area_sqm && ['site_area_sqm', data.site_area_sqm],
+          data.construction_cost && ['construction_cost', data.construction_cost],
+          data.duration_months && ['duration_months', data.duration_months],
+          data.currency_code && ['currency_code', data.currency_code],
+          data.start_date && ['start_date', new Date(data.start_date)],
+          data.completion_date && ['completion_date', new Date(data.completion_date)],
+        ].filter(Boolean) as [string, any][];
+
+        updates.forEach(([key, value]) => {
+          form.setValue(key as keyof FormData, value);
+        });
+
+        toast({
+          title: t('feasly.model.flow_data_loaded'),
+          description: t('feasly.model.flow_data_loaded_desc'),
+        });
+
+        localStorage.removeItem('feasly_model_from_flow');
+      } else {
+        // Show notification for existing data
+        const updates = [
+          data.total_gfa_sqm && ['total_gfa_sqm', data.total_gfa_sqm],
+          data.site_area_sqm && ['site_area_sqm', data.site_area_sqm],
+          data.construction_cost && ['construction_cost', data.construction_cost],
+          data.duration_months && ['duration_months', data.duration_months],
+          data.currency_code && ['currency_code', data.currency_code],
+          data.start_date && ['start_date', new Date(data.start_date)],
+          data.completion_date && ['completion_date', new Date(data.completion_date)],
+        ].filter(Boolean) as [string, any][];
+
+        toast({
+          title: t('feasly.model.flow_data_available'),
+          description: t('feasly.model.flow_data_available_desc'),
+          action: (
+            <Button 
+              size="sm" 
+              onClick={() => {
+                updates.forEach(([key, value]) => {
+                  form.setValue(key as keyof FormData, value);
+                });
+                localStorage.removeItem('feasly_model_from_flow');
+                toast({
+                  title: t('feasly.model.flow_data_applied'),
+                  description: t('feasly.model.flow_data_applied_desc'),
+                });
+              }}
+            >
+              {t('feasly.model.apply_flow_data')}
+            </Button>
+          ),
+        });
+      }
+    } catch (error) {
+      console.error('Error parsing synced data:', error);
+      localStorage.removeItem('feasly_model_from_flow');
+    }
   }, [form, toast, t]);
 
-  const watchPhasing = form.watch("phasing_enabled");
-  const watchZakat = form.watch("zakat_applicable");
-  const watchSiteArea = form.watch("site_area_sqm");
-  const watchTotalGfa = form.watch("total_gfa_sqm");
+  // Memoized form values for better performance
+  const formValues = form.watch();
   
-  // Watch for calculated fields
-  const watchStartDate = form.watch("start_date");
-  const watchDurationMonths = form.watch("duration_months");
-  const watchLandCost = form.watch("land_cost");
-  const watchConstructionCost = form.watch("construction_cost");
-  const watchSoftCosts = form.watch("soft_costs");
-  const watchMarketingCost = form.watch("marketing_cost");
-  const watchContingencyPercent = form.watch("contingency_percent");
-  const watchTotalFunding = form.watch("total_funding");
-  const watchEquityContribution = form.watch("equity_contribution");
-  const watchLoanAmount = form.watch("loan_amount");
-  const watchCurrencyCode = form.watch("currency_code");
+  // Memoized calculations to prevent unnecessary re-renders
+  const calculations = useMemo(() => {
+    const {
+      site_area_sqm: watchSiteArea,
+      total_gfa_sqm: watchTotalGfa,
+      start_date: watchStartDate,
+      duration_months: watchDurationMonths,
+      land_cost: watchLandCost,
+      construction_cost: watchConstructionCost,
+      soft_costs: watchSoftCosts,
+      marketing_cost: watchMarketingCost,
+      contingency_percent: watchContingencyPercent,
+      total_funding: watchTotalFunding,
+      equity_contribution: watchEquityContribution,
+      loan_amount: watchLoanAmount,
+      currency_code: watchCurrencyCode,
+      zakat_applicable: watchZakat,
+      zakat_rate_percent: watchZakatRate,
+      average_sale_price,
+      expected_lease_rate,
+      yield_estimate,
+      target_irr
+    } = formValues;
 
-  // Calculate buildable ratio
-  const buildableRatio = watchSiteArea && watchTotalGfa ? (watchTotalGfa / watchSiteArea).toFixed(2) : null;
+    // Calculate buildable ratio
+    const buildableRatio = watchSiteArea && watchTotalGfa ? (watchTotalGfa / watchSiteArea).toFixed(2) : null;
 
-  // Calculate end date
-  const calculatedEndDate = watchStartDate && watchDurationMonths 
-    ? addMonths(watchStartDate, watchDurationMonths)
-    : null;
+    // Calculate end date
+    const calculatedEndDate = watchStartDate && watchDurationMonths 
+      ? addMonths(watchStartDate, watchDurationMonths) : null;
 
-  // Calculate contingency value and total investment
-  const nonLandCosts = (watchConstructionCost || 0) + (watchSoftCosts || 0) + (watchMarketingCost || 0);
-  const contingencyValue = nonLandCosts * ((watchContingencyPercent || 0) / 100);
-  const totalInvestment = (watchLandCost || 0) + nonLandCosts + contingencyValue;
+    // Calculate contingency value and total investment
+    const nonLandCosts = (watchConstructionCost || 0) + (watchSoftCosts || 0) + (watchMarketingCost || 0);
+    const contingencyValue = nonLandCosts * ((watchContingencyPercent || 0) / 100);
+    const totalInvestment = (watchLandCost || 0) + nonLandCosts + contingencyValue;
 
-  // Calculate funding gap
-  const totalFundingSources = (watchEquityContribution || 0) + (watchLoanAmount || 0);
-  const fundingGap = (watchTotalFunding || 0) - totalFundingSources;
+    // Calculate funding gap
+    const totalFundingSources = (watchEquityContribution || 0) + (watchLoanAmount || 0);
+    const fundingGap = (watchTotalFunding || 0) - totalFundingSources;
 
-  // Helper function to get scenario-aware values
-  const getScenarioValue = (baseValue: number | undefined, overrideKey: string): number => {
+    return {
+      buildableRatio,
+      calculatedEndDate,
+      contingencyValue,
+      totalInvestment,
+      fundingGap,
+      currency: watchCurrencyCode || 'AED',
+      watchSiteArea,
+      watchTotalGfa,
+      watchStartDate,
+      watchDurationMonths,
+      watchLandCost,
+      watchConstructionCost,
+      watchSoftCosts,
+      watchMarketingCost,
+      watchContingencyPercent,
+      watchTotalFunding,
+      watchEquityContribution,
+      watchLoanAmount,
+      watchZakat,
+      watchZakatRate
+    };
+  }, [formValues]);
+
+  // Helper function to get scenario-aware values (memoized)
+  const getScenarioValue = useCallback((baseValue: number | undefined, overrideKey: string): number => {
     const override = scenarioOverrides[activeScenario]?.[overrideKey];
     return override !== undefined ? override : (baseValue || 0);
-  };
+  }, [scenarioOverrides, activeScenario]);
 
-  // Calculate KPIs based on active scenario
-  const scenarioLandCost = getScenarioValue(watchLandCost, 'land_cost');
-  const scenarioConstructionCost = getScenarioValue(watchConstructionCost, 'construction_cost');
-  const scenarioAverageSalePrice = getScenarioValue(form.watch("average_sale_price"), 'average_sale_price');
-  const scenarioYieldEstimate = getScenarioValue(form.watch("yield_estimate"), 'yield_estimate');
-  const scenarioTargetIRR = getScenarioValue(form.watch("target_irr"), 'target_irr');
-  const scenarioLeaseRate = getScenarioValue(form.watch("expected_lease_rate"), 'expected_lease_rate');
+  // Memoized scenario calculations
+  const scenarioCalculations = useMemo(() => {
+    const scenarioLandCost = getScenarioValue(calculations.watchLandCost, 'land_cost');
+    const scenarioConstructionCost = getScenarioValue(calculations.watchConstructionCost, 'construction_cost');
+    const scenarioAverageSalePrice = getScenarioValue(formValues.average_sale_price, 'average_sale_price');
+    const scenarioYieldEstimate = getScenarioValue(formValues.yield_estimate, 'yield_estimate');
+    const scenarioTargetIRR = getScenarioValue(formValues.target_irr, 'target_irr');
+    const scenarioLeaseRate = getScenarioValue(formValues.expected_lease_rate, 'expected_lease_rate');
 
-  // KPI Calculations
-  const scenarioTotalCost = scenarioLandCost + scenarioConstructionCost + (watchSoftCosts || 0) + (watchMarketingCost || 0) + contingencyValue;
-  const scenarioTotalRevenue = scenarioAverageSalePrice * (watchTotalGfa || 0);
-  const scenarioProfit = scenarioTotalRevenue - scenarioTotalCost;
-  const scenarioProfitMargin = scenarioTotalRevenue > 0 ? (scenarioProfit / scenarioTotalRevenue) * 100 : 0;
-  const scenarioROI = scenarioTotalCost > 0 ? (scenarioProfit / scenarioTotalCost) * 100 : 0;
-  const paybackPeriod = scenarioLeaseRate > 0 && watchTotalGfa ? (scenarioTotalCost / (scenarioLeaseRate * watchTotalGfa * 12)) : 0;
-  
-  // Zakat calculation
-  const zakatDue = watchZakat && watchContingencyPercent ? scenarioProfit * ((form.watch("zakat_rate_percent") || 2.5) / 100) : 0;
+    // KPI Calculations
+    const scenarioTotalCost = scenarioLandCost + scenarioConstructionCost + (calculations.watchSoftCosts || 0) + (calculations.watchMarketingCost || 0) + calculations.contingencyValue;
+    const scenarioTotalRevenue = scenarioAverageSalePrice * (calculations.watchTotalGfa || 0);
+    const scenarioProfit = scenarioTotalRevenue - scenarioTotalCost;
+    const scenarioProfitMargin = scenarioTotalRevenue > 0 ? (scenarioProfit / scenarioTotalRevenue) * 100 : 0;
+    const scenarioROI = scenarioTotalCost > 0 ? (scenarioProfit / scenarioTotalCost) * 100 : 0;
+    const paybackPeriod = scenarioLeaseRate > 0 && calculations.watchTotalGfa ? (scenarioTotalCost / (scenarioLeaseRate * calculations.watchTotalGfa * 12)) : 0;
+    
+    // Zakat calculation
+    const zakatDue = calculations.watchZakat && calculations.watchZakatRate ? scenarioProfit * (calculations.watchZakatRate / 100) : 0;
+
+    return {
+      scenarioLandCost,
+      scenarioConstructionCost,
+      scenarioAverageSalePrice,
+      scenarioYieldEstimate,
+      scenarioTargetIRR,
+      scenarioLeaseRate,
+      scenarioTotalCost,
+      scenarioTotalRevenue,
+      scenarioProfit,
+      scenarioProfitMargin,
+      scenarioROI,
+      paybackPeriod,
+      zakatDue
+    };
+  }, [calculations, formValues, getScenarioValue]);
 
   // Helper function for KPI color coding
   const getKPIColor = (value: number, type: 'irr' | 'roi' | 'margin' | 'payback') => {
