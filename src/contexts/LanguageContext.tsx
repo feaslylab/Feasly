@@ -690,7 +690,14 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 export const useLanguage = (): LanguageContextType => {
   const context = useContext(LanguageContext);
   if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    // Provide a fallback instead of throwing an error
+    console.warn('useLanguage called outside LanguageProvider, using fallback');
+    return {
+      language: 'en' as Language,
+      setLanguage: () => {},
+      isRTL: false,
+      t: (key: string) => key
+    };
   }
   return context;
 };
