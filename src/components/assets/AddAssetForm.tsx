@@ -16,11 +16,11 @@ import { Plus } from "lucide-react";
 
 const assetSchema = z.object({
   name: z.string().min(1, "Asset name is required"),
-  type: z.enum(["Residential", "Mixed Use", "Retail", "Hospitality", "Infrastructure"]),
+  asset_type: z.enum(["Residential", "Mixed Use", "Retail", "Hospitality", "Infrastructure"]),
   gfa_sqm: z.number().min(1, "GFA must be greater than 0"),
   construction_cost_aed: z.number().min(1, "Construction cost must be greater than 0"),
   annual_revenue_aed: z.number().min(0, "Annual revenue potential must be 0 or greater"),
-  annual_operating_cost_aed: z.number().min(0, "Operating cost must be 0 or greater"),
+  operating_cost_aed: z.number().min(0, "Operating cost must be 0 or greater"),
   occupancy_rate_percent: z.number().min(0).max(100, "Occupancy rate must be between 0 and 100"),
   cap_rate_percent: z.number().min(0).max(100, "Cap rate must be between 0 and 100"),
   development_timeline_months: z.number().min(1, "Development timeline must be at least 1 month"),
@@ -43,11 +43,11 @@ export const AddAssetForm = ({ projectId, trigger }: AddAssetFormProps) => {
     resolver: zodResolver(assetSchema),
     defaultValues: {
       name: "",
-      type: "Residential",
+      asset_type: "Residential",
       gfa_sqm: 0,
       construction_cost_aed: 0,
       annual_revenue_aed: 0,
-      annual_operating_cost_aed: 0,
+      operating_cost_aed: 0,
       occupancy_rate_percent: 0,
       cap_rate_percent: 0,
       development_timeline_months: 0,
@@ -133,7 +133,7 @@ export const AddAssetForm = ({ projectId, trigger }: AddAssetFormProps) => {
 
               <FormField
                 control={form.control}
-                name="type"
+                name="asset_type"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Asset Type</FormLabel>
@@ -221,7 +221,7 @@ export const AddAssetForm = ({ projectId, trigger }: AddAssetFormProps) => {
 
                 <FormField
                   control={form.control}
-                  name="annual_operating_cost_aed"
+                  name="operating_cost_aed"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Operating Cost (AED/year)</FormLabel>
