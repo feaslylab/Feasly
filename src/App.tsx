@@ -9,6 +9,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import NewProject from "./pages/NewProject";
 import ProjectDetails from "./pages/ProjectDetails";
+import ProjectView from "./pages/ProjectView";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const AppRoutes = () => {
         <Route index element={<div className="p-6">Projects page coming soon...</div>} />
         <Route path="new" element={<NewProject />} />
         <Route path=":id" element={<ProjectDetails />} />
+        <Route path=":id/view" element={<ProjectView />} />
       </Route>
       <Route path="/settings" element={<AppLayout />}>
         <Route index element={<div className="p-6">Settings page coming soon...</div>} />
