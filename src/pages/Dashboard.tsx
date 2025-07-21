@@ -27,6 +27,26 @@ interface RecentProject {
   created_at: string;
 }
 
+interface Asset {
+  id: string;
+  name: string;
+  annual_revenue_potential_aed: number;
+  project: {
+    name: string;
+  };
+}
+
+interface ProjectInsights {
+  highestRevenueAsset: Asset | null;
+  averageRevenuePerAsset: number;
+  topProjects: Array<{
+    id: string;
+    name: string;
+    totalRevenue: number;
+    assetCount: number;
+  }>;
+}
+
 export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats>({
     totalProjects: 0,
@@ -36,6 +56,11 @@ export default function Dashboard() {
     avgIRR: 0,
   });
   const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
+  const [insights, setInsights] = useState<ProjectInsights>({
+    highestRevenueAsset: null,
+    averageRevenuePerAsset: 0,
+    topProjects: [],
+  });
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -106,6 +131,9 @@ export default function Dashboard() {
       });
       setRecentProjects(recentProjectsData);
 
+      // Fetch detailed insights data
+      await fetchPortfolioInsights();
+
     } catch (error: any) {
       toast({
         title: "Error loading dashboard",
@@ -114,6 +142,96 @@ export default function Dashboard() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchPortfolioInsights = async () => {
+    try {
+      // Fetch all assets with project names for insights
+      const { data: assets, error: assetsError } = await supabase
+        .from('assets')
+        .select(`
+          id,
+          name,
+          annual_revenue_potential_aed,
+          project_id,
+          projects (
+            id,
+            name
+          )
+        `)
+        .order('annual_revenue_potential_aed', { ascending: false });
+
+      if (assetsError) throw assetsError;
+
+      if (!assets || assets.length === 0) {
+        setInsights({
+          highestRevenueAsset: null,
+          averageRevenuePerAsset: 0,
+          topProjects: [],
+        });
+        return;
+      }
+
+      // Filter assets that belong to the current user's projects
+      const userAssets = assets.filter(asset => asset.projects);
+
+      if (userAssets.length === 0) {
+        setInsights({
+          highestRevenueAsset: null,
+          averageRevenuePerAsset: 0,
+          topProjects: [],
+        });
+        return;
+      }
+
+      // Find highest revenue asset
+      const highestRevenueAsset = userAssets[0];
+
+      // Calculate average revenue per asset
+      const totalRevenue = userAssets.reduce((sum, asset) => sum + (asset.annual_revenue_potential_aed || 0), 0);
+      const averageRevenuePerAsset = userAssets.length > 0 ? totalRevenue / userAssets.length : 0;
+
+      // Group by project and calculate totals
+      const projectRevenues = new Map();
+      userAssets.forEach(asset => {
+        const project = asset.projects as any;
+        const projectId = project?.id;
+        const projectName = project?.name;
+        const revenue = asset.annual_revenue_potential_aed || 0;
+        
+        if (projectId && projectRevenues.has(projectId)) {
+          const existing = projectRevenues.get(projectId);
+          existing.totalRevenue += revenue;
+          existing.assetCount += 1;
+        } else if (projectId) {
+          projectRevenues.set(projectId, {
+            id: projectId,
+            name: projectName,
+            totalRevenue: revenue,
+            assetCount: 1,
+          });
+        }
+      });
+
+      // Get top 3 projects by revenue
+      const topProjects = Array.from(projectRevenues.values())
+        .sort((a, b) => b.totalRevenue - a.totalRevenue)
+        .slice(0, 3);
+
+      setInsights({
+        highestRevenueAsset: {
+          ...highestRevenueAsset,
+          project: { 
+            name: (highestRevenueAsset.projects as any)?.name || 'Unknown Project'
+          }
+        },
+        averageRevenuePerAsset,
+        topProjects,
+      });
+
+    } catch (error: any) {
+      console.error('Error fetching portfolio insights:', error);
     }
   };
 
@@ -304,6 +422,96 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Portfolio Insights Section */}
+      {stats.totalRevenue > 0 && (
+        <Card className="border-border shadow-soft">
+          <CardHeader>
+            <CardTitle className="text-foreground">Portfolio Insights</CardTitle>
+            <CardDescription>
+              Key performance metrics across your real estate portfolio
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Highest Revenue Asset */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-muted-foreground">Highest Revenue Asset</h4>
+                {insights.highestRevenueAsset ? (
+                  <div className="p-4 bg-accent/50 rounded-lg border border-border">
+                    <div className="font-semibold text-foreground">
+                      {insights.highestRevenueAsset.name}
+                    </div>
+                    <div className="text-sm text-muted-foreground mb-2">
+                      {insights.highestRevenueAsset.project.name}
+                    </div>
+                    <div className="text-lg font-bold text-success">
+                      {formatCurrency(insights.highestRevenueAsset.annual_revenue_potential_aed)}
+                      <span className="text-xs font-normal text-muted-foreground">/year</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-4 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-muted-foreground">No revenue data available</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Average Revenue Per Asset */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-muted-foreground">Average Revenue Per Asset</h4>
+                <div className="p-4 bg-accent/50 rounded-lg border border-border">
+                  <div className="text-2xl font-bold text-foreground">
+                    {formatCurrency(insights.averageRevenuePerAsset)}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    per asset annually
+                  </div>
+                </div>
+              </div>
+
+              {/* Top 3 Projects */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-medium text-muted-foreground">Top Projects by Revenue</h4>
+                <div className="space-y-2">
+                  {insights.topProjects.length > 0 ? (
+                    insights.topProjects.map((project, index) => (
+                      <div key={project.id} className="p-3 bg-accent/50 rounded-lg border border-border">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white ${
+                              index === 0 ? 'bg-yellow-500' : index === 1 ? 'bg-gray-400' : 'bg-orange-600'
+                            }`}>
+                              {index + 1}
+                            </div>
+                            <div>
+                              <div className="font-medium text-foreground text-sm">
+                                {project.name}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {project.assetCount} assets
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="font-semibold text-foreground text-sm">
+                              {formatCurrencyShort(project.totalRevenue)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="p-4 bg-muted/50 rounded-lg">
+                      <div className="text-sm text-muted-foreground">No projects available</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Recent Projects */}
       <Card className="border-border shadow-soft">
