@@ -31,53 +31,37 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   // Memoized translation function with namespace support
   const translateFunction = useCallback((key: string, namespace?: string) => {
+    // If explicit namespace provided, use it
     if (namespace) {
-      return t(key, { ns: namespace });
+      const result = t(key, { ns: namespace });
+      return result !== key ? result : key;
     }
     
-    // Handle dotted keys by extracting namespace and key
+    // Handle dotted keys (auth.email, nav.dashboard, etc.)
     if (key.includes('.')) {
       const parts = key.split('.');
       
-      if (parts.length >= 2) {
-        let ns = '';
-        let actualKey = '';
-        
-        // Handle feasly.module.key pattern
-        if (parts[0] === 'feasly' && parts.length >= 3) {
-          ns = `feasly.${parts[1]}`;
-          actualKey = parts.slice(2).join('.');
-        } 
-        // Handle namespace.key pattern (auth.email, nav.dashboard, etc.)
-        else {
-          ns = parts[0];
-          actualKey = parts.slice(1).join('.');
-        }
-        
-        // Try to translate with the detected namespace
-        try {
-          const translated = t(actualKey, { ns });
-          if (translated !== actualKey) {
-            return translated;
-          }
-        } catch (error) {
-          console.warn(`Translation failed for key: ${actualKey} in namespace: ${ns}`);
-        }
+      if (parts.length === 2) {
+        // Simple case: namespace.key (e.g., auth.email)
+        const [ns, k] = parts;
+        const result = t(k, { ns });
+        console.log(`Translating ${key}: ${ns}.${k} = ${result}`);
+        return result !== k ? result : key;
+      } 
+      else if (parts.length >= 3 && parts[0] === 'feasly') {
+        // Feasly modules: feasly.module.key
+        const ns = `feasly.${parts[1]}`;
+        const k = parts.slice(2).join('.');
+        const result = t(k, { ns });
+        console.log(`Translating ${key}: ${ns}.${k} = ${result}`);
+        return result !== k ? result : key;
       }
     }
     
-    // Try default translation without namespace
-    try {
-      const translated = t(key);
-      if (translated !== key) {
-        return translated;
-      }
-    } catch (error) {
-      // Ignore
-    }
-    
-    // Return the original key if no translation found
-    return key;
+    // Try default translation (no explicit namespace)
+    const result = t(key);
+    console.log(`Default translation ${key} = ${result}`);
+    return result !== key ? result : key;
   }, [t]);
 
   const setLanguage = useCallback(async (lang: Language) => {
