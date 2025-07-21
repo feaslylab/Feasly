@@ -184,7 +184,70 @@ export function calculateZakat(profit: number, zakatRatePercent: number): number
 }
 
 /**
- * Build scenario-specific cashflow grid
+ * Allocate costs over phases with specific timing and percentages
+ */
+export function allocatePhasedCosts(
+  totalCost: number,
+  months: string[],
+  phases: Array<{ phase: string; startMonth: number; duration: number; costPercent: number }>
+): Record<string, number> {
+  const allocation: Record<string, number> = {};
+  
+  // Initialize all months to 0
+  months.forEach(month => allocation[month] = 0);
+  
+  phases.forEach(phase => {
+    const phaseCost = (totalCost * phase.costPercent) / 100;
+    const monthlyAmount = phaseCost / phase.duration;
+    
+    for (let i = 0; i < phase.duration; i++) {
+      const monthIndex = phase.startMonth + i;
+      if (monthIndex < months.length) {
+        allocation[months[monthIndex]] += monthlyAmount;
+      }
+    }
+  });
+  
+  return allocation;
+}
+
+/**
+ * Allocate equity based on actual cost timing in phased projects
+ */
+export function allocatePhasedEquity(
+  totalEquity: number,
+  months: string[],
+  constructionCosts: Record<string, number>,
+  landCosts: Record<string, number>,
+  softCosts: Record<string, number>
+): Record<string, number> {
+  const allocation: Record<string, number> = {};
+  
+  // Calculate total monthly costs
+  const monthlyCosts: Record<string, number> = {};
+  months.forEach(month => {
+    monthlyCosts[month] = 
+      (constructionCosts[month] || 0) + 
+      (landCosts[month] || 0) + 
+      (softCosts[month] || 0);
+  });
+  
+  const totalCosts = Object.values(monthlyCosts).reduce((sum, cost) => sum + cost, 0);
+  
+  // Allocate equity proportionally to costs
+  months.forEach(month => {
+    if (totalCosts > 0) {
+      allocation[month] = (monthlyCosts[month] / totalCosts) * totalEquity;
+    } else {
+      allocation[month] = 0;
+    }
+  });
+  
+  return allocation;
+}
+
+/**
+ * Build scenario-specific cashflow grid with optional phasing support
  */
 export function buildScenarioGrid(
   input: FeaslyModelFormData,
@@ -208,20 +271,50 @@ export function buildScenarioGrid(
   const avgSalePrice = input.average_sale_price || 0;
   const totalRevenue = totalGfa * avgSalePrice;
   const adjustedRevenue = totalRevenue * multipliers.salePriceMultiplier;
-  
-  // Allocate costs over months
+
+  // Handle phased allocation if enabled
+  let constructionCostAllocation: Record<string, number>;
+  let softCostAllocation: Record<string, number>;
+  let revenueAllocation: Record<string, number>;
+
+  if (input.phasing_enabled && months.length > 6) {
+    // Implement phased cost and revenue allocation
+    constructionCostAllocation = allocatePhasedCosts(adjustedConstructionCost, months, [
+      { phase: "Foundation", startMonth: 0, duration: Math.ceil(months.length * 0.25), costPercent: 30 },
+      { phase: "Structure", startMonth: Math.ceil(months.length * 0.2), duration: Math.ceil(months.length * 0.4), costPercent: 45 },
+      { phase: "Finishing", startMonth: Math.ceil(months.length * 0.6), duration: Math.ceil(months.length * 0.35), costPercent: 25 },
+    ]);
+
+    softCostAllocation = allocatePhasedCosts(adjustedSoftCosts, months, [
+      { phase: "Design", startMonth: 0, duration: Math.ceil(months.length * 0.3), costPercent: 40 },
+      { phase: "Permits", startMonth: Math.ceil(months.length * 0.1), duration: Math.ceil(months.length * 0.2), costPercent: 20 },
+      { phase: "Management", startMonth: 0, duration: months.length, costPercent: 40 },
+    ]);
+
+    // Revenue starts after 75% completion for phased projects
+    const revenueStartIndex = Math.ceil(months.length * 0.75);
+    revenueAllocation = calculateRevenueOverMonths(
+      adjustedRevenue, 
+      months[revenueStartIndex] || months[months.length - 1], 
+      months, 
+      Math.max(3, months.length - revenueStartIndex)
+    );
+  } else {
+    // Standard even allocation
+    constructionCostAllocation = allocateCostOverMonths(adjustedConstructionCost, months);
+    softCostAllocation = allocateCostOverMonths(adjustedSoftCosts, months);
+    
+    // Revenue starts after completion
+    const completionMonth = months[months.length - 1];
+    revenueAllocation = calculateRevenueOverMonths(adjustedRevenue, completionMonth, months);
+  }
+
+  // Land cost allocation (always in first month)
   const landCostAllocation: Record<string, number> = {};
   if (months.length > 0) {
-    landCostAllocation[months[0]] = adjustedLandCost; // Land cost in first month
+    landCostAllocation[months[0]] = adjustedLandCost;
   }
-  
-  const constructionCostAllocation = allocateCostOverMonths(adjustedConstructionCost, months);
-  const softCostAllocation = allocateCostOverMonths(adjustedSoftCosts, months);
-  
-  // Calculate revenue allocation (starts after completion)
-  const completionMonth = months[months.length - 1];
-  const revenueAllocation = calculateRevenueOverMonths(adjustedRevenue, completionMonth, months);
-  
+
   // Calculate loan schedule
   const loanAmount = input.loan_amount || 0;
   const interestRate = (input.interest_rate || 0) / 100;
@@ -235,12 +328,14 @@ export function buildScenarioGrid(
     gracePeriod,
     months
   );
-  
+
   // Calculate equity injection (remaining funding needed)
   const totalCost = adjustedConstructionCost + adjustedLandCost + adjustedSoftCosts;
-  const equityNeeded = totalCost - loanAmount;
-  const equityAllocation = allocateCostOverMonths(equityNeeded, months);
-  
+  const equityNeeded = Math.max(0, totalCost - loanAmount);
+  const equityAllocation = input.phasing_enabled ? 
+    allocatePhasedEquity(equityNeeded, months, constructionCostAllocation, landCostAllocation, softCostAllocation) :
+    allocateCostOverMonths(equityNeeded, months);
+
   // Build monthly cashflow
   let cumulativeCashBalance = 0;
   

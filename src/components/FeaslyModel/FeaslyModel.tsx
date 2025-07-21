@@ -22,6 +22,9 @@ import { ScenarioChart } from "./ScenarioChart";
 import { TimelineGantt } from "./TimelineGantt";
 import { CommentingPanel } from "./CommentingPanel";
 import CashflowTable from "./CashflowTable";
+import ScenarioComparisonChart from "./ScenarioComparisonChart";
+import SmartInsightsPanel from "./SmartInsightsPanel";
+import ExportPDFReport from "./ExportPDFReport";
 
 export default function FeaslyModel() {
   const { t, isRTL } = useLanguage();
@@ -117,6 +120,9 @@ export default function FeaslyModel() {
                   
                   {/* Scenario Comparison Chart */}
                   <ScenarioChart />
+                  
+                  {/* NEW: Scenario Comparison Chart */}
+                  <ScenarioComparisonChart />
                 </div>
 
                 {/* Results & Insights - Always Visible */}
@@ -139,10 +145,14 @@ export default function FeaslyModel() {
                     }}
                   />
                   
+                  {/* Smart Insights Panel */}
+                  <SmartInsightsPanel />
+                  
                   {/* Export & AI Insights */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <ExportPanel />
                     <AiInsightPanel />
+                    <ExportPDFReport formData={form.getValues()} />
                   </div>
                 </div>
 
