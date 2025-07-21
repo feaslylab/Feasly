@@ -1868,4 +1868,4 @@ export default function FeaslyModel() {
       </Form>
     </div>
   );
-})
+}
