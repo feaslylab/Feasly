@@ -18,6 +18,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import { ImportFromExcel } from "@/components/import/ImportFromExcel";
 import { DashboardExport } from "@/components/dashboard/DashboardExport";
+import { calculateFinancialMetrics, FinancialMetrics } from "@/lib/financialCalculations";
 
 interface DashboardStats {
   totalProjects: number;
@@ -55,6 +56,12 @@ interface Project {
   name: string;
 }
 
+interface KPIData {
+  baseCase: FinancialMetrics;
+  optimistic: FinancialMetrics;
+  pessimistic: FinancialMetrics;
+}
+
 interface ProjectInsights {
   highestRevenueAsset: Asset | null;
   averageRevenuePerAsset: number;
@@ -85,6 +92,11 @@ export default function Dashboard() {
     projectId: null,
     dateRange: null,
   });
+  const [kpiData, setKpiData] = useState<KPIData>({
+    baseCase: { totalConstructionCost: 0, totalRevenue: 0, totalOperatingCost: 0, profitMargin: 0, irr: 0, paybackPeriod: 0 },
+    optimistic: { totalConstructionCost: 0, totalRevenue: 0, totalOperatingCost: 0, profitMargin: 0, irr: 0, paybackPeriod: 0 },
+    pessimistic: { totalConstructionCost: 0, totalRevenue: 0, totalOperatingCost: 0, profitMargin: 0, irr: 0, paybackPeriod: 0 },
+  });
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
   const { toast } = useToast();
@@ -93,6 +105,7 @@ export default function Dashboard() {
     if (user) {
       fetchDashboardData();
       fetchProjectsList();
+      fetchKPIData();
     }
   }, [user, filters]); // Re-fetch when filters change
 
@@ -309,6 +322,110 @@ export default function Dashboard() {
     }
   };
 
+  const fetchKPIData = async () => {
+    try {
+      // Build query with filters
+      let query = supabase
+        .from('projects')
+        .select(`
+          id,
+          name,
+          assets (
+            id,
+            gfa_sqm,
+            construction_cost_aed,
+            annual_operating_cost_aed,
+            annual_revenue_potential_aed,
+            occupancy_rate_percent,
+            cap_rate_percent,
+            development_timeline_months,
+            stabilization_period_months
+          ),
+          scenarios (
+            id,
+            name,
+            type,
+            is_base
+          )
+        `)
+        .eq('user_id', user?.id);
+
+      // Apply project filter
+      if (filters.projectId) {
+        query = query.eq('id', filters.projectId);
+      }
+
+      // Apply date filter
+      if (filters.dateRange) {
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - filters.dateRange);
+        query = query.gte('created_at', daysAgo.toISOString());
+      }
+
+      const { data: projectsData, error: projectsError } = await query;
+      if (projectsError) throw projectsError;
+
+      if (!projectsData || projectsData.length === 0) {
+        setKpiData({
+          baseCase: { totalConstructionCost: 0, totalRevenue: 0, totalOperatingCost: 0, profitMargin: 0, irr: 0, paybackPeriod: 0 },
+          optimistic: { totalConstructionCost: 0, totalRevenue: 0, totalOperatingCost: 0, profitMargin: 0, irr: 0, paybackPeriod: 0 },
+          pessimistic: { totalConstructionCost: 0, totalRevenue: 0, totalOperatingCost: 0, profitMargin: 0, irr: 0, paybackPeriod: 0 },
+        });
+        return;
+      }
+
+      // Collect all assets from filtered projects
+      const allAssets = projectsData.flatMap(project => project.assets || []);
+      const allScenarios = projectsData.flatMap(project => project.scenarios || []);
+
+      if (allAssets.length === 0) {
+        setKpiData({
+          baseCase: { totalConstructionCost: 0, totalRevenue: 0, totalOperatingCost: 0, profitMargin: 0, irr: 0, paybackPeriod: 0 },
+          optimistic: { totalConstructionCost: 0, totalRevenue: 0, totalOperatingCost: 0, profitMargin: 0, irr: 0, paybackPeriod: 0 },
+          pessimistic: { totalConstructionCost: 0, totalRevenue: 0, totalOperatingCost: 0, profitMargin: 0, irr: 0, paybackPeriod: 0 },
+        });
+        return;
+      }
+
+      // Find scenarios by type
+      const baseScenario = allScenarios.find(s => s.is_base || s.type === 'Base Case');
+      const optimisticScenario = allScenarios.find(s => s.type === 'Optimistic');
+      const pessimisticScenario = allScenarios.find(s => s.type === 'Pessimistic');
+
+      // Fetch scenario overrides for each scenario type
+      const fetchScenarioOverrides = async (scenarioId: string | undefined) => {
+        if (!scenarioId) return [];
+        
+        const { data: overrides, error } = await supabase
+          .from('scenario_overrides')
+          .select('asset_id, field_name, override_value')
+          .eq('scenario_id', scenarioId);
+        
+        return error ? [] : (overrides || []);
+      };
+
+      const [baseOverrides, optimisticOverrides, pessimisticOverrides] = await Promise.all([
+        fetchScenarioOverrides(baseScenario?.id),
+        fetchScenarioOverrides(optimisticScenario?.id),
+        fetchScenarioOverrides(pessimisticScenario?.id),
+      ]);
+
+      // Calculate metrics for each scenario
+      const baseCase = calculateFinancialMetrics(allAssets, baseOverrides);
+      const optimistic = calculateFinancialMetrics(allAssets, optimisticOverrides);
+      const pessimistic = calculateFinancialMetrics(allAssets, pessimisticOverrides);
+
+      setKpiData({
+        baseCase,
+        optimistic,
+        pessimistic,
+      });
+
+    } catch (error: any) {
+      console.error('Error fetching KPI data:', error);
+    }
+  };
+
   // Generate 12-month revenue projection data with date filtering
   const generateRevenueProjection = () => {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -340,6 +457,15 @@ export default function Dashboard() {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(amount);
+  };
+
+  const formatPercentage = (value: number) => {
+    return `${value.toFixed(1)}%`;
+  };
+
+  const formatYears = (value: number) => {
+    if (value <= 0) return 'N/A';
+    return `${value.toFixed(1)} years`;
   };
 
   const formatCurrencyShort = (amount: number) => {
@@ -592,6 +718,123 @@ export default function Dashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* KPI Comparison Section */}
+      {(kpiData.baseCase.totalRevenue > 0 || kpiData.optimistic.totalRevenue > 0 || kpiData.pessimistic.totalRevenue > 0) && (
+        <Card className="border-border shadow-soft">
+          <CardHeader>
+            <CardTitle className="text-foreground">KPI Comparison</CardTitle>
+            <CardDescription>
+              Compare key performance indicators across different scenarios
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Base Case */}
+              <div className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-foreground">Base Case</h3>
+                  <p className="text-sm text-muted-foreground">Conservative estimates</p>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-accent/50 rounded-lg">
+                    <span className="text-sm font-medium text-muted-foreground">IRR</span>
+                    <span className="text-sm font-bold text-foreground">
+                      {formatPercentage(kpiData.baseCase.irr)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-accent/50 rounded-lg">
+                    <span className="text-sm font-medium text-muted-foreground">Payback Period</span>
+                    <span className="text-sm font-bold text-foreground">
+                      {formatYears(kpiData.baseCase.paybackPeriod)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-accent/50 rounded-lg">
+                    <span className="text-sm font-medium text-muted-foreground">Revenue</span>
+                    <span className="text-sm font-bold text-foreground">
+                      {formatCurrencyShort(kpiData.baseCase.totalRevenue)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-accent/50 rounded-lg">
+                    <span className="text-sm font-medium text-muted-foreground">Profit Margin</span>
+                    <span className="text-sm font-bold text-foreground">
+                      {formatPercentage(kpiData.baseCase.profitMargin)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Optimistic */}
+              <div className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-success">Optimistic</h3>
+                  <p className="text-sm text-muted-foreground">Best case scenario</p>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-success/10 rounded-lg border border-success/20">
+                    <span className="text-sm font-medium text-muted-foreground">IRR</span>
+                    <span className="text-sm font-bold text-success">
+                      {formatPercentage(kpiData.optimistic.irr)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-success/10 rounded-lg border border-success/20">
+                    <span className="text-sm font-medium text-muted-foreground">Payback Period</span>
+                    <span className="text-sm font-bold text-success">
+                      {formatYears(kpiData.optimistic.paybackPeriod)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-success/10 rounded-lg border border-success/20">
+                    <span className="text-sm font-medium text-muted-foreground">Revenue</span>
+                    <span className="text-sm font-bold text-success">
+                      {formatCurrencyShort(kpiData.optimistic.totalRevenue)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-success/10 rounded-lg border border-success/20">
+                    <span className="text-sm font-medium text-muted-foreground">Profit Margin</span>
+                    <span className="text-sm font-bold text-success">
+                      {formatPercentage(kpiData.optimistic.profitMargin)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pessimistic */}
+              <div className="space-y-4">
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-destructive">Pessimistic</h3>
+                  <p className="text-sm text-muted-foreground">Worst case scenario</p>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-destructive/10 rounded-lg border border-destructive/20">
+                    <span className="text-sm font-medium text-muted-foreground">IRR</span>
+                    <span className="text-sm font-bold text-destructive">
+                      {formatPercentage(kpiData.pessimistic.irr)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-destructive/10 rounded-lg border border-destructive/20">
+                    <span className="text-sm font-medium text-muted-foreground">Payback Period</span>
+                    <span className="text-sm font-bold text-destructive">
+                      {formatYears(kpiData.pessimistic.paybackPeriod)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-destructive/10 rounded-lg border border-destructive/20">
+                    <span className="text-sm font-medium text-muted-foreground">Revenue</span>
+                    <span className="text-sm font-bold text-destructive">
+                      {formatCurrencyShort(kpiData.pessimistic.totalRevenue)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-destructive/10 rounded-lg border border-destructive/20">
+                    <span className="text-sm font-medium text-muted-foreground">Profit Margin</span>
+                    <span className="text-sm font-bold text-destructive">
+                      {formatPercentage(kpiData.pessimistic.profitMargin)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Portfolio Insights Section */}
       {stats.totalRevenue > 0 && (
