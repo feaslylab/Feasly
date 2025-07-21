@@ -37,7 +37,7 @@ const getModuleTitle = (pathname: string, t: (key: string) => string) => {
 export const Sidebar = () => {
   const { signOut, user } = useAuth();
   const { isRTL } = useLanguage();
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'auth']);
   const location = useLocation();
   
   const currentModuleTitle = getModuleTitle(location.pathname, t);
