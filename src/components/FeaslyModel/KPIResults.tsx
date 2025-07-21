@@ -97,10 +97,10 @@ export function KPIResults() {
       <CardHeader>
         <div className="flex items-center space-x-2">
           <BarChart className="h-5 w-5 text-primary" />
-          <CardTitle>{t('feasly.model.kpi_dashboard')}</CardTitle>
+          <CardTitle>{t('kpi_dashboard')}</CardTitle>
         </div>
         <CardDescription>
-          {t('feasly.model.kpi_dashboard_desc')}
+          {t('kpi_dashboard_desc')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">

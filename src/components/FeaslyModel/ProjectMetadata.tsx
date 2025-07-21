@@ -44,10 +44,10 @@ export function ProjectMetadata() {
       <CardHeader>
         <div className="flex items-center space-x-2">
           <Building2 className="h-5 w-5 text-primary" />
-          <CardTitle>{t('feasly.model.project_metadata')}</CardTitle>
+          <CardTitle>{t('project_metadata')}</CardTitle>
         </div>
         <CardDescription>
-          {t('feasly.model.project_metadata_desc')}
+          {t('project_metadata_desc')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -57,10 +57,10 @@ export function ProjectMetadata() {
             name="project_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.project_name')}</FormLabel>
+                <FormLabel>{t('project_name')}</FormLabel>
                 <FormControl>
                   <Input 
-                    placeholder={t('feasly.model.project_name_placeholder')} 
+                    placeholder={t('project_name_placeholder')}
                     {...field} 
                   />
                 </FormControl>
@@ -74,7 +74,7 @@ export function ProjectMetadata() {
             name="sponsor_name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.sponsor_name')}</FormLabel>
+                <FormLabel>{t('sponsor_name')}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -88,7 +88,7 @@ export function ProjectMetadata() {
             name="land_owner"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.land_owner')}</FormLabel>
+                <FormLabel>{t('land_owner')}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -102,7 +102,7 @@ export function ProjectMetadata() {
             name="planning_stage"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.planning_stage')}</FormLabel>
+                <FormLabel>{t('planning_stage')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -127,11 +127,11 @@ export function ProjectMetadata() {
             name="country"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.country')}</FormLabel>
+                <FormLabel>{t('country')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder={t('feasly.model.select_country')} />
+                      <SelectValue placeholder={t('select_country')} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -152,7 +152,7 @@ export function ProjectMetadata() {
             name="city"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.city')}</FormLabel>
+                <FormLabel>{t('city')}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -166,7 +166,7 @@ export function ProjectMetadata() {
             name="currency_code"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.currency')}</FormLabel>
+                <FormLabel>{t('currency')}</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -191,7 +191,7 @@ export function ProjectMetadata() {
             name="plot_number"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.plot_number')}</FormLabel>
+                <FormLabel>{t('plot_number')}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -206,10 +206,10 @@ export function ProjectMetadata() {
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t('feasly.model.description')}</FormLabel>
+              <FormLabel>{t('description')}</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder={t('feasly.model.description_placeholder')}
+                  placeholder={t('description_placeholder')}
                   className="min-h-[100px]"
                   {...field} 
                 />

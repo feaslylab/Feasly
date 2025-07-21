@@ -236,7 +236,7 @@ export function CommentingPanel({ projectId }: CommentingPanelProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <MessageSquare className="h-5 w-5 text-primary" />
-            <CardTitle>{t('feasly.model.project_comments')}</CardTitle>
+            <CardTitle>{t('project_comments')}</CardTitle>
             {getTotalComments() > 0 && (
               <Badge variant="secondary">
                 {getTotalComments()} section{getTotalComments() !== 1 ? 's' : ''}

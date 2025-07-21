@@ -31,7 +31,7 @@ export function PreviewToggle({ children }: PreviewToggleProps) {
             </div>
             <div className="flex items-center space-x-2">
               <Label htmlFor="preview-mode" className="text-sm font-normal">
-                {t('feasly.model.preview_toggle')}
+                {t('preview_toggle')}
               </Label>
               <Switch
                 id="preview-mode"

@@ -146,7 +146,7 @@ export function ExportPanel() {
       <CardHeader>
         <div className="flex items-center space-x-2">
           <FileText className="h-5 w-5 text-primary" />
-          <CardTitle>{t('feasly.model.export_model')}</CardTitle>
+          <CardTitle>{t('export_model')}</CardTitle>
         </div>
         <CardDescription>
           Export your feasibility model as PDF or Excel

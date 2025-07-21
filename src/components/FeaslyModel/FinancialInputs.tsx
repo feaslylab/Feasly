@@ -49,10 +49,10 @@ export function FinancialInputs() {
         <CardHeader>
           <div className="flex items-center space-x-2">
             <DollarSign className="h-5 w-5 text-primary" />
-            <CardTitle>{t('feasly.model.financial_inputs')}</CardTitle>
+            <CardTitle>{t('financial_inputs')}</CardTitle>
           </div>
           <CardDescription>
-            {t('feasly.model.financial_inputs_desc')}
+            {t('financial_inputs_desc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -62,7 +62,7 @@ export function FinancialInputs() {
               name="land_cost"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('feasly.model.land_cost')}</FormLabel>
+                  <FormLabel>{t('land_cost')}</FormLabel>
                   <FormControl>
                     <Input
                       type="number"

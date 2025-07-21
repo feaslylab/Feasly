@@ -102,9 +102,9 @@ export default function FeaslyModel() {
       <div className="flex items-center space-x-3 mb-6">
         <Building2 className="h-8 w-8 text-primary" />
         <div>
-          <h1 className="text-3xl font-bold">{t('feasly.model.title')}</h1>
+          <h1 className="text-3xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground">
-            {t('feasly.model.description')}
+            {t('description')}
           </p>
         </div>
       </div>
@@ -210,10 +210,10 @@ export default function FeaslyModel() {
                       variant="outline" 
                       onClick={onSaveDraft}
                     >
-                      {t('feasly.model.save_draft')}
+                      {t('save_draft')}
                     </Button>
                     <Button type="submit">
-                      {t('feasly.model.generate_model')}
+                      {t('generate_model')}
                     </Button>
                   </div>
                 )}
