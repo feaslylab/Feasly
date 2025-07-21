@@ -11,7 +11,7 @@
   "apply_flow_data": "Apply Flow Data",
   "flow_data_applied": "Flow Data Applied",
   "flow_data_applied_desc": "Phase data has been successfully applied to your model.",
-  "project_metadata": "Project Metadata",
+  "project_metadata": "Project Information",
   "project_metadata_desc": "Basic project information and location details",
   "project_name": "Project Name",
   "project_name_placeholder": "Enter project name",

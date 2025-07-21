@@ -11,7 +11,7 @@
   "apply_flow_data": "تطبيق بيانات التدفق",
   "flow_data_applied": "تم تطبيق بيانات التدفق",
   "flow_data_applied_desc": "تم تطبيق بيانات المراحل بنجاح على النموذج",
-  "project_metadata": "بيانات المشروع الأساسية",
+  "project_metadata": "معلومات المشروع",
   "project_metadata_desc": "معلومات المشروع الأساسية وتفاصيل الموقع",
   "project_name": "اسم المشروع",
   "project_name_placeholder": "أدخل اسم المشروع",
