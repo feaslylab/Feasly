@@ -40,6 +40,8 @@ interface Project {
   user_id: string;
   is_public: boolean;
   is_demo: boolean;
+  zakat_applicable?: boolean;
+  zakat_rate_percent?: number;
 }
 
 interface Asset {
@@ -1021,45 +1023,99 @@ const ProjectDetails = () => {
 
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            {/* Project Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  Project Information
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Project Name</label>
-                  <p className="text-lg">{project.name}</p>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Description</label>
-                  <p className="text-sm">{project.description || "No description provided"}</p>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
+            {/* Left Column */}
+            <div className="space-y-6">
+              {/* Project Information */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Project Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">Start Date</label>
-                    <p className="text-sm">{formatDate(project.start_date)}</p>
+                    <label className="text-sm font-medium text-muted-foreground">Project Name</label>
+                    <p className="text-lg">{project.name}</p>
                   </div>
                   
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground">End Date</label>
-                    <p className="text-sm">{formatDate(project.end_date)}</p>
+                    <label className="text-sm font-medium text-muted-foreground">Description</label>
+                    <p className="text-sm">{project.description || "No description provided"}</p>
                   </div>
-                </div>
-                
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">Created</label>
-                  <p className="text-sm">{formatDate(project.created_at)}</p>
-                </div>
-              </CardContent>
-            </Card>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">Start Date</label>
+                      <p className="text-sm">{formatDate(project.start_date)}</p>
+                    </div>
+                    
+                    <div>
+                      <label className="text-sm font-medium text-muted-foreground">End Date</label>
+                      <p className="text-sm">{formatDate(project.end_date)}</p>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Created</label>
+                    <p className="text-sm">{formatDate(project.created_at)}</p>
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Quick Actions */}
+              {/* Zakat Settings */}
+              {canManageTeam && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Zakat Settings</CardTitle>
+                    <CardDescription>
+                      Enable Zakat to apply GCC-specific financial treatment.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="zakatToggle">Zakat Applicable</Label>
+                      <Switch
+                        id="zakatToggle"
+                        checked={project.zakat_applicable || false}
+                        onCheckedChange={async (checked) => {
+                          await supabase
+                            .from('projects')
+                            .update({ zakat_applicable: checked })
+                            .eq('id', project.id);
+                          queryClient.invalidateQueries({ queryKey: ['project', id] });
+                        }}
+                      />
+                    </div>
+
+                    {project.zakat_applicable && (
+                      <div className="space-y-2">
+                        <Label htmlFor="zakatRate">Zakat Rate (%)</Label>
+                        <Input
+                          id="zakatRate"
+                          type="number"
+                          min="0"
+                          step="0.01"
+                          defaultValue={project.zakat_rate_percent ?? ''}
+                          onBlur={async (e) => {
+                            const rate = parseFloat(e.target.value);
+                            if (!isNaN(rate)) {
+                              await supabase
+                                .from('projects')
+                                .update({ zakat_rate_percent: rate })
+                                .eq('id', project.id);
+                              queryClient.invalidateQueries({ queryKey: ['project', id] });
+                            }
+                          }}
+                        />
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            {/* Right Column - Quick Actions */}
             <Card>
               <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>
