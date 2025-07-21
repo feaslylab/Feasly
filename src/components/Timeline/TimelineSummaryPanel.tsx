@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, AlertTriangle, CheckCircle2, Target } from "lucide-react";
 import { format, differenceInDays, isValid } from "date-fns";
-import type { FeaslyModelFormData } from "./types";
+import type { FeaslyModelFormData } from "@/components/FeaslyModel/types";
 import type { Milestone } from "@/hooks/useMilestones";
 
 interface TimelineSummaryPanelProps {

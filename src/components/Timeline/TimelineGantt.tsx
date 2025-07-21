@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Calendar, Clock, Plus, Edit2, Trash2, CheckCircle2, AlertCircle, Circle } from "lucide-react";
 import { format, differenceInDays, isValid } from "date-fns";
-import type { FeaslyModelFormData } from "./types";
+import type { FeaslyModelFormData } from "@/components/FeaslyModel/types";
 import { useMilestones, type Milestone } from "@/hooks/useMilestones";
 import { MilestoneDialog } from "./MilestoneDialog";
 import { cn } from "@/lib/utils";

@@ -1,0 +1,11 @@
+/* Enhanced Validation Translations */
+{
+  "missing_construction_cost": "Construction cost is missing or zero",
+  "missing_gfa": "Total GFA (Gross Floor Area) is missing or zero", 
+  "revenue_less_than_cost": "Estimated revenue is less than total project cost",
+  "funding_gap_detected": "Funding gap detected - total funding is less than project cost",
+  "high_risk_warning": "High risk project detected",
+  "low_irr_warning": "IRR below recommended threshold",
+  "negative_profit_warning": "Project shows negative profit",
+  "missing_timeline": "Project timeline is incomplete"
+}

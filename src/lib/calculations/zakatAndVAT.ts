@@ -1,3 +1,5 @@
+import { DEFAULT_RATES } from "@/lib/constants/finance";
+
 /**
  * Calculate zakat on profit
  */

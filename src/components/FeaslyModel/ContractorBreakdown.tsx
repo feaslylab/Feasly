@@ -150,14 +150,14 @@ export function ContractorBreakdown({ projectId }: ContractorBreakdownProps) {
   }
 
   return (
-    <Card>
+    <Card className="feasly-card">
       <CardHeader>
-        <div className="flex items-center justify-between">
+        <div className="feasly-mobile-stack">
           <div className="flex items-center space-x-2">
             <Building2 className="h-5 w-5 text-primary" />
             <div>
-              <CardTitle>Contractor Breakdown</CardTitle>
-              <CardDescription>
+              <CardTitle className="feasly-title">Contractor Breakdown</CardTitle>
+              <CardDescription className="feasly-description">
                 Track contractor costs, phases, and delivery risk
               </CardDescription>
             </div>

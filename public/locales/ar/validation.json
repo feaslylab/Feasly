@@ -1,0 +1,11 @@
+/* Enhanced Validation Translations - Arabic */
+{
+  "missing_construction_cost": "تكلفة البناء مفقودة أو صفر",
+  "missing_gfa": "إجمالي المساحة الإجمالية مفقود أو صفر",
+  "revenue_less_than_cost": "الإيرادات المقدرة أقل من إجمالي تكلفة المشروع",
+  "funding_gap_detected": "تم اكتشاف فجوة في التمويل - إجمالي التمويل أقل من تكلفة المشروع", 
+  "high_risk_warning": "تم اكتشاف مشروع عالي المخاطر",
+  "low_irr_warning": "معدل العائد الداخلي أقل من العتبة الموصى بها",
+  "negative_profit_warning": "المشروع يظهر ربحًا سلبيًا",
+  "missing_timeline": "الجدول الزمني للمشروع غير مكتمل"
+}

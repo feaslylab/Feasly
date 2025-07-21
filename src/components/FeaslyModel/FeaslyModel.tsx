@@ -20,8 +20,7 @@ import { AiInsightPanel } from "./AiInsightPanel";
 import { PreviewToggle } from "./PreviewToggle";
 import { SensitivityAnalysis } from "./SensitivityAnalysis";
 import { ScenarioChart } from "./ScenarioChart";
-import { TimelineGantt } from "./TimelineGantt";
-import { TimelineSummaryPanel } from "./TimelineSummaryPanel";
+import { TimelineGantt, TimelineSummaryPanel } from "@/components/Timeline";
 import { ContractorBreakdown } from "./ContractorBreakdown";
 import { VendorRiskSummary } from "./VendorRiskSummary";
 import { ContractorWarnings } from "./ContractorWarnings";
@@ -31,6 +30,7 @@ import CashflowTable from "./CashflowTable";
 import ScenarioComparisonChart from "./ScenarioComparisonChart";
 import { SmartExplainerPanel } from "../FeaslyInsights/SmartExplainerPanel";
 import ExportPDFReport from "./ExportPDFReport";
+import { FeaslyValidationPanel } from "./FeaslyValidationPanel";
 import { VersionSelector } from "./VersionSelector";
 import { CashflowVarianceChart } from "./CashflowVarianceChart";
 import ScenarioPlayback from "./ScenarioPlayback";
@@ -141,7 +141,10 @@ export default function FeaslyModel() {
                     {/* Project Metadata Section */}
                     <ProjectMetadata />
                     
-                    {/* Timeline Section */}
+                  {/* Validation Panel */}
+                  <FeaslyValidationPanel />
+                  
+                  {/* Timeline Section */}
                     <TimelineSection />
 
                     {/* Site Metrics Section */}

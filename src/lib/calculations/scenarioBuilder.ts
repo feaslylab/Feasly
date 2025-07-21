@@ -3,20 +3,13 @@ import type { MonthlyCashflow, ScenarioMultipliers } from "./types";
 import { generateTimelineGrid, allocateCostOverMonths, calculateRevenueOverMonths, allocatePhasedCosts, allocatePhasedEquity } from "./utils";
 import { calculateLoanSchedule } from "./loanCalculations";
 import { calculateZakat } from "./zakatAndVAT";
-
-// Scenario multipliers configuration
-const SCENARIO_MULTIPLIERS: Record<string, ScenarioMultipliers> = {
-  base: { constructionCostMultiplier: 1.0, salePriceMultiplier: 1.0, irrMultiplier: 1.0 },
-  optimistic: { constructionCostMultiplier: 0.9, salePriceMultiplier: 1.15, irrMultiplier: 1.2 },
-  pessimistic: { constructionCostMultiplier: 1.2, salePriceMultiplier: 0.9, irrMultiplier: 0.8 },
-  custom: { constructionCostMultiplier: 1.05, salePriceMultiplier: 0.95, irrMultiplier: 1.0 }, // Light adjustments
-};
+import { SCENARIO_MULTIPLIERS } from "@/lib/constants/finance";
 
 /**
  * Get scenario multipliers for a given scenario
  */
 export function getScenarioMultipliers(scenario: string): ScenarioMultipliers {
-  return SCENARIO_MULTIPLIERS[scenario] || SCENARIO_MULTIPLIERS.base;
+  return SCENARIO_MULTIPLIERS[scenario as keyof typeof SCENARIO_MULTIPLIERS] || SCENARIO_MULTIPLIERS.base;
 }
 
 /**
