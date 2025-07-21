@@ -6,7 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Eye, EyeOff, Building2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface LoginFormProps {
   onToggleMode: () => void;
@@ -19,6 +21,7 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t, isRTL } = useLanguage();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,49 +59,54 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
 
   return (
     <Card className="w-full max-w-md shadow-medium">
-      <CardHeader className="text-center space-y-4">
+      <CardHeader className={cn("text-center space-y-4", isRTL && "text-right")}>
         <div className="mx-auto w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center">
           <Building2 className="w-6 h-6 text-primary-foreground" />
         </div>
         <div>
-          <CardTitle className="text-2xl font-semibold">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl font-semibold">{t('auth.welcomeBack')}</CardTitle>
           <CardDescription className="text-muted-foreground mt-2">
-            Sign in to your Feasly account
+            {t('auth.loginToAccount')}
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleLogin} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className={cn(isRTL && "text-right")}>{t('auth.email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="Enter your email"
+              placeholder={t('auth.enterEmail')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="h-11"
+              className={cn("h-11", isRTL && "text-right")}
+              dir={isRTL ? "rtl" : "ltr"}
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className={cn(isRTL && "text-right")}>{t('auth.password')}</Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Enter your password"
+                placeholder={t('auth.enterPassword')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="h-11 pr-10"
+                className={cn("h-11", isRTL ? "pl-10 text-right" : "pr-10")}
+                dir={isRTL ? "rtl" : "ltr"}
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="absolute right-2 top-1/2 -translate-y-1/2 h-auto p-1 hover:bg-transparent"
+                className={cn(
+                  "absolute top-1/2 -translate-y-1/2 h-auto p-1 hover:bg-transparent",
+                  isRTL ? "left-2" : "right-2"
+                )}
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -115,20 +123,20 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
             className="w-full h-11 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
             disabled={isLoading}
           >
-            {isLoading ? "Signing In..." : "Sign In"}
+            {isLoading ? t('common.loading') : t('auth.login')}
           </Button>
         </form>
 
         <div className="mt-6">
           <Separator className="my-4" />
-          <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
+          <p className={cn("text-center text-sm text-muted-foreground", isRTL && "text-right")}>
+            {t('auth.dontHaveAccount')}{" "}
             <Button
               variant="link"
               className="p-0 h-auto font-medium text-primary hover:text-primary-dark"
               onClick={onToggleMode}
             >
-              Create account
+              {t('auth.signUpHere')}
             </Button>
           </p>
         </div>

@@ -6,7 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Eye, EyeOff, Building2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface SignUpFormProps {
   onToggleMode: () => void;
@@ -24,6 +26,7 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { t, isRTL } = useLanguage();
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -89,62 +92,68 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
 
   return (
     <Card className="w-full max-w-md shadow-medium">
-      <CardHeader className="text-center space-y-4">
+      <CardHeader className={cn("text-center space-y-4", isRTL && "text-right")}>
         <div className="mx-auto w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center">
           <Building2 className="w-6 h-6 text-primary-foreground" />
         </div>
         <div>
-          <CardTitle className="text-2xl font-semibold">Create Account</CardTitle>
+          <CardTitle className="text-2xl font-semibold">{t('auth.createAccount')}</CardTitle>
           <CardDescription className="text-muted-foreground mt-2">
-            Join our project management platform
+            {t('auth.getStarted')}
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSignUp} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="fullName">Full Name</Label>
+            <Label htmlFor="fullName" className={cn(isRTL && "text-right")}>{t('auth.fullName')}</Label>
             <Input
               id="fullName"
               type="text"
-              placeholder="Enter your full name"
+              placeholder={t('auth.enterFullName')}
               value={formData.fullName}
               onChange={(e) => handleInputChange("fullName", e.target.value)}
               required
-              className="h-11"
+              className={cn("h-11", isRTL && "text-right")}
+              dir={isRTL ? "rtl" : "ltr"}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email" className={cn(isRTL && "text-right")}>{t('auth.email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="Enter your email"
+              placeholder={t('auth.enterEmail')}
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               required
-              className="h-11"
+              className={cn("h-11", isRTL && "text-right")}
+              dir={isRTL ? "rtl" : "ltr"}
             />
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className={cn(isRTL && "text-right")}>{t('auth.password')}</Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder="Create a password"
+                placeholder={t('auth.createPassword')}
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
                 required
-                className="h-11 pr-10"
+                className={cn("h-11", isRTL ? "pl-10 text-right" : "pr-10")}
+                dir={isRTL ? "rtl" : "ltr"}
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="absolute right-2 top-1/2 -translate-y-1/2 h-auto p-1 hover:bg-transparent"
+                className={cn(
+                  "absolute top-1/2 -translate-y-1/2 h-auto p-1 hover:bg-transparent",
+                  isRTL ? "left-2" : "right-2"
+                )}
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
@@ -157,22 +166,26 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword" className={cn(isRTL && "text-right")}>{t('auth.confirmPassword')}</Label>
             <div className="relative">
               <Input
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm your password"
+                placeholder={t('auth.confirmYourPassword')}
                 value={formData.confirmPassword}
                 onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                 required
-                className="h-11 pr-10"
+                className={cn("h-11", isRTL ? "pl-10 text-right" : "pr-10")}
+                dir={isRTL ? "rtl" : "ltr"}
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="absolute right-2 top-1/2 -translate-y-1/2 h-auto p-1 hover:bg-transparent"
+                className={cn(
+                  "absolute top-1/2 -translate-y-1/2 h-auto p-1 hover:bg-transparent",
+                  isRTL ? "left-2" : "right-2"
+                )}
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
                 {showConfirmPassword ? (
@@ -189,20 +202,20 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
             className="w-full h-11 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
             disabled={isLoading}
           >
-            {isLoading ? "Creating Account..." : "Create Account"}
+            {isLoading ? t('common.loading') : t('auth.signup')}
           </Button>
         </form>
 
         <div className="mt-6">
           <Separator className="my-4" />
-          <p className="text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
+          <p className={cn("text-center text-sm text-muted-foreground", isRTL && "text-right")}>
+            {t('auth.alreadyHaveAccount')}{" "}
             <Button
               variant="link"
               className="p-0 h-auto font-medium text-primary hover:text-primary-dark"
               onClick={onToggleMode}
             >
-              Sign in
+              {t('auth.signInHere')}
             </Button>
           </p>
         </div>

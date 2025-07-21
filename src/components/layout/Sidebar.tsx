@@ -3,32 +3,36 @@ import { NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: BarChart3 },
-  { name: "Projects", href: "/projects", icon: FolderOpen },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { nameKey: "nav.dashboard", href: "/dashboard", icon: BarChart3 },
+  { nameKey: "nav.projects", href: "/projects", icon: FolderOpen },
+  { nameKey: "nav.settings", href: "/settings", icon: Settings },
 ];
 
 export const Sidebar = () => {
   const { signOut, user } = useAuth();
+  const { t, isRTL } = useLanguage();
 
   const handleSignOut = async () => {
     await signOut();
   };
 
   return (
-    <div className="flex h-full flex-col bg-card border-r border-border">
+    <div className={cn("flex h-full flex-col bg-card border-border", isRTL ? "border-l" : "border-r")}>
       {/* Logo */}
       <div className="flex h-16 items-center gap-3 px-6 border-b border-border">
         <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center">
           <Building2 className="w-5 h-5 text-primary-foreground" />
         </div>
-        <div>
+        <div className={cn("flex-1", isRTL && "text-right")}>
           <h1 className="text-lg font-semibold text-foreground">ProjectPro</h1>
           <p className="text-xs text-muted-foreground">Financial Modeling</p>
         </div>
+        <LanguageSwitcher />
       </div>
 
       {/* Quick Action */}
@@ -38,8 +42,8 @@ export const Sidebar = () => {
           className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
         >
           <NavLink to="/projects/new">
-            <Plus className="w-4 h-4 mr-2" />
-            New Project
+            <Plus className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+            {t('nav.newProject')}
           </NavLink>
         </Button>
       </div>
@@ -48,19 +52,20 @@ export const Sidebar = () => {
       <nav className="flex-1 px-4 space-y-1">
         {navigation.map((item) => (
           <NavLink
-            key={item.name}
+            key={item.nameKey}
             to={item.href}
             className={({ isActive }) =>
               cn(
                 "flex items-center gap-3 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors",
                 isActive
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent",
+                isRTL && "flex-row-reverse"
               )
             }
           >
             <item.icon className="w-5 h-5" />
-            {item.name}
+            {t(item.nameKey)}
           </NavLink>
         ))}
       </nav>
@@ -86,11 +91,14 @@ export const Sidebar = () => {
         <Button
           variant="ghost"
           size="sm"
-          className="w-full justify-start text-muted-foreground hover:text-foreground"
+          className={cn(
+            "w-full text-muted-foreground hover:text-foreground",
+            isRTL ? "justify-end" : "justify-start"
+          )}
           onClick={handleSignOut}
         >
-          <LogOut className="w-4 h-4 mr-2" />
-          Sign Out
+          <LogOut className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+          {t('nav.signOut')}
         </Button>
       </div>
     </div>

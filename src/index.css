@@ -131,4 +131,69 @@
   body {
     @apply bg-background text-foreground;
   }
+  
+  /* RTL Support */
+  .rtl {
+    direction: rtl;
+  }
+  
+  /* RTL-specific adjustments */
+  .rtl .text-left {
+    text-align: right;
+  }
+  
+  .rtl .text-right {
+    text-align: left;
+  }
+  
+  .rtl .ml-auto {
+    margin-left: 0;
+    margin-right: auto;
+  }
+  
+  .rtl .mr-auto {
+    margin-right: 0;
+    margin-left: auto;
+  }
+  
+  .rtl .flex-row-reverse {
+    flex-direction: row-reverse;
+  }
+  
+  /* RTL-aware spacing */
+  .rtl .space-x-2 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 1;
+    margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+    margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
+  }
+  
+  .rtl .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 1;
+    margin-right: calc(1rem * var(--tw-space-x-reverse));
+    margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)));
+  }
+  
+  /* RTL Sidebar adjustments */
+  .rtl .sidebar {
+    border-left: 1px solid hsl(var(--border));
+    border-right: none;
+  }
+  
+  /* RTL form adjustments */
+  .rtl input[type="text"],
+  .rtl input[type="email"],
+  .rtl input[type="password"],
+  .rtl input[type="number"],
+  .rtl textarea,
+  .rtl select {
+    text-align: right;
+  }
+  
+  .rtl input[type="text"]::placeholder,
+  .rtl input[type="email"]::placeholder,
+  .rtl input[type="password"]::placeholder,
+  .rtl input[type="number"]::placeholder,
+  .rtl textarea::placeholder {
+    text-align: right;
+  }
 }
