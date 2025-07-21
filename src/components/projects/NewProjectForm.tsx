@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { SUPPORTED_CURRENCIES } from "@/lib/currencyConversion";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,12 +31,20 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   description: z.string().optional(),
   start_date: z.date().optional(),
   end_date: z.date().optional(),
+  currency_code: z.string().default("AED"),
 }).refine((data) => {
   if (data.start_date && data.end_date) {
     return data.start_date <= data.end_date;
@@ -59,6 +68,7 @@ export const NewProjectForm = () => {
     defaultValues: {
       name: "",
       description: "",
+      currency_code: "AED",
     },
   });
 
@@ -82,6 +92,7 @@ export const NewProjectForm = () => {
           description: data.description || null,
           start_date: data.start_date ? format(data.start_date, "yyyy-MM-dd") : null,
           end_date: data.end_date ? format(data.end_date, "yyyy-MM-dd") : null,
+          currency_code: data.currency_code,
           user_id: user.id,
         })
         .select()
@@ -164,6 +175,34 @@ export const NewProjectForm = () => {
                       </FormControl>
                       <FormDescription>
                         Optional description of the project
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="currency_code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Currency</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="h-11">
+                            <SelectValue placeholder="Select currency" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {SUPPORTED_CURRENCIES.map((currency) => (
+                            <SelectItem key={currency} value={currency}>
+                              {currency}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        The currency for this project's financial data
                       </FormDescription>
                       <FormMessage />
                     </FormItem>

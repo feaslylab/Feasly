@@ -70,6 +70,30 @@ export type Database = {
           },
         ]
       }
+      exchange_rates: {
+        Row: {
+          from_currency: string
+          id: string
+          rate: number
+          to_currency: string
+          updated_at: string
+        }
+        Insert: {
+          from_currency: string
+          id?: string
+          rate: number
+          to_currency: string
+          updated_at?: string
+        }
+        Update: {
+          from_currency?: string
+          id?: string
+          rate?: number
+          to_currency?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       export_history: {
         Row: {
           export_type: string
@@ -201,6 +225,7 @@ export type Database = {
       projects: {
         Row: {
           created_at: string | null
+          currency_code: string | null
           description: string | null
           end_date: string | null
           id: string
@@ -215,6 +240,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          currency_code?: string | null
           description?: string | null
           end_date?: string | null
           id?: string
@@ -229,6 +255,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          currency_code?: string | null
           description?: string | null
           end_date?: string | null
           id?: string

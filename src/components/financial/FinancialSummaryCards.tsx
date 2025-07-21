@@ -7,6 +7,12 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { 
+  convertCurrency, 
+  formatCurrencyAmount, 
+  getExchangeRates, 
+  type ExchangeRate 
+} from "@/lib/currencyConversion";
+import { 
   DollarSign, 
   TrendingUp, 
   Percent, 
@@ -37,6 +43,7 @@ interface FinancialSummaryCardsProps {
   projectId: string;
   selectedScenarioId?: string | null;
   assets?: Asset[];
+  projectCurrency?: string;
 }
 
 const formatCurrency = (amount: number) => {
@@ -61,9 +68,16 @@ const formatYears = (years: number) => {
 export const FinancialSummaryCards = ({ 
   projectId, 
   selectedScenarioId, 
-  assets = [] 
+  assets = [],
+  projectCurrency = "AED"
 }: FinancialSummaryCardsProps) => {
   const { toast } = useToast();
+
+  // Fetch exchange rates
+  const { data: exchangeRates = [], isLoading: ratesLoading } = useQuery({
+    queryKey: ["exchange-rates"],
+    queryFn: getExchangeRates,
+  });
 
   // Fetch scenario overrides for calculations
   const { data: overrides = [], isLoading: overridesLoading } = useQuery({
@@ -113,7 +127,36 @@ export const FinancialSummaryCards = ({
     }
   }, [assets, overrides, toast]);
 
-  if (overridesLoading) {
+  // Convert currency values to AED if needed
+  const convertedMetrics = useMemo(() => {
+    if (projectCurrency === "AED" || exchangeRates.length === 0) {
+      return metrics;
+    }
+
+    return {
+      ...metrics,
+      totalConstructionCost: convertCurrency(
+        metrics.totalConstructionCost, 
+        projectCurrency, 
+        "AED", 
+        exchangeRates
+      ),
+      totalRevenue: convertCurrency(
+        metrics.totalRevenue, 
+        projectCurrency, 
+        "AED", 
+        exchangeRates
+      ),
+      totalOperatingCost: convertCurrency(
+        metrics.totalOperatingCost, 
+        projectCurrency, 
+        "AED", 
+        exchangeRates
+      ),
+    };
+  }, [metrics, projectCurrency, exchangeRates]);
+
+  if (overridesLoading || ratesLoading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {[...Array(5)].map((_, i) => (
@@ -134,14 +177,26 @@ export const FinancialSummaryCards = ({
   const summaryCards = [
     {
       title: "Total Construction Cost",
-      value: formatCurrency(metrics.totalConstructionCost),
+      value: formatCurrencyAmount(
+        convertedMetrics.totalConstructionCost,
+        "AED",
+        projectCurrency !== "AED",
+        metrics.totalConstructionCost,
+        projectCurrency
+      ),
       subtitle: `${assets.length} asset${assets.length === 1 ? "" : "s"}`,
       icon: Building2,
       color: "text-blue-600",
     },
     {
       title: "Annual Revenue",
-      value: formatCurrency(metrics.totalRevenue),
+      value: formatCurrencyAmount(
+        convertedMetrics.totalRevenue,
+        "AED", 
+        projectCurrency !== "AED",
+        metrics.totalRevenue,
+        projectCurrency
+      ),
       subtitle: "With occupancy rates",
       icon: DollarSign,
       color: "text-green-600",
@@ -155,18 +210,18 @@ export const FinancialSummaryCards = ({
     },
     {
       title: "IRR (10-year)",
-      value: formatPercentage(metrics.irr),
+      value: formatPercentage(convertedMetrics.irr),
       subtitle: "Internal rate of return",
       icon: Calculator,
-      color: metrics.irr > 0 ? "text-green-600" : "text-red-600",
+      color: convertedMetrics.irr > 0 ? "text-green-600" : "text-red-600",
     },
     {
       title: "Payback Period",
-      value: formatYears(metrics.paybackPeriod),
+      value: formatYears(convertedMetrics.paybackPeriod),
       subtitle: "Time to break even",
       icon: Clock,
-      color: metrics.paybackPeriod > 0 && metrics.paybackPeriod <= 5 ? "text-green-600" : 
-             metrics.paybackPeriod > 5 && metrics.paybackPeriod <= 10 ? "text-yellow-600" : "text-red-600",
+      color: convertedMetrics.paybackPeriod > 0 && convertedMetrics.paybackPeriod <= 5 ? "text-green-600" : 
+             convertedMetrics.paybackPeriod > 5 && convertedMetrics.paybackPeriod <= 10 ? "text-yellow-600" : "text-red-600",
     },
   ];
 
@@ -187,6 +242,11 @@ export const FinancialSummaryCards = ({
               <p className="text-xs text-muted-foreground mt-1">
                 {card.subtitle}
               </p>
+              {projectCurrency !== "AED" && (
+                <p className="text-xs text-muted-foreground italic mt-1">
+                  *Converted to AED
+                </p>
+              )}
             </CardContent>
           </Card>
         );

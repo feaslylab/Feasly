@@ -42,6 +42,7 @@ interface Project {
   is_demo: boolean;
   zakat_applicable?: boolean;
   zakat_rate_percent?: number;
+  currency_code?: string;
 }
 
 interface Asset {
@@ -968,6 +969,7 @@ const ProjectDetails = () => {
             projectId={id || ""}
             selectedScenarioId={selectedScenarioId}
             assets={assets}
+            projectCurrency={project?.currency_code || "AED"}
           />
         </div>
       )}
