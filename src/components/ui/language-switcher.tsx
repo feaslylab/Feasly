@@ -19,7 +19,7 @@ export const LanguageSwitcher = () => {
           <span className="sr-only">{t('settings.language')}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-36">
+      <DropdownMenuContent align="end" className="w-36 bg-popover border border-border shadow-md z-50">
         <DropdownMenuItem
           onClick={() => setLanguage('en')}
           className={`cursor-pointer ${language === 'en' ? 'bg-accent' : ''}`}

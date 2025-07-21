@@ -32,7 +32,7 @@ export const ThemeToggle = () => {
           <span className="sr-only">{t('settings.theme')}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-32">
+      <DropdownMenuContent align="end" className="w-32 bg-popover border border-border shadow-md z-50">
         <DropdownMenuItem
           onClick={() => setTheme('light')}
           className={`cursor-pointer ${theme === 'light' ? 'bg-accent' : ''}`}

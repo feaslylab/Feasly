@@ -30,7 +30,7 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className={cn("flex flex-col justify-between h-screen bg-card border-border", isRTL ? "border-l" : "border-r")}>
+    <div className={cn("flex flex-col justify-between h-full bg-card border-border relative", isRTL ? "border-l" : "border-r")}>
       {/* Top Section - Navigation */}
       <div className="flex flex-col min-h-0">
         {/* Logo */}
