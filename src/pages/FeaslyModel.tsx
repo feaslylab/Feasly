@@ -12,8 +12,9 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Building2, Calendar as CalendarIconLucide, DollarSign, TrendingUp, MapPin, Clock } from "lucide-react";
-import { format } from "date-fns";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { CalendarIcon, Building2, Calendar as CalendarIconLucide, DollarSign, TrendingUp, MapPin, Clock, Info } from "lucide-react";
+import { format, addMonths } from "date-fns";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -100,9 +101,36 @@ export default function FeaslyModel() {
   const watchZakat = form.watch("zakat_applicable");
   const watchSiteArea = form.watch("site_area_sqm");
   const watchTotalGfa = form.watch("total_gfa_sqm");
+  
+  // Watch for calculated fields
+  const watchStartDate = form.watch("start_date");
+  const watchDurationMonths = form.watch("duration_months");
+  const watchLandCost = form.watch("land_cost");
+  const watchConstructionCost = form.watch("construction_cost");
+  const watchSoftCosts = form.watch("soft_costs");
+  const watchMarketingCost = form.watch("marketing_cost");
+  const watchContingencyPercent = form.watch("contingency_percent");
+  const watchTotalFunding = form.watch("total_funding");
+  const watchEquityContribution = form.watch("equity_contribution");
+  const watchLoanAmount = form.watch("loan_amount");
+  const watchCurrencyCode = form.watch("currency_code");
 
   // Calculate buildable ratio
   const buildableRatio = watchSiteArea && watchTotalGfa ? (watchTotalGfa / watchSiteArea).toFixed(2) : null;
+
+  // Calculate end date
+  const calculatedEndDate = watchStartDate && watchDurationMonths 
+    ? addMonths(watchStartDate, watchDurationMonths)
+    : null;
+
+  // Calculate contingency value and total investment
+  const nonLandCosts = (watchConstructionCost || 0) + (watchSoftCosts || 0) + (watchMarketingCost || 0);
+  const contingencyValue = nonLandCosts * ((watchContingencyPercent || 0) / 100);
+  const totalInvestment = (watchLandCost || 0) + nonLandCosts + contingencyValue;
+
+  // Calculate funding gap
+  const totalFundingSources = (watchEquityContribution || 0) + (watchLoanAmount || 0);
+  const fundingGap = (watchTotalFunding || 0) - totalFundingSources;
 
   const onSubmit = (data: FormData) => {
     console.log("Form submitted:", data);
@@ -348,6 +376,30 @@ export default function FeaslyModel() {
                     )}
                   />
                 </div>
+
+                {/* Calculated End Date */}
+                {calculatedEndDate && (
+                  <div className="space-y-2">
+                    <FormLabel className="flex items-center gap-2">
+                      {t('feasly.model.calculated_end_date')}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('feasly.model.calculated_end_date_tooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </FormLabel>
+                    <Input 
+                      value={format(calculatedEndDate, "PPP")} 
+                      disabled
+                      className="bg-muted"
+                    />
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 gap-4">
                   <FormField
@@ -601,6 +653,37 @@ export default function FeaslyModel() {
                   )}
                 />
 
+                {/* Total Investment Calculation */}
+                {totalInvestment > 0 && (
+                  <div className="space-y-2">
+                    <FormLabel className="flex items-center gap-2">
+                      {t('feasly.model.total_investment')}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('feasly.model.total_investment_tooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </FormLabel>
+                    <Input 
+                      value={`${watchCurrencyCode || 'AED'} ${totalInvestment.toLocaleString()}`}
+                      disabled
+                      className="bg-muted font-medium"
+                    />
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <p>• Land Cost: {watchCurrencyCode || 'AED'} {(watchLandCost || 0).toLocaleString()}</p>
+                      <p>• Construction: {watchCurrencyCode || 'AED'} {(watchConstructionCost || 0).toLocaleString()}</p>
+                      <p>• Soft Costs: {watchCurrencyCode || 'AED'} {(watchSoftCosts || 0).toLocaleString()}</p>
+                      <p>• Marketing: {watchCurrencyCode || 'AED'} {(watchMarketingCost || 0).toLocaleString()}</p>
+                      <p>• Contingency ({watchContingencyPercent || 0}%): {watchCurrencyCode || 'AED'} {contingencyValue.toLocaleString()}</p>
+                    </div>
+                  </div>
+                )}
+
                 <FormField
                   control={form.control}
                   name="zakat_applicable"
@@ -799,6 +882,44 @@ export default function FeaslyModel() {
                     </FormItem>
                   )}
                 />
+
+                {/* Funding Gap Calculation */}
+                {(watchTotalFunding || watchEquityContribution || watchLoanAmount) && (
+                  <div className="space-y-2">
+                    <FormLabel className="flex items-center gap-2">
+                      {t('feasly.model.funding_gap')}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="h-4 w-4 text-muted-foreground" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{t('feasly.model.funding_gap_tooltip')}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </FormLabel>
+                    <Input 
+                      value={`${watchCurrencyCode || 'AED'} ${fundingGap.toLocaleString()}`}
+                      disabled
+                      className={cn(
+                        "bg-muted font-medium",
+                        fundingGap > 0 ? "text-destructive" : "text-green-600"
+                      )}
+                    />
+                    <div className="text-xs text-muted-foreground space-y-1">
+                      <p>• Total Funding Required: {watchCurrencyCode || 'AED'} {(watchTotalFunding || 0).toLocaleString()}</p>
+                      <p>• Equity Contribution: {watchCurrencyCode || 'AED'} {(watchEquityContribution || 0).toLocaleString()}</p>
+                      <p>• Loan Amount: {watchCurrencyCode || 'AED'} {(watchLoanAmount || 0).toLocaleString()}</p>
+                      <p className={cn(
+                        "font-medium",
+                        fundingGap > 0 ? "text-destructive" : "text-green-600"
+                      )}>
+                        • {fundingGap > 0 ? 'Funding Shortfall' : 'Funding Surplus'}: {watchCurrencyCode || 'AED'} {Math.abs(fundingGap).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
