@@ -117,7 +117,7 @@ export function SensitivityAnalysis() {
       <CardHeader>
         <div className="flex items-center space-x-2">
           <TrendingUp className="h-5 w-5 text-primary" />
-          <CardTitle>{t('feasly.model.sensitivity_analysis')}</CardTitle>
+          <CardTitle>{t('sensitivity_analysis')}</CardTitle>
         </div>
         <CardDescription>
           Compare key financial inputs across different scenarios

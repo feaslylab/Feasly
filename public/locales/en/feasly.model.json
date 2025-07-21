@@ -200,6 +200,8 @@
   "export_success": "Export Successful",
   "export_error": "Export Failed",
   
+  "project_timeline": "Project Timeline",
+  
   "smart_insights": "Smart Insights & Commentary",
   "smart_insights_desc": "AI-generated insights and stakeholder notes",
   "regenerate_insights": "Regenerate",

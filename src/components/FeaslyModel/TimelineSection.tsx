@@ -53,10 +53,10 @@ export function TimelineSection() {
       <CardHeader>
         <div className="flex items-center space-x-2">
           <Clock className="h-5 w-5 text-primary" />
-          <CardTitle>{t('feasly.model.timeline_phases')}</CardTitle>
+          <CardTitle>{t('timeline_phases')}</CardTitle>
         </div>
         <CardDescription>
-          {t('feasly.model.timeline_phases_desc')}
+          {t('timeline_phases_desc')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -66,7 +66,7 @@ export function TimelineSection() {
             name="start_date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>{t('feasly.model.start_date')}</FormLabel>
+                <FormLabel>{t('start_date')}</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -80,7 +80,7 @@ export function TimelineSection() {
                         {field.value ? (
                           format(field.value, "PPP")
                         ) : (
-                          <span>{t('feasly.model.select_date')}</span>
+                          <span>{t('select_date')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -107,7 +107,7 @@ export function TimelineSection() {
             name="duration_months"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.duration_months')}</FormLabel>
+                <FormLabel>{t('duration_months')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -127,14 +127,14 @@ export function TimelineSection() {
             render={({ field }) => (
               <FormItem className="flex flex-col">
                 <div className="flex items-center space-x-2">
-                  <FormLabel>{t('feasly.model.completion_date')}</FormLabel>
+                  <FormLabel>{t('completion_date')}</FormLabel>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Info className="h-4 w-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{t('feasly.model.calculated_end_date_tooltip')}</p>
+                        <p>{t('calculated_end_date_tooltip')}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -156,7 +156,7 @@ export function TimelineSection() {
                             {format(calculatedEndDate, "PPP")} (auto)
                           </span>
                         ) : (
-                          <span>{t('feasly.model.select_date')}</span>
+                          <span>{t('select_date')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -183,7 +183,7 @@ export function TimelineSection() {
             name="construction_start_date"
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>{t('feasly.model.construction_start')}</FormLabel>
+                <FormLabel>{t('construction_start')}</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -197,7 +197,7 @@ export function TimelineSection() {
                         {field.value ? (
                           format(field.value, "PPP")
                         ) : (
-                          <span>{t('feasly.model.select_date')}</span>
+                          <span>{t('select_date')}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -224,7 +224,7 @@ export function TimelineSection() {
             name="stabilization_period_months"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.stabilization_period')}</FormLabel>
+                <FormLabel>{t('stabilization_period')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -248,10 +248,10 @@ export function TimelineSection() {
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
                   <FormLabel className="text-base">
-                    {t('feasly.model.phasing_enabled')}
+                    {t('phasing_enabled')}
                   </FormLabel>
                   <div className="text-sm text-muted-foreground">
-                    {t('feasly.model.phasing_enabled_desc')}
+                    {t('phasing_enabled_desc')}
                   </div>
                 </div>
                 <FormControl>

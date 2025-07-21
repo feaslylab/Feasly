@@ -25,10 +25,10 @@ export function SiteMetrics() {
       <CardHeader>
         <div className="flex items-center space-x-2">
           <Layers className="h-5 w-5 text-primary" />
-          <CardTitle>{t('feasly.model.site_area_metrics')}</CardTitle>
+          <CardTitle>{t('site_area_metrics')}</CardTitle>
         </div>
         <CardDescription>
-          {t('feasly.model.site_area_metrics_desc')}
+          {t('site_area_metrics_desc')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -38,7 +38,7 @@ export function SiteMetrics() {
             name="site_area_sqm"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.site_area_sqm')}</FormLabel>
+                <FormLabel>{t('site_area_sqm')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -59,7 +59,7 @@ export function SiteMetrics() {
             name="total_gfa_sqm"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.total_gfa_sqm')}</FormLabel>
+                <FormLabel>{t('total_gfa_sqm')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -81,7 +81,7 @@ export function SiteMetrics() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center space-x-2">
-                  <FormLabel>{t('feasly.model.efficiency_ratio')}</FormLabel>
+                  <FormLabel>{t('efficiency_ratio')}</FormLabel>
                   {calculatedEfficiencyRatio && (
                     <TooltipProvider>
                       <Tooltip>
@@ -116,7 +116,7 @@ export function SiteMetrics() {
             name="far_ratio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.far_ratio')}</FormLabel>
+                <FormLabel>{t('far_ratio')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -137,7 +137,7 @@ export function SiteMetrics() {
             name="height_stories"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.height_stories')}</FormLabel>
+                <FormLabel>{t('height_stories')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -158,7 +158,7 @@ export function SiteMetrics() {
             name="buildable_ratio"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t('feasly.model.buildable_ratio')}</FormLabel>
+                <FormLabel>{t('buildable_ratio')}</FormLabel>
                 <FormControl>
                   <Input
                     type="number"

@@ -80,7 +80,7 @@ export function TimelineGantt() {
         <CardHeader>
           <div className="flex items-center space-x-2">
             <Calendar className="h-5 w-5 text-primary" />
-            <CardTitle>{t('feasly.model.project_timeline')}</CardTitle>
+            <CardTitle>{t('project_timeline')}</CardTitle>
           </div>
           <CardDescription>
             Visual timeline of project phases and milestones
@@ -106,7 +106,7 @@ export function TimelineGantt() {
       <CardHeader>
         <div className="flex items-center space-x-2">
           <Calendar className="h-5 w-5 text-primary" />
-          <CardTitle>{t('feasly.model.project_timeline')}</CardTitle>
+          <CardTitle>{t('project_timeline')}</CardTitle>
         </div>
         <CardDescription>
           Visual timeline of project phases and milestones
