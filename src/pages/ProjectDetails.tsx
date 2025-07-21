@@ -5,6 +5,8 @@ import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText } from "luci
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { AddAssetForm } from "@/components/assets/AddAssetForm";
+import { AssetsList } from "@/components/assets/AssetsList";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +20,23 @@ interface Project {
   description: string | null;
   start_date: string | null;
   end_date: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface Asset {
+  id: string;
+  project_id: string;
+  name: string;
+  type: 'Residential' | 'Mixed Use' | 'Retail' | 'Hospitality' | 'Infrastructure';
+  gfa_sqm: number;
+  construction_cost_aed: number;
+  annual_operating_cost_aed: number;
+  annual_revenue_potential_aed: number;
+  occupancy_rate_percent: number;
+  cap_rate_percent: number;
+  development_timeline_months: number;
+  stabilization_period_months: number;
   created_at: string;
   updated_at: string;
 }
@@ -44,6 +63,26 @@ const ProjectDetails = () => {
     },
     enabled: !!id && !!user,
   });
+
+  const { data: assets } = useQuery({
+    queryKey: ["assets", id],
+    queryFn: async () => {
+      if (!id) return [];
+      
+      const { data, error } = await supabase
+        .from("assets")
+        .select("*")
+        .eq("project_id", id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data as Asset[];
+    },
+    enabled: !!id,
+  });
+
+  const totalAssets = assets?.length || 0;
+  const totalValue = assets?.reduce((sum, asset) => sum + asset.construction_cost_aed, 0) || 0;
 
   if (isLoading) {
     return (
@@ -110,10 +149,7 @@ const ProjectDetails = () => {
               {project.description || "No description provided"}
             </p>
           </div>
-          <Button className="flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Add Asset
-          </Button>
+          {id && <AddAssetForm projectId={id} />}
         </div>
       </div>
 
@@ -125,8 +161,10 @@ const ProjectDetails = () => {
             <Building2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">No assets added yet</p>
+            <div className="text-2xl font-bold">{totalAssets}</div>
+            <p className="text-xs text-muted-foreground">
+              {totalAssets === 0 ? "No assets added yet" : `${totalAssets} asset${totalAssets === 1 ? "" : "s"} in project`}
+            </p>
           </CardContent>
         </Card>
 
@@ -136,7 +174,14 @@ const ProjectDetails = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">AED 0</div>
+            <div className="text-2xl font-bold">
+              {new Intl.NumberFormat('en-AE', {
+                style: 'currency',
+                currency: 'AED',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              }).format(totalValue)}
+            </div>
             <p className="text-xs text-muted-foreground">Based on construction costs</p>
           </CardContent>
         </Card>
@@ -219,10 +264,17 @@ const ProjectDetails = () => {
                 <CardDescription>Manage your project efficiently</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full justify-start" variant="outline">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add New Asset
-                </Button>
+                {id && (
+                  <AddAssetForm 
+                    projectId={id} 
+                    trigger={
+                      <Button className="w-full justify-start" variant="outline">
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add New Asset
+                      </Button>
+                    } 
+                  />
+                )}
                 <Button className="w-full justify-start" variant="outline">
                   <TrendingUp className="w-4 h-4 mr-2" />
                   View Financial Model
@@ -243,23 +295,10 @@ const ProjectDetails = () => {
                 <CardTitle>Assets</CardTitle>
                 <CardDescription>Manage project assets and their financial details</CardDescription>
               </div>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Asset
-              </Button>
+              {id && <AddAssetForm projectId={id} />}
             </CardHeader>
             <CardContent>
-              <div className="text-center py-12">
-                <Building2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No assets yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Start building your financial model by adding your first asset
-                </p>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Your First Asset
-                </Button>
-              </div>
+              {id && <AssetsList projectId={id} />}
             </CardContent>
           </Card>
         </TabsContent>
