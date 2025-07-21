@@ -26,6 +26,7 @@ import ScenarioComparisonChart from "./ScenarioComparisonChart";
 import SmartInsightsPanel from "./SmartInsightsPanel";
 import ExportPDFReport from "./ExportPDFReport";
 import { VersionSelector } from "./VersionSelector";
+import { CashflowVarianceChart } from "./CashflowVarianceChart";
 import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
 
 export default function FeaslyModel() {
@@ -148,6 +149,9 @@ export default function FeaslyModel() {
                 {/* Advanced Analysis - Always Visible */}
                 <div className="space-y-6">
                   <h2 className="text-xl font-semibold">📊 Advanced Analysis</h2>
+                  
+                  {/* Cashflow Variance Chart */}
+                  <CashflowVarianceChart projectId={projectId} />
                   
                   {/* Timeline Gantt */}
                   <TimelineGantt />
