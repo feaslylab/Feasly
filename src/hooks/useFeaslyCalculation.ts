@@ -4,9 +4,10 @@ import { toast } from 'sonner';
 import {
   generateCashflowGrid,
   loadCashflowFromDatabase,
+  getScenarioSummary,
   type CashflowGrid,
   type MonthlyCashflow,
-} from '@/lib/feaslyCalculationEngine';
+} from '@/lib/calculations';
 import type { FeaslyModelFormData } from '@/components/FeaslyModel/types';
 
 export function useFeaslyCalculation(projectId: string | undefined) {
@@ -68,31 +69,32 @@ export function useFeaslyCalculation(projectId: string | undefined) {
   );
 
   // Get summary data for a scenario
-  const getScenarioSummary = useCallback(
+  const getScenarioSummaryLocal = useCallback(
     (scenario: 'base' | 'optimistic' | 'pessimistic' | 'custom') => {
       const data = getScenarioData(scenario);
       if (data.length === 0) return null;
 
-      const lastMonth = data[data.length - 1];
-      const totalCosts = data.reduce((sum, month) => 
-        sum + month.constructionCost + month.landCost + month.softCosts, 0
-      );
-      const totalRevenue = data.reduce((sum, month) => sum + month.revenue, 0);
-      const totalProfit = totalRevenue - totalCosts;
+      // Use the new modular calculation engine
+      const summary = getScenarioSummary(data);
+      
+      // Additional calculations for compatibility
       const totalZakat = data.reduce((sum, month) => sum + month.zakatDue, 0);
       const totalVatPaid = data.reduce((sum, month) => sum + month.vatOnCosts, 0);
       const totalVatRecovered = data.reduce((sum, month) => sum + month.vatRecoverable, 0);
 
       return {
-        totalCosts,
-        totalRevenue,
-        totalProfit,
-        profitMargin: totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0,
-        finalCashBalance: lastMonth.cashBalance,
+        totalCosts: summary.totalCosts,
+        totalRevenue: summary.totalRevenue,
+        totalProfit: summary.netProfit,
+        profitMargin: summary.profitMargin,
+        finalCashBalance: summary.finalCashBalance,
         totalZakat,
         totalVatPaid,
         totalVatRecovered,
         timelineMonths: data.length,
+        irr: summary.irr,
+        roi: summary.roi,
+        paybackPeriod: summary.paybackPeriod,
       };
     },
     [getScenarioData]
@@ -104,10 +106,10 @@ export function useFeaslyCalculation(projectId: string | undefined) {
     
     return scenarios.map(scenario => ({
       scenario,
-      summary: getScenarioSummary(scenario),
+      summary: getScenarioSummaryLocal(scenario),
       data: getScenarioData(scenario),
     })).filter(s => s.summary !== null);
-  }, [getScenarioData, getScenarioSummary]);
+  }, [getScenarioData, getScenarioSummaryLocal]);
 
   return {
     // Data
@@ -125,7 +127,7 @@ export function useFeaslyCalculation(projectId: string | undefined) {
     
     // Utilities
     getScenarioData,
-    getScenarioSummary,
+    getScenarioSummary: getScenarioSummaryLocal,
     compareScenarios,
     
     // Status checks
