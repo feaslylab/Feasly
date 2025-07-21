@@ -198,5 +198,19 @@
   "export_pdf": "Export PDF",
   "export_excel": "Export Excel",
   "export_success": "Export Successful",
-  "export_error": "Export Failed"
+  "export_error": "Export Failed",
+  
+  "smart_insights": "Smart Insights & Commentary",
+  "smart_insights_desc": "AI-generated insights and stakeholder notes",
+  "regenerate_insights": "Regenerate",
+  "ai_generated_insights": "AI-Generated Insights",
+  "user_notes": "Your Notes",
+  "save_notes": "Save Notes",
+  "notes_placeholder": "Add your observations, risks, or action items for this scenario...",
+  "notes_markdown_help": "Supports markdown formatting. Your notes are automatically saved to the project.",
+  "no_insights_yet": "No insights generated yet. Add project data to see AI insights.",
+  "insight_type_opportunity": "opportunity",
+  "insight_type_risk": "risk", 
+  "insight_type_caution": "caution",
+  "insight_type_note": "note"
 }

@@ -289,6 +289,36 @@ export type Database = {
         }
         Relationships: []
       }
+      feasly_insights_notes: {
+        Row: {
+          created_at: string
+          generated_insights: Json | null
+          id: string
+          project_id: string
+          scenario: string
+          updated_at: string
+          user_notes: string | null
+        }
+        Insert: {
+          created_at?: string
+          generated_insights?: Json | null
+          id?: string
+          project_id: string
+          scenario: string
+          updated_at?: string
+          user_notes?: string | null
+        }
+        Update: {
+          created_at?: string
+          generated_insights?: Json | null
+          id?: string
+          project_id?: string
+          scenario?: string
+          updated_at?: string
+          user_notes?: string | null
+        }
+        Relationships: []
+      }
       feasly_modules: {
         Row: {
           enabled_at: string | null

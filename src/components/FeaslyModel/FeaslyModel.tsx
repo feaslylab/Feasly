@@ -24,7 +24,7 @@ import { TimelineGantt } from "./TimelineGantt";
 import { CommentingPanel } from "./CommentingPanel";
 import CashflowTable from "./CashflowTable";
 import ScenarioComparisonChart from "./ScenarioComparisonChart";
-import SmartInsightsPanel from "./SmartInsightsPanel";
+import { SmartExplainerPanel } from "./SmartExplainerPanel";
 import ExportPDFReport from "./ExportPDFReport";
 import { VersionSelector } from "./VersionSelector";
 import { CashflowVarianceChart } from "./CashflowVarianceChart";
@@ -192,8 +192,8 @@ export default function FeaslyModel() {
                   {/* Scenario Timeline Playback */}
                   <ScenarioPlayback projectId={projectId} />
                   
-                  {/* Smart Insights Panel */}
-                  <SmartInsightsPanel />
+                  {/* Smart Explainer Panel */}
+                  <SmartExplainerPanel projectId={projectId} />
                   
                   {/* Export & AI Insights */}
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

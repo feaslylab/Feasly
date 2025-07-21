@@ -114,5 +114,18 @@
     "saving": "جاري حفظ المشروع...",
     "loading": "جاري تحميل بيانات المشروع...",
     "exporting": "جاري إنشاء التصدير..."
-  }
+  },
+  "smart_insights": "التحليلات الذكية والتعليقات",
+  "smart_insights_desc": "رؤى مدعومة بالذكاء الاصطناعي وملاحظات أصحاب المصلحة",
+  "regenerate_insights": "إعادة إنتاج",
+  "ai_generated_insights": "التحليلات المولدة بالذكاء الاصطناعي",
+  "user_notes": "ملاحظاتك",
+  "save_notes": "حفظ الملاحظات",
+  "notes_placeholder": "أضف ملاحظاتك أو المخاطر أو العناصر المطلوبة لهذا السيناريو...",
+  "notes_markdown_help": "يدعم تنسيق Markdown. يتم حفظ ملاحظاتك تلقائياً في المشروع.",
+  "no_insights_yet": "لم يتم إنتاج أي تحليلات بعد. أضف بيانات المشروع لرؤية التحليلات الذكية.",
+  "insight_type_opportunity": "فرصة",
+  "insight_type_risk": "مخاطرة", 
+  "insight_type_caution": "تحذير",
+  "insight_type_note": "ملاحظة"
 }
