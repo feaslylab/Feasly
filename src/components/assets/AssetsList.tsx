@@ -43,6 +43,7 @@ interface AssetsListProps {
   projectId: string;
   selectedScenarioId?: string | null;
   selectedScenario?: Scenario | null;
+  canEdit?: boolean;
 }
 
 const formatCurrency = (amount: number) => {
@@ -58,7 +59,7 @@ const formatNumber = (num: number) => {
   return new Intl.NumberFormat('en-US').format(num);
 };
 
-export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario }: AssetsListProps) => {
+export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario, canEdit = true }: AssetsListProps) => {
   const { data: assets, isLoading, error } = useQuery({
     queryKey: ["assets", projectId],
     queryFn: async () => {
@@ -163,7 +164,7 @@ export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario }: 
               <CardTitle className="text-lg">{asset.name}</CardTitle>
               <div className="flex items-center gap-2">
                 <Badge variant="secondary">{asset.type}</Badge>
-                {selectedScenario && !selectedScenario.is_base && selectedScenarioId && (
+                {canEdit && selectedScenario && !selectedScenario.is_base && selectedScenarioId && (
                   <EditScenarioValuesForm 
                     asset={asset}
                     scenarioId={selectedScenarioId}

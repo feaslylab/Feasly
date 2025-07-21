@@ -63,6 +63,7 @@ const ProjectDetails = () => {
   const [isDuplicateDialogOpen, setIsDuplicateDialogOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState("");
   const [isDuplicating, setIsDuplicating] = useState(false);
+  const [userRole, setUserRole] = useState<'Owner' | 'Editor' | 'Viewer' | null>(null);
 
   const { data: project, isLoading, error } = useQuery({
     queryKey: ["project", id],
@@ -81,6 +82,46 @@ const ProjectDetails = () => {
     },
     enabled: !!id && !!user,
   });
+
+  // Fetch user's role for this project
+  const { data: userRoleData } = useQuery({
+    queryKey: ["user-project-role", id, user?.id],
+    queryFn: async () => {
+      if (!id || !user) return null;
+      
+      // Check if user is the project owner
+      if (project && project.user_id === user.id) {
+        return { role: 'Owner' as const };
+      }
+
+      // Check project_team table for role
+      const { data, error } = await supabase
+        .from("project_team")
+        .select("role")
+        .eq("project_id", id)
+        .eq("user_id", user.id)
+        .single();
+
+      if (error) {
+        // User is not in project_team table and not owner
+        return null;
+      }
+
+      return { role: data.role as 'Owner' | 'Editor' | 'Viewer' };
+    },
+    enabled: !!id && !!user && !!project,
+  });
+
+  // Update user role when data changes
+  useEffect(() => {
+    if (userRoleData) {
+      setUserRole(userRoleData.role);
+    } else if (project && user && project.user_id === user.id) {
+      setUserRole('Owner');
+    } else {
+      setUserRole(null);
+    }
+  }, [userRoleData, project, user]);
 
   const { data: assets } = useQuery({
     queryKey: ["assets", id],
@@ -126,6 +167,13 @@ const ProjectDetails = () => {
 
   const selectedScenario = scenarios?.find(s => s.id === selectedScenarioId) || null;
   const totalAssets = assets?.length || 0;
+
+  // Permission helpers
+  const canEdit = userRole === 'Owner' || userRole === 'Editor';
+  const canManageTeam = userRole === 'Owner';
+  const canExport = userRole === 'Owner' || userRole === 'Editor';
+  const canDuplicate = userRole === 'Owner';
+  const hasAccess = userRole !== null;
   const totalValue = assets?.reduce((sum, asset) => sum + asset.construction_cost_aed, 0) || 0;
 
   if (isLoading) {
@@ -150,17 +198,41 @@ const ProjectDetails = () => {
       <div className="max-w-7xl mx-auto p-6">
         <Button
           variant="ghost"
-          onClick={() => navigate("/projects")}
+          onClick={() => navigate("/dashboard")}
           className="mb-6"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Projects
+          Back to Dashboard
         </Button>
         <Card>
           <CardContent className="p-6 text-center">
             <h2 className="text-lg font-semibold mb-2">Project not found</h2>
             <p className="text-muted-foreground">
               The project you're looking for doesn't exist or you don't have access to it.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Check access permissions
+  if (!hasAccess && !isLoading) {
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/dashboard")}
+          className="mb-6"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Dashboard
+        </Button>
+        <Card>
+          <CardContent className="p-6 text-center">
+            <h2 className="text-lg font-semibold mb-2">Access Denied</h2>
+            <p className="text-muted-foreground">
+              You don't have permission to view this project.
             </p>
           </CardContent>
         </Card>
@@ -573,11 +645,11 @@ const ProjectDetails = () => {
       <div className="mb-6">
         <Button
           variant="ghost"
-          onClick={() => navigate("/projects")}
+          onClick={() => navigate("/dashboard")}
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Projects
+          Back to Dashboard
         </Button>
         
         <div className="flex justify-between items-start">
@@ -588,61 +660,65 @@ const ProjectDetails = () => {
             </p>
           </div>
           <div className="flex gap-3">
-            <Dialog open={isDuplicateDialogOpen} onOpenChange={setIsDuplicateDialogOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  onClick={handleDuplicateClick}
-                  className="flex items-center gap-2"
-                >
-                  <Copy className="w-4 h-4" />
-                  Duplicate Project
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Duplicate Project</DialogTitle>
-                  <DialogDescription>
-                    Create a copy of this project with all its assets, scenarios, and override values.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="project-name">New Project Name</Label>
-                    <Input
-                      id="project-name"
-                      value={newProjectName}
-                      onChange={(e) => setNewProjectName(e.target.value)}
-                      placeholder="Enter project name"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
+            {canDuplicate && (
+              <Dialog open={isDuplicateDialogOpen} onOpenChange={setIsDuplicateDialogOpen}>
+                <DialogTrigger asChild>
                   <Button
                     variant="outline"
-                    onClick={() => setIsDuplicateDialogOpen(false)}
-                    disabled={isDuplicating}
+                    onClick={handleDuplicateClick}
+                    className="flex items-center gap-2"
                   >
-                    Cancel
+                    <Copy className="w-4 h-4" />
+                    Duplicate Project
                   </Button>
-                  <Button
-                    onClick={duplicateProject}
-                    disabled={!newProjectName.trim() || isDuplicating}
-                  >
-                    {isDuplicating ? "Duplicating..." : "Duplicate Project"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-            <Button
-              variant="outline"
-              onClick={copyShareableLink}
-              className="flex items-center gap-2"
-            >
-              <Link className="w-4 h-4" />
-              Copy Shareable Link
-            </Button>
-            {selectedScenario && assets && assets.length > 0 && (
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Duplicate Project</DialogTitle>
+                    <DialogDescription>
+                      Create a copy of this project with all its assets, scenarios, and override values.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="project-name">New Project Name</Label>
+                      <Input
+                        id="project-name"
+                        value={newProjectName}
+                        onChange={(e) => setNewProjectName(e.target.value)}
+                        placeholder="Enter project name"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsDuplicateDialogOpen(false)}
+                      disabled={isDuplicating}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      onClick={duplicateProject}
+                      disabled={!newProjectName.trim() || isDuplicating}
+                    >
+                      {isDuplicating ? "Duplicating..." : "Duplicate Project"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            )}
+            {canEdit && (
+              <Button
+                variant="outline"
+                onClick={copyShareableLink}
+                className="flex items-center gap-2"
+              >
+                <Link className="w-4 h-4" />
+                Copy Shareable Link
+              </Button>
+            )}
+            {canExport && selectedScenario && assets && assets.length > 0 && (
               <>
                 <Button
                   variant="outline"
@@ -662,7 +738,7 @@ const ProjectDetails = () => {
                 </Button>
               </>
             )}
-            {id && <AddAssetForm projectId={id} />}
+            {canEdit && id && <AddAssetForm projectId={id} />}
           </div>
         </div>
       </div>
@@ -728,11 +804,11 @@ const ProjectDetails = () => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className={`grid w-full ${canManageTeam ? 'grid-cols-5' : 'grid-cols-4'}`}>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="assets">Assets</TabsTrigger>
           <TabsTrigger value="scenarios">Scenarios</TabsTrigger>
-          <TabsTrigger value="team">Team</TabsTrigger>
+          {canManageTeam && <TabsTrigger value="team">Team</TabsTrigger>}
           <TabsTrigger value="analytics">Analytics</TabsTrigger>
         </TabsList>
 
@@ -783,7 +859,7 @@ const ProjectDetails = () => {
                 <CardDescription>Manage your project efficiently</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
-                {id && (
+                {canEdit && id && (
                   <AddAssetForm 
                     projectId={id} 
                     trigger={
@@ -794,14 +870,18 @@ const ProjectDetails = () => {
                     } 
                   />
                 )}
+                {canEdit && (
                 <Button className="w-full justify-start" variant="outline">
                   <TrendingUp className="w-4 h-4 mr-2" />
                   View Financial Model
                 </Button>
+                )}
+                {canEdit && (
                 <Button className="w-full justify-start" variant="outline">
                   <FileText className="w-4 h-4 mr-2" />
                   Generate Report
                 </Button>
+                )}
               </CardContent>
             </Card>
           </div>
@@ -814,17 +894,19 @@ const ProjectDetails = () => {
                 <CardTitle>Assets</CardTitle>
                 <CardDescription>Manage project assets and their financial details</CardDescription>
               </div>
-              {id && <AddAssetForm projectId={id} />}
+              {canEdit && id && <AddAssetForm projectId={id} />}
             </CardHeader>
             <CardContent>
-              {id && <AssetsList projectId={id} selectedScenarioId={selectedScenarioId} selectedScenario={selectedScenario} />}
+              {id && <AssetsList projectId={id} selectedScenarioId={selectedScenarioId} selectedScenario={selectedScenario} canEdit={canEdit} />}
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="team" className="space-y-6">
-          <ProjectTeam projectId={id || ""} projectOwnerId={project.user_id} />
-        </TabsContent>
+        {canManageTeam && (
+          <TabsContent value="team" className="space-y-6">
+            <ProjectTeam projectId={id || ""} projectOwnerId={project.user_id} userRole={userRole} />
+          </TabsContent>
+        )}
 
         <TabsContent value="scenarios" className="space-y-6">
           <Card>

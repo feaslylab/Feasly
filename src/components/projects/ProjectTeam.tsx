@@ -29,9 +29,10 @@ interface TeamMember {
 interface ProjectTeamProps {
   projectId: string;
   projectOwnerId: string;
+  userRole?: 'Owner' | 'Editor' | 'Viewer' | null;
 }
 
-export const ProjectTeam = ({ projectId, projectOwnerId }: ProjectTeamProps) => {
+export const ProjectTeam = ({ projectId, projectOwnerId, userRole }: ProjectTeamProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -41,7 +42,7 @@ export const ProjectTeam = ({ projectId, projectOwnerId }: ProjectTeamProps) => 
   const [inviteRole, setInviteRole] = useState<'Editor' | 'Viewer'>('Viewer');
   const [isInviting, setIsInviting] = useState(false);
 
-  const isOwner = user?.id === projectOwnerId;
+  const isOwner = userRole === 'Owner';
 
   // Fetch team members
   const { data: teamMembers, isLoading } = useQuery({
