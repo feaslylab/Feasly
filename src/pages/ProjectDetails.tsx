@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download, FileDown, Copy } from "lucide-react";
+import { ArrowLeft, Plus, Building2, TrendingUp, Calendar, FileText, Download, FileDown, Copy, Link } from "lucide-react";
 import * as XLSX from "xlsx";
 import { calculateFinancialMetrics } from "@/lib/financialCalculations";
 import jsPDF from "jspdf";
@@ -538,6 +538,33 @@ const ProjectDetails = () => {
     setIsDuplicateDialogOpen(true);
   };
 
+  const copyShareableLink = async () => {
+    if (!id) return;
+
+    const shareableUrl = `${window.location.origin}/projects/${id}/view`;
+    
+    try {
+      await navigator.clipboard.writeText(shareableUrl);
+      toast({
+        title: "Link Copied",
+        description: "Anyone with access can view this project in read-only mode.",
+      });
+    } catch (error) {
+      // Fallback for browsers that don't support clipboard API
+      const textArea = document.createElement("textarea");
+      textArea.value = shareableUrl;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      
+      toast({
+        title: "Link Copied",
+        description: "Anyone with access can view this project in read-only mode.",
+      });
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6">
       {/* Header */}
@@ -605,6 +632,14 @@ const ProjectDetails = () => {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+            <Button
+              variant="outline"
+              onClick={copyShareableLink}
+              className="flex items-center gap-2"
+            >
+              <Link className="w-4 h-4" />
+              Copy Shareable Link
+            </Button>
             {selectedScenario && assets && assets.length > 0 && (
               <>
                 <Button
