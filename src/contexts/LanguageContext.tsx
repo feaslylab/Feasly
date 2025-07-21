@@ -1,5 +1,9 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
+// Import external translation files
+import enFeasly from '../translations/en/feasly.json';
+import arFeasly from '../translations/ar/feasly.json';
+
 export type Language = 'en' | 'ar';
 
 interface LanguageContextType {
@@ -11,8 +15,8 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-// Translations object
-const translations = {
+// Base translations (keeping existing common translations for backward compatibility)
+const baseTranslations = {
   en: {
     // Navigation
     'nav.dashboard': 'Dashboard',
@@ -432,6 +436,18 @@ const translations = {
   }
 };
 
+// Merge base translations with Feasly translations
+const translations = {
+  en: {
+    ...baseTranslations.en,
+    feasly: enFeasly
+  },
+  ar: {
+    ...baseTranslations.ar,
+    feasly: arFeasly
+  }
+};
+
 interface LanguageProviderProps {
   children: ReactNode;
 }
@@ -445,7 +461,19 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const isRTL = language === 'ar';
 
   const t = (key: string): string => {
-    return translations[language][key] || key;
+    // Handle nested keys like "feasly.model.title"
+    const keys = key.split('.');
+    let value: any = translations[language];
+    
+    for (const k of keys) {
+      if (value && typeof value === 'object' && k in value) {
+        value = value[k];
+      } else {
+        return key; // Return key if translation not found
+      }
+    }
+    
+    return typeof value === 'string' ? value : key;
   };
 
   useEffect(() => {
