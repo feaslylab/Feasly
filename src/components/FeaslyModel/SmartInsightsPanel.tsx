@@ -1,3 +1,4 @@
+import { useFormContext } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -5,6 +6,8 @@ import { KPIBenchmarkBadge } from "@/components/ui/kpi-benchmark-badge";
 import { AlertTriangle, CheckCircle, XCircle, Info } from "lucide-react";
 import { useFeaslyCalculation } from "@/hooks/useFeaslyCalculation";
 import { useBenchmarks } from "@/hooks/useBenchmarks";
+import { formatCurrency } from "@/lib/currencyUtils";
+import type { FeaslyModelFormData } from "./types";
 
 interface SmartInsightsPanelProps {
   projectId?: string;
