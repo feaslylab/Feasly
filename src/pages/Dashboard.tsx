@@ -652,7 +652,7 @@ export default function Dashboard() {
             <FolderOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{stats.totalProjects}</div>
+            <div className="text-xl font-bold text-foreground">{stats.totalProjects}</div>
             <p className="text-xs text-muted-foreground">
               Active development projects
             </p>
@@ -667,7 +667,7 @@ export default function Dashboard() {
             <Building className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">{stats.totalAssets}</div>
+            <div className="text-xl font-bold text-foreground">{stats.totalAssets}</div>
             <p className="text-xs text-muted-foreground">
               Across all projects
             </p>
@@ -682,8 +682,8 @@ export default function Dashboard() {
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-foreground">
-              {formatCurrency(stats.totalValue)}
+            <div className="text-xl font-bold text-foreground break-words">
+              {formatCurrencyShort(stats.totalValue)}
             </div>
             <p className="text-xs text-muted-foreground">
               Total construction cost
@@ -701,8 +701,8 @@ export default function Dashboard() {
               <DollarSign className="h-4 w-4 text-green-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">
-                {formatCurrency(stats.totalRevenue)}
+              <div className="text-xl font-bold text-green-600 break-words">
+                {formatCurrencyShort(stats.totalRevenue)}
               </div>
               <p className="text-xs text-muted-foreground">
                 Annual revenue potential
@@ -719,7 +719,7 @@ export default function Dashboard() {
             <TrendingUp className="h-4 w-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">{stats.avgIRR}%</div>
+            <div className="text-xl font-bold text-success">{stats.avgIRR}%</div>
             <p className="text-xs text-muted-foreground">
               Expected return rate
             </p>
