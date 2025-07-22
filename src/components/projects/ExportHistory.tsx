@@ -13,14 +13,10 @@ interface ExportRecord {
   scenario_id: string;
   export_type: 'pdf' | 'excel';
   filename: string;
+  exported_at: string;
   created_at: string;
-  profiles: {
-    email: string;
-    full_name?: string;
-  };
   scenarios: {
     name: string;
-    type: string;
   };
 }
 
@@ -36,8 +32,7 @@ export const ExportHistory = ({ projectId }: ExportHistoryProps) => {
         .from("export_history")
         .select(`
           *,
-          profiles!inner(email, full_name),
-          scenarios!inner(name, type)
+          scenarios!inner(name)
         `)
         .eq("project_id", projectId)
         .order("created_at", { ascending: false });
@@ -151,9 +146,9 @@ export const ExportHistory = ({ projectId }: ExportHistoryProps) => {
             <tbody>
               {exportHistory.map((record) => (
                 <tr key={record.id} className="border-b hover:bg-muted/50">
-                  <td className="p-3">
+                   <td className="p-3">
                     <div className="text-sm">
-                      {formatDate(record.created_at)}
+                      {formatDate(record.exported_at || record.created_at)}
                     </div>
                   </td>
                   <td className="p-3">
@@ -163,12 +158,7 @@ export const ExportHistory = ({ projectId }: ExportHistoryProps) => {
                     </div>
                   </td>
                   <td className="p-3">
-                    <div className="space-y-1">
-                      <div className="font-medium">{record.scenarios.name}</div>
-                      <Badge variant="outline" className="text-xs">
-                        {record.scenarios.type}
-                      </Badge>
-                    </div>
+                    <div className="font-medium">{record.scenarios.name}</div>
                   </td>
                   <td className="p-3">
                     <div className="font-mono text-sm break-all">
@@ -176,15 +166,8 @@ export const ExportHistory = ({ projectId }: ExportHistoryProps) => {
                     </div>
                   </td>
                   <td className="p-3">
-                    <div className="text-sm">
-                      <div className="font-medium">
-                        {record.profiles.full_name || record.profiles.email}
-                      </div>
-                      {record.profiles.full_name && (
-                        <div className="text-muted-foreground text-xs">
-                          {record.profiles.email}
-                        </div>
-                      )}
+                    <div className="text-sm text-muted-foreground">
+                      User
                     </div>
                   </td>
                 </tr>

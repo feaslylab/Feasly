@@ -195,13 +195,13 @@ export const Sidebar = () => {
             side="top"
           >
             <div className="px-2 py-1.5">
-              <p className="text-sm font-medium">{user?.user_metadata?.full_name || t('auth.user')}</p>
+              <p className="text-sm font-medium">{user?.user_metadata?.full_name || t('user', { ns: 'auth' })}</p>
               <p className="text-xs text-muted-foreground">{user?.email}</p>
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer">
               <User className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-              {t('auth.viewAccount')}
+              {t('viewAccount', { ns: 'auth' })}
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer">
               <Settings className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
@@ -213,7 +213,7 @@ export const Sidebar = () => {
               onClick={handleSignOut}
             >
               <LogOut className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-              {t('auth.signOut')}
+              {t('signOut', { ns: 'auth' })}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
