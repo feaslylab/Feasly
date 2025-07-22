@@ -33,14 +33,26 @@ export function useWebVitals() {
   // Initialize web vitals monitoring
   const initWebVitals = useCallback(async () => {
     try {
-      // Dynamic import to reduce bundle size
-      const { getCLS, getFID, getFCP, getLCP, getTTFB } = await import('web-vitals');
+      // Dynamic import to reduce bundle size - using individual imports for v5
+      const [
+        { onCLS },
+        { onFCP },
+        { onLCP },
+        { onTTFB },
+        { onINP }
+      ] = await Promise.all([
+        import('web-vitals/attribution').then(m => ({ onCLS: m.onCLS })).catch(() => import('web-vitals').then(m => ({ onCLS: m.onCLS }))),
+        import('web-vitals/attribution').then(m => ({ onFCP: m.onFCP })).catch(() => import('web-vitals').then(m => ({ onFCP: m.onFCP }))),
+        import('web-vitals/attribution').then(m => ({ onLCP: m.onLCP })).catch(() => import('web-vitals').then(m => ({ onLCP: m.onLCP }))),
+        import('web-vitals/attribution').then(m => ({ onTTFB: m.onTTFB })).catch(() => import('web-vitals').then(m => ({ onTTFB: m.onTTFB }))),
+        import('web-vitals/attribution').then(m => ({ onINP: m.onINP })).catch(() => import('web-vitals').then(m => ({ onINP: m.onINP })))
+      ]);
       
-      getCLS(reportMetric);
-      getFID(reportMetric);
-      getFCP(reportMetric);
-      getLCP(reportMetric);
-      getTTFB(reportMetric);
+      onCLS(reportMetric);
+      onFCP(reportMetric);
+      onLCP(reportMetric);
+      onTTFB(reportMetric);
+      onINP(reportMetric); // INP replaced FID in v3+
     } catch (error) {
       console.warn('Web Vitals not available:', error);
     }
