@@ -977,12 +977,12 @@ export default function Dashboard() {
               {recentProjects.map((project) => (
                 <div
                   key={project.id}
-                  className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors"
+                  className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 border border-border rounded-lg hover:bg-accent/50 transition-colors"
                 >
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="font-medium text-foreground">{project.name}</h3>
-                      <Badge variant="secondary" className="text-xs">
+                      <h3 className="font-medium text-foreground truncate">{project.name}</h3>
+                      <Badge variant="secondary" className="text-xs flex-shrink-0">
                         {project.assetCount} assets
                       </Badge>
                     </div>
@@ -991,12 +991,12 @@ export default function Dashboard() {
                         {project.description}
                       </p>
                     )}
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>Value: {formatCurrency(project.totalValue)}</span>
-                      <span>Created: {formatDate(project.created_at)}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
+                      <span className="truncate">Value: {formatCurrency(project.totalValue)}</span>
+                      <span className="truncate">Created: {formatDate(project.created_at)}</span>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm" asChild>
+                  <Button variant="outline" size="sm" className="w-full sm:w-auto flex-shrink-0" asChild>
                     <NavLink to={`/projects/${project.id}`}>
                       View Project
                     </NavLink>
