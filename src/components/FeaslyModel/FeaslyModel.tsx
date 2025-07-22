@@ -222,7 +222,7 @@ export default function FeaslyModel() {
                     formData={form.getValues()}
                     onRecalculate={async (formData) => {
                       // This will trigger the calculation engine
-                      console.log("Recalculating cashflow with:", formData);
+                      // Recalculating cashflow...
                       toast({
                         title: "Cashflow Calculated",
                         description: "Monthly cashflow projections have been updated.",

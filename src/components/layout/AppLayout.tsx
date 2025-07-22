@@ -1,17 +1,18 @@
 import { Outlet } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
+import { EnhancedSidebar, MobileSidebarTrigger } from "./EnhancedSidebar";
+import { ResponsiveContainer } from "@/components/ui/mobile-optimized";
 
 export const AppLayout = () => {
   return (
-    <div className="feasly-page min-h-screen flex overflow-hidden">
-      <div className="flex-shrink-0 h-full transition-all duration-300">
-        <Sidebar />
-      </div>
-      <div className="flex-1 flex flex-col min-w-0">
+    <div className="min-h-screen w-full flex bg-background">
+      <EnhancedSidebar />
+      <MobileSidebarTrigger />
+      
+      <div className="flex-1 flex flex-col min-w-0 lg:ml-0">
         <main className="flex-1 overflow-auto">
-          <div className="feasly-container px-4 sm:px-6 lg:px-8 py-6">
+          <ResponsiveContainer className="py-6">
             <Outlet />
-          </div>
+          </ResponsiveContainer>
         </main>
       </div>
     </div>

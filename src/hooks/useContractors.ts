@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 
 export interface Contractor {
   id?: string;
@@ -56,7 +57,7 @@ export function useContractors(projectId: string) {
   const fetchContractors = async (retry = false) => {
     // Don't fetch if projectId is not valid
     if (!projectId || projectId.trim() === '') {
-      console.warn('Invalid projectId provided to useContractors:', projectId);
+      logger.warn('Invalid projectId provided to useContractors', { projectId }, 'useContractors');
       setIsLoading(false);
       setError('Invalid project ID');
       return;
@@ -66,7 +67,7 @@ export function useContractors(projectId: string) {
       setIsLoading(true);
       setError(null);
       
-      console.log('Fetching contractors for project:', projectId);
+      logger.debug('Fetching contractors for project', { projectId }, 'useContractors');
       
       const { data, error } = await supabase
         .from('project_contractors')
@@ -78,10 +79,10 @@ export function useContractors(projectId: string) {
       
       setContractors((data || []) as Contractor[]);
       setRetryCount(0); // Reset retry count on success
-      console.log('Successfully fetched contractors:', data?.length || 0);
+      logger.info('Successfully fetched contractors', { count: data?.length || 0 }, 'useContractors');
       
     } catch (error: any) {
-      console.error('Error fetching contractors:', error);
+      logger.error('Error fetching contractors', error, 'useContractors');
       setError(error.message || 'Failed to load contractors');
       
       // Auto-retry for mobile network issues (up to 2 retries)
