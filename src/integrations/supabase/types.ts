@@ -174,6 +174,7 @@ export type Database = {
           cash_balance: number | null
           construction_cost: number | null
           created_at: string
+          created_by: string | null
           equity_injected: number | null
           escrow_released: number | null
           escrow_reserved: number | null
@@ -196,13 +197,16 @@ export type Database = {
           updated_at: string
           vat_on_costs: number | null
           vat_recoverable: number | null
+          version_created_at: string | null
           version_label: string
+          version_notes: string | null
           zakat_due: number | null
         }
         Insert: {
           cash_balance?: number | null
           construction_cost?: number | null
           created_at?: string
+          created_by?: string | null
           equity_injected?: number | null
           escrow_released?: number | null
           escrow_reserved?: number | null
@@ -225,13 +229,16 @@ export type Database = {
           updated_at?: string
           vat_on_costs?: number | null
           vat_recoverable?: number | null
+          version_created_at?: string | null
           version_label?: string
+          version_notes?: string | null
           zakat_due?: number | null
         }
         Update: {
           cash_balance?: number | null
           construction_cost?: number | null
           created_at?: string
+          created_by?: string | null
           equity_injected?: number | null
           escrow_released?: number | null
           escrow_reserved?: number | null
@@ -254,7 +261,9 @@ export type Database = {
           updated_at?: string
           vat_on_costs?: number | null
           vat_recoverable?: number | null
+          version_created_at?: string | null
           version_label?: string
+          version_notes?: string | null
           zakat_due?: number | null
         }
         Relationships: []
@@ -342,6 +351,50 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      feasly_versions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_latest: boolean
+          kpi_snapshot: Json | null
+          project_id: string
+          scenario_types: string[] | null
+          version_label: string
+          version_notes: string | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_latest?: boolean
+          kpi_snapshot?: Json | null
+          project_id: string
+          scenario_types?: string[] | null
+          version_label: string
+          version_notes?: string | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_latest?: boolean
+          kpi_snapshot?: Json | null
+          project_id?: string
+          scenario_types?: string[] | null
+          version_label?: string
+          version_notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "feasly_versions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       financial_summaries: {
         Row: {

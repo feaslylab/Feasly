@@ -31,8 +31,10 @@ import CashflowTable from "./CashflowTable";
 import ScenarioComparisonChart from "./ScenarioComparisonChart";
 import { SmartExplainerPanel } from "../FeaslyInsights/SmartExplainerPanel";
 import { ExportPDF } from "@/components/export/ExportPDF";
+import { VersionSelector } from "@/components/versions/VersionSelector";
+import { ScenarioComparison } from "@/components/versions/ScenarioComparison";
 import { FeaslyValidationPanel } from "./FeaslyValidationPanel";
-import { VersionSelector } from "./VersionSelector";
+import { VersionSelector as LegacyVersionSelector } from "./VersionSelector";
 import { CashflowVarianceChart } from "./CashflowVarianceChart";
 import ScenarioPlayback from "./ScenarioPlayback";
 import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
@@ -126,16 +128,18 @@ export default function FeaslyModel() {
         </div>
       </div>
 
-      {/* Version Selector */}
-      <div className="bg-card border rounded-lg p-3 sm:p-4">
-        <VersionSelector
-          availableVersions={availableVersions}
-          selectedVersion={selectedVersion}
-          currentVersionLabel={currentVersionLabel}
-          isLoading={isLoadingCashflow || isCalculating}
-          onVersionSelect={switchToVersion}
-          onCalculateWithVersion={handleCalculateWithVersion}
-        />
+      {/* Version Management */}
+      <div className="bg-card border rounded-lg p-3 sm:p-4 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <VersionSelector 
+            projectId={projectId}
+            className="flex-1"
+          />
+          <ScenarioComparison 
+            projectId={projectId}
+            className="sm:w-auto"
+          />
+        </div>
       </div>
 
       {/* Form with Preview Toggle */}
