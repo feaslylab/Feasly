@@ -84,7 +84,7 @@ export const ProjectAnalytics = ({ projectId, assets, projectCurrency = "AED" }:
         .from("scenarios")
         .select("*")
         .eq("project_id", projectId)
-        .order("type", { ascending: true });
+        .order("name", { ascending: true });
 
       if (error) throw error;
       return data;
@@ -142,14 +142,46 @@ export const ProjectAnalytics = ({ projectId, assets, projectCurrency = "AED" }:
     );
   }
 
+  // If no scenarios exist, show a message
+  if (!scenarios || scenarios.length === 0) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Financial Analytics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-12">
+              <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium mb-2">No Scenarios Found</h3>
+              <p className="text-muted-foreground">
+                Create scenarios in the Scenarios tab to see detailed analytics and projections
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Calculate metrics for all scenarios
   const scenarioMetrics = scenarios.map(scenario => {
     const scenarioOverrides = allOverrides.filter(o => o.scenario_id === scenario.id);
     const metrics = calculateFinancialMetrics(assets, scenarioOverrides);
     
+    // Use name as type fallback, or determine type from name
+    let scenarioType = scenario.name;
+    if (scenario.is_base) {
+      scenarioType = "Base Case";
+    } else if (scenario.name?.toLowerCase().includes('optimistic')) {
+      scenarioType = "Optimistic";
+    } else if (scenario.name?.toLowerCase().includes('pessimistic')) {
+      scenarioType = "Pessimistic";
+    }
+    
     return {
       scenario: scenario.name,
-      type: scenario.type,
+      type: scenarioType,
       ...metrics
     };
   });
@@ -378,17 +410,29 @@ export const ProjectAnalytics = ({ projectId, assets, projectCurrency = "AED" }:
                   labelFormatter={(value) => `Year ${value}`}
                 />
                 <Legend />
-                {scenarios.map((scenario) => (
-                  <Area
-                    key={scenario.id}
-                    type="monotone"
-                    dataKey={scenario.type}
-                    stackId="1"
-                    stroke={COLORS[scenario.type as keyof typeof COLORS]}
-                    fill={COLORS[scenario.type as keyof typeof COLORS]}
-                    fillOpacity={0.6}
-                  />
-                ))}
+                {scenarios.map((scenario) => {
+                  // Use name as type fallback, or determine type from name
+                  let scenarioType = scenario.name;
+                  if (scenario.is_base) {
+                    scenarioType = "Base Case";
+                  } else if (scenario.name?.toLowerCase().includes('optimistic')) {
+                    scenarioType = "Optimistic";
+                  } else if (scenario.name?.toLowerCase().includes('pessimistic')) {
+                    scenarioType = "Pessimistic";
+                  }
+                  
+                  return (
+                    <Area
+                      key={scenario.id}
+                      type="monotone"
+                      dataKey={scenarioType}
+                      stackId="1"
+                      stroke={COLORS[scenarioType as keyof typeof COLORS]}
+                      fill={COLORS[scenarioType as keyof typeof COLORS]}
+                      fillOpacity={0.6}
+                    />
+                  );
+                })}
               </AreaChart>
             </ResponsiveContainer>
           </CardContent>
