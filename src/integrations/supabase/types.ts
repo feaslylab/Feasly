@@ -184,6 +184,51 @@ export type Database = {
           },
         ]
       }
+      feasly_alerts: {
+        Row: {
+          alert_type: string
+          body: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          project_id: string
+          resolved: boolean
+          resolved_at: string | null
+          severity: string
+          title: string
+          triggered_at: string
+          updated_at: string
+        }
+        Insert: {
+          alert_type: string
+          body: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          project_id: string
+          resolved?: boolean
+          resolved_at?: string | null
+          severity?: string
+          title: string
+          triggered_at?: string
+          updated_at?: string
+        }
+        Update: {
+          alert_type?: string
+          body?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          project_id?: string
+          resolved?: boolean
+          resolved_at?: string | null
+          severity?: string
+          title?: string
+          triggered_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       feasly_benchmarks: {
         Row: {
           asset_type: string
@@ -491,6 +536,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      forecast_simulations: {
+        Row: {
+          base_irr: number | null
+          base_payback_period: number | null
+          base_roi: number | null
+          cost_delta_percent: number | null
+          created_at: string
+          delay_months: number | null
+          forecasted_irr: number | null
+          forecasted_payback_period: number | null
+          forecasted_roi: number | null
+          id: string
+          project_id: string
+          revenue_delta_percent: number | null
+          simulation_data: Json | null
+          simulation_name: string
+          updated_at: string
+        }
+        Insert: {
+          base_irr?: number | null
+          base_payback_period?: number | null
+          base_roi?: number | null
+          cost_delta_percent?: number | null
+          created_at?: string
+          delay_months?: number | null
+          forecasted_irr?: number | null
+          forecasted_payback_period?: number | null
+          forecasted_roi?: number | null
+          id?: string
+          project_id: string
+          revenue_delta_percent?: number | null
+          simulation_data?: Json | null
+          simulation_name?: string
+          updated_at?: string
+        }
+        Update: {
+          base_irr?: number | null
+          base_payback_period?: number | null
+          base_roi?: number | null
+          cost_delta_percent?: number | null
+          created_at?: string
+          delay_months?: number | null
+          forecasted_irr?: number | null
+          forecasted_payback_period?: number | null
+          forecasted_roi?: number | null
+          id?: string
+          project_id?: string
+          revenue_delta_percent?: number | null
+          simulation_data?: Json | null
+          simulation_name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       project_compliance: {
         Row: {
