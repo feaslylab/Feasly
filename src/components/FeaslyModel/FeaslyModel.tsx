@@ -48,8 +48,8 @@ export default function FeaslyModel() {
   const [activeScenario, setActiveScenario] = useState<ScenarioType>("base");
   const [searchParams] = useSearchParams();
   
-  // Get project ID from URL params or use demo project
-  const projectId = searchParams.get('projectId') || "bee8e7de-357f-4334-a591-978ebb11f446";
+  // Get project ID from URL params or use compliance demo project
+  const projectId = searchParams.get('projectId') || "f47ac10b-58cc-4372-a567-0e02b2c3d479";
   const { milestones } = useMilestones(projectId);
   
   // Get export data to retrieve project name
