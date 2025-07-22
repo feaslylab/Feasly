@@ -521,9 +521,12 @@ export type Database = {
           end_date: string | null
           id: string
           is_demo: boolean | null
+          is_pinned: boolean | null
           is_public: boolean | null
           name: string
           start_date: string | null
+          status: Database["public"]["Enums"]["project_status"] | null
+          tags: string[] | null
           updated_at: string | null
           user_id: string | null
           zakat_applicable: boolean | null
@@ -536,9 +539,12 @@ export type Database = {
           end_date?: string | null
           id?: string
           is_demo?: boolean | null
+          is_pinned?: boolean | null
           is_public?: boolean | null
           name: string
           start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"] | null
+          tags?: string[] | null
           updated_at?: string | null
           user_id?: string | null
           zakat_applicable?: boolean | null
@@ -551,9 +557,12 @@ export type Database = {
           end_date?: string | null
           id?: string
           is_demo?: boolean | null
+          is_pinned?: boolean | null
           is_public?: boolean | null
           name?: string
           start_date?: string | null
+          status?: Database["public"]["Enums"]["project_status"] | null
+          tags?: string[] | null
           updated_at?: string | null
           user_id?: string | null
           zakat_applicable?: boolean | null
@@ -664,7 +673,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      project_status: "draft" | "active" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -791,6 +800,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      project_status: ["draft", "active", "archived"],
+    },
   },
 } as const

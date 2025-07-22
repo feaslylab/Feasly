@@ -120,7 +120,7 @@ export const Sidebar = () => {
               asChild
               className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
             >
-              <NavLink to="/projects/new">
+              <NavLink to="/projects">
                 <Plus className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
                 {t('nav.newProject')}
               </NavLink>

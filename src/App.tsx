@@ -10,6 +10,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthPage } from "@/pages/Auth";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
+import Projects from "./pages/Projects";
 import NewProject from "./pages/NewProject";
 import ProjectDetails from "./pages/ProjectDetails";
 import ProjectView from "./pages/ProjectView";
@@ -47,7 +48,7 @@ const AppRoutes = () => {
         <Route index element={<Dashboard />} />
       </Route>
       <Route path="/projects" element={<AppLayout />}>
-        <Route index element={<div className="p-6">Projects page coming soon...</div>} />
+        <Route index element={<Projects />} />
         <Route path="new" element={<NewProject />} />
         <Route path=":id" element={<ProjectDetails />} />
         <Route path=":id/view" element={<ProjectView />} />
