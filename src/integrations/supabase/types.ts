@@ -666,10 +666,14 @@ export type Database = {
           construction_cost_aed: number | null
           created_at: string | null
           development_timeline_months: number | null
+          field_name: string
           gfa_sqm: number | null
           id: string
           occupancy_rate_percent: number | null
           operating_cost_aed: number | null
+          override_text: string | null
+          project_id: string
+          scenario: string
           scenario_id: string | null
           stabilization_period_months: number | null
         }
@@ -680,10 +684,14 @@ export type Database = {
           construction_cost_aed?: number | null
           created_at?: string | null
           development_timeline_months?: number | null
+          field_name: string
           gfa_sqm?: number | null
           id?: string
           occupancy_rate_percent?: number | null
           operating_cost_aed?: number | null
+          override_text?: string | null
+          project_id: string
+          scenario?: string
           scenario_id?: string | null
           stabilization_period_months?: number | null
         }
@@ -694,10 +702,14 @@ export type Database = {
           construction_cost_aed?: number | null
           created_at?: string | null
           development_timeline_months?: number | null
+          field_name?: string
           gfa_sqm?: number | null
           id?: string
           occupancy_rate_percent?: number | null
           operating_cost_aed?: number | null
+          override_text?: string | null
+          project_id?: string
+          scenario?: string
           scenario_id?: string | null
           stabilization_period_months?: number | null
         }
