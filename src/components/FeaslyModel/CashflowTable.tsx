@@ -153,6 +153,10 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
         { label: "VAT on Costs", key: "vatOnCosts" as keyof MonthlyCashflow },
         { label: "VAT Recovered", key: "vatRecoverable" as keyof MonthlyCashflow },
       ],
+      escrow: [
+        { label: "Held in Escrow", key: "escrowReserved" as keyof MonthlyCashflow },
+        { label: "Released Funds", key: "escrowReleased" as keyof MonthlyCashflow },
+      ],
       revenue: [
         { label: "Revenue", key: "revenue" as keyof MonthlyCashflow },
         { label: "Zakat Due", key: "zakatDue" as keyof MonthlyCashflow },
@@ -310,10 +314,24 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
                           <div className="text-lg font-semibold text-green-700">{formatAmount((scenarioSummary as any).totalEscrowReleased)}</div>
                         </div>
                         <div className="text-center p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                          <div className="text-sm text-muted-foreground">Net Escrow Impact</div>
-                          <div className={`text-lg font-semibold ${(scenarioSummary as any).netEscrowImpact >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                            {formatAmount((scenarioSummary as any).netEscrowImpact)}
+                          <div className="text-sm text-muted-foreground">Escrow Balance</div>
+                          <div className={`text-lg font-semibold ${(scenarioSummary as any).totalEscrowReserved - (scenarioSummary as any).totalEscrowReleased >= 0 ? 'text-blue-700' : 'text-red-700'}`}>
+                            {formatAmount((scenarioSummary as any).totalEscrowReserved - (scenarioSummary as any).totalEscrowReleased)}
                           </div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Add Zakat Summary if applicable */}
+                    {((scenarioSummary as any).totalZakatDue > 0) && (
+                      <div className="grid grid-cols-2 gap-4 mb-6">
+                        <div className="text-center p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                          <div className="text-sm text-muted-foreground">Total Zakat Due</div>
+                          <div className="text-lg font-semibold text-purple-700">{formatAmount((scenarioSummary as any).totalZakatDue)}</div>
+                        </div>
+                        <div className="text-center p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="text-sm text-muted-foreground">Net Profit After Zakat</div>
+                          <div className="text-lg font-semibold text-green-700">{formatAmount(scenarioSummary.totalProfit - ((scenarioSummary as any).totalZakatDue || 0))}</div>
                         </div>
                       </div>
                     )}

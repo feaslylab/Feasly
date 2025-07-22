@@ -52,6 +52,78 @@ const getInsightBadgeVariant = (type: InsightItem['type']) => {
   }
 };
 
+// Generate compliance-specific insights
+const generateComplianceInsights = (formData: any): Record<string, InsightItem[]> => {
+  const insights: Record<string, InsightItem[]> = {};
+  const scenarios = ['Base', 'Optimistic', 'Pessimistic'];
+  
+  scenarios.forEach(scenario => {
+    const scenarioInsights: InsightItem[] = [];
+    
+    // Escrow insights
+    if (formData.escrow_required) {
+      const escrowPercent = formData.escrow_percent || 20;
+      scenarioInsights.push({
+        id: `escrow_${scenario.toLowerCase()}`,
+        type: 'note',
+        title: 'Escrow Protection Active',
+        description: `Escrow of ${escrowPercent}% is held and released based on construction progress milestones. This provides additional security for stakeholders but temporarily reduces available cash flow.`,
+        value: `${escrowPercent}%`
+      });
+      
+      if (escrowPercent > 25) {
+        scenarioInsights.push({
+          id: `escrow_high_${scenario.toLowerCase()}`,
+          type: 'caution',
+          title: 'High Escrow Percentage',
+          description: `The escrow percentage of ${escrowPercent}% is above typical market rates (15-20%). Consider if this level of protection is necessary as it may impact project liquidity.`,
+          value: `${escrowPercent}%`
+        });
+      }
+    }
+    
+    // Zakat insights
+    if (formData.zakat_applicable) {
+      const zakatRate = formData.zakat_rate_percent || 2.5;
+      const calculationMethod = formData.zakat_calculation_method || 'net_profit';
+      const excludeLosses = formData.zakat_exclude_losses !== false;
+      
+      scenarioInsights.push({
+        id: `zakat_${scenario.toLowerCase()}`,
+        type: 'note',
+        title: 'Zakat Compliance Enabled',
+        description: `Zakat of ${zakatRate}% is applied to ${calculationMethod.replace('_', ' ')} using Islamic finance principles${excludeLosses ? ', excluding losses from calculation' : ''}.`,
+        value: `${zakatRate}%`
+      });
+      
+      if (calculationMethod === 'gross_revenue') {
+        scenarioInsights.push({
+          id: `zakat_gross_${scenario.toLowerCase()}`,
+          type: 'caution',
+          title: 'Zakat on Gross Revenue',
+          description: 'Calculating zakat on gross revenue may result in higher payments compared to net profit method. Ensure this aligns with your Islamic finance advisor recommendations.',
+          value: 'Gross Revenue'
+        });
+      }
+    }
+    
+    // Combined compliance impact
+    if (formData.escrow_required && formData.zakat_applicable) {
+      scenarioInsights.push({
+        id: `compliance_combined_${scenario.toLowerCase()}`,
+        type: 'opportunity',
+        title: 'Comprehensive Compliance Framework',
+        description: 'Project includes both escrow protection and zakat compliance, providing stakeholder confidence and Shariah compliance. This positions the project well for Islamic finance opportunities.',
+        value: 'Full Compliance'
+      });
+    }
+    
+    insights[scenario] = scenarioInsights;
+  });
+  
+  return insights;
+};
+
 export const SmartExplainerPanel: React.FC<SmartExplainerPanelProps> = ({
   projectId,
   scenarios = ['Base', 'Optimistic', 'Pessimistic']
@@ -76,8 +148,22 @@ export const SmartExplainerPanel: React.FC<SmartExplainerPanelProps> = ({
     if (!formData || Object.keys(formData).length === 0) {
       return {};
     }
-    return generateInsights(formData);
-  }, [formData, generateInsights]);
+    const baseInsights = generateInsights(formData);
+    
+    // Add compliance insights
+    const complianceInsights = generateComplianceInsights(formData);
+    
+    // Merge insights for each scenario
+    const mergedInsights: Record<string, any[]> = {};
+    scenarios.forEach(scenario => {
+      mergedInsights[scenario] = [
+        ...(baseInsights[scenario] || []),
+        ...(complianceInsights[scenario] || [])
+      ];
+    });
+    
+    return mergedInsights;
+  }, [formData, generateInsights, scenarios]);
 
   // Initialize user notes from saved insights
   useEffect(() => {

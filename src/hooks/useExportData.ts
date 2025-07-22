@@ -16,7 +16,18 @@ export function useExportData(projectId: string) {
         // Fetch project data
         const { data: project, error: projectError } = await supabase
           .from('projects')
-          .select('*')
+          .select(`
+            *,
+            escrow_enabled,
+            escrow_percent,
+            release_trigger_type,
+            release_threshold,
+            release_rule_details,
+            zakat_applicable,
+            zakat_rate_percent,
+            zakat_calculation_method,
+            zakat_exclude_losses
+          `)
           .eq('id', projectId)
           .single();
 
@@ -108,6 +119,24 @@ export function useExportData(projectId: string) {
 
         const userNotes = comments?.map(c => c.comment).join('\n\n') || undefined;
 
+        // Fetch escrow releases if escrow is enabled
+        let escrowReleases;
+        if (project.escrow_enabled) {
+          const { data: releases } = await supabase
+            .from('escrow_releases')
+            .select('*')
+            .eq('project_id', projectId)
+            .order('release_date', { ascending: true });
+          
+          escrowReleases = releases?.map(release => ({
+            releaseDate: release.release_date,
+            releaseAmount: release.release_amount,
+            releasePercentage: release.release_percentage,
+            triggerType: release.trigger_type,
+            constructionProgress: release.construction_progress_percent
+          }));
+        }
+
         const exportData: ExportData = {
           project: {
             id: project.id,
@@ -132,6 +161,22 @@ export function useExportData(projectId: string) {
           insights: {
             userNotes,
             generatedInsights: insightsNotes?.generated_insights
+          },
+          compliance: {
+            escrow: project.escrow_enabled ? {
+              enabled: project.escrow_enabled,
+              percentage: project.escrow_percent || 20.0,
+              triggerType: project.release_trigger_type || 'construction_percent',
+              releaseThreshold: project.release_threshold || 75.0,
+              triggerDetails: project.release_rule_details
+            } : undefined,
+            zakat: project.zakat_applicable ? {
+              applicable: project.zakat_applicable,
+              rate: project.zakat_rate_percent || 2.5,
+              calculationMethod: project.zakat_calculation_method || 'net_profit',
+              excludeLosses: project.zakat_exclude_losses !== false
+            } : undefined,
+            escrowReleases
           },
           language: i18n.language as 'en' | 'ar',
           isRTL

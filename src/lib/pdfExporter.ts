@@ -54,6 +54,28 @@ export interface ExportData {
     userNotes?: string;
     generatedInsights?: any;
   };
+  compliance?: {
+    escrow?: {
+      enabled: boolean;
+      percentage: number;
+      triggerType: string;
+      releaseThreshold: number;
+      triggerDetails?: string;
+    };
+    zakat?: {
+      applicable: boolean;
+      rate: number;
+      calculationMethod: string;
+      excludeLosses: boolean;
+    };
+    escrowReleases?: Array<{
+      releaseDate: string;
+      releaseAmount: number;
+      releasePercentage: number;
+      triggerType: string;
+      constructionProgress?: number;
+    }>;
+  };
   language?: 'en' | 'ar';
   isRTL?: boolean;
 }
@@ -439,6 +461,151 @@ export class FeaslyPDFExporter {
     this.currentY = (this.doc as any).lastAutoTable.finalY + 15;
   }
 
+  private addComplianceSection(): void {
+    if (!this.data.compliance) return;
+
+    this.addSectionTitle('Compliance Summary');
+
+    const textX = this.isRTL ? this.pageWidth - this.margin : this.margin;
+    const textAlign = this.isRTL ? 'right' : 'left';
+
+    // Escrow Settings
+    if (this.data.compliance.escrow) {
+      this.doc.setFontSize(12);
+      this.doc.setFont('helvetica', 'bold');
+      this.doc.setTextColor(this.colors.text);
+      this.doc.text('Escrow Configuration:', textX, this.currentY, { align: textAlign });
+      this.currentY += 8;
+
+      this.doc.setFontSize(10);
+      this.doc.setFont('helvetica', 'normal');
+      
+      const escrowData = [
+        ['Setting', 'Value'],
+        ['Status', this.data.compliance.escrow.enabled ? '✅ Enabled' : '❌ Disabled'],
+        ['Escrow Percentage', `${this.data.compliance.escrow.percentage}%`],
+        ['Release Trigger', this.data.compliance.escrow.triggerType.replace(/_/g, ' ').toUpperCase()],
+        ['Release Threshold', `${this.data.compliance.escrow.releaseThreshold}%`],
+        ['Trigger Details', this.data.compliance.escrow.triggerDetails || 'Standard release conditions']
+      ];
+
+      this.doc.autoTable({
+        startY: this.currentY,
+        head: [escrowData[0]],
+        body: escrowData.slice(1),
+        theme: 'grid',
+        headStyles: {
+          fillColor: '#3B82F6', // Blue
+          textColor: 255,
+          fontSize: 10,
+          fontStyle: 'bold'
+        },
+        bodyStyles: {
+          fontSize: 9,
+          textColor: this.colors.text
+        },
+        margin: { left: this.margin, right: this.margin },
+        tableWidth: 'auto',
+        columnStyles: {
+          0: { fontStyle: 'bold', cellWidth: 50 },
+          1: { cellWidth: 120 }
+        }
+      });
+
+      this.currentY = (this.doc as any).lastAutoTable.finalY + 10;
+    }
+
+    // Zakat Settings
+    if (this.data.compliance.zakat) {
+      this.doc.setFontSize(12);
+      this.doc.setFont('helvetica', 'bold');
+      this.doc.setTextColor(this.colors.text);
+      this.doc.text('Zakat Configuration:', textX, this.currentY, { align: textAlign });
+      this.currentY += 8;
+
+      this.doc.setFontSize(10);
+      this.doc.setFont('helvetica', 'normal');
+      
+      const zakatData = [
+        ['Setting', 'Value'],
+        ['Status', this.data.compliance.zakat.applicable ? '✅ Applicable' : '❌ Not Applicable'],
+        ['Zakat Rate', `${this.data.compliance.zakat.rate}%`],
+        ['Calculation Method', this.data.compliance.zakat.calculationMethod.replace(/_/g, ' ').toUpperCase()],
+        ['Exclude Losses', this.data.compliance.zakat.excludeLosses ? '✅ Yes' : '❌ No']
+      ];
+
+      this.doc.autoTable({
+        startY: this.currentY,
+        head: [zakatData[0]],
+        body: zakatData.slice(1),
+        theme: 'grid',
+        headStyles: {
+          fillColor: '#7C3AED', // Purple
+          textColor: 255,
+          fontSize: 10,
+          fontStyle: 'bold'
+        },
+        bodyStyles: {
+          fontSize: 9,
+          textColor: this.colors.text
+        },
+        margin: { left: this.margin, right: this.margin },
+        tableWidth: 'auto',
+        columnStyles: {
+          0: { fontStyle: 'bold', cellWidth: 50 },
+          1: { cellWidth: 120 }
+        }
+      });
+
+      this.currentY = (this.doc as any).lastAutoTable.finalY + 10;
+    }
+
+    // Escrow Schedule
+    if (this.data.compliance.escrowReleases && this.data.compliance.escrowReleases.length > 0) {
+      this.checkPageBreak(40);
+      
+      this.doc.setFontSize(12);
+      this.doc.setFont('helvetica', 'bold');
+      this.doc.setTextColor(this.colors.text);
+      this.doc.text('Escrow Release Schedule:', textX, this.currentY, { align: textAlign });
+      this.currentY += 8;
+
+      const escrowScheduleData = [
+        ['Release Date', 'Amount', 'Percentage', 'Trigger', 'Progress']
+      ];
+
+      this.data.compliance.escrowReleases.forEach(release => {
+        escrowScheduleData.push([
+          format(new Date(release.releaseDate), 'MMM dd, yyyy'),
+          `${(release.releaseAmount / 1000000).toFixed(1)}M ${this.data.project.currency_code || 'AED'}`,
+          `${release.releasePercentage}%`,
+          release.triggerType.replace(/_/g, ' ').toUpperCase(),
+          release.constructionProgress ? `${release.constructionProgress}%` : '-'
+        ]);
+      });
+
+      this.doc.autoTable({
+        startY: this.currentY,
+        head: [escrowScheduleData[0]],
+        body: escrowScheduleData.slice(1),
+        theme: 'grid',
+        headStyles: {
+          fillColor: this.colors.success,
+          textColor: 255,
+          fontSize: 10,
+          fontStyle: 'bold'
+        },
+        bodyStyles: {
+          fontSize: 9,
+          textColor: this.colors.text
+        },
+        margin: { left: this.margin, right: this.margin }
+      });
+
+      this.currentY = (this.doc as any).lastAutoTable.finalY + 15;
+    }
+  }
+
   private addInsightsSection(): void {
     if (!this.data.insights) return;
 
@@ -510,6 +677,7 @@ export class FeaslyPDFExporter {
     this.addScenarioSection();
     this.addTimelineSection();
     this.addContractorSection();
+    this.addComplianceSection();
     this.addInsightsSection();
     
     // Add footer to all pages
