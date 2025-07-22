@@ -137,23 +137,28 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-medium">
-      <CardHeader className={cn("text-center space-y-4", isRTL && "text-right")}>
-        <div className="mx-auto w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center">
-          <Building2 className="w-6 h-6 text-primary-foreground" />
+    <Card className="w-full max-w-md shadow-elegant border-0 bg-background/95 backdrop-blur-sm relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary-light/5 pointer-events-none" />
+      
+      <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-primary-glow/20 to-transparent blur-3xl" />
+      <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-gradient-to-tr from-primary-glow/10 to-transparent blur-3xl" />
+      
+      <CardHeader className={cn("text-center space-y-6 relative z-10", isRTL && "text-right")}>
+        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center shadow-glow transform transition-all duration-500 hover:scale-105 hover:shadow-lg">
+          <Building2 className="w-8 h-8 text-primary-foreground" />
         </div>
         <div>
-          <CardTitle className="text-2xl font-semibold">{t('welcomeBack')}</CardTitle>
-          <CardDescription className="text-muted-foreground mt-2">
+          <CardTitle className="text-3xl font-semibold tracking-tight">{t('welcomeBack')}</CardTitle>
+          <CardDescription className="text-muted-foreground mt-3 text-base">
             {t('loginToAccount')}
           </CardDescription>
         </div>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email" className={cn(isRTL && "text-right")}>{t('email')}</Label>
-            <div className="relative">
+      <CardContent className="relative z-10">
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div className="space-y-3">
+            <Label htmlFor="email" className={cn("text-sm font-medium", isRTL && "text-right")}>{t('email')}</Label>
+            <div className="relative group">
               <Input
                 ref={emailInputRef}
                 id="email"
@@ -163,16 +168,21 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
                 onChange={handleEmailChange}
                 required
                 className={cn(
-                  "h-11 transition-colors",
-                  isRTL ? "pr-10 text-right" : "pl-10",
+                  "h-12 transition-all duration-200 bg-background/50 backdrop-blur-sm border-border/60",
+                  "focus:border-primary/40 focus:ring-primary/20 focus:bg-background/80",
+                  "group-hover:border-primary/30",
+                  isRTL ? "pr-11 text-right" : "pl-11",
                   emailError && "border-destructive focus-visible:ring-destructive"
                 )}
                 dir={isRTL ? "rtl" : "ltr"}
               />
-              <Mail className={cn(
-                "absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground",
-                isRTL ? "right-3" : "left-3"
-              )} />
+              <div className={cn(
+                "absolute top-1/2 -translate-y-1/2 transition-colors duration-200",
+                isRTL ? "right-3" : "left-3",
+                "group-focus-within:text-primary"
+              )}>
+                <Mail className="h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+              </div>
             </div>
             {emailError && (
               <p className={cn(
@@ -184,9 +194,9 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
             )}
           </div>
           
-          <div className="space-y-2">
-            <Label htmlFor="password" className={cn(isRTL && "text-right")}>{t('password')}</Label>
-            <div className="relative">
+          <div className="space-y-3">
+            <Label htmlFor="password" className={cn("text-sm font-medium", isRTL && "text-right")}>{t('password')}</Label>
+            <div className="relative group">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
@@ -194,7 +204,12 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className={cn("h-11", isRTL ? "pl-10 text-right" : "pr-10")}
+                className={cn(
+                  "h-12 transition-all duration-200 bg-background/50 backdrop-blur-sm border-border/60",
+                  "focus:border-primary/40 focus:ring-primary/20 focus:bg-background/80",
+                  "group-hover:border-primary/30",
+                  isRTL ? "pl-10 text-right" : "pr-10",
+                )}
                 dir={isRTL ? "rtl" : "ltr"}
               />
               <Button
@@ -202,15 +217,15 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
                 variant="ghost"
                 size="sm"
                 className={cn(
-                  "absolute top-1/2 -translate-y-1/2 h-auto p-1 hover:bg-transparent",
+                  "absolute top-1/2 -translate-y-1/2 h-auto p-1 rounded-full hover:bg-primary/5",
                   isRTL ? "left-2" : "right-2"
                 )}
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
-                  <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  <EyeOff className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 ) : (
-                  <Eye className="h-4 w-4 text-muted-foreground" />
+                  <Eye className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 )}
               </Button>
             </div>
@@ -221,16 +236,24 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
             "flex items-center justify-between text-sm",
             isRTL && "flex-row-reverse"
           )}>
-            <div className={cn("flex items-center space-x-2", isRTL && "space-x-reverse")}>
+            <div className={cn("flex items-center space-x-2 group", isRTL && "space-x-reverse")}>
               <Checkbox
                 id="remember"
                 checked={rememberMe}
                 onCheckedChange={(checked) => setRememberMe(checked as boolean)}
-                className="data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                className={cn(
+                  "h-4 w-4 border-border/70 transition-colors duration-200",
+                  "data-[state=checked]:bg-gradient-to-r from-primary to-primary-dark",
+                  "data-[state=checked]:border-primary/0 shadow-sm",
+                  "focus-visible:ring-primary/20 focus-visible:ring-offset-0"
+                )}
               />
               <Label
                 htmlFor="remember"
-                className={cn("cursor-pointer text-muted-foreground", isRTL && "text-right")}
+                className={cn(
+                  "cursor-pointer text-muted-foreground group-hover:text-foreground transition-colors duration-200",
+                  isRTL && "text-right"
+                )}
               >
                 {t('rememberMe')}
               </Label>
@@ -239,7 +262,10 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
             <Button
               type="button"
               variant="link"
-              className="p-0 h-auto text-sm text-primary hover:text-primary-dark"
+              className={cn(
+                "p-0 h-auto text-sm font-medium text-primary hover:text-primary-dark transition-colors duration-200",
+                "hover:underline hover:underline-offset-4"
+              )}
               onClick={handleForgotPassword}
               disabled={isForgotPasswordLoading}
             >
@@ -257,29 +283,50 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
           <Button
             type="submit"
             className={cn(
-              "w-full h-11 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary transition-all duration-200",
-              "hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
+              "w-full h-12 bg-gradient-to-r from-primary to-primary-dark",
+              "hover:from-primary-glow hover:to-primary",
+              "shadow-lg hover:shadow-xl transition-all duration-300",
+              "hover:scale-[1.02] active:scale-[0.98]",
+              "text-base font-semibold tracking-wide",
+              "relative overflow-hidden group",
+              "before:absolute before:inset-0 before:bg-gradient-to-r before:from-white/20 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-300",
+              "disabled:hover:scale-100 disabled:shadow-lg disabled:opacity-50"
             )}
             disabled={isLoading || !!emailError}
           >
             {isLoading ? (
-              <span className="flex items-center gap-2">
+              <span className="flex items-center gap-2 relative z-10">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 {t('signingIn')}
               </span>
             ) : (
-              t('login')
+              <span className="relative z-10">{t('login')}</span>
             )}
           </Button>
         </form>
 
-        <div className="mt-6">
-          <Separator className="my-4" />
-          <p className={cn("text-center text-sm text-muted-foreground", isRTL && "text-right")}>
+        <div className="mt-8">
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <Separator className="w-full opacity-30" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-background px-3 text-muted-foreground/60 font-medium tracking-wider">
+                {t('or', 'OR')}
+              </span>
+            </div>
+          </div>
+          <p className={cn(
+            "text-center text-sm text-muted-foreground mt-6",
+            isRTL && "text-right"
+          )}>
             {t('dontHaveAccount')}{" "}
             <Button
               variant="link"
-              className="p-0 h-auto font-medium text-primary hover:text-primary-dark"
+              className={cn(
+                "p-0 h-auto font-semibold text-primary hover:text-primary-dark transition-colors duration-200",
+                "hover:underline hover:underline-offset-4"
+              )}
               onClick={onToggleMode}
             >
               {t('signUpHere')}

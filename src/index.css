@@ -17,11 +17,12 @@
     --popover: 0 0% 100%;
     --popover-foreground: 213 31% 13%;
 
-    /* Professional Blue Palette - Softened Primary */
-    --primary: 214 50% 35%;
-    --primary-foreground: 0 0% 98%;
-    --primary-light: 214 60% 88%;
-    --primary-dark: 214 55% 25%;
+    /* Premium SaaS Blue Palette */
+    --primary: 224 76% 48%;           /* Modern electric blue */
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 224 100% 88%;    /* Light blue for accents */
+    --primary-dark: 224 85% 38%;      /* Deep blue for depth */
+    --primary-glow: 224 100% 75%;     /* Glowing accent blue */
 
     /* Financial Green Accents */
     --success: 142 71% 45%;
@@ -52,15 +53,19 @@
 
     --radius: 0.75rem;
 
-    /* Gradients */
+    /* Premium Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-dark)));
+    --gradient-primary-glow: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
     --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(142 71% 35%));
     --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(214 32% 98%));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.1), hsl(var(--primary-light) / 0.05));
 
-    /* Shadows */
+    /* Premium Shadows */
     --shadow-soft: 0 2px 8px hsl(var(--primary) / 0.08);
-    --shadow-medium: 0 4px 12px hsl(var(--primary) / 0.12);
-    --shadow-strong: 0 8px 24px hsl(var(--primary) / 0.16);
+    --shadow-medium: 0 8px 25px hsl(var(--primary) / 0.15);
+    --shadow-strong: 0 20px 40px hsl(var(--primary) / 0.2);
+    --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.3);
+    --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.25);
 
     /* Financial Chart Colors */
     --chart-revenue: 142 71% 45%;
