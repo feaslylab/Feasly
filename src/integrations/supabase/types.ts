@@ -481,6 +481,38 @@ export type Database = {
         }
         Relationships: []
       }
+      project_tag_suggestions: {
+        Row: {
+          created_at: string | null
+          generated_at: string | null
+          id: string
+          project_id: string | null
+          suggested_tag: string
+        }
+        Insert: {
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+          project_id?: string | null
+          suggested_tag: string
+        }
+        Update: {
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+          project_id?: string | null
+          suggested_tag?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_tag_suggestions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_team: {
         Row: {
           created_at: string | null
@@ -524,6 +556,7 @@ export type Database = {
           is_pinned: boolean | null
           is_public: boolean | null
           name: string
+          project_ai_summary: string | null
           start_date: string | null
           status: Database["public"]["Enums"]["project_status"] | null
           tags: string[] | null
@@ -542,6 +575,7 @@ export type Database = {
           is_pinned?: boolean | null
           is_public?: boolean | null
           name: string
+          project_ai_summary?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["project_status"] | null
           tags?: string[] | null
@@ -560,6 +594,7 @@ export type Database = {
           is_pinned?: boolean | null
           is_public?: boolean | null
           name?: string
+          project_ai_summary?: string | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["project_status"] | null
           tags?: string[] | null

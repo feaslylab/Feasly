@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useTranslation } from 'react-i18next';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { useToast } from '@/hooks/use-toast';
 import { 
   Plus, 
   Search, 
@@ -14,7 +15,11 @@ import {
   Calendar,
   Tag,
   Grid3X3,
-  List
+  List,
+  X,
+  ChevronDown,
+  ChevronUp,
+  Sparkles
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,16 +31,24 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { toast } from 'sonner';
 import { format } from 'date-fns';
+import { 
+  generateAndSaveProjectSummary, 
+  suggestTagsFromText, 
+  logTagSuggestions, 
+  getProjectSearchText, 
+  truncateText 
+} from '@/lib/projectAI';
 
 const newProjectSchema = z.object({
-  name: z.string().min(1, 'Project name is required'),
-  description: z.string().optional(),
-  status: z.enum(['draft', 'active', 'archived']),
+  name: z.string().min(1, 'Project name is required').max(100, 'Name too long'),
+  description: z.string().max(500, 'Description too long').optional(),
+  status: z.enum(['draft', 'active', 'archived']).default('draft'),
   tags: z.string().optional(),
 });
 
@@ -48,18 +61,26 @@ interface Project {
   status: 'draft' | 'active' | 'archived';
   tags: string[];
   is_pinned: boolean;
+  project_ai_summary: string | null;
   created_at: string;
   updated_at: string;
+  currency_code: string;
+  user_id: string;
 }
 
 export default function Projects() {
-  const { t } = useTranslation();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  
+  // State for filters and UI
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [suggestedTags, setSuggestedTags] = useState<string[]>([]);
 
   const form = useForm<NewProjectFormData>({
     resolver: zodResolver(newProjectSchema),
@@ -71,57 +92,133 @@ export default function Projects() {
     },
   });
 
+  // Watch form fields for smart tag suggestions
+  const watchedName = form.watch('name');
+  const watchedDescription = form.watch('description');
+
+  // Generate smart tag suggestions
+  useEffect(() => {
+    const combinedText = `${watchedName || ''} ${watchedDescription || ''}`.trim();
+    if (combinedText.length > 3) {
+      const suggestions = suggestTagsFromText(combinedText);
+      setSuggestedTags(suggestions);
+    } else {
+      setSuggestedTags([]);
+    }
+  }, [watchedName, watchedDescription]);
+
   // Fetch projects
   const { data: projects = [], isLoading, error } = useQuery({
-    queryKey: ['projects'],
+    queryKey: ['projects', user?.id],
     queryFn: async () => {
+      if (!user?.id) return [];
+      
       const { data, error } = await supabase
         .from('projects')
         .select('*')
+        .eq('user_id', user.id)
         .order('is_pinned', { ascending: false })
-        .order('created_at', { ascending: false });
+        .order('updated_at', { ascending: false });
 
       if (error) throw error;
       return data as Project[];
     },
+    enabled: !!user?.id,
   });
 
-  // Create project mutation
+  // Get unique tags for filter dropdown
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    projects.forEach(project => {
+      project.tags?.forEach(tag => tagSet.add(tag));
+    });
+    return Array.from(tagSet).sort();
+  }, [projects]);
+
+  // Enhanced filtering logic
+  const filteredProjects = useMemo(() => {
+    return projects.filter(project => {
+      // Status filter
+      if (statusFilter !== 'all' && project.status !== statusFilter) {
+        return false;
+      }
+      
+      // Tag filter
+      if (selectedTags.length > 0) {
+        const hasSelectedTag = selectedTags.some(tag => 
+          project.tags?.includes(tag)
+        );
+        if (!hasSelectedTag) return false;
+      }
+      
+      // Enhanced search filter (includes AI summary)
+      if (searchTerm) {
+        const searchText = getProjectSearchText(project);
+        if (!searchText.includes(searchTerm.toLowerCase())) {
+          return false;
+        }
+      }
+      
+      return true;
+    });
+  }, [projects, searchTerm, statusFilter, selectedTags]);
+
+  // Create project mutation with AI summary generation
   const createProjectMutation = useMutation({
     mutationFn: async (formData: NewProjectFormData) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!user?.id) throw new Error('User not authenticated');
 
       const tags = formData.tags 
         ? formData.tags.split(',').map(tag => tag.trim()).filter(Boolean)
         : [];
 
-      const { data, error } = await supabase
+      const projectData = {
+        name: formData.name,
+        description: formData.description || null,
+        status: formData.status,
+        tags,
+        user_id: user.id,
+        currency_code: 'AED',
+      };
+
+      const { data: project, error } = await supabase
         .from('projects')
-        .insert({
-          name: formData.name,
-          description: formData.description || null,
-          status: formData.status,
-          tags,
-          user_id: user.id,
-        })
+        .insert(projectData)
         .select()
         .single();
 
       if (error) throw error;
-      return data;
+
+      // Generate AI summary
+      const summary = await generateAndSaveProjectSummary(project, undefined);
+      
+      // Generate and log tag suggestions
+      const combinedText = `${project.name} ${project.description || ''}`;
+      const suggestedTagsList = suggestTagsFromText(combinedText);
+      if (suggestedTagsList.length > 0) {
+        await logTagSuggestions(project.id, suggestedTagsList);
+      }
+
+      return { ...project, project_ai_summary: summary };
     },
-    onSuccess: (data) => {
+    onSuccess: (project) => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
-      toast.success('Project created successfully');
-      setIsDialogOpen(false);
       form.reset();
-      // Navigate to the new project
-      navigate(`/feasly-model?projectId=${data.id}`);
+      setIsDialogOpen(false);
+      setSuggestedTags([]);
+      toast({
+        title: "Project created successfully",
+        description: `${project.name} has been created with AI summary generated.`,
+      });
+      navigate(`/feasly-model?projectId=${project.id}`);
     },
     onError: (error) => {
       console.error('Failed to create project:', error);
-      toast.error('Failed to create project');
+      toast({
+        title: "Error creating project",
+        description: "Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -140,7 +237,11 @@ export default function Projects() {
     },
     onError: (error) => {
       console.error('Failed to toggle pin:', error);
-      toast.error('Failed to update project');
+      toast({
+        title: "Error updating project",
+        description: "Please try again.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -156,25 +257,18 @@ export default function Projects() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
-      toast.success('Project updated successfully');
+      toast({
+        title: "Project updated successfully",
+      });
     },
     onError: (error) => {
       console.error('Failed to update project:', error);
-      toast.error('Failed to update project');
+      toast({
+        title: "Error updating project",
+        description: "Please try again.",
+        variant: "destructive",
+      });
     },
-  });
-
-  // Filter projects
-  const filteredProjects = projects.filter(project => {
-    const searchLower = searchTerm.toLowerCase();
-    const matchesSearch = !searchTerm || 
-                         project.name.toLowerCase().includes(searchLower) ||
-                         project.description?.toLowerCase().includes(searchLower) ||
-                         project.tags.some(tag => tag.toLowerCase().includes(searchLower));
-    
-    const matchesStatus = statusFilter === 'all' || project.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
   });
 
   const onSubmit = (data: NewProjectFormData) => {
@@ -187,11 +281,205 @@ export default function Projects() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'draft': return 'bg-gray-100 text-gray-800 border-gray-200';
-      case 'active': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'archived': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'draft': return 'bg-gray-50 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-300';
+      case 'active': return 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-300';
+      case 'archived': return 'bg-red-50 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-300';
+      default: return 'bg-gray-50 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-300';
     }
+  };
+
+  const addSuggestedTag = (tag: string) => {
+    const currentTags = form.getValues('tags');
+    const tagsArray = currentTags ? currentTags.split(',').map(t => t.trim()).filter(Boolean) : [];
+    
+    if (!tagsArray.includes(tag)) {
+      const newTags = [...tagsArray, tag].join(', ');
+      form.setValue('tags', newTags);
+    }
+  };
+
+  const removeSelectedTag = (tagToRemove: string) => {
+    setSelectedTags(prev => prev.filter(tag => tag !== tagToRemove));
+  };
+
+  const TagBadge = ({ tag, onRemove }: { tag: string; onRemove?: () => void }) => {
+    const displayTag = truncateText(tag, 16);
+    const needsTooltip = tag.length > 16;
+    
+    const badge = (
+      <Badge className="bg-blue-50 text-blue-800 text-xs px-2 py-1 rounded-md border border-blue-200 dark:bg-blue-900 dark:text-blue-300">
+        {displayTag}
+        {onRemove && (
+          <X 
+            className="ml-1 h-3 w-3 cursor-pointer hover:text-blue-600" 
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove();
+            }}
+          />
+        )}
+      </Badge>
+    );
+
+    if (needsTooltip) {
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>{badge}</TooltipTrigger>
+            <TooltipContent>{tag}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
+    }
+
+    return badge;
+  };
+
+  const ProjectCard = ({ project }: { project: Project }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    
+    return (
+      <Card 
+        className="feasly-card cursor-pointer hover:shadow-lg transition-all duration-200"
+        onClick={() => handleProjectClick(project.id)}
+      >
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <CardTitle className="text-lg mb-2 flex items-center gap-2">
+                {project.name}
+                {project.is_pinned && (
+                  <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                )}
+              </CardTitle>
+              <Badge className={getStatusColor(project.status)}>
+                {project.status}
+              </Badge>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <Button variant="ghost" size="sm">
+                  •••
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    togglePinMutation.mutate({ projectId: project.id, isPinned: project.is_pinned });
+                  }}
+                >
+                  {project.is_pinned ? (
+                    <>
+                      <StarOff className="mr-2 h-4 w-4" />
+                      Unpin
+                    </>
+                  ) : (
+                    <>
+                      <Star className="mr-2 h-4 w-4" />
+                      Pin
+                    </>
+                  )}
+                </DropdownMenuItem>
+                {project.status === 'archived' ? (
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      archiveMutation.mutate({ projectId: project.id, status: 'active' });
+                    }}
+                  >
+                    <ArchiveRestore className="mr-2 h-4 w-4" />
+                    Restore
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      archiveMutation.mutate({ projectId: project.id, status: 'archived' });
+                    }}
+                  >
+                    <Archive className="mr-2 h-4 w-4" />
+                    Archive
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardHeader>
+        
+        <CardContent>
+          <div className="space-y-3">
+            {/* AI Summary */}
+            {project.project_ai_summary && (
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-3 rounded-lg border border-purple-200 dark:border-purple-800">
+                <div className="flex items-start gap-2">
+                  <Sparkles className="h-4 w-4 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
+                      <div className="text-sm text-purple-800 dark:text-purple-200">
+                        {project.project_ai_summary.length > 100 && !isExpanded ? (
+                          <>
+                            {project.project_ai_summary.substring(0, 100)}...
+                            <CollapsibleTrigger asChild>
+                              <Button 
+                                variant="ghost" 
+                                size="sm" 
+                                className="p-0 h-auto text-purple-600 dark:text-purple-400 ml-1"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ChevronDown className="h-3 w-3" />
+                              </Button>
+                            </CollapsibleTrigger>
+                          </>
+                        ) : (
+                          <>
+                            {project.project_ai_summary}
+                            {project.project_ai_summary.length > 100 && (
+                              <CollapsibleTrigger asChild>
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="p-0 h-auto text-purple-600 dark:text-purple-400 ml-1"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <ChevronUp className="h-3 w-3" />
+                                </Button>
+                              </CollapsibleTrigger>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </Collapsible>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Description */}
+            {project.description && (
+              <CardDescription className="line-clamp-2">
+                {project.description}
+              </CardDescription>
+            )}
+            
+            {/* Tags */}
+            {project.tags && project.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {project.tags.map((tag, index) => (
+                  <TagBadge key={index} tag={tag} />
+                ))}
+              </div>
+            )}
+            
+            {/* Date info */}
+            <div className="flex items-center text-sm text-muted-foreground">
+              <Calendar className="mr-1 h-4 w-4" />
+              Updated {format(new Date(project.updated_at), 'MMM dd, yyyy')}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
   };
 
   const renderTableView = () => (
@@ -235,6 +523,12 @@ export default function Projects() {
                 <TableCell>
                   <div>
                     <div className="font-medium">{project.name}</div>
+                    {project.project_ai_summary && (
+                      <div className="text-sm text-purple-600 dark:text-purple-400 truncate max-w-md flex items-center gap-1">
+                        <Sparkles className="h-3 w-3" />
+                        {project.project_ai_summary}
+                      </div>
+                    )}
                     {project.description && (
                       <div className="text-sm text-muted-foreground truncate max-w-xs">
                         {project.description}
@@ -249,12 +543,10 @@ export default function Projects() {
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
-                    {project.tags.slice(0, 2).map((tag, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {tag}
-                      </Badge>
+                    {project.tags?.slice(0, 2).map((tag, index) => (
+                      <TagBadge key={index} tag={tag} />
                     ))}
-                    {project.tags.length > 2 && (
+                    {project.tags && project.tags.length > 2 && (
                       <Badge variant="outline" className="text-xs">
                         +{project.tags.length - 2}
                       </Badge>
@@ -314,98 +606,7 @@ export default function Projects() {
   const renderGridView = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {filteredProjects.map((project) => (
-        <Card 
-          key={project.id} 
-          className="feasly-card cursor-pointer hover:shadow-lg transition-shadow"
-          onClick={() => handleProjectClick(project.id)}
-        >
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <CardTitle className="text-lg mb-1">{project.name}</CardTitle>
-                <div className="flex items-center gap-2">
-                  <Badge className={getStatusColor(project.status)}>
-                    {project.status}
-                  </Badge>
-                  {project.is_pinned && (
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  )}
-                </div>
-              </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                  <Button variant="ghost" size="sm">
-                    •••
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      togglePinMutation.mutate({ projectId: project.id, isPinned: project.is_pinned });
-                    }}
-                  >
-                    {project.is_pinned ? (
-                      <>
-                        <StarOff className="mr-2 h-4 w-4" />
-                        Unpin
-                      </>
-                    ) : (
-                      <>
-                        <Star className="mr-2 h-4 w-4" />
-                        Pin
-                      </>
-                    )}
-                  </DropdownMenuItem>
-                  {project.status === 'archived' ? (
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        archiveMutation.mutate({ projectId: project.id, status: 'active' });
-                      }}
-                    >
-                      <ArchiveRestore className="mr-2 h-4 w-4" />
-                      Restore
-                    </DropdownMenuItem>
-                  ) : (
-                    <DropdownMenuItem
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        archiveMutation.mutate({ projectId: project.id, status: 'archived' });
-                      }}
-                    >
-                      <Archive className="mr-2 h-4 w-4" />
-                      Archive
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            {project.description && (
-              <CardDescription className="mt-2">
-                {project.description}
-              </CardDescription>
-            )}
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {project.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1">
-                  {project.tags.map((tag, index) => (
-                    <Badge key={index} variant="outline" className="text-xs">
-                      <Tag className="mr-1 h-3 w-3" />
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-              <div className="flex items-center text-sm text-muted-foreground">
-                <Calendar className="mr-1 h-4 w-4" />
-                Created {format(new Date(project.created_at), 'MMM dd, yyyy')}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <ProjectCard key={project.id} project={project} />
       ))}
     </div>
   );
@@ -414,7 +615,7 @@ export default function Projects() {
     return (
       <div className="feasly-container">
         <div className="feasly-section text-center">
-          <p className="text-red-600">Failed to load projects. Please try again.</p>
+          <p className="text-red-600 dark:text-red-400">Failed to load projects. Please try again.</p>
         </div>
       </div>
     );
@@ -439,7 +640,7 @@ export default function Projects() {
                 New Project
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-md">
               <DialogHeader>
                 <DialogTitle>Create New Project</DialogTitle>
                 <DialogDescription>
@@ -511,11 +712,32 @@ export default function Projects() {
                         <FormLabel>Tags</FormLabel>
                         <FormControl>
                           <Input 
-                            placeholder="Enter tags separated by commas (e.g., Mixed Use, Retail)"
+                            placeholder="Enter tags separated by commas"
                             {...field} 
                           />
                         </FormControl>
                         <FormMessage />
+                        
+                        {/* Smart tag suggestions */}
+                        {suggestedTags.length > 0 && (
+                          <div className="mt-2">
+                            <p className="text-sm text-muted-foreground mb-2">Suggested tags:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {suggestedTags.map((tag) => (
+                                <Button
+                                  key={tag}
+                                  type="button"
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-6 text-xs"
+                                  onClick={() => addSuggestedTag(tag)}
+                                >
+                                  + {tag}
+                                </Button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </FormItem>
                     )}
                   />
@@ -544,20 +766,22 @@ export default function Projects() {
 
       {/* Search and Filters */}
       <div className="feasly-section">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
+        <div className="flex flex-col gap-4">
+          {/* Search bar */}
+          <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search projects by name, description, or tags..."
+              placeholder="Search projects by name, description, tags, or AI summary..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
           
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* Status filter */}
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-32">
+              <SelectTrigger className="w-full sm:w-40">
                 <Filter className="mr-2 h-4 w-4" />
                 <SelectValue />
               </SelectTrigger>
@@ -568,7 +792,46 @@ export default function Projects() {
                 <SelectItem value="archived">Archived</SelectItem>
               </SelectContent>
             </Select>
+
+            {/* Tag filter */}
+            {allTags.length > 0 && (
+              <div className="flex-1">
+                <div className="flex flex-wrap gap-2">
+                  {selectedTags.map((tag) => (
+                    <TagBadge 
+                      key={tag} 
+                      tag={tag} 
+                      onRemove={() => removeSelectedTag(tag)} 
+                    />
+                  ))}
+                  <Select 
+                    value="" 
+                    onValueChange={(value) => {
+                      if (value && !selectedTags.includes(value)) {
+                        setSelectedTags(prev => [...prev, value]);
+                      }
+                    }}
+                  >
+                    <SelectTrigger className="w-40">
+                      <Tag className="mr-2 h-4 w-4" />
+                      <SelectValue placeholder="Filter by tag" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allTags
+                        .filter(tag => !selectedTags.includes(tag))
+                        .map((tag) => (
+                          <SelectItem key={tag} value={tag}>
+                            {tag}
+                          </SelectItem>
+                        ))
+                      }
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
             
+            {/* View mode toggle */}
             <div className="hidden sm:flex border rounded-md">
               <Button
                 variant={viewMode === 'table' ? 'default' : 'ghost'}
@@ -601,12 +864,12 @@ export default function Projects() {
           <div className="max-w-md mx-auto">
             <h3 className="text-lg font-medium mb-2">No projects found</h3>
             <p className="text-muted-foreground mb-4">
-              {searchTerm || statusFilter !== 'all' 
+              {searchTerm || statusFilter !== 'all' || selectedTags.length > 0
                 ? 'Try adjusting your search or filters.' 
                 : 'Get started by creating your first Feasly model project.'
               }
             </p>
-            {!searchTerm && statusFilter === 'all' && (
+            {!searchTerm && statusFilter === 'all' && selectedTags.length === 0 && (
               <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Create Your First Project
