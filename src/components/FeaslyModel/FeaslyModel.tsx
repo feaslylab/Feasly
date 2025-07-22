@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -29,22 +30,27 @@ import { CommentingPanel } from "./CommentingPanel";
 import CashflowTable from "./CashflowTable";
 import ScenarioComparisonChart from "./ScenarioComparisonChart";
 import { SmartExplainerPanel } from "../FeaslyInsights/SmartExplainerPanel";
-import ExportPDFReport from "./ExportPDFReport";
+import { ExportPDF } from "@/components/export/ExportPDF";
 import { FeaslyValidationPanel } from "./FeaslyValidationPanel";
 import { VersionSelector } from "./VersionSelector";
 import { CashflowVarianceChart } from "./CashflowVarianceChart";
 import ScenarioPlayback from "./ScenarioPlayback";
 import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
+import { useExportData } from "@/hooks/useExportData";
 
 export default function FeaslyModel() {
   const { isRTL } = useLanguage();
   const { t } = useTranslation('feasly.model');
   const { toast } = useToast();
   const [activeScenario, setActiveScenario] = useState<ScenarioType>("base");
+  const [searchParams] = useSearchParams();
   
-  // Use existing project ID from the database
-  const projectId = "bee8e7de-357f-4334-a591-978ebb11f446";
+  // Get project ID from URL params or use demo project
+  const projectId = searchParams.get('projectId') || "bee8e7de-357f-4334-a591-978ebb11f446";
   const { milestones } = useMilestones(projectId);
+  
+  // Get export data to retrieve project name
+  const { data: exportData } = useExportData(projectId);
   
   // Use versioning hook instead of the old calculation hook
   const {
@@ -226,10 +232,21 @@ export default function FeaslyModel() {
                   <SmartExplainerPanel projectId={projectId} />
                   
                   {/* Export & AI Insights */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    <ExportPanel />
-                    <AiInsightPanel />
-                    <ExportPDFReport formData={form.getValues()} />
+                  <div className="space-y-4 sm:space-y-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                      <h3 className="text-lg font-semibold">📋 Export & AI Insights</h3>
+                      <ExportPDF 
+                        projectId={projectId} 
+                        projectName={exportData?.project.name || "Feasly Model Project"} 
+                        variant="default"
+                        size="sm"
+                      />
+                    </div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                      <ExportPanel />
+                      <AiInsightPanel />
+                    </div>
                   </div>
                 </div>
 
