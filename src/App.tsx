@@ -23,11 +23,25 @@ import FeaslyConsolidate from "./pages/FeaslyConsolidate";
 import FeaslyInsights from "./pages/FeaslyInsights";
 import FeaslyAlerts from "./pages/FeaslyAlerts";
 import NotFound from "./pages/NotFound";
+import MarketingWrapper from "./pages/MarketingWrapper";
 
 const queryClient = new QueryClient();
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();
+  
+  // Check if we're on the marketing site
+  const isMarketingRoute = window.location.pathname === '/';
+  
+  // If we're on the marketing site path, show marketing content
+  if (isMarketingRoute) {
+    return (
+      <Routes>
+        <Route path="/" element={<MarketingWrapper />} />
+        <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.reload()} />} />
+      </Routes>
+    );
+  }
 
   if (loading) {
     return (
@@ -37,13 +51,13 @@ const AppRoutes = () => {
     );
   }
 
-  if (!user) {
-    return <AuthPage onSuccess={() => window.location.reload()} />;
+  if (!user && window.location.pathname !== '/welcome') {
+    return <Navigate to="/welcome" replace />;
   }
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.reload()} />} />
       <Route path="/dashboard" element={<AppLayout />}>
         <Route index element={<Dashboard />} />
       </Route>

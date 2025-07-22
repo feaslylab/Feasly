@@ -1,0 +1,87 @@
+import { Link } from "react-router-dom";
+
+const footerLinks = [
+  {
+    title: "Product",
+    links: [
+      { name: "Features", href: "#features" },
+      { name: "Pricing", href: "#pricing" },
+      { name: "Roadmap", href: "#roadmap" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { name: "Privacy", href: "#privacy" },
+      { name: "Terms", href: "#terms" },
+      { name: "Compliance", href: "#compliance" },
+    ],
+  },
+  {
+    title: "Support",
+    links: [
+      { name: "Help Center", href: "#help" },
+      { name: "Contact", href: "#contact" },
+      { name: "FAQs", href: "#faqs" },
+    ],
+  },
+];
+
+export function MarketingFooter() {
+  return (
+    <footer className="bg-background border-t border-border py-12">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand Column */}
+          <div className="space-y-4">
+            <Link to="/" className="flex items-center">
+              <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+                Feasly
+              </span>
+            </Link>
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Next-gen real estate financial modeling platform, 
+              built for the GCC and beyond.
+            </p>
+          </div>
+
+          {/* Links Columns */}
+          {footerLinks.map((section) => (
+            <div key={section.title} className="space-y-4">
+              <h3 className="text-sm font-medium">{section.title}</h3>
+              <ul className="space-y-2">
+                {section.links.map((link) => (
+                  <li key={link.name}>
+                    <a
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Feasly Technologies. All rights reserved.
+          </p>
+          <div className="flex space-x-6">
+            <a href="#linkedin" className="text-muted-foreground hover:text-foreground">
+              LinkedIn
+            </a>
+            <a href="#twitter" className="text-muted-foreground hover:text-foreground">
+              Twitter
+            </a>
+            <a href="#github" className="text-muted-foreground hover:text-foreground">
+              GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}
