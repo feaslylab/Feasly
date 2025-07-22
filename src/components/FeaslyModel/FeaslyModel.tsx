@@ -39,6 +39,7 @@ import { CashflowVarianceChart } from "./CashflowVarianceChart";
 import ScenarioPlayback from "./ScenarioPlayback";
 import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
 import { useExportData } from "@/hooks/useExportData";
+import { ComplianceStatusPanel } from "./ComplianceStatusPanel";
 
 export default function FeaslyModel() {
   const { isRTL } = useLanguage();
@@ -253,6 +254,9 @@ export default function FeaslyModel() {
                     </div>
                   </div>
                 </div>
+
+                {/* Compliance Panel - Sprint 13 */}
+                <ComplianceStatusPanel projectId={projectId} />
 
                 {/* Comments Panel */}
                 <CommentingPanel projectId={undefined} />

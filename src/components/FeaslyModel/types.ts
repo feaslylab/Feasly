@@ -57,10 +57,17 @@ export const feaslyModelSchema = z.object({
   sale_price_retail: z.number().min(0, "Retail price must be positive").optional(),
   sale_price_office: z.number().min(0, "Office price must be positive").optional(),
   
-  // Cost Escalation (Sprint 12)
+  // Escalation (Sprint 12)
   construction_escalation_percent: z.number().min(0, "Escalation rate must be positive").max(50, "Escalation rate too high").optional(),
   escalation_start_month: z.number().min(0, "Start month must be positive").optional(),
   escalation_duration_months: z.number().min(1, "Duration must be at least 1 month").optional(),
+  
+  // Compliance fields (Sprint 13)
+  release_trigger_type: z.string().optional(),
+  release_threshold: z.number().optional(),
+  release_rule_details: z.string().optional(),
+  zakat_calculation_method: z.string().optional(),
+  zakat_exclude_losses: z.boolean().optional(),
   
   // Funding & Capital (with validation)
   funding_type: z.string().optional(),

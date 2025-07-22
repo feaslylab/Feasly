@@ -70,6 +70,51 @@ export type Database = {
           },
         ]
       }
+      escrow_releases: {
+        Row: {
+          construction_progress_percent: number | null
+          created_at: string
+          id: string
+          is_projected: boolean
+          milestone_achieved: string | null
+          project_id: string
+          release_amount: number
+          release_date: string
+          release_percentage: number
+          trigger_details: string | null
+          trigger_type: string
+          updated_at: string
+        }
+        Insert: {
+          construction_progress_percent?: number | null
+          created_at?: string
+          id?: string
+          is_projected?: boolean
+          milestone_achieved?: string | null
+          project_id: string
+          release_amount: number
+          release_date: string
+          release_percentage: number
+          trigger_details?: string | null
+          trigger_type: string
+          updated_at?: string
+        }
+        Update: {
+          construction_progress_percent?: number | null
+          created_at?: string
+          id?: string
+          is_projected?: boolean
+          milestone_achieved?: string | null
+          project_id?: string
+          release_amount?: number
+          release_date?: string
+          release_percentage?: number
+          trigger_details?: string | null
+          trigger_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       exchange_rates: {
         Row: {
           from_currency: string
@@ -447,6 +492,42 @@ export type Database = {
           },
         ]
       }
+      project_compliance: {
+        Row: {
+          calculated_amounts: Json | null
+          compliance_type: string
+          configuration: Json
+          created_at: string
+          id: string
+          is_enabled: boolean
+          last_calculated_at: string | null
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          calculated_amounts?: Json | null
+          compliance_type: string
+          configuration?: Json
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          last_calculated_at?: string | null
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          calculated_amounts?: Json | null
+          compliance_type?: string
+          configuration?: Json
+          created_at?: string
+          id?: string
+          is_enabled?: boolean
+          last_calculated_at?: string | null
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       project_contractors: {
         Row: {
           actual_completion: string | null
@@ -674,6 +755,8 @@ export type Database = {
           end_date: string | null
           escalation_duration_months: number | null
           escalation_start_month: number | null
+          escrow_enabled: boolean | null
+          escrow_percent: number | null
           gfa_office: number | null
           gfa_residential: number | null
           gfa_retail: number | null
@@ -683,6 +766,9 @@ export type Database = {
           is_public: boolean | null
           name: string
           project_ai_summary: string | null
+          release_rule_details: string | null
+          release_threshold: number | null
+          release_trigger_type: string | null
           sale_price_office: number | null
           sale_price_residential: number | null
           sale_price_retail: number | null
@@ -694,6 +780,8 @@ export type Database = {
           use_segmented_revenue: boolean | null
           user_id: string | null
           zakat_applicable: boolean | null
+          zakat_calculation_method: string | null
+          zakat_exclude_losses: boolean | null
           zakat_rate_percent: number | null
         }
         Insert: {
@@ -705,6 +793,8 @@ export type Database = {
           end_date?: string | null
           escalation_duration_months?: number | null
           escalation_start_month?: number | null
+          escrow_enabled?: boolean | null
+          escrow_percent?: number | null
           gfa_office?: number | null
           gfa_residential?: number | null
           gfa_retail?: number | null
@@ -714,6 +804,9 @@ export type Database = {
           is_public?: boolean | null
           name: string
           project_ai_summary?: string | null
+          release_rule_details?: string | null
+          release_threshold?: number | null
+          release_trigger_type?: string | null
           sale_price_office?: number | null
           sale_price_residential?: number | null
           sale_price_retail?: number | null
@@ -725,6 +818,8 @@ export type Database = {
           use_segmented_revenue?: boolean | null
           user_id?: string | null
           zakat_applicable?: boolean | null
+          zakat_calculation_method?: string | null
+          zakat_exclude_losses?: boolean | null
           zakat_rate_percent?: number | null
         }
         Update: {
@@ -736,6 +831,8 @@ export type Database = {
           end_date?: string | null
           escalation_duration_months?: number | null
           escalation_start_month?: number | null
+          escrow_enabled?: boolean | null
+          escrow_percent?: number | null
           gfa_office?: number | null
           gfa_residential?: number | null
           gfa_retail?: number | null
@@ -745,6 +842,9 @@ export type Database = {
           is_public?: boolean | null
           name?: string
           project_ai_summary?: string | null
+          release_rule_details?: string | null
+          release_threshold?: number | null
+          release_trigger_type?: string | null
           sale_price_office?: number | null
           sale_price_residential?: number | null
           sale_price_retail?: number | null
@@ -756,6 +856,8 @@ export type Database = {
           use_segmented_revenue?: boolean | null
           user_id?: string | null
           zakat_applicable?: boolean | null
+          zakat_calculation_method?: string | null
+          zakat_exclude_losses?: boolean | null
           zakat_rate_percent?: number | null
         }
         Relationships: []
@@ -866,6 +968,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      zakat_calculations: {
+        Row: {
+          adjustments: Json | null
+          calculation_method: string
+          calculation_period: string
+          created_at: string
+          id: string
+          is_final: boolean
+          period_end: string
+          period_start: string
+          project_id: string
+          taxable_base: number
+          updated_at: string
+          zakat_amount: number
+          zakat_rate: number
+        }
+        Insert: {
+          adjustments?: Json | null
+          calculation_method: string
+          calculation_period: string
+          created_at?: string
+          id?: string
+          is_final?: boolean
+          period_end: string
+          period_start: string
+          project_id: string
+          taxable_base: number
+          updated_at?: string
+          zakat_amount: number
+          zakat_rate: number
+        }
+        Update: {
+          adjustments?: Json | null
+          calculation_method?: string
+          calculation_period?: string
+          created_at?: string
+          id?: string
+          is_final?: boolean
+          period_end?: string
+          period_start?: string
+          project_id?: string
+          taxable_base?: number
+          updated_at?: string
+          zakat_amount?: number
+          zakat_rate?: number
+        }
+        Relationships: []
       }
     }
     Views: {
