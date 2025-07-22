@@ -501,6 +501,36 @@ export type Database = {
         }
         Relationships: []
       }
+      project_input_templates: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          is_public: boolean | null
+          template_data: Json
+          template_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_public?: boolean | null
+          template_data: Json
+          template_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_public?: boolean | null
+          template_data?: Json
+          template_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       project_milestones: {
         Row: {
           created_at: string
@@ -530,6 +560,42 @@ export type Database = {
           project_id?: string
           status?: string
           target_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      project_phases: {
+        Row: {
+          cost_percentage: number
+          created_at: string
+          duration_months: number
+          id: string
+          phase_name: string
+          phase_order: number
+          project_id: string
+          start_month: number
+          updated_at: string
+        }
+        Insert: {
+          cost_percentage?: number
+          created_at?: string
+          duration_months?: number
+          id?: string
+          phase_name: string
+          phase_order?: number
+          project_id: string
+          start_month?: number
+          updated_at?: string
+        }
+        Update: {
+          cost_percentage?: number
+          created_at?: string
+          duration_months?: number
+          id?: string
+          phase_name?: string
+          phase_order?: number
+          project_id?: string
+          start_month?: number
           updated_at?: string
         }
         Relationships: []
@@ -600,58 +666,94 @@ export type Database = {
       }
       projects: {
         Row: {
+          construction_escalation_percent: number | null
           created_at: string | null
           currency_code: string | null
           description: string | null
+          enable_escalation: boolean | null
           end_date: string | null
+          escalation_duration_months: number | null
+          escalation_start_month: number | null
+          gfa_office: number | null
+          gfa_residential: number | null
+          gfa_retail: number | null
           id: string
           is_demo: boolean | null
           is_pinned: boolean | null
           is_public: boolean | null
           name: string
           project_ai_summary: string | null
+          sale_price_office: number | null
+          sale_price_residential: number | null
+          sale_price_retail: number | null
           start_date: string | null
           status: Database["public"]["Enums"]["project_status"] | null
           tags: string[] | null
+          unit_system: string | null
           updated_at: string | null
+          use_segmented_revenue: boolean | null
           user_id: string | null
           zakat_applicable: boolean | null
           zakat_rate_percent: number | null
         }
         Insert: {
+          construction_escalation_percent?: number | null
           created_at?: string | null
           currency_code?: string | null
           description?: string | null
+          enable_escalation?: boolean | null
           end_date?: string | null
+          escalation_duration_months?: number | null
+          escalation_start_month?: number | null
+          gfa_office?: number | null
+          gfa_residential?: number | null
+          gfa_retail?: number | null
           id?: string
           is_demo?: boolean | null
           is_pinned?: boolean | null
           is_public?: boolean | null
           name: string
           project_ai_summary?: string | null
+          sale_price_office?: number | null
+          sale_price_residential?: number | null
+          sale_price_retail?: number | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["project_status"] | null
           tags?: string[] | null
+          unit_system?: string | null
           updated_at?: string | null
+          use_segmented_revenue?: boolean | null
           user_id?: string | null
           zakat_applicable?: boolean | null
           zakat_rate_percent?: number | null
         }
         Update: {
+          construction_escalation_percent?: number | null
           created_at?: string | null
           currency_code?: string | null
           description?: string | null
+          enable_escalation?: boolean | null
           end_date?: string | null
+          escalation_duration_months?: number | null
+          escalation_start_month?: number | null
+          gfa_office?: number | null
+          gfa_residential?: number | null
+          gfa_retail?: number | null
           id?: string
           is_demo?: boolean | null
           is_pinned?: boolean | null
           is_public?: boolean | null
           name?: string
           project_ai_summary?: string | null
+          sale_price_office?: number | null
+          sale_price_residential?: number | null
+          sale_price_retail?: number | null
           start_date?: string | null
           status?: Database["public"]["Enums"]["project_status"] | null
           tags?: string[] | null
+          unit_system?: string | null
           updated_at?: string | null
+          use_segmented_revenue?: boolean | null
           user_id?: string | null
           zakat_applicable?: boolean | null
           zakat_rate_percent?: number | null

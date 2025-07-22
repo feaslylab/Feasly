@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Form schema for the Feasly Model with enhanced validation
+// Form schema for the Feasly Model with enhanced validation - Sprint 12 Update
 export const feaslyModelSchema = z.object({
   // Project Metadata
   project_name: z.string().min(1, "Project name is required").max(100, "Project name too long"),
@@ -31,6 +31,11 @@ export const feaslyModelSchema = z.object({
   plot_number: z.string().optional(),
   buildable_ratio: z.number().min(0, "Buildable ratio must be positive").max(100, "Buildable ratio cannot exceed 100%").optional(),
   
+  // System Settings (Sprint 12)
+  unit_system: z.enum(['sqm', 'sqft', 'units']).default('sqm'),
+  use_segmented_revenue: z.boolean().default(false),
+  enable_escalation: z.boolean().default(false),
+  
   // Financial Inputs (with strict validation)
   land_cost: z.number().min(0, "Land cost must be positive").optional(),
   construction_cost: z.number().min(0, "Construction cost must be positive").optional(),
@@ -43,6 +48,19 @@ export const feaslyModelSchema = z.object({
   vat_rate: z.number().min(0, "VAT rate must be positive").max(100, "VAT rate cannot exceed 100%").optional(),
   escrow_required: z.boolean().default(false),
   escrow_percent: z.number().min(0, "Escrow percentage must be positive").max(100, "Escrow percentage cannot exceed 100%").optional(),
+  
+  // Segmented GFA Fields (Sprint 12)
+  gfa_residential: z.number().min(0, "Residential GFA must be positive").optional(),
+  gfa_retail: z.number().min(0, "Retail GFA must be positive").optional(),
+  gfa_office: z.number().min(0, "Office GFA must be positive").optional(),
+  sale_price_residential: z.number().min(0, "Residential price must be positive").optional(),
+  sale_price_retail: z.number().min(0, "Retail price must be positive").optional(),
+  sale_price_office: z.number().min(0, "Office price must be positive").optional(),
+  
+  // Cost Escalation (Sprint 12)
+  construction_escalation_percent: z.number().min(0, "Escalation rate must be positive").max(50, "Escalation rate too high").optional(),
+  escalation_start_month: z.number().min(0, "Start month must be positive").optional(),
+  escalation_duration_months: z.number().min(1, "Duration must be at least 1 month").optional(),
   
   // Funding & Capital (with validation)
   funding_type: z.string().optional(),

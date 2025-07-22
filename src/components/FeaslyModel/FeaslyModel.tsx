@@ -13,7 +13,7 @@ import { feaslyModelSchema, type FeaslyModelFormData, type ScenarioType } from "
 import { ProjectMetadata } from "./ProjectMetadata";
 import { TimelineSection } from "./TimelineSection";
 import { SiteMetrics } from "./SiteMetrics";
-import { FinancialInputs } from "./FinancialInputs";
+import { FinancialInputsV2 } from "./FinancialInputsV2";
 import { ScenariosSection } from "./ScenariosSection";
 import { KPIResults } from "./KPIResults";
 import { ExportPanel } from "./ExportPanel";
@@ -164,8 +164,8 @@ export default function FeaslyModel() {
                     {/* Site Metrics Section */}
                     <SiteMetrics />
 
-                    {/* Financial Inputs Section */}
-                    <FinancialInputs />
+                    {/* Financial Inputs Section - Sprint 12 Dynamic System */}
+                    <FinancialInputsV2 projectId={projectId} />
 
                     {/* Scenarios Section */}
                     <ScenariosSection />
