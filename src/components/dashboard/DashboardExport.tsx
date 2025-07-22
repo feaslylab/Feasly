@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
-import * as XLSX from 'xlsx';
+import { utils as XLSXUtils, writeFile } from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -121,7 +121,7 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
       const filteredData = await getFilteredData();
       
       // Create workbook
-      const wb = XLSX.utils.book_new();
+      const wb = XLSXUtils.book_new();
       
       // Summary sheet
       const summaryData = [
@@ -138,8 +138,8 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
         ['Average IRR', `${stats.avgIRR}%`],
       ];
       
-      const summaryWs = XLSX.utils.aoa_to_sheet(summaryData);
-      XLSX.utils.book_append_sheet(wb, summaryWs, 'Summary');
+      const summaryWs = XLSXUtils.aoa_to_sheet(summaryData);
+      XLSXUtils.book_append_sheet(wb, summaryWs, 'Summary');
       
       // Projects sheet
       const projectsData = [
@@ -163,8 +163,8 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
         ]);
       });
       
-      const projectsWs = XLSX.utils.aoa_to_sheet(projectsData);
-      XLSX.utils.book_append_sheet(wb, projectsWs, 'Projects');
+      const projectsWs = XLSXUtils.aoa_to_sheet(projectsData);
+      XLSXUtils.book_append_sheet(wb, projectsWs, 'Projects');
       
       // Assets sheet
       const assetsData = [
@@ -189,12 +189,12 @@ export const DashboardExport = ({ filters, stats, projects }: DashboardExportPro
         });
       });
       
-      const assetsWs = XLSX.utils.aoa_to_sheet(assetsData);
-      XLSX.utils.book_append_sheet(wb, assetsWs, 'Assets');
+      const assetsWs = XLSXUtils.aoa_to_sheet(assetsData);
+      XLSXUtils.book_append_sheet(wb, assetsWs, 'Assets');
       
       // Save file
       const filename = getExportFileName('excel');
-      XLSX.writeFile(wb, filename);
+      writeFile(wb, filename);
       
       toast({
         title: "Export Successful",

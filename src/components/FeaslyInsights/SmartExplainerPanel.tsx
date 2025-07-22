@@ -180,7 +180,7 @@ export const SmartExplainerPanel: React.FC<SmartExplainerPanelProps> = ({
 
   const handleRegenerateInsights = () => {
     // Force regeneration by updating the key or triggering recalculation
-    console.log('Regenerating insights with current form data:', formData);
+    // Regenerating insights...
     // The useMemo will automatically recalculate when formData changes
   };
 

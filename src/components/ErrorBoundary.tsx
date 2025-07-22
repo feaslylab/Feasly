@@ -1,11 +1,13 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AlertTriangle, RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ErrorFallback } from '@/components/ui/error-fallback';
+import { logger } from '@/lib/logger';
 
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  title?: string;
+  description?: string;
+  showDetails?: boolean;
 }
 
 interface State {
@@ -24,8 +26,14 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
     this.setState({ error, errorInfo });
+    
+    // Log error with proper error tracking
+    logger.error('ErrorBoundary caught an error', {
+      error: error.message,
+      stack: error.stack,
+      componentStack: errorInfo.componentStack
+    }, 'ErrorBoundary');
   }
 
   private handleRetry = () => {
@@ -33,45 +41,16 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   public render() {
-    if (this.state.hasError) {
-      if (this.props.fallback) {
-        return this.props.fallback;
-      }
-
-      return (
-        <div className="min-h-[400px] flex items-center justify-center p-6">
-          <Card className="w-full max-w-md">
-            <CardHeader className="text-center">
-              <div className="mx-auto w-12 h-12 bg-destructive/10 rounded-full flex items-center justify-center mb-4">
-                <AlertTriangle className="w-6 h-6 text-destructive" />
-              </div>
-              <CardTitle className="text-destructive">Something went wrong</CardTitle>
-              <CardDescription>
-                An error occurred while rendering this component. Please try refreshing or contact support if the problem persists.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {process.env.NODE_ENV === 'development' && this.state.error && (
-                <div className="text-xs text-muted-foreground bg-muted p-3 rounded">
-                  <strong>Error:</strong> {this.state.error.message}
-                </div>
-              )}
-              <div className="flex gap-2">
-                <Button onClick={this.handleRetry} className="flex-1">
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Try Again
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => window.location.reload()}
-                  className="flex-1"
-                >
-                  Refresh Page
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+    if (this.state.hasError && this.state.error) {
+      return this.props.fallback || (
+        <ErrorFallback
+          error={this.state.error}
+          resetError={this.handleRetry}
+          errorInfo={this.state.errorInfo}
+          title={this.props.title}
+          description={this.props.description}
+          showDetails={this.props.showDetails}
+        />
       );
     }
 

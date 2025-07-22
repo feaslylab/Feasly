@@ -100,7 +100,7 @@ export default function FeaslyModel() {
 
   const onSaveDraft = () => {
     const currentData = form.getValues();
-    console.log("Saving draft:", currentData);
+    // Draft saved automatically
     toast({
       title: "Draft Saved",
       description: "Your project draft has been saved.",

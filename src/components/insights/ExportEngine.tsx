@@ -4,7 +4,7 @@ import { FileDown, FileSpreadsheet, FileText } from "lucide-react";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
+import { utils as XLSXUtils, writeFile } from "xlsx";
 import html2canvas from "html2canvas";
 
 interface Project {
@@ -136,8 +136,8 @@ export const ExportEngine = ({ projects, kpiMetrics, currencyFormat, formatCurre
         'Created Date': p.createdAt.toISOString().split('T')[0]
       }));
       
-      const worksheet = XLSX.utils.json_to_sheet(csvData);
-      const csvOutput = XLSX.utils.sheet_to_csv(worksheet);
+      const worksheet = XLSXUtils.json_to_sheet(csvData);
+      const csvOutput = XLSXUtils.sheet_to_csv(worksheet);
       
       const blob = new Blob([csvOutput], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
@@ -163,7 +163,7 @@ export const ExportEngine = ({ projects, kpiMetrics, currencyFormat, formatCurre
     toast("Generating Excel export...");
     
     try {
-      const workbook = XLSX.utils.book_new();
+      const workbook = XLSXUtils.book_new();
       
       // KPI Sheet
       const kpiData = [
@@ -179,8 +179,8 @@ export const ExportEngine = ({ projects, kpiMetrics, currencyFormat, formatCurre
         ['Risk Level', kpiMetrics.riskLevel]
       ];
       
-      const kpiSheet = XLSX.utils.aoa_to_sheet(kpiData);
-      XLSX.utils.book_append_sheet(workbook, kpiSheet, 'KPI Summary');
+      const kpiSheet = XLSXUtils.aoa_to_sheet(kpiData);
+      XLSXUtils.book_append_sheet(workbook, kpiSheet, 'KPI Summary');
       
       // Projects Sheet
       const projectData = projects.map(p => ({
@@ -200,10 +200,10 @@ export const ExportEngine = ({ projects, kpiMetrics, currencyFormat, formatCurre
         'Created Date': p.createdAt.toISOString().split('T')[0]
       }));
       
-      const projectSheet = XLSX.utils.json_to_sheet(projectData);
-      XLSX.utils.book_append_sheet(workbook, projectSheet, 'Projects Data');
+      const projectSheet = XLSXUtils.json_to_sheet(projectData);
+      XLSXUtils.book_append_sheet(workbook, projectSheet, 'Projects Data');
       
-      XLSX.writeFile(workbook, 'feasly-insights-report.xlsx');
+      writeFile(workbook, 'feasly-insights-report.xlsx');
       toast("Excel export completed!");
     } catch (error) {
       toast("Failed to export Excel");

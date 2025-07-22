@@ -6,7 +6,7 @@ import { FileText, FileSpreadsheet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import * as XLSX from "xlsx";
+import { utils as XLSXUtils, writeFile } from "xlsx";
 import type { FeaslyModelFormData } from "./types";
 
 export function ExportPanel() {
@@ -94,7 +94,7 @@ export function ExportPanel() {
     const data = form.getValues();
 
     // Create workbook
-    const wb = XLSX.utils.book_new();
+    const wb = XLSXUtils.book_new();
 
     // Project Information Sheet
     const projectData = [
@@ -106,8 +106,8 @@ export function ExportPanel() {
       ["Start Date", data.start_date?.toString() || "N/A"],
       ["Completion Date", data.completion_date?.toString() || "N/A"],
     ];
-    const projectWS = XLSX.utils.aoa_to_sheet(projectData);
-    XLSX.utils.book_append_sheet(wb, projectWS, "Project Info");
+    const projectWS = XLSXUtils.aoa_to_sheet(projectData);
+    XLSXUtils.book_append_sheet(wb, projectWS, "Project Info");
 
     // Financial Data Sheet
     const financialData = [
@@ -117,8 +117,8 @@ export function ExportPanel() {
       ["Soft Costs", data.soft_costs || 0, data.currency_code || "SAR"],
       ["Total Investment", (data.land_cost || 0) + (data.construction_cost || 0) + (data.soft_costs || 0), data.currency_code || "SAR"],
     ];
-    const financialWS = XLSX.utils.aoa_to_sheet(financialData);
-    XLSX.utils.book_append_sheet(wb, financialWS, "Financial Data");
+    const financialWS = XLSXUtils.aoa_to_sheet(financialData);
+    XLSXUtils.book_append_sheet(wb, financialWS, "Financial Data");
 
     // Site Metrics Sheet
     const siteData = [
@@ -129,11 +129,11 @@ export function ExportPanel() {
       ["FAR Ratio", data.far_ratio || 0, "ratio"],
       ["Height", data.height_stories || 0, "stories"],
     ];
-    const siteWS = XLSX.utils.aoa_to_sheet(siteData);
-    XLSX.utils.book_append_sheet(wb, siteWS, "Site Metrics");
+    const siteWS = XLSXUtils.aoa_to_sheet(siteData);
+    XLSXUtils.book_append_sheet(wb, siteWS, "Site Metrics");
 
     // Save Excel file
-    XLSX.writeFile(wb, "feasly-model-report.xlsx");
+    writeFile(wb, "feasly-model-report.xlsx");
 
     toast({
       title: "Excel Exported",
