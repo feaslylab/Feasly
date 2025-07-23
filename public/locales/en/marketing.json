@@ -279,6 +279,115 @@
           "Request custom modules"
         ]
       }
+    },
+    "personaSelector": {
+      "title": "What describes you best?",
+      "subtitle": "Choose your path to get the most relevant experience",
+      "personas": {
+        "excelUser": {
+          "title": "I build models in Excel",
+          "description": "Upload spreadsheets, get structured models instantly",
+          "actionText": "See Excel Import Demo"
+        },
+        "multiProject": {
+          "title": "I manage multiple projects",
+          "description": "Consolidate and compare across your portfolio",
+          "actionText": "View Portfolio Demo"
+        },
+        "teamLead": {
+          "title": "I lead a development team",
+          "description": "Enterprise features for collaboration and control",
+          "actionText": "Explore Enterprise"
+        }
+      }
+    },
+    "whyFeaslyWorks": {
+      "title": "Why Feasly Works — A Visual Walkthrough",
+      "subtitle": "From upload to export in four simple steps",
+      "steps": {
+        "uploadExcel": {
+          "title": "Upload Excel → Get Structured Model",
+          "description": "Messy spreadsheet? Feasly turns it into a clean model instantly."
+        },
+        "toggleScenarios": {
+          "title": "Toggle Scenarios (Base, Opt, Neg)",
+          "description": "See impact across IRR, profit, and delivery instantly."
+        },
+        "switchArabic": {
+          "title": "Switch to Arabic Mode",
+          "description": "Right-to-left. Fully localized. Built for bilingual teams."
+        },
+        "generateExport": {
+          "title": "Generate Export & Share Link",
+          "description": "One click to share a secure, read-only project snapshot."
+        }
+      }
+    },
+    "howRealTeams": {
+      "title": "How Real Teams Use Feasly",
+      "subtitle": "Practical stories from the field",
+      "useCases": {
+        "residential": {
+          "title": "500-unit residential feasibility",
+          "description": "Uploaded Excel. Built scenarios. Delivered 20-year projection with IRR."
+        },
+        "legacy": {
+          "title": "Legacy .edmf model for Saudi project",
+          "description": "Migrated old EstateMaster file. Feasly mapped it in seconds."
+        },
+        "hotel": {
+          "title": "Hotel development with 3 case stress test",
+          "description": "Used scenario tabs to compare equity IRR under market shifts."
+        }
+      }
+    },
+    "enterpriseScale": {
+      "title": "Built for Enterprise at Any Scale",
+      "subtitle": "From single projects to giga-scale portfolios",
+      "features": {
+        "secureHosting": "Secure cloud hosting (SOC2-ready)",
+        "legacySupport": "Supports legacy .edmf and modern Excel",
+        "arabicCompliance": "Designed with Arabic-first compliance",
+        "auditLogs": "Full audit logs and version control",
+        "permissionAccess": "Permission-based access and sharing",
+        "modularStructure": "Modular structure — tailored to your org"
+      },
+      "trustBanner": "Trusted by teams managing $100M+ portfolios across the GCC"
+    },
+    "tryFeaslyDemo": {
+      "title": "Try Feasly — No Login Required",
+      "subtitle": "Explore a real feasibility model in read-only mode. Instantly.",
+      "features": {
+        "liveModel": "Live Financial Model",
+        "realTimeCalc": "Real-time Calculations",
+        "interactiveReports": "Interactive Reports"
+      },
+      "cta": "Launch Public Demo",
+      "note": "No signup required • Full-featured preview • Takes 30 seconds"
+    },
+    "feaslyVsOldWay": {
+      "title": "Feasly vs. The Old Way",
+      "subtitle": "See why teams are making the switch",
+      "tableHeaders": {
+        "capability": "Capability",
+        "feasly": "Feasly",
+        "traditional": "Traditional Tools"
+      },
+      "comparisons": {
+        "realTimeScenarios": "Real-time scenarios",
+        "arabicRtl": "Arabic RTL support",
+        "excelImport": "Excel import (structured + raw)",
+        "legacyEdmf": "Legacy .edmf import",
+        "publicDemo": "Public shareable demo",
+        "auditExports": "Audit-ready exports"
+      },
+      "legend": "✅ Full support • ❌ Not available • ⚠️ Limited functionality"
+    },
+    "stickyCTAFooter": {
+      "title": "Ready to kill the spreadsheet?",
+      "tryDemo": "Try the Demo",
+      "startTrial": "Start free trial",
+      "placeholder": "Enter your email for early access"
     }
   }
 }

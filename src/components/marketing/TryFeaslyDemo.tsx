@@ -4,14 +4,18 @@ import { Play, Eye, BarChart3, FileText, Calculator } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { PulsingButton } from "./AnimatedCTA";
-
-const demoFeatures = [
-  { icon: BarChart3, text: "Live Financial Model" },
-  { icon: Calculator, text: "Real-time Calculations" }, 
-  { icon: FileText, text: "Interactive Reports" }
-];
+import { useTranslation } from "react-i18next";
 
 export function TryFeaslyDemo() {
+  const { t } = useTranslation('marketing');
+
+  const getDemoFeatures = () => [
+    { icon: BarChart3, text: t('home.tryFeaslyDemo.features.liveModel') },
+    { icon: Calculator, text: t('home.tryFeaslyDemo.features.realTimeCalc') }, 
+    { icon: FileText, text: t('home.tryFeaslyDemo.features.interactiveReports') }
+  ];
+
+  const demoFeatures = getDemoFeatures();
   const [currentFeature, setCurrentFeature] = useState(0);
 
   useEffect(() => {
@@ -67,7 +71,7 @@ export function TryFeaslyDemo() {
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
             >
-              Try Feasly — No Login Required
+              {t('home.tryFeaslyDemo.title')}
             </motion.h2>
             
             <motion.p 
@@ -77,7 +81,7 @@ export function TryFeaslyDemo() {
               viewport={{ once: true }}
               transition={{ delay: 0.4 }}
             >
-              Explore a real feasibility model in read-only mode. Instantly.
+              {t('home.tryFeaslyDemo.subtitle')}
             </motion.p>
             
             {/* Rotating demo features */}
@@ -116,7 +120,7 @@ export function TryFeaslyDemo() {
               <PulsingButton size="lg" className="px-8 py-4 text-lg" asChild>
                 <Link to="/demo">
                   <Play className="mr-2 h-5 w-5" />
-                  Launch Public Demo
+                  {t('home.tryFeaslyDemo.cta')}
                 </Link>
               </PulsingButton>
             </motion.div>
@@ -128,7 +132,7 @@ export function TryFeaslyDemo() {
               viewport={{ once: true }}
               transition={{ delay: 1 }}
             >
-              No signup required • Full-featured preview • Takes 30 seconds
+              {t('home.tryFeaslyDemo.note')}
             </motion.p>
           </motion.div>
         </div>

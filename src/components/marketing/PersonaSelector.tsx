@@ -3,55 +3,59 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { FileSpreadsheet, Layers, Building2 } from "lucide-react";
 import { Link } from "react-router-dom";
-
-const personas = [
-  {
-    id: "excel-user",
-    title: "I build models in Excel",
-    icon: FileSpreadsheet,
-    description: "Upload spreadsheets, get structured models instantly",
-    action: {
-      type: "link",
-      href: "/demo",
-      text: "See Excel Import Demo"
-    }
-  },
-  {
-    id: "multi-project",
-    title: "I manage multiple projects", 
-    icon: Layers,
-    description: "Consolidate and compare across your portfolio",
-    action: {
-      type: "link",
-      href: "/demo",
-      text: "View Portfolio Demo"
-    }
-  },
-  {
-    id: "team-lead",
-    title: "I lead a development team",
-    icon: Building2,
-    description: "Enterprise features for collaboration and control",
-    action: {
-      type: "link", 
-      href: "/pricing",
-      text: "Explore Enterprise"
-    }
-  }
-];
+import { useTranslation } from "react-i18next";
 
 export function PersonaSelector() {
+  const { t } = useTranslation('marketing');
   const [selectedPersona, setSelectedPersona] = useState<string | null>(null);
+
+  const getPersonas = () => [
+    {
+      id: "excel-user",
+      title: t('home.personaSelector.personas.excelUser.title'),
+      icon: FileSpreadsheet,
+      description: t('home.personaSelector.personas.excelUser.description'),
+      action: {
+        type: "link",
+        href: "/demo",
+        text: t('home.personaSelector.personas.excelUser.actionText')
+      }
+    },
+    {
+      id: "multi-project",
+      title: t('home.personaSelector.personas.multiProject.title'), 
+      icon: Layers,
+      description: t('home.personaSelector.personas.multiProject.description'),
+      action: {
+        type: "link",
+        href: "/demo",
+        text: t('home.personaSelector.personas.multiProject.actionText')
+      }
+    },
+    {
+      id: "team-lead",
+      title: t('home.personaSelector.personas.teamLead.title'),
+      icon: Building2,
+      description: t('home.personaSelector.personas.teamLead.description'),
+      action: {
+        type: "link", 
+        href: "/pricing",
+        text: t('home.personaSelector.personas.teamLead.actionText')
+      }
+    }
+  ];
+
+  const personas = getPersonas();
 
   return (
     <section className="py-16 bg-muted/20">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            What describes you best?
+            {t('home.personaSelector.title')}
           </h2>
           <p className="text-lg text-muted-foreground">
-            Choose your path to get the most relevant experience
+            {t('home.personaSelector.subtitle')}
           </p>
         </div>
 

@@ -1,48 +1,53 @@
 import { Check, X, AlertTriangle } from "lucide-react";
-
-const comparisons = [
-  {
-    capability: "Real-time scenarios",
-    feasly: true,
-    traditional: false,
-  },
-  {
-    capability: "Arabic RTL support", 
-    feasly: true,
-    traditional: false,
-  },
-  {
-    capability: "Excel import (structured + raw)",
-    feasly: true,
-    traditional: "limited",
-  },
-  {
-    capability: "Legacy .edmf import",
-    feasly: true,
-    traditional: "limited",
-  },
-  {
-    capability: "Public shareable demo",
-    feasly: true,
-    traditional: false,
-  },
-  {
-    capability: "Audit-ready exports",
-    feasly: true,
-    traditional: "limited",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export function FeaslyVsOldWay() {
+  const { t } = useTranslation('marketing');
+
+  const getComparisons = () => [
+    {
+      capability: t('home.feaslyVsOldWay.comparisons.realTimeScenarios'),
+      feasly: true,
+      traditional: false,
+    },
+    {
+      capability: t('home.feaslyVsOldWay.comparisons.arabicRtl'), 
+      feasly: true,
+      traditional: false,
+    },
+    {
+      capability: t('home.feaslyVsOldWay.comparisons.excelImport'),
+      feasly: true,
+      traditional: "limited",
+    },
+    {
+      capability: t('home.feaslyVsOldWay.comparisons.legacyEdmf'),
+      feasly: true,
+      traditional: "limited",
+    },
+    {
+      capability: t('home.feaslyVsOldWay.comparisons.publicDemo'),
+      feasly: true,
+      traditional: false,
+    },
+    {
+      capability: t('home.feaslyVsOldWay.comparisons.auditExports'),
+      feasly: true,
+      traditional: "limited",
+    },
+  ];
+
+  const comparisons = getComparisons();
+
   return (
     <section className="py-20 bg-muted/20">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Feasly vs. The Old Way
+            {t('home.feaslyVsOldWay.title')}
           </h2>
           <p className="text-xl text-muted-foreground">
-            See why teams are making the switch
+            {t('home.feaslyVsOldWay.subtitle')}
           </p>
         </div>
 
@@ -51,9 +56,9 @@ export function FeaslyVsOldWay() {
             {/* Header */}
             <div className="bg-muted/50 p-4">
               <div className="grid grid-cols-3 gap-4">
-                <div className="text-center font-semibold">Capability</div>
-                <div className="text-center font-semibold text-primary">Feasly</div>
-                <div className="text-center font-semibold text-muted-foreground">Traditional Tools</div>
+                <div className="text-center font-semibold">{t('home.feaslyVsOldWay.tableHeaders.capability')}</div>
+                <div className="text-center font-semibold text-primary">{t('home.feaslyVsOldWay.tableHeaders.feasly')}</div>
+                <div className="text-center font-semibold text-muted-foreground">{t('home.feaslyVsOldWay.tableHeaders.traditional')}</div>
               </div>
             </div>
             
@@ -104,7 +109,7 @@ export function FeaslyVsOldWay() {
           
           <div className="text-center mt-8">
             <p className="text-sm text-muted-foreground">
-              ✅ Full support • ❌ Not available • ⚠️ Limited functionality
+              {t('home.feaslyVsOldWay.legend')}
             </p>
           </div>
         </div>
