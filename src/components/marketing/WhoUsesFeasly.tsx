@@ -4,29 +4,35 @@ import { useTranslation } from "react-i18next";
 export function WhoUsesFeasly() {
   const { t } = useTranslation('marketing');
 
-  const getPersonas = () => [
-    {
-      title: t('home.whoUses.analysts.title'),
-      icon: BarChart4,
-      color: "from-primary/10 to-primary-light/10",
-      iconColor: "text-primary",
-      features: t('home.whoUses.analysts.features', { returnObjects: true }) as string[]
-    },
-    {
-      title: t('home.whoUses.developers.title'),
-      icon: Building2,
-      color: "from-success/10 to-success-light/10", 
-      iconColor: "text-success",
-      features: t('home.whoUses.developers.features', { returnObjects: true }) as string[]
-    },
-    {
-      title: t('home.whoUses.enterprises.title'),
-      icon: Users,
-      color: "from-secondary/10 to-accent/10",
-      iconColor: "text-secondary", 
-      features: t('home.whoUses.enterprises.features', { returnObjects: true }) as string[]
-    }
-  ];
+  const getPersonas = () => {
+    const analystFeatures = t('home.whoUses.analysts.features', { returnObjects: true });
+    const developerFeatures = t('home.whoUses.developers.features', { returnObjects: true });
+    const enterpriseFeatures = t('home.whoUses.enterprises.features', { returnObjects: true });
+
+    return [
+      {
+        title: t('home.whoUses.analysts.title'),
+        icon: BarChart4,
+        color: "from-primary/10 to-primary-light/10",
+        iconColor: "text-primary",
+        features: Array.isArray(analystFeatures) ? analystFeatures : []
+      },
+      {
+        title: t('home.whoUses.developers.title'),
+        icon: Building2,
+        color: "from-success/10 to-success-light/10", 
+        iconColor: "text-success",
+        features: Array.isArray(developerFeatures) ? developerFeatures : []
+      },
+      {
+        title: t('home.whoUses.enterprises.title'),
+        icon: Users,
+        color: "from-secondary/10 to-accent/10",
+        iconColor: "text-secondary", 
+        features: Array.isArray(enterpriseFeatures) ? enterpriseFeatures : []
+      }
+    ];
+  };
 
   const personas = getPersonas();
 
