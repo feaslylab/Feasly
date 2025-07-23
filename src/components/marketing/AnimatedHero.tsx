@@ -6,6 +6,8 @@ import { ArrowRight, Play } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { GradientText } from "./GradientText";
+import { HeroLoadingFallback } from "./HeroLoadingFallback";
+import { useTranslationReady } from "@/hooks/useTranslationReady";
 
 interface AnimatedHeroProps {
   title: string;
@@ -18,9 +20,20 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
   const [displayedText, setDisplayedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   
+  // Critical translation keys for hero section
+  const criticalKeys = [
+    'common.nextGenModeling',
+    'home.hero.titleSpeed',
+    'cta.viewLiveDemo',
+    'cta.getStartedFree'
+  ];
+  
+  const isTranslationReady = useTranslationReady('marketing', criticalKeys);
   const typewriterText = t('common.nextGenModeling');
 
   useEffect(() => {
+    if (!isTranslationReady) return;
+    
     if (currentIndex < typewriterText.length) {
       const timeout = setTimeout(() => {
         setDisplayedText(prev => prev + typewriterText[currentIndex]);
@@ -28,7 +41,20 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
       }, 100);
       return () => clearTimeout(timeout);
     }
-  }, [currentIndex, typewriterText]);
+  }, [currentIndex, typewriterText, isTranslationReady]);
+
+  // Reset typewriter when translations load or language changes
+  useEffect(() => {
+    if (isTranslationReady) {
+      setDisplayedText("");
+      setCurrentIndex(0);
+    }
+  }, [isTranslationReady, typewriterText]);
+
+  // Show loading fallback until translations are ready
+  if (!isTranslationReady) {
+    return <HeroLoadingFallback />;
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },

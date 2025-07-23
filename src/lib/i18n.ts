@@ -1,3 +1,4 @@
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import Backend from 'i18next-http-backend';
@@ -27,10 +28,13 @@ i18n
     
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
+      // Preload critical namespaces for faster initial loading
+      crossDomain: false,
+      withCredentials: false,
     },
     
     react: {
-      useSuspense: false, // Disable suspense for better control
+      useSuspense: false, // Keep disabled for better control
     },
     
     interpolation: {
@@ -44,10 +48,29 @@ i18n
     
     // Performance optimizations
     load: 'languageOnly',
-    preload: ['en'], // Preload English
+    preload: ['en', 'ar'], // Preload both languages
+    
+    // Preload critical namespaces immediately
+    initImmediate: false,
     
     // Debug in development
     debug: process.env.NODE_ENV === 'development',
   });
+
+// Preload marketing translations on initialization for faster hero rendering
+const preloadCriticalTranslations = async () => {
+  try {
+    // Load marketing namespace for current language immediately
+    const currentLang = i18n.language || 'en';
+    await i18n.loadNamespaces(['marketing', 'common'], [currentLang]);
+  } catch (error) {
+    console.warn('Failed to preload critical translations:', error);
+  }
+};
+
+// Start preloading critical translations
+if (typeof window !== 'undefined') {
+  preloadCriticalTranslations();
+}
 
 export default i18n;

@@ -1,8 +1,59 @@
+
 import { BarChart4, Building2, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useTranslationReady } from "@/hooks/useTranslationReady";
+import { Skeleton } from "@/components/ui/skeleton";
+
+function WhoUsesLoadingFallback() {
+  return (
+    <section className="py-20">
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto text-center mb-16 space-y-4">
+          <Skeleton className="h-10 w-96 mx-auto bg-foreground/10" />
+          <Skeleton className="h-6 w-80 mx-auto bg-muted-foreground/20" />
+          <Skeleton className="h-4 w-60 mx-auto bg-muted-foreground/20" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {[1, 2, 3].map((index) => (
+            <div key={index} className="rounded-xl border border-border p-8">
+              <div className="rounded-full p-4 w-fit mx-auto mb-6">
+                <Skeleton className="h-8 w-8 bg-primary/20" />
+              </div>
+              <Skeleton className="h-8 w-32 mx-auto mb-6 bg-foreground/10" />
+              <div className="space-y-4">
+                {[1, 2, 3].map((featureIndex) => (
+                  <div key={featureIndex} className="flex items-start gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-2" />
+                    <Skeleton className="h-4 w-full bg-muted-foreground/20" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 export function WhoUsesFeasly() {
   const { t } = useTranslation('marketing');
+  
+  const criticalKeys = [
+    'home.whoUses.title',
+    'home.whoUses.subtitle',
+    'home.whoUses.socialProof',
+    'home.whoUses.analysts.title',
+    'home.whoUses.developers.title',
+    'home.whoUses.enterprises.title'
+  ];
+  
+  const isTranslationReady = useTranslationReady('marketing', criticalKeys);
+
+  if (!isTranslationReady) {
+    return <WhoUsesLoadingFallback />;
+  }
 
   const getPersonas = () => {
     const analystFeatures = t('home.whoUses.analysts.features', { returnObjects: true });
