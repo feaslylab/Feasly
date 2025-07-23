@@ -8,7 +8,8 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PageTransition } from "@/components/ui/page-transition";
-import { CursorEffects } from "@/components/ui/cursor-effects";
+import { PerformanceMonitor } from "@/components/ui/performance-monitor";
+
 import { AuthPage } from "@/pages/Auth";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
@@ -140,6 +141,7 @@ const App = () => (
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <TooltipProvider>
+            <PerformanceMonitor />
             <Toaster />
             <Sonner />
             <BrowserRouter>

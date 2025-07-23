@@ -5,34 +5,55 @@ import { useRef, useEffect, useState } from "react";
 export function CursorTrail() {
   const [dots, setDots] = useState<{ x: number; y: number; id: number }[]>([]);
   const [nextId, setNextId] = useState(0);
+  const [isEnabled, setIsEnabled] = useState(true);
 
   useEffect(() => {
+    // Disable on mobile or low-performance devices
+    const isMobile = window.innerWidth < 768;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    if (isMobile || prefersReducedMotion) {
+      setIsEnabled(false);
+      return;
+    }
+
+    let throttleTimer: NodeJS.Timeout;
     const handleMouseMove = (e: MouseEvent) => {
-      setDots(prev => [
-        ...prev.slice(-20), // Keep only last 20 dots
-        { x: e.clientX, y: e.clientY, id: nextId }
-      ]);
-      setNextId(prev => prev + 1);
+      if (throttleTimer) return;
+      
+      throttleTimer = setTimeout(() => {
+        setDots(prev => [
+          ...prev.slice(-10), // Reduce to 10 dots for better performance
+          { x: e.clientX, y: e.clientY, id: nextId }
+        ]);
+        setNextId(prev => prev + 1);
+        throttleTimer = null as any;
+      }, 16); // Throttle to ~60fps
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (throttleTimer) clearTimeout(throttleTimer);
+    };
   }, [nextId]);
+
+  if (!isEnabled) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-50">
-      {dots.map((dot, index) => (
+      {dots.map((dot) => (
         <motion.div
           key={dot.id}
-          className="absolute w-2 h-2 bg-primary/60 rounded-full"
-          initial={{ opacity: 1, scale: 1 }}
+          className="absolute w-2 h-2 bg-primary/40 rounded-full"
+          initial={{ opacity: 0.8, scale: 1 }}
           animate={{ 
             opacity: 0, 
             scale: 0,
             x: dot.x - 4,
             y: dot.y - 4
           }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
         />
       ))}
     </div>
