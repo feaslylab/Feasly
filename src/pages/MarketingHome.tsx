@@ -349,9 +349,6 @@ export default function MarketingHome() {
             {/* Visual with Interactive Blob */}
             <ScrollProgressiveReveal direction="right" delay={0.6}>
               <div className="relative">
-                <div className="absolute inset-0 opacity-30 pointer-events-none z-0">
-                  <InteractiveBlob size={300} />
-                </div>
                 <div className="bg-card rounded-2xl border border-border shadow-xl overflow-hidden relative z-10">
                   <div className="aspect-[4/3] w-full bg-gradient-to-br from-background to-muted/50 flex items-center justify-center">
                     <div className="text-center space-y-3">

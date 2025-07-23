@@ -87,7 +87,7 @@ export function TypewriterText({
   );
 }
 
-// 10. Particle System - Performance Optimized
+// 10. Particle System - Performance Optimized with Correct Colors
 export function ParticleBackground({ particleCount = 8 }: { particleCount?: number }) {
   const particles = Array.from({ length: particleCount }, (_, i) => ({
     id: i,
@@ -103,13 +103,14 @@ export function ParticleBackground({ particleCount = 8 }: { particleCount?: numb
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
-          className="absolute rounded-full bg-primary/20 backdrop-blur-sm"
+          className="absolute rounded-full"
           style={{
             width: particle.size,
             height: particle.size,
             left: `${particle.x}%`,
             top: `${particle.y}%`,
-            boxShadow: `0 0 ${particle.size}px hsl(var(--primary) / 0.1)`,
+            background: `radial-gradient(circle at 30% 30%, hsl(224 76% 48% / 0.4), hsl(224 76% 48% / 0.1))`,
+            boxShadow: `0 0 ${particle.size}px hsl(224 76% 48% / 0.2)`,
           }}
           animate={{
             y: [0, -80, 0],
