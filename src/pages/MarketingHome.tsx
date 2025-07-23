@@ -44,7 +44,7 @@ import { Card3D } from "@/components/ui/3d-card";
 import { AnimatedChart } from "@/components/marketing/AnimatedChart";
 import { CurrencyConverter } from "@/components/marketing/CurrencyConverter";
 import { TimelineProgress } from "@/components/marketing/TimelineProgress";
-import { AnimationTest } from "@/components/marketing/AnimationTest";
+
 import { motion } from "framer-motion";
 // Enhanced Animations
 import { ParallaxSection, MagneticButton, TextReveal, MorphingBackground, StaggerGrid, TiltCard } from "@/components/marketing/EnhancedAnimations";
@@ -667,8 +667,6 @@ export default function MarketingHome() {
           </div>
         </section>
 
-      {/* Animation Test Component - Remove after debugging */}
-      <AnimationTest />
     </div>
   );
 }
