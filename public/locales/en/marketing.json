@@ -19,36 +19,6 @@
     "strip": "5 M AED in projects modelled · Trusted by GCC developers · Built by Saudi real-estate pros"
   },
   "features": {
-    "importAnything": {
-      "title": "Smart Excel & EDMF import",
-      "subtitle": "Upload raw files. Our AI maps every cell."
-    },
-    "scenarioEngine": {
-      "title": "Multi-scenario modelling", 
-      "subtitle": "Flip Base, Optimistic, Pessimistic in one click."
-    },
-    "compliance": {
-      "title": "Saudi compliance & Zakat",
-      "subtitle": "Built-in escrow and tax rules."
-    },
-    "insights": {
-      "title": "AI-powered smart insights",
-      "subtitle": "Spot risks before they cost you."
-    },
-    "audit": {
-      "title": "Audit-ready version control",
-      "subtitle": "Every change tracked, time-stamped."
-    },
-    "portfolio": {
-      "title": "Portfolio consolidation",
-      "subtitle": "View KPIs across projects."
-    },
-    "reports": {
-      "title": "Investor-ready exports",
-      "subtitle": "PDF, Excel, Arabic or English."
-    }
-  },
-  "features": {
     "excelImport": {
       "title": "Excel Import",
       "description": "Upload raw spreadsheets. Get a structured model instantly."
@@ -161,12 +131,10 @@
   "social": {
     "proof": "5 M AED in projects modelled · Trusted by GCC developers · Built by Saudi real-estate pros"
   },
-  "features": {
-    "saudiBanner": "Built on Saudi compliance rules. Zakat, VAT, Wafi ready at launch.",
-    "aiRiskFlags": {
-      "title": "AI risk flags",
-      "desc": "Auto-scans every model and highlights risky assumptions."
-    }
+  "saudiBanner": "Built on Saudi compliance rules. Zakat, VAT, Wafi ready at launch.",
+  "aiRiskFlags": {
+    "title": "AI risk flags",
+    "desc": "Auto-scans every model and highlights risky assumptions."
   },
   "pricing": {
     "plans": {
