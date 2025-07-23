@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -102,6 +103,12 @@ const features = [
 ];
 
 export default function FeaturesPage() {
+  useEffect(() => {
+    // Scroll to top when page loads
+    window.scrollTo(0, 0);
+    document.title = "Features | Feasly";
+  }, []);
+
   return (
     <MarketingLayout>
       <div className="flex flex-col">
