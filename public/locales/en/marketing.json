@@ -108,6 +108,56 @@
       "description": "Create, compare, and stress-test various financial scenarios with ease."
     }
   },
+  "aiFeatures": {
+    "smartInsights": {
+      "title": "Smart Insights Panel",
+      "description": "Identify cost overruns, low-margin phases, or financial risks automatically.",
+      "alerts": {
+        "constructionCost": "Construction costs 12% above budget in Phase 2",
+        "revenueTrack": "Revenue projections on track for Q3",
+        "valueEngineering": "Consider value engineering for parking structure"
+      }
+    },
+    "automatedAlerts": {
+      "title": "Automated KPI Alerts", 
+      "description": "Set automated alerts for IRR drops, cost spikes, or delayed timelines.",
+      "kpis": {
+        "payback": "Payback"
+      }
+    },
+    "optimization": {
+      "title": "Optimization Recommendations",
+      "description": "Let Feasly suggest restructuring or value engineering options.",
+      "suggestions": {
+        "parkingRatio": "Reduce parking ratio",
+        "unitMix": "Optimize unit mix", 
+        "phaseTiming": "Phase timing adjustment"
+      },
+      "confidence": {
+        "high": "High",
+        "medium": "Medium"
+      }
+    },
+    "labels": {
+      "aiInsights": "AI Insights",
+      "live": "Live",
+      "kpiMonitor": "KPI Monitor", 
+      "realTime": "Real-time",
+      "optimization": "Optimization",
+      "aiPowered": "AI-Powered",
+      "confidence": "confidence"
+    },
+    "section": {
+      "title": "Smarter decisions, instantly",
+      "subtitle": "AI-powered insights that help you optimize every aspect of your financial model."
+    },
+    "cta": {
+      "title": "Ready to experience AI-powered modeling?",
+      "subtitle": "See how these features work in our interactive demo.",
+      "tryDemo": "Try Live Demo",
+      "learnMore": "Learn More"
+    }
+  },
   "social": {
     "proof": "5 M AED in projects modelled · Trusted by GCC developers · Built by Saudi real-estate pros"
   },
