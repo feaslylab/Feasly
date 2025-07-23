@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -81,6 +82,11 @@ const resources = [
 ];
 
 export default function DocsPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.title = "Documentation | Feasly";
+  }, []);
+
   return (
     <MarketingLayout>
       <div className="flex flex-col">

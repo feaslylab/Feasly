@@ -6,6 +6,7 @@ import { useEffect } from "react";
 
 function PressPage() {
   useEffect(() => {
+    window.scrollTo(0, 0);
     document.title = "Press & Media Kit | Feasly";
   }, []);
 

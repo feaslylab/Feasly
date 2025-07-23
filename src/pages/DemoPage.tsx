@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -66,6 +66,11 @@ const scenarios = [
 
 export default function DemoPage() {
   const [activeScenario, setActiveScenario] = useState("Base Case");
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.title = "Demo | Feasly";
+  }, []);
 
   return (
     <MarketingLayout>

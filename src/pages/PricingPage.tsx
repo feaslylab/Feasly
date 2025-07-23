@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -119,6 +119,11 @@ const features = [
 ];
 
 export default function PricingPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.title = "Pricing | Feasly";
+  }, []);
+
   return (
     <MarketingLayout>
       <div className="flex flex-col">

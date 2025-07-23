@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 function PrivacyPage() {
   useEffect(() => {
+    window.scrollTo(0, 0);
     document.title = "Privacy Policy | Feasly";
   }, []);
 

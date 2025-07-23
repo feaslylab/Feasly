@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -115,6 +116,11 @@ const workflows = [
 ];
 
 export default function UseCasesPage() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.title = "Use Cases | Feasly";
+  }, []);
+
   return (
     <MarketingLayout>
       <div className="flex flex-col">
