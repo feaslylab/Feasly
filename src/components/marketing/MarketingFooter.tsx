@@ -3,27 +3,29 @@ import { WaitlistForm } from "@/components/marketing/WaitlistForm";
 
 const footerLinks = [
   {
-    title: "Product",
+    title: "Company",
     links: [
-      { name: "Features", href: "#features" },
-      { name: "Pricing", href: "#pricing" },
-      { name: "Roadmap", href: "#roadmap" },
+      { name: "About", href: "/" },
+      { name: "Press / Media Kit", href: "/press" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { name: "Privacy", href: "#privacy" },
-      { name: "Terms", href: "#terms" },
-      { name: "Compliance", href: "#compliance" },
+      { name: "Privacy Policy", href: "/privacy" },
+      { name: "Terms of Service", href: "/terms" },
     ],
   },
   {
-    title: "Support",
+    title: "Technical",
     links: [
-      { name: "Help Center", href: "#help" },
-      { name: "Contact", href: "#contact" },
       { name: "Security & Infrastructure", href: "/docs#security" },
+    ],
+  },
+  {
+    title: "Contact",
+    links: [
+      { name: "hello@feasly.com", href: "mailto:hello@feasly.com" },
     ],
   },
 ];
@@ -32,9 +34,9 @@ export function MarketingFooter() {
   return (
     <footer className="bg-background border-t border-border py-12">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
           {/* Brand Column */}
-          <div className="space-y-4">
+          <div className="col-span-2 md:col-span-1 space-y-4">
             <Link to="/" className="flex items-center">
               <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
                 Feasly
@@ -61,12 +63,21 @@ export function MarketingFooter() {
               <ul className="space-y-2">
                 {section.links.map((link) => (
                   <li key={link.name}>
-                    <a
-                      href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      {link.name}
-                    </a>
+                    {link.href.startsWith('mailto:') || link.href.startsWith('http') || link.href.includes('#') ? (
+                      <a
+                        href={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </a>
+                    ) : (
+                      <Link
+                        to={link.href}
+                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        {link.name}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

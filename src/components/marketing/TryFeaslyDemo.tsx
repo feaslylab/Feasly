@@ -4,7 +4,7 @@ import { Play, Eye } from "lucide-react";
 
 export function TryFeaslyDemo() {
   return (
-    <section className="py-20">
+    <section className="py-20" id="demo">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-gradient-to-r from-primary/10 to-primary-light/10 rounded-2xl border border-border p-8 md:p-12 text-center">

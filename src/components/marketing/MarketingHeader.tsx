@@ -2,16 +2,26 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { name: "Features", href: "/features" },
-  { name: "Pricing", href: "/pricing" },
-  { name: "Use Cases", href: "/use-cases" },
-  { name: "Demo", href: "/demo" },
-  { name: "Docs", href: "/docs" },
+  { name: "Features", href: "#features", isAnchor: true },
+  { name: "Demo", href: "#demo", isAnchor: true },
+  { name: "Pricing", href: "/pricing", isAnchor: false },
+  { name: "Docs", href: "/docs", isAnchor: false },
 ];
+
+const handleAnchorClick = (href: string, setMobileMenuOpen?: (open: boolean) => void) => {
+  if (href.startsWith('#')) {
+    const element = document.querySelector(href);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+    setMobileMenuOpen?.(false);
+  }
+};
 
 export function MarketingHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -47,30 +57,42 @@ export function MarketingHeader() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.name}
-              href={link.href}
-              className="text-sm font-medium hover:text-primary transition-colors"
-            >
-              {link.name}
-            </a>
-          ))}
+          {navLinks.map((link) => 
+            link.isAnchor ? (
+              <button
+                key={link.name}
+                onClick={() => handleAnchorClick(link.href)}
+                className="text-sm font-medium hover:text-primary transition-colors cursor-pointer"
+              >
+                {link.name}
+              </button>
+            ) : (
+              <Link
+                key={link.name}
+                to={link.href}
+                className="text-sm font-medium hover:text-primary transition-colors"
+              >
+                {link.name}
+              </Link>
+            )
+          )}
         </nav>
 
         {/* Action Buttons */}
-        <div className="hidden md:flex items-center space-x-4">
+        <div className="hidden md:flex items-center space-x-3">
+          <LanguageSwitcher />
           <ThemeToggle />
           <Button variant="outline" asChild>
             <Link to="/welcome">Login</Link>
           </Button>
           <Button asChild>
-            <Link to="#get-started">Get Started</Link>
+            <Link to="/welcome">Get Started</Link>
           </Button>
         </div>
 
         {/* Mobile Menu Button */}
         <div className="flex items-center md:hidden space-x-2">
+          <LanguageSwitcher />
           <ThemeToggle />
           <Button
             variant="ghost"
@@ -87,16 +109,26 @@ export function MarketingHeader() {
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 w-full bg-background/95 backdrop-blur-md shadow-lg border-t border-border pb-4">
           <nav className="flex flex-col space-y-4 p-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="text-base font-medium hover:text-primary transition-colors py-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {link.name}
-              </a>
-            ))}
+            {navLinks.map((link) => 
+              link.isAnchor ? (
+                <button
+                  key={link.name}
+                  onClick={() => handleAnchorClick(link.href, setMobileMenuOpen)}
+                  className="text-base font-medium hover:text-primary transition-colors py-2 text-left"
+                >
+                  {link.name}
+                </button>
+              ) : (
+                <Link
+                  key={link.name}
+                  to={link.href}
+                  className="text-base font-medium hover:text-primary transition-colors py-2"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              )
+            )}
             <div className="flex flex-col space-y-3 pt-2">
               <Button variant="outline" asChild className="w-full">
                 <Link to="/welcome" onClick={() => setMobileMenuOpen(false)}>
@@ -104,7 +136,7 @@ export function MarketingHeader() {
                 </Link>
               </Button>
               <Button asChild className="w-full">
-                <Link to="#get-started" onClick={() => setMobileMenuOpen(false)}>
+                <Link to="/welcome" onClick={() => setMobileMenuOpen(false)}>
                   Get Started
                 </Link>
               </Button>

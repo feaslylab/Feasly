@@ -29,6 +29,9 @@ import PricingPage from "./pages/PricingPage";
 import UseCasesPage from "./pages/UseCasesPage";
 import DocsPage from "./pages/DocsPage";
 import DemoPage from "./pages/DemoPage";
+import PressPage from "./pages/PressPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +42,7 @@ const AppRoutes = () => {
   const isMarketingRoute = window.location.pathname === '/';
   
   // If we're on the marketing site path, show marketing content
-  if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs')) {
+  if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms')) {
     return (
       <Routes>
         <Route path="/" element={<MarketingWrapper />} />
@@ -48,6 +51,9 @@ const AppRoutes = () => {
           <Route path="/use-cases" element={<UseCasesPage />} />
           <Route path="/docs" element={<DocsPage />} />
           <Route path="/demo" element={<DemoPage />} />
+          <Route path="/press" element={<PressPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
         <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.reload()} />} />
       </Routes>
     );
