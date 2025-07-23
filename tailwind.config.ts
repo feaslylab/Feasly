@@ -15,6 +15,7 @@ export default {
 			center: true,
 			padding: '2rem',
 			screens: {
+				xl: '1280px',
 				'2xl': '1400px'
 			}
 		},
@@ -25,12 +26,12 @@ export default {
 				ring: 'hsl(var(--ring))',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
+				surface: 'hsl(var(--surface))',
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))',
 					light: 'hsl(var(--primary-light))',
-					dark: 'hsl(var(--primary-dark))',
-					glow: 'hsl(var(--primary-glow))'
+					dark: 'hsl(var(--primary-dark))'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',

@@ -35,6 +35,7 @@ import { WaitlistForm } from "@/components/marketing/WaitlistForm";
 import { PersonaSelector } from "@/components/marketing/PersonaSelector";
 import { AIFeaturesVisual } from "@/components/marketing/AIFeaturesVisual";
 import { AnimatedHero } from "@/components/marketing/AnimatedHero";
+import { PricingSection } from "@/components/marketing/PricingSection";
 import { AnimatedFeatureCard } from "@/components/marketing/AnimatedFeatureCard";
 import { AnimatedRedX } from "@/components/marketing/AnimatedRedX";
 import { ScrollReveal } from "@/components/marketing/ScrollReveal";
@@ -140,57 +141,11 @@ export default function MarketingHome() {
       <CursorTrail />
       
       {/* Hero Section */}
-      <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-          <MorphingBackground />
-        </div>
-        <div className="absolute inset-0 z-0 opacity-40 pointer-events-none">
-          <ParticleBackground particleCount={6} />
-        </div>
-        <div className="container mx-auto px-4 relative z-10 content-layer">
-          <h1 className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 text-foreground">
-            <GradientText animated={true}>
-              {t('home.hero.title')}
-            </GradientText>
-            <br />
-            <div className="text-center">
-              <GradientText animated={true}>
-                {t('home.hero.titleSpeed')}
-              </GradientText>
-            </div>
-          </h1>
-          <div className="text-center mb-8">
-            <p className="hero-subtitle text-xl md:text-2xl text-muted-foreground">
-              {t('home.hero.subtitle')}
-            </p>
-          </div>
-          <ParallaxSection speed={0.3}>
-            <div className="text-center space-y-8">
-              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                {t('home.hero.description')}
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-6">
-                <MagneticButton strength={0.2}>
-                  <PulsingButton size="lg" className="px-8 py-4 text-lg" asChild>
-                    <Link to="/demo" aria-label={t('hero.tryDemo')}>
-                      <Play className="mr-2 h-5 w-5" />
-                      {t('hero.tryDemo')}
-                    </Link>
-                  </PulsingButton>
-                </MagneticButton>
-                <MagneticButton strength={0.15}>
-                  <Button variant="outline" size="lg" className="px-8 py-4 text-lg" asChild>
-                    <Link to="/welcome" aria-label={t('hero.startFreeTrial')}>
-                      {t('hero.startFreeTrial')} <ArrowRight className="ml-2 h-4 w-4" />
-                    </Link>
-                  </Button>
-                </MagneticButton>
-              </div>
-            </div>
-          </ParallaxSection>
-        </div>
-        <WaveBackground />
-      </section>
+      <AnimatedHero 
+        title={t('home.hero.title')} 
+        subtitle={t('home.hero.subtitle')} 
+        description={t('home.hero.description')} 
+      />
 
       {/* The Problem We Solve */}
       <ScrollSection background="muted" className="py-20">
@@ -414,6 +369,9 @@ export default function MarketingHome() {
 
       {/* How Real Teams Use Feasly */}
       <HowRealTeamsUseFeasly />
+
+      {/* Pricing Section */}
+      <PricingSection />
 
       {/* Try Feasly Demo */}
       <TryFeaslyDemo />

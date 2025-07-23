@@ -1,5 +1,6 @@
 import { Building2, FileText, Building } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { ScrollReveal } from "./ScrollReveal";
 
 export function HowRealTeamsUseFeasly() {
   const { t } = useTranslation('marketing');
@@ -42,30 +43,24 @@ export function HowRealTeamsUseFeasly() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="max-w-4xl mx-auto space-y-16">
           {useCases.map((useCase, index) => (
-            <div
-              key={index}
-              className={`rounded-xl border border-border p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-gradient-to-br ${useCase.color}`}
-            >
-              {/* Icon */}
-              <div className={`rounded-lg p-3 w-fit mb-4 bg-gradient-to-r ${useCase.color}`}>
-                <useCase.icon className={`h-6 w-6 ${useCase.iconColor}`} />
+            <ScrollReveal key={index} delay={index * 0.2}>
+              <div className="border-l-4 border-primary pl-6">
+                {/* Icon */}
+                <div className={`rounded-lg p-3 w-fit mb-4 bg-gradient-to-r ${useCase.color}`}>
+                  <useCase.icon className={`h-6 w-6 ${useCase.iconColor}`} />
+                </div>
+                
+                {/* Content */}
+                <h3 className="text-2xl font-semibold mb-3 leading-tight">
+                  {useCase.title}
+                </h3>
+                <p className="text-lg text-muted-foreground">
+                  {useCase.description}
+                </p>
               </div>
-              
-              {/* Content */}
-              <h3 className="text-lg font-semibold mb-3 leading-tight">
-                {useCase.title}
-              </h3>
-              <p className="text-muted-foreground">
-                {useCase.description}
-              </p>
-              
-              {/* Visual placeholder */}
-              <div className="mt-6 aspect-[16/10] bg-gradient-to-br from-background/80 to-muted/60 rounded-lg flex items-center justify-center">
-                <useCase.icon className={`h-8 w-8 opacity-40 ${useCase.iconColor}`} />
-              </div>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
       </div>

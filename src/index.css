@@ -10,8 +10,14 @@
 
 @layer base {
   :root {
-    /* Core Brand Colors */
-    --background: 0 0% 100%;
+    /* Brand Colors */
+    --primary: 217 79% 53%;
+    --primary-light: 217 79% 63%;
+    --primary-dark: 217 79% 35%;
+    
+    /* Base Colors */
+    --background: 220 18% 98%;
+    --surface: 0 0% 100%;
     --foreground: 213 31% 13%;
 
     --card: 0 0% 100%;
@@ -20,8 +26,8 @@
     --popover: 0 0% 100%;
     --popover-foreground: 213 31% 13%;
 
-    /* Premium SaaS Blue Palette */
-    --primary: 224 76% 48%;           /* Modern electric blue */
+    /* Card and Components */
+    --card: hsl(var(--surface));
     --primary-foreground: 0 0% 100%;
     --primary-light: 224 100% 88%;    /* Light blue for accents */
     --primary-dark: 224 85% 38%;      /* Deep blue for depth */
@@ -145,6 +151,7 @@
   /* Mobile viewport optimizations */
   html {
     overflow-x: hidden;
+    scroll-behavior: smooth;
   }
   
   /* RTL Support */

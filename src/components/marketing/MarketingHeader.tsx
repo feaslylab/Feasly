@@ -34,7 +34,18 @@ export function MarketingHeader() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
+      const scrollY = window.scrollY;
+      setScrolled(scrollY > 10);
+      
+      // Animate height based on scroll
+      const header = document.querySelector('[data-header]') as HTMLElement;
+      if (header) {
+        if (scrollY > 40) {
+          header.style.height = '60px';
+        } else {
+          header.style.height = '80px';
+        }
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -45,13 +56,13 @@ export function MarketingHeader() {
     <>
       <ScrollProgress />
       <header
-      className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-300",
-        scrolled
-          ? "bg-background/90 backdrop-blur-md shadow-sm py-3"
-          : "bg-transparent py-5"
-      )}
-    >
+        data-header
+        className={cn(
+          "sticky top-0 w-full z-50 backdrop-blur-sm bg-background/80 border-b border-border transition-all duration-300",
+          scrolled ? "shadow-sm" : ""
+        )}
+        style={{ height: '80px' }}
+      >
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">

@@ -43,7 +43,7 @@ export function WhyFeaslyWorks() {
   const steps = getSteps();
 
   return (
-    <section className="py-20 bg-muted/20">
+    <section className="py-24">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
@@ -55,41 +55,21 @@ export function WhyFeaslyWorks() {
         </div>
 
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {steps.map((step, index) => (
-              <div key={index} className="relative group">
-                {/* Connection line for desktop */}
-                {index < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-1/2 left-full w-8 h-px bg-border z-10 transform -translate-y-1/2" />
-                )}
-                
-                <div className="bg-background rounded-xl border border-border p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 relative z-20">
-                  {/* Step number */}
-                  <div className="text-sm font-mono text-muted-foreground mb-4">
-                    {step.number}
-                  </div>
-                  
-                  {/* Icon */}
-                  <div className={cn(
-                    "rounded-lg p-3 w-fit mb-4 bg-gradient-to-r",
-                    step.color
-                  )}>
-                    <step.icon className={cn("h-6 w-6", step.iconColor)} />
-                  </div>
-                  
-                  {/* Content */}
-                  <h3 className="text-lg font-semibold mb-2 leading-tight">
-                    {step.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    {step.description}
-                  </p>
-                  
-                  {/* Visual placeholder */}
-                  <div className="mt-6 aspect-[4/3] bg-gradient-to-br from-muted/50 to-muted rounded-lg flex items-center justify-center">
-                    <step.icon className={cn("h-8 w-8 opacity-50", step.iconColor)} />
-                  </div>
+              <div key={index} className="bg-surface rounded-3xl p-8 shadow-lg hover:scale-[1.02] transition">
+                {/* Icon container */}
+                <div className="size-12 md:size-14 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-6">
+                  <step.icon className="h-6 w-6 md:h-7 md:w-7" />
                 </div>
+                
+                {/* Content */}
+                <h3 className="text-lg font-semibold mb-2 leading-tight">
+                  {step.title}
+                </h3>
+                <p className="text-muted-foreground text-sm">
+                  {step.description}
+                </p>
               </div>
             ))}
           </div>

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { GradientText } from "./GradientText";
 import { HeroLoadingFallback } from "./HeroLoadingFallback";
+import { ProductMockup } from "./ProductMockup";
 import { useTranslationReady } from "@/hooks/useTranslationReady";
 
 interface AnimatedHeroProps {
@@ -77,80 +78,62 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
   };
 
   return (
-    <motion.div
-      className="text-center relative z-10"
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      style={{
-        willChange: 'transform, opacity',
-        backfaceVisibility: 'hidden',
-        transform: 'translateZ(0)'
-      }}
-    >
-      {/* Typewriter subtitle */}
-      <motion.div variants={itemVariants}>
-        <p className="text-primary font-medium mb-4 text-lg">
-          {displayedText}
-          <motion.span
-            animate={{ opacity: [0, 1, 0] }}
-            transition={{ duration: 1, repeat: Infinity }}
-            className="inline-block w-0.5 h-5 bg-primary ml-1"
-          />
-        </p>
-      </motion.div>
-
-      {/* Main title with proper color */}
-      <motion.div variants={itemVariants}>
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-foreground">
-          <GradientText animated={true}>
-            {title}
-          </GradientText>
-          <br />
-          <div className="text-center">
-            <GradientText animated={true}>
-              {t('home.hero.titleSpeed')}
-            </GradientText>
-          </div>
-        </h1>
-      </motion.div>
-
-      {/* Description */}
-      <motion.div variants={itemVariants}>
-        <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
-          {description}
-        </p>
-      </motion.div>
-
-      {/* CTA Buttons */}
-      <motion.div 
-        variants={itemVariants}
-        className="flex flex-col sm:flex-row justify-center gap-4"
-      >
+    <section className="min-h-[85vh] flex flex-col items-center justify-center text-center bg-gradient-to-b from-background via-surface to-background">
+      <div className="container mx-auto px-4 relative z-10">
         <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          style={{
+            willChange: 'transform, opacity',
+            backfaceVisibility: 'hidden',
+            transform: 'translateZ(0)'
+          }}
         >
-          <Button size="lg" className="group px-8 py-4 text-lg" asChild>
-            <Link to="/demo">
-              <Play className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" /> 
-              {t('cta.viewLiveDemo')}
-            </Link>
-          </Button>
+          {/* Product Mockup */}
+          <motion.div variants={itemVariants} className="mb-12">
+            <ProductMockup className="mx-auto" />
+          </motion.div>
+
+          {/* Main Headline */}
+          <motion.div variants={itemVariants}>
+            <h1 className="text-5xl/tight md:text-7xl font-semibold text-foreground max-w-[13ch] mx-auto mb-6">
+              Model the future.<br />Manage with precision.
+            </h1>
+          </motion.div>
+
+          {/* Subhead */}
+          <motion.div variants={itemVariants}>
+            <p className="mt-6 text-lg md:text-2xl text-muted-foreground max-w-[45ch] mx-auto">
+              Cloud feasibility built for GCC developers. Faster than Excel, ready for Arabic, trusted by PIF teams.
+            </p>
+          </motion.div>
+
+          {/* CTA Group */}
+          <motion.div 
+            variants={itemVariants}
+            className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
+          >
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button size="lg" className="group px-8 py-4 text-lg">
+                Try the live demo
+              </Button>
+            </motion.div>
+            
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button variant="ghost" size="lg" className="group px-8 py-4 text-lg">
+                Book a call
+              </Button>
+            </motion.div>
+          </motion.div>
         </motion.div>
-        
-        <motion.div
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Button variant="outline" size="lg" className="group px-8 py-4 text-lg" asChild>
-            <Link to="/welcome">
-              {t('cta.getStartedFree')}
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </Button>
-        </motion.div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </section>
   );
 }
