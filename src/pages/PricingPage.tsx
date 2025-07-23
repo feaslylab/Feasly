@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { WaitlistForm } from "@/components/marketing/WaitlistForm";
+import { ScrollReveal } from "@/components/marketing/ScrollReveal";
+import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
+import { PulsingButton } from "@/components/marketing/AnimatedCTA";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Check,

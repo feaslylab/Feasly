@@ -2,6 +2,10 @@ import { useEffect } from "react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { ScrollReveal } from "@/components/marketing/ScrollReveal";
+import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
+import { PulsingButton } from "@/components/marketing/AnimatedCTA";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Building2,
@@ -126,16 +130,26 @@ export default function UseCasesPage() {
       <div className="flex flex-col">
         {/* Hero Section */}
         <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
+          <AnimatedBackground />
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+              <motion.h1 
+                className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
                 Built for Every Scale of Development
-              </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto">
+              </motion.h1>
+              <motion.p 
+                className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
                 From solo developers to government giga projects, Feasly scales to meet your financial modeling needs.
-              </p>
+              </motion.p>
             </div>
           </div>
         </section>

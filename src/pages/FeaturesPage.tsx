@@ -2,6 +2,11 @@ import { useEffect } from "react";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { ScrollReveal } from "@/components/marketing/ScrollReveal";
+import { AnimatedFeatureCard } from "@/components/marketing/AnimatedFeatureCard";
+import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
+import { PulsingButton } from "@/components/marketing/AnimatedCTA";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Building2,
