@@ -178,44 +178,52 @@ export default function MarketingHome() {
             </h2>
             <div className="space-y-6 text-lg text-muted-foreground max-w-3xl mx-auto">
               <motion.div 
-                className="flex items-center gap-4 justify-center"
+                className="flex items-start gap-4 text-left"
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <AnimatedRedX delay={0.2} />
-                <p>Excel models are fragile, unstructured, and hard to audit</p>
+                <div className="pt-1">
+                  <AnimatedRedX delay={0.2} />
+                </div>
+                <p className="flex-1">Excel models are fragile, unstructured, and hard to audit</p>
               </motion.div>
               <motion.div 
-                className="flex items-center gap-4 justify-center"
+                className="flex items-start gap-4 text-left"
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <AnimatedRedX delay={0.4} />
-                <p>Legacy tools like EstateMaster are outdated, slow, and siloed</p>
+                <div className="pt-1">
+                  <AnimatedRedX delay={0.4} />
+                </div>
+                <p className="flex-1">Legacy tools like EstateMaster are outdated, slow, and siloed</p>
               </motion.div>
               <motion.div 
-                className="flex items-center gap-4 justify-center"
+                className="flex items-start gap-4 text-left"
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.5 }}
               >
-                <AnimatedRedX delay={0.6} />
-                <p>Most platforms ignore Arabic language and GCC-specific needs</p>
+                <div className="pt-1">
+                  <AnimatedRedX delay={0.6} />
+                </div>
+                <p className="flex-1">Most platforms ignore Arabic language and GCC-specific needs</p>
               </motion.div>
               <motion.div 
-                className="flex items-center gap-4 justify-center"
+                className="flex items-start gap-4 text-left"
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.7 }}
               >
-                <AnimatedRedX delay={0.8} />
-                <p>Sharing models with stakeholders is a mess</p>
+                <div className="pt-1">
+                  <AnimatedRedX delay={0.8} />
+                </div>
+                <p className="flex-1">Sharing models with stakeholders is a mess</p>
               </motion.div>
             </div>
             <div className="mt-12">
