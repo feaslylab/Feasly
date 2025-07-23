@@ -50,6 +50,7 @@ import { motion } from "framer-motion";
 import { ParallaxSection, MagneticButton, TextReveal, MorphingBackground, StaggerGrid, TiltCard } from "@/components/marketing/EnhancedAnimations";
 import { SpotlightCard, TypewriterText, ParticleBackground, GlitchText, ScrollCounter } from "@/components/marketing/AdvancedEffects";
 import { CursorTrail, InteractiveBlob, WaveBackground } from "@/components/marketing/NextLevelAnimations";
+import { ScrollProgressiveReveal, ScrollSection, ScrollCard, ScrollTextReveal } from "@/components/marketing/ScrollProgressiveReveal";
 
 const features = [
   {
@@ -206,155 +207,165 @@ export default function MarketingHome() {
       </section>
 
       {/* The Problem We Solve */}
-      <section className="py-20 bg-muted/20">
+      <ScrollSection background="muted" className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto mb-16">
-            <GlitchText text="Feasibility modeling is broken." className="text-3xl md:text-4xl font-bold mb-6 text-center" />
-            <div className="space-y-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-              <motion.div 
-                className="flex items-start gap-4"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-              >
-                <div className="pt-1">
-                  <AnimatedRedX delay={0.2} />
+            <ScrollProgressiveReveal direction="scale" delay={0.2}>
+              <GlitchText text="Feasibility modeling is broken." className="text-3xl md:text-4xl font-bold mb-6 text-center" />
+            </ScrollProgressiveReveal>
+            
+            <ScrollProgressiveReveal direction="up" delay={0.4} stagger={true} staggerDelay={0.2} className="space-y-6 text-lg text-muted-foreground max-w-2xl mx-auto">
+              <ScrollCard index={0} totalCards={4}>
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
+                  <div className="pt-1">
+                    <AnimatedRedX delay={0.2} />
+                  </div>
+                  <p className="flex-1">Excel models are fragile, unstructured, and hard to audit</p>
                 </div>
-                <p className="flex-1">Excel models are fragile, unstructured, and hard to audit</p>
-              </motion.div>
-              <motion.div 
-                className="flex items-start gap-4"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <div className="pt-1">
-                  <AnimatedRedX delay={0.4} />
+              </ScrollCard>
+              
+              <ScrollCard index={1} totalCards={4}>
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
+                  <div className="pt-1">
+                    <AnimatedRedX delay={0.4} />
+                  </div>
+                  <p className="flex-1">Legacy tools like EstateMaster are outdated, slow, and siloed</p>
                 </div>
-                <p className="flex-1">Legacy tools like EstateMaster are outdated, slow, and siloed</p>
-              </motion.div>
-              <motion.div 
-                className="flex items-start gap-4"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-              >
-                <div className="pt-1">
-                  <AnimatedRedX delay={0.6} />
+              </ScrollCard>
+              
+              <ScrollCard index={2} totalCards={4}>
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
+                  <div className="pt-1">
+                    <AnimatedRedX delay={0.6} />
+                  </div>
+                  <p className="flex-1">Most platforms ignore Arabic language and GCC-specific needs</p>
                 </div>
-                <p className="flex-1">Most platforms ignore Arabic language and GCC-specific needs</p>
-              </motion.div>
-              <motion.div 
-                className="flex items-start gap-4"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-              >
-                <div className="pt-1">
-                  <AnimatedRedX delay={0.8} />
+              </ScrollCard>
+              
+              <ScrollCard index={3} totalCards={4}>
+                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
+                  <div className="pt-1">
+                    <AnimatedRedX delay={0.8} />
+                  </div>
+                  <p className="flex-1">Sharing models with stakeholders is a mess</p>
                 </div>
-                <p className="flex-1">Sharing models with stakeholders is a mess</p>
-              </motion.div>
-            </div>
-            <div className="mt-12 text-center">
-              <h3 className="text-2xl font-bold text-primary">
-                Feasly is purpose-built to fix all of this.
-              </h3>
-            </div>
+              </ScrollCard>
+            </ScrollProgressiveReveal>
+            
+            <ScrollProgressiveReveal direction="scale" delay={0.8}>
+              <div className="mt-12 text-center">
+                <ScrollTextReveal 
+                  text="Feasly is purpose-built to fix all of this." 
+                  className="text-2xl font-bold text-primary"
+                  cascade={true}
+                  delay={0.2}
+                />
+              </div>
+            </ScrollProgressiveReveal>
           </div>
         </div>
-      </section>
+      </ScrollSection>
 
       {/* Benefits Section */}
-      <section className="py-20">
+      <ScrollSection className="py-20">
         <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Model Faster. Decide Smarter.
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Everything you need for professional real estate financial modeling
-            </p>
-          </div>
+          <ScrollProgressiveReveal direction="up" delay={0.2}>
+            <div className="max-w-4xl mx-auto text-center mb-16">
+              <ScrollTextReveal 
+                text="Model Faster. Decide Smarter." 
+                className="text-3xl md:text-4xl font-bold mb-6"
+                cascade={true}
+              />
+              <p className="text-xl text-muted-foreground">
+                Everything you need for professional real estate financial modeling
+              </p>
+            </div>
+          </ScrollProgressiveReveal>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
             {/* Benefits List */}
-            <div className="space-y-8">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <BarChart4 className="h-6 w-6 text-primary" />
+            <ScrollProgressiveReveal direction="left" delay={0.4} stagger={true} staggerDelay={0.15}>
+              <ScrollCard index={0} totalCards={4}>
+                <div className="flex items-start gap-4 p-6 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50">
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                    <BarChart4 className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">Import in Seconds</h3>
+                    <p className="text-muted-foreground">
+                      Upload Excel files or legacy EstateMaster .edmf files. Our AI handles the rest.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Import in Seconds</h3>
-                  <p className="text-muted-foreground">
-                    Upload Excel files or legacy EstateMaster .edmf files. Our AI handles the rest.
-                  </p>
-                </div>
-              </div>
+              </ScrollCard>
               
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
-                  <Expand className="h-6 w-6 text-success" />
+              <ScrollCard index={1} totalCards={4}>
+                <div className="flex items-start gap-4 p-6 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50">
+                  <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center flex-shrink-0">
+                    <Expand className="h-6 w-6 text-success" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">Side-by-Side Scenarios</h3>
+                    <p className="text-muted-foreground">
+                      Compare Base, Optimistic, and Pessimistic outcomes in real-time.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Side-by-Side Scenarios</h3>
-                  <p className="text-muted-foreground">
-                    Compare Base, Optimistic, and Pessimistic outcomes in real-time.
-                  </p>
-                </div>
-              </div>
+              </ScrollCard>
               
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-warning/10 flex items-center justify-center flex-shrink-0">
-                  <Globe2 className="h-6 w-6 text-warning" />
+              <ScrollCard index={2} totalCards={4}>
+                <div className="flex items-start gap-4 p-6 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50">
+                  <div className="w-12 h-12 rounded-lg bg-warning/10 flex items-center justify-center flex-shrink-0">
+                    <Globe2 className="h-6 w-6 text-warning" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">Arabic & RTL Support</h3>
+                    <p className="text-muted-foreground">
+                      Native Arabic interface with right-to-left layout support.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Arabic & RTL Support</h3>
-                  <p className="text-muted-foreground">
-                    Native Arabic interface with right-to-left layout support.
-                  </p>
-                </div>
-              </div>
+              </ScrollCard>
               
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
-                  <Lock className="h-6 w-6 text-secondary" />
+              <ScrollCard index={3} totalCards={4}>
+                <div className="flex items-start gap-4 p-6 rounded-lg bg-card/50 backdrop-blur-sm border border-border/50">
+                  <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                    <Lock className="h-6 w-6 text-secondary" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold mb-2">Secure Sharing</h3>
+                    <p className="text-muted-foreground">
+                      Generate read-only links for stakeholders. Control access with precision.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Secure Sharing</h3>
-                  <p className="text-muted-foreground">
-                    Generate read-only links for stakeholders. Control access with precision.
-                  </p>
-                </div>
-              </div>
-            </div>
+              </ScrollCard>
+            </ScrollProgressiveReveal>
 
             {/* Visual with Interactive Blob */}
-            <div className="relative">
-              <InteractiveBlob size={300} />
-              <div className="bg-card rounded-2xl border border-border shadow-xl overflow-hidden relative z-10">
-                <div className="aspect-[4/3] w-full bg-gradient-to-br from-background to-muted/50 flex items-center justify-center">
-                  <div className="text-center space-y-3">
-                    <LineChart className="h-12 w-12 text-primary mx-auto" />
-                    <p className="text-sm text-muted-foreground">Scenario Comparison View</p>
+            <ScrollProgressiveReveal direction="right" delay={0.6}>
+              <div className="relative">
+                <InteractiveBlob size={300} />
+                <div className="bg-card rounded-2xl border border-border shadow-xl overflow-hidden relative z-10">
+                  <div className="aspect-[4/3] w-full bg-gradient-to-br from-background to-muted/50 flex items-center justify-center">
+                    <div className="text-center space-y-3">
+                      <LineChart className="h-12 w-12 text-primary mx-auto" />
+                      <p className="text-sm text-muted-foreground">Scenario Comparison View</p>
+                    </div>
+                  </div>
+                </div>
+                {/* Floating card */}
+                <div className="absolute -bottom-4 -left-4 bg-card border border-border rounded-xl p-4 shadow-lg z-20">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-success"></div>
+                    <span className="text-sm font-medium">Live Updates</span>
                   </div>
                 </div>
               </div>
-              {/* Floating card */}
-              <div className="absolute -bottom-4 -left-4 bg-card border border-border rounded-xl p-4 shadow-lg z-20">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-success"></div>
-                  <span className="text-sm font-medium">Live Updates</span>
-                </div>
-              </div>
-            </div>
+            </ScrollProgressiveReveal>
           </div>
         </div>
-      </section>
+      </ScrollSection>
 
       {/* Why Feasly Works - Visual Walkthrough */}
       <WhyFeaslyWorks />
@@ -366,44 +377,52 @@ export default function MarketingHome() {
       <WhoUsesFeasly />
 
       {/* Features Grid */}
-      <section className="py-20 bg-muted/30" id="features">
+      <ScrollSection background="muted" className="py-20" id="features">
         <div className="container mx-auto px-4">
-          <MobileScrollReveal>
+          <ScrollProgressiveReveal direction="scale" delay={0.2}>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Core Features That Make Feasly Different
-              </h2>
+              <ScrollTextReveal 
+                text="Core Features That Make Feasly Different"
+                className="text-3xl md:text-4xl font-bold mb-4"
+                cascade={true}
+              />
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
                 Built for real estate professionals who need accuracy, speed, and compliance in their financial modeling.
               </p>
             </div>
-          </MobileScrollReveal>
+          </ScrollProgressiveReveal>
 
-          <StaggerGrid columns={3}>
-            {features.map((feature, index) => (
-              <SpotlightCard key={feature.title} className="h-full">
-                <div className="p-6">
-                  <div className={cn("p-4 rounded-lg mb-4 w-fit", feature.color)}>
-                    <feature.icon className={cn("h-8 w-8", feature.iconColor)} />
-                  </div>
-                  <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                  <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-                </div>
-              </SpotlightCard>
-            ))}
-          </StaggerGrid>
-
-          <MobileScrollReveal>
-            <div className="text-center mt-12">
-              <Button size="lg" asChild>
-                <Link to="/features">
-                  View All Features <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+          <ScrollProgressiveReveal direction="up" delay={0.4} stagger={true} staggerDelay={0.1}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {features.map((feature, index) => (
+                <ScrollCard key={feature.title} index={index} totalCards={features.length}>
+                  <SpotlightCard className="h-full">
+                    <div className="p-6">
+                      <div className={cn("p-4 rounded-lg mb-4 w-fit", feature.color)}>
+                        <feature.icon className={cn("h-8 w-8", feature.iconColor)} />
+                      </div>
+                      <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                    </div>
+                  </SpotlightCard>
+                </ScrollCard>
+              ))}
             </div>
-          </MobileScrollReveal>
+          </ScrollProgressiveReveal>
+
+          <ScrollProgressiveReveal direction="scale" delay={0.8}>
+            <div className="text-center mt-12">
+              <MagneticButton strength={0.1}>
+                <Button size="lg" asChild>
+                  <Link to="/features">
+                    View All Features <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </MagneticButton>
+            </div>
+          </ScrollProgressiveReveal>
         </div>
-      </section>
+      </ScrollSection>
 
       {/* AI Features Visual Section */}
       <AIFeaturesVisual />
