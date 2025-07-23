@@ -12,6 +12,7 @@ export const namespaces = {
   FINANCE: 'feasly.finance',
   CONSOLIDATE: 'feasly.consolidate',
   INSIGHTS: 'feasly.insights',
+  VALIDATION: 'validation',
 } as const;
 
 // Initialize i18next
@@ -21,7 +22,7 @@ i18n
   .init({
     fallbackLng: 'en',
     supportedLngs: ['en', 'ar'],
-    ns: ['common', 'auth', 'marketing', 'feasly.model', 'feasly.flow', 'feasly.finance', 'feasly.consolidate', 'feasly.insights'],
+    ns: ['common', 'auth', 'marketing', 'feasly.model', 'feasly.flow', 'feasly.finance', 'feasly.consolidate', 'feasly.insights', 'validation'],
     defaultNS: 'common',
     
     backend: {

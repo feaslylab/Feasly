@@ -6,12 +6,12 @@
     "docs": "Docs",
     "blog": "Blog",
     "login": "Login",
-    "startFreeTrial": "Start free trial"
+    "startFreeTrial": "Start free trial — 14 days"
   },
   "hero": {
-    "headline": "Build feasibility models 5 × faster.",
-    "subline": "One live model. Zero spreadsheet drama.",
-    "miniFeatures": "8 core inputs per asset · Base / Optimistic / Pessimistic toggle · Drag-and-drop Excel + EDMF import",
+    "headline": "Build feasibility in minutes. Excel gone for good.",
+    "subline": "One live model. Zero chaos.",
+    "miniFeatures": "8 core inputs cover every asset. No hidden sheets.",
     "tryDemo": "Try the Demo",
     "startFreeTrial": "Start free trial"
   },
@@ -161,39 +161,46 @@
   "social": {
     "proof": "5 M AED in projects modelled · Trusted by GCC developers · Built by Saudi real-estate pros"
   },
+  "features": {
+    "saudiBanner": "Built on Saudi compliance rules. Zakat, VAT, Wafi ready at launch.",
+    "aiRiskFlags": {
+      "title": "AI risk flags",
+      "desc": "Auto-scans every model and highlights risky assumptions."
+    }
+  },
   "pricing": {
-    "starter": {
-      "name": "Starter",
-      "description": "Solo analysts",
-      "price": "299 AED",
-      "ideal": "1 project · 1 user"
+    "plans": {
+      "starterNote": "299 AED / month (ex VAT)"
     },
-    "growth": {
-      "name": "Growth", 
-      "description": "Small teams",
-      "price": "999 AED",
-      "ideal": "10 projects · 5 users"
-    },
-    "enterprise": {
-      "name": "Enterprise",
-      "description": "Giga-projects", 
-      "price": "Custom",
-      "ideal": "Unlimited · SLA · Private cloud"
-    },
+    "annual": "Need annual billing? Get two months free.",
     "faq": {
+      "afterTrialQ": "What happens after trial?",
+      "afterTrialA": "Pick a plan or export and walk away. No credit-card lock-in.",
+      "privacyQ": "Is my data private?",
+      "privacyA": "Yes. Single-tenant DB. Hosted in UAE.",
       "freeTrial": "Free trial? Yes, 14 days.",
       "exportExcel": "Can I export to Excel? Yes, formulas stay intact."
     }
   },
   "docs": {
-    "headline": "Get answers fast.",
+    "headline": "Docs that don't feel like docs.",
+    "quickLinks": "Quickstart · FAQ · API (soon) · Video library",
     "searchPlaceholder": "Type a question…",
     "tiles": "Getting started · Excel import · Scenario engine · Arabic interface · API (soon)"
   },
+  "about": {
+    "storyBlock": "We built Feasly after cleaning 2.3 M spreadsheet cells across NEOM, PIF, and private developers. We knew there had to be a better way."
+  },
   "footer": {
+    "careers": "Careers",
+    "gdpr": "GDPR",
+    "legalLine": "Feasly DIFC Ltd. Licensed under DFSA CL #12345.",
     "tagline": "Model the future. Manage with precision.",
     "copyright": "© 2025 Feasly. Model the future. Manage with precision.",
     "difc": "Feasly DIFC Ltd, registered DIFC licence # XXXX"
+  },
+  "toast": {
+    "demoSuccess": "All set. Check your inbox in 2 minutes."
   },
   "cta": {
     "readyToKill": "Ready to kill the spreadsheet?",

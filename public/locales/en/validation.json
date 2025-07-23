@@ -1,4 +1,3 @@
-/* Enhanced Validation Translations */
 {
   "missing_construction_cost": "Construction cost is missing or zero",
   "missing_gfa": "Total GFA (Gross Floor Area) is missing or zero", 
