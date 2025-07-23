@@ -19,12 +19,21 @@ import {
 
 const features = [
   {
+    title: "Smart Excel & Legacy File Import",
+    benefit: "Import your existing work in seconds",
+    description: "Upload Excel files (structured or raw) or import legacy EstateMaster .edmf files directly. Our AI handles the mapping and formatting automatically.",
+    icon: FileText,
+    color: "from-primary/20 to-primary-light/20",
+    iconColor: "text-primary",
+    quote: "Importing our 5-year-old EstateMaster model took just 30 seconds.",
+  },
+  {
     title: "Multi-Scenario Financial Modeling",
     benefit: "Test every possibility before you invest",
     description: "Create unlimited scenarios to stress-test your development projects. Compare optimistic, realistic, and pessimistic outcomes side-by-side with advanced sensitivity analysis.",
     icon: BarChart4,
-    color: "from-primary/20 to-primary-light/20",
-    iconColor: "text-primary",
+    color: "from-success/20 to-success-light/20",
+    iconColor: "text-success",
     quote: "We saved 6 months of analysis time with Feasly's scenario modeling.",
   },
   {

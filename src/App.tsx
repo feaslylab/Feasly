@@ -28,6 +28,7 @@ import FeaturesPage from "./pages/FeaturesPage";
 import PricingPage from "./pages/PricingPage";
 import UseCasesPage from "./pages/UseCasesPage";
 import DocsPage from "./pages/DocsPage";
+import DemoPage from "./pages/DemoPage";
 
 const queryClient = new QueryClient();
 
@@ -43,9 +44,10 @@ const AppRoutes = () => {
       <Routes>
         <Route path="/" element={<MarketingWrapper />} />
         <Route path="/features" element={<FeaturesPage />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/use-cases" element={<UseCasesPage />} />
-        <Route path="/docs" element={<DocsPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/use-cases" element={<UseCasesPage />} />
+          <Route path="/docs" element={<DocsPage />} />
+          <Route path="/demo" element={<DemoPage />} />
         <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.reload()} />} />
       </Routes>
     );
