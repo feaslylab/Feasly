@@ -52,6 +52,7 @@ import { ParallaxSection, MagneticButton, TextReveal, MorphingBackground, Stagge
 import { SpotlightCard, TypewriterText, ParticleBackground, GlitchText, ScrollCounter } from "@/components/marketing/AdvancedEffects";
 import { CursorTrail, InteractiveBlob, WaveBackground } from "@/components/marketing/NextLevelAnimations";
 import { ScrollProgressiveReveal, ScrollSection, ScrollCard, ScrollTextReveal } from "@/components/marketing/ScrollProgressiveReveal";
+import { GradientText } from "@/components/marketing/GradientText";
 
 const getFeatures = (t: (key: string) => string) => [
   {
@@ -148,7 +149,15 @@ export default function MarketingHome() {
         </div>
         <div className="container mx-auto px-4 relative z-10 content-layer">
           <h1 className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 text-foreground">
-            {t('home.hero.title')}
+            <GradientText animated={true}>
+              {t('home.hero.title')}
+            </GradientText>
+            <br />
+            <div className="text-center">
+              <GradientText animated={true}>
+                {t('home.hero.titleSpeed')}
+              </GradientText>
+            </div>
           </h1>
           <div className="text-center mb-8">
             <p className="hero-subtitle text-xl md:text-2xl text-muted-foreground">
