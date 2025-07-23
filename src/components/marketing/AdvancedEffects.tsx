@@ -1,0 +1,196 @@
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+
+// 8. Spotlight Effect
+export function SpotlightCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    setMousePosition({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className={`relative overflow-hidden ${className}`}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+    >
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            className="absolute pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              background: `radial-gradient(300px circle at ${mousePosition.x}px ${mousePosition.y}px, hsl(var(--primary)/0.2), transparent 60%)`,
+              left: 0,
+              top: 0,
+              right: 0,
+              bottom: 0,
+            }}
+          />
+        )}
+      </AnimatePresence>
+      {children}
+    </motion.div>
+  );
+}
+
+// 9. Typewriter Effect with Cursor
+export function TypewriterText({ 
+  text, 
+  speed = 50, 
+  className = "",
+  showCursor = true 
+}: { 
+  text: string; 
+  speed?: number; 
+  className?: string;
+  showCursor?: boolean;
+}) {
+  const [displayedText, setDisplayedText] = useState("");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayedText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, speed);
+      return () => clearTimeout(timeout);
+    }
+  }, [currentIndex, text, speed]);
+
+  return (
+    <span className={className}>
+      {displayedText}
+      {showCursor && (
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.8, repeat: Infinity, repeatType: "reverse" }}
+          className="inline-block w-0.5 h-[1em] bg-primary ml-1"
+        />
+      )}
+    </span>
+  );
+}
+
+// 10. Particle System
+export function ParticleBackground({ particleCount = 50 }: { particleCount?: number }) {
+  const particles = Array.from({ length: particleCount }, (_, i) => ({
+    id: i,
+    size: Math.random() * 4 + 1,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    duration: Math.random() * 3 + 2,
+    delay: Math.random() * 2,
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((particle) => (
+        <motion.div
+          key={particle.id}
+          className="absolute rounded-full bg-primary/30"
+          style={{
+            width: particle.size,
+            height: particle.size,
+            left: `${particle.x}%`,
+            top: `${particle.y}%`,
+          }}
+          animate={{
+            y: [0, -100, 0],
+            opacity: [0, 1, 0],
+            scale: [0, 1, 0],
+          }}
+          transition={{
+            duration: particle.duration,
+            repeat: Infinity,
+            delay: particle.delay,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// 11. 3D Tilt Effect
+export function TiltCard({ children, tiltStrength = 15 }: { children: React.ReactNode; tiltStrength?: number }) {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const tiltX = ((e.clientY - centerY) / rect.height) * tiltStrength;
+    const tiltY = ((e.clientX - centerX) / rect.width) * -tiltStrength;
+    
+    setTilt({ x: tiltX, y: tiltY });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      animate={{
+        rotateX: tilt.x,
+        rotateY: tilt.y,
+      }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      style={{
+        transformStyle: "preserve-3d",
+        perspective: "1000px",
+      }}
+      className="cursor-pointer"
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+// 12. Glitch Effect
+export function GlitchText({ text, className = "" }: { text: string; className?: string }) {
+  return (
+    <motion.div
+      className={`relative inline-block ${className}`}
+      whileHover="hover"
+    >
+      <motion.span
+        variants={{
+          hover: {
+            x: [0, -2, 2, 0],
+            textShadow: [
+              "0 0 0 hsl(var(--primary))",
+              "2px 0 0 hsl(var(--destructive)), -2px 0 0 hsl(var(--accent))",
+              "0 0 0 hsl(var(--primary))"
+            ],
+          }
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        {text}
+      </motion.span>
+    </motion.div>
+  );
+}
