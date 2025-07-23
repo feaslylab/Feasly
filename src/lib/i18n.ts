@@ -61,8 +61,7 @@ i18n
 const preloadCriticalTranslations = async () => {
   try {
     // Load marketing namespace for current language immediately
-    const currentLang = i18n.language || 'en';
-    await i18n.loadNamespaces(['marketing', 'common'], [currentLang]);
+    await i18n.loadNamespaces(['marketing', 'common']);
   } catch (error) {
     console.warn('Failed to preload critical translations:', error);
   }
