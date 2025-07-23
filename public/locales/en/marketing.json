@@ -72,6 +72,40 @@
     "shareable": {
       "title": "Shareable Projects",
       "description": "Send read-only project links securely."
+    },
+    "fullExport": {
+      "title": "Full Export History",
+      "description": "Every version saved and downloadable."
+    },
+    "publicDemo": {
+      "title": "Public Demo Access", 
+      "description": "Try without creating an account."
+    },
+    "mobileAccess": {
+      "title": "Mobile-Responsive Access",
+      "description": "Model from anywhere."
+    },
+    "assetTemplates": {
+      "title": "Asset-Specific Templates",
+      "description": "Residential, Retail, Hospitality, and more."
+    }
+  },
+  "advantages": {
+    "gccNative": {
+      "title": "GCC-Native",
+      "description": "Built specifically for the Gulf region's unique market conditions and regulations."
+    },
+    "saudiRegulation": {
+      "title": "Saudi Regulation Support", 
+      "description": "Fully compliant with Saudi Arabia's latest real estate investment requirements."
+    },
+    "aiInsights": {
+      "title": "AI-Powered Insights",
+      "description": "Native AI integration for predictive analytics and financial optimization."
+    },
+    "multiScenario": {
+      "title": "Multi-Scenario Planning",
+      "description": "Create, compare, and stress-test various financial scenarios with ease."
     }
   },
   "social": {

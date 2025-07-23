@@ -53,102 +53,70 @@ import { SpotlightCard, TypewriterText, ParticleBackground, GlitchText, ScrollCo
 import { CursorTrail, InteractiveBlob, WaveBackground } from "@/components/marketing/NextLevelAnimations";
 import { ScrollProgressiveReveal, ScrollSection, ScrollCard, ScrollTextReveal } from "@/components/marketing/ScrollProgressiveReveal";
 
-const features = [
+const getFeatures = (t: (key: string) => string) => [
   {
-    title: "Excel Import",
-    description: "Upload raw spreadsheets. Get a structured model instantly.",
+    title: t('features.excelImport.title'),
+    description: t('features.excelImport.description'),
     icon: Upload,
     color: "bg-gradient-to-r from-primary/10 to-primary-light/10",
     iconColor: "text-primary",
   },
   {
-    title: "EstateMaster File Support",
-    description: "Direct .edmf import, no rebuilds required.",
+    title: t('features.edmfSupport.title'),
+    description: t('features.edmfSupport.description'),
     icon: FileText,
     color: "bg-gradient-to-r from-success/10 to-success-light/10", 
     iconColor: "text-success",
   },
   {
-    title: "Scenario Modeling",
-    description: "Toggle Base, Optimistic, Pessimistic. Instantly.",
+    title: t('features.scenarioModeling.title'),
+    description: t('features.scenarioModeling.description'),
     icon: Expand,
     color: "bg-gradient-to-r from-warning/10 to-warning-light/10",
     iconColor: "text-warning",
   },
   {
-    title: "Real-Time Calculations",
-    description: "No waiting. Changes reflect across the model.",
+    title: t('features.realTimeCalc.title'),
+    description: t('features.realTimeCalc.description'),
     icon: LineChart,
     color: "bg-gradient-to-r from-secondary/10 to-accent/10",
     iconColor: "text-secondary",
   },
   {
-    title: "Arabic Language Support",
-    description: "RTL and native labels built in.",
+    title: t('features.arabicSupport.title'),
+    description: t('features.arabicSupport.description'),
     icon: Languages,
     color: "bg-gradient-to-r from-primary/10 to-secondary/10",
     iconColor: "text-primary",
   },
   {
-    title: "Shareable Projects", 
-    description: "Send read-only project links securely.",
+    title: t('features.shareable.title'),
+    description: t('features.shareable.description'),
     icon: Share2,
     color: "bg-gradient-to-r from-success/10 to-primary/10",
     iconColor: "text-success",
   },
-  {
-    title: "Full Export History",
-    description: "Every version saved and downloadable.",
-    icon: Download,
-    color: "bg-gradient-to-r from-warning/10 to-secondary/10",
-    iconColor: "text-warning",
-  },
-  {
-    title: "Public Demo Access",
-    description: "Try without creating an account.",
-    icon: Eye,
-    color: "bg-gradient-to-r from-primary/10 to-accent/10",
-    iconColor: "text-primary",
-  },
-  {
-    title: "Mobile-Responsive Access",
-    description: "Model from anywhere.",
-    icon: Smartphone,
-    color: "bg-gradient-to-r from-success/10 to-warning/10",
-    iconColor: "text-success",
-  },
-  {
-    title: "Asset-Specific Templates",
-    description: "Residential, Retail, Hospitality, and more.",
-    icon: Layout,
-    color: "bg-gradient-to-r from-secondary/10 to-primary/10",
-    iconColor: "text-secondary",
-  },
 ];
 
-const advantages = [
+const getAdvantages = (t: (key: string) => string) => [
   {
-    title: "GCC-Native",
-    description:
-      "Built specifically for the Gulf region's unique market conditions and regulations.",
+    title: t('advantages.gccNative.title'),
+    description: t('advantages.gccNative.description'),
     icon: Globe2,
   },
   {
-    title: "Saudi Regulation Support",
-    description:
-      "Fully compliant with Saudi Arabia's latest real estate investment requirements.",
+    title: t('advantages.saudiRegulation.title'),
+    description: t('advantages.saudiRegulation.description'),
     icon: Lock,
   },
   {
-    title: "AI-Powered Insights",
-    description:
-      "Native AI integration for predictive analytics and financial optimization.",
+    title: t('advantages.aiInsights.title'),
+    description: t('advantages.aiInsights.description'),
     icon: Cloud,
   },
   {
-    title: "Multi-Scenario Planning",
-    description:
-      "Create, compare, and stress-test various financial scenarios with ease.",
+    title: t('advantages.multiScenario.title'),
+    description: t('advantages.multiScenario.description'),
     icon: BarChart4,
   },
 ];
@@ -156,6 +124,9 @@ const advantages = [
 export default function MarketingHome() {
   const { isOnline } = usePWA();
   const { t } = useTranslation('marketing');
+  
+  const features = getFeatures(t);
+  const advantages = getAdvantages(t);
 
   useEffect(() => {
     // Scroll to top on page load
