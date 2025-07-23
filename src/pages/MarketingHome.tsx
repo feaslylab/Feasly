@@ -35,6 +35,7 @@ import { PersonaSelector } from "@/components/marketing/PersonaSelector";
 import { AIFeaturesVisual } from "@/components/marketing/AIFeaturesVisual";
 import { AnimatedHero } from "@/components/marketing/AnimatedHero";
 import { AnimatedFeatureCard } from "@/components/marketing/AnimatedFeatureCard";
+import { AnimatedRedX } from "@/components/marketing/AnimatedRedX";
 import { ScrollReveal } from "@/components/marketing/ScrollReveal";
 import { MobileScrollReveal } from "@/components/marketing/MobileOptimizedAnimations";
 import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
@@ -175,23 +176,47 @@ export default function MarketingHome() {
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
               Feasibility modeling is broken.
             </h2>
-            <div className="space-y-4 text-lg text-muted-foreground max-w-3xl mx-auto">
-              <div className="flex items-center gap-3 justify-center">
-                <div className="w-2 h-2 rounded-full bg-destructive flex-shrink-0"></div>
+            <div className="space-y-6 text-lg text-muted-foreground max-w-3xl mx-auto">
+              <motion.div 
+                className="flex items-center gap-4 justify-center"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
+                <AnimatedRedX delay={0.2} />
                 <p>Excel models are fragile, unstructured, and hard to audit</p>
-              </div>
-              <div className="flex items-center gap-3 justify-center">
-                <div className="w-2 h-2 rounded-full bg-destructive flex-shrink-0"></div>
+              </motion.div>
+              <motion.div 
+                className="flex items-center gap-4 justify-center"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <AnimatedRedX delay={0.4} />
                 <p>Legacy tools like EstateMaster are outdated, slow, and siloed</p>
-              </div>
-              <div className="flex items-center gap-3 justify-center">
-                <div className="w-2 h-2 rounded-full bg-destructive flex-shrink-0"></div>
+              </motion.div>
+              <motion.div 
+                className="flex items-center gap-4 justify-center"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <AnimatedRedX delay={0.6} />
                 <p>Most platforms ignore Arabic language and GCC-specific needs</p>
-              </div>
-              <div className="flex items-center gap-3 justify-center">
-                <div className="w-2 h-2 rounded-full bg-destructive flex-shrink-0"></div>
+              </motion.div>
+              <motion.div 
+                className="flex items-center gap-4 justify-center"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+              >
+                <AnimatedRedX delay={0.8} />
                 <p>Sharing models with stakeholders is a mess</p>
-              </div>
+              </motion.div>
             </div>
             <div className="mt-12">
               <h3 className="text-2xl font-bold text-primary">
