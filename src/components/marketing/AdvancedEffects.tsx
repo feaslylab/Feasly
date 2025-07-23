@@ -109,8 +109,8 @@ export function ParticleBackground({ particleCount = 8 }: { particleCount?: numb
             height: particle.size,
             left: `${particle.x}%`,
             top: `${particle.y}%`,
-            background: `radial-gradient(circle at 30% 30%, hsl(224 76% 48% / 0.4), hsl(224 76% 48% / 0.1))`,
-            boxShadow: `0 0 ${particle.size}px hsl(224 76% 48% / 0.2)`,
+            background: `radial-gradient(circle at 30% 30%, hsl(224 76% 48% / 0.6), hsl(224 76% 48% / 0.2))`,
+            boxShadow: `0 0 ${particle.size}px hsl(224 76% 48% / 0.3)`,
           }}
           animate={{
             y: [0, -80, 0],
