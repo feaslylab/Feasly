@@ -36,12 +36,14 @@ import { AIFeaturesVisual } from "@/components/marketing/AIFeaturesVisual";
 import { AnimatedHero } from "@/components/marketing/AnimatedHero";
 import { AnimatedFeatureCard } from "@/components/marketing/AnimatedFeatureCard";
 import { ScrollReveal } from "@/components/marketing/ScrollReveal";
+import { MobileScrollReveal } from "@/components/marketing/MobileOptimizedAnimations";
 import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
 import { PulsingButton, NumberCounter } from "@/components/marketing/AnimatedCTA";
 import { Card3D } from "@/components/ui/3d-card";
 import { AnimatedChart } from "@/components/marketing/AnimatedChart";
 import { CurrencyConverter } from "@/components/marketing/CurrencyConverter";
 import { TimelineProgress } from "@/components/marketing/TimelineProgress";
+import { AnimationTest } from "@/components/marketing/AnimationTest";
 import { motion } from "framer-motion";
 
 const features = [
@@ -298,7 +300,7 @@ export default function MarketingHome() {
       {/* Features Grid */}
       <section className="py-20 bg-muted/30" id="features">
         <div className="container mx-auto px-4">
-          <ScrollReveal>
+          <MobileScrollReveal>
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Core Features That Make Feasly Different
@@ -307,7 +309,7 @@ export default function MarketingHome() {
                 Built for real estate professionals who need accuracy, speed, and compliance in their financial modeling.
               </p>
             </div>
-          </ScrollReveal>
+          </MobileScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
@@ -321,7 +323,7 @@ export default function MarketingHome() {
             ))}
           </div>
 
-          <ScrollReveal delay={0.6}>
+          <MobileScrollReveal>
             <div className="text-center mt-12">
               <Button size="lg" asChild>
                 <Link to="/features">
@@ -329,7 +331,7 @@ export default function MarketingHome() {
                 </Link>
               </Button>
             </div>
-          </ScrollReveal>
+          </MobileScrollReveal>
         </div>
       </section>
 
@@ -564,6 +566,9 @@ export default function MarketingHome() {
             </div>
           </div>
         </section>
+
+      {/* Animation Test Component - Remove after debugging */}
+      <AnimationTest />
     </div>
   );
 }

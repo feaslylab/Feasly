@@ -52,6 +52,11 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
       variants={containerVariants}
       initial="hidden"
       animate="visible"
+      style={{
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)'
+      }}
     >
       {/* Typewriter subtitle */}
       <motion.div variants={itemVariants}>

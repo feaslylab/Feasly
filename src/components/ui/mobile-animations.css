@@ -1,0 +1,58 @@
+/* Mobile Animation Optimizations */
+@media (max-width: 1024px) {
+  /* Enable hardware acceleration for better mobile performance */
+  * {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+  }
+
+  /* Optimize animations for mobile */
+  [data-framer-motion] {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  /* Reduce animation complexity on mobile */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Allow animations only if user hasn't requested reduced motion */
+    .mobile-animation-enabled {
+      animation-duration: 0.3s !important;
+      transition-duration: 0.3s !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Disable animations if user prefers reduced motion */
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* Force hardware acceleration for key elements */
+.force-acceleration {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-perspective: 1000;
+  perspective: 1000;
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* This targets iOS Safari specifically */
+  .ios-animation-fix {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    will-change: transform, opacity;
+  }
+}

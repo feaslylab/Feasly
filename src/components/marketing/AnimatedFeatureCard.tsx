@@ -12,7 +12,11 @@ export function AnimatedFeatureCard({ children, index, className = "" }: Animate
     <motion.div
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ 
+        once: true, 
+        margin: "-20px",
+        amount: 0.1
+      }}
       transition={{ 
         duration: 0.5, 
         delay: index * 0.1,
@@ -24,6 +28,11 @@ export function AnimatedFeatureCard({ children, index, className = "" }: Animate
         transition: { duration: 0.2 }
       }}
       className={`group cursor-pointer ${className}`}
+      style={{
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)'
+      }}
     >
       <div className="relative overflow-hidden rounded-xl border border-border bg-card p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10">
         {/* Hover glow effect */}

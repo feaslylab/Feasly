@@ -38,9 +38,18 @@ export function ScrollReveal({
     <motion.div
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-100px" }}
+      viewport={{ 
+        once: true, 
+        margin: "-50px",
+        amount: 0.1
+      }}
       variants={variants}
       className={className}
+      style={{
+        willChange: 'transform, opacity',
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)'
+      }}
     >
       {children}
     </motion.div>
