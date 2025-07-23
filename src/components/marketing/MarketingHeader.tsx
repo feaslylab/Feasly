@@ -6,6 +6,7 @@ import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 const navLinks = [
   { name: "Features", href: "#features", isAnchor: true },
@@ -25,6 +26,7 @@ const handleAnchorClick = (href: string, setMobileMenuOpen?: (open: boolean) => 
 };
 
 export function MarketingHeader() {
+  const { t } = useTranslation('marketing');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
