@@ -176,9 +176,9 @@ export default function MarketingHome() {
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
               Feasibility modeling is broken.
             </h2>
-            <div className="space-y-6 text-lg text-muted-foreground max-w-3xl mx-auto">
+            <div className="space-y-6 text-lg text-muted-foreground max-w-2xl mx-auto">
               <motion.div 
-                className="flex items-start gap-4 text-left"
+                className="flex items-start gap-4"
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -190,7 +190,7 @@ export default function MarketingHome() {
                 <p className="flex-1">Excel models are fragile, unstructured, and hard to audit</p>
               </motion.div>
               <motion.div 
-                className="flex items-start gap-4 text-left"
+                className="flex items-start gap-4"
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -202,7 +202,7 @@ export default function MarketingHome() {
                 <p className="flex-1">Legacy tools like EstateMaster are outdated, slow, and siloed</p>
               </motion.div>
               <motion.div 
-                className="flex items-start gap-4 text-left"
+                className="flex items-start gap-4"
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -214,7 +214,7 @@ export default function MarketingHome() {
                 <p className="flex-1">Most platforms ignore Arabic language and GCC-specific needs</p>
               </motion.div>
               <motion.div 
-                className="flex items-start gap-4 text-left"
+                className="flex items-start gap-4"
                 initial={{ opacity: 0, x: -50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
