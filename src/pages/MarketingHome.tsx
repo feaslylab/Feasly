@@ -179,7 +179,7 @@ export default function MarketingHome() {
           </h1>
           <div className="text-center mb-8">
             <p className="hero-subtitle text-xl md:text-2xl text-muted-foreground">
-              Feasly is the fastest way to model, compare, and share development feasibility — in real time, without Excel.
+              Feasly is the fastest way to model, compare, and share development feasibility, in real time, without Excel.
             </p>
           </div>
           <ParallaxSection speed={0.3}>
