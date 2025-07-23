@@ -87,16 +87,15 @@ export function TypewriterText({
   );
 }
 
-// 10. Particle System - Enhanced Floating Spheres
-export function ParticleBackground({ particleCount = 20 }: { particleCount?: number }) {
+// 10. Particle System - Performance Optimized
+export function ParticleBackground({ particleCount = 8 }: { particleCount?: number }) {
   const particles = Array.from({ length: particleCount }, (_, i) => ({
     id: i,
-    size: Math.random() * 20 + 8, // Larger spheres (8px to 28px)
+    size: Math.random() * 12 + 6, // Moderate size (6px to 18px)
     x: Math.random() * 100,
     y: Math.random() * 100,
-    duration: Math.random() * 8 + 6, // Slower movement (6-14s)
-    delay: Math.random() * 4,
-    rotateSpeed: Math.random() * 20 + 5, // Random rotation speed
+    duration: Math.random() * 6 + 8, // Slower, less frequent updates
+    delay: Math.random() * 3,
   }));
 
   return (
@@ -104,27 +103,24 @@ export function ParticleBackground({ particleCount = 20 }: { particleCount?: num
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
-          className="absolute rounded-full"
+          className="absolute rounded-full bg-primary/20 backdrop-blur-sm"
           style={{
             width: particle.size,
             height: particle.size,
             left: `${particle.x}%`,
             top: `${particle.y}%`,
-            background: `radial-gradient(circle at 30% 30%, hsl(var(--primary) / 0.6), hsl(var(--primary) / 0.2), hsl(var(--primary) / 0.05))`,
-            boxShadow: `0 0 ${particle.size / 2}px hsl(var(--primary) / 0.3)`,
+            boxShadow: `0 0 ${particle.size}px hsl(var(--primary) / 0.1)`,
           }}
           animate={{
-            y: [0, -50, -100, -50, 0],
-            x: [0, 20, -20, 0],
-            opacity: [0.2, 0.8, 1, 0.8, 0.2],
-            scale: [0.5, 1, 1.2, 1, 0.5],
-            rotate: [0, particle.rotateSpeed, particle.rotateSpeed * 2],
+            y: [0, -80, 0],
+            opacity: [0.3, 0.7, 0.3],
+            scale: [0.8, 1.1, 0.8],
           }}
           transition={{
             duration: particle.duration,
             repeat: Infinity,
             delay: particle.delay,
-            ease: "easeInOut",
+            ease: "linear",
           }}
         />
       ))}
