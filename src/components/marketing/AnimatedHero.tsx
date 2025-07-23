@@ -1,8 +1,10 @@
+
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import { useEffect, useState } from "react";
+import { GradientText } from "./GradientText";
 
 interface AnimatedHeroProps {
   title: string;
@@ -70,23 +72,12 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
         </p>
       </motion.div>
 
-      {/* Main title with gradient animation */}
+      {/* Main title with proper color */}
       <motion.div variants={itemVariants}>
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
-          <motion.span
-            className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent"
-            animate={{
-              backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            style={{ backgroundSize: "200% 200%" }}
-          >
+        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-foreground">
+          <GradientText>
             {title}
-          </motion.span>
+          </GradientText>
         </h1>
       </motion.div>
 

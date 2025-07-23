@@ -1,3 +1,4 @@
+
 /* Critical Visual Fixes for Site-Wide Issues */
 
 /* Prevent scroll sections from disappearing completely */
@@ -14,15 +15,7 @@
   z-index: 20;
   position: relative;
   display: block !important;
-}
-
-/* Fix gradient text visibility across all pages */
-.bg-gradient-to-r.bg-clip-text {
-  background: linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) 50%, hsl(var(--primary-light)) 100%) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  color: transparent !important;
-  text-shadow: none;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Ensure proper text alignment for all text elements */
@@ -41,12 +34,14 @@
   opacity: 1 !important;
   transform: none !important;
   visibility: visible !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Override problematic animation states */
 .text-4xl, .text-3xl, .text-6xl {
   opacity: 1 !important;
   visibility: visible !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Fix z-index layering issues */
@@ -83,34 +78,6 @@
   overflow-y: auto;
 }
 
-/* Ensure proper contrast for text */
-.text-reveal {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  filter: none !important;
-  opacity: 1 !important;
-}
-
-/* Hero text visibility fix */
-.hero-title {
-  opacity: 1 !important;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  z-index: 20;
-  position: relative;
-}
-
-/* Ensure text reveals are always visible */
-.text-center {
-  display: block !important;
-  text-align: center !important;
-}
-
-/* Fix for gradient text visibility */
-.bg-gradient-to-r {
-  background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary))) !important;
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-
 /* Fix morphing background performance */
 .morphing-bg {
   will-change: border-radius, transform;
@@ -130,9 +97,12 @@
   overflow: hidden;
 }
 
-/* Global text alignment fixes */
+/* Global text visibility fixes */
 h1, h2, h3, h4, h5, h6 {
   text-align: inherit !important;
+  color: hsl(var(--foreground)) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* Ensure critical text elements are visible */
@@ -141,19 +111,7 @@ h1, h2, h3, h4, h5, h6 {
 h1, h2, h3 {
   opacity: 1 !important;
   visibility: visible !important;
-}
-
-/* Override any problematic animation initial states */
-[style*="opacity: 0"] {
-  opacity: 1 !important;
-}
-
-/* Force visibility for gradient text */
-.text-transparent {
-  opacity: 1 !important;
-  background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--primary-light))) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Center alignment for specific text elements */
@@ -164,6 +122,7 @@ h1, h2, h3 {
   margin-left: auto !important;
   margin-right: auto !important;
   display: block !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Fix table responsiveness */
@@ -182,4 +141,24 @@ h1, h2, h3 {
 [data-framer-motion] {
   transform-origin: center;
   will-change: transform, opacity;
+}
+
+/* Fix any remaining text visibility issues */
+p, span, div, a, button {
+  color: inherit;
+}
+
+/* Ensure muted text has proper contrast */
+.text-muted-foreground {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Fix primary text color */
+.text-primary {
+  color: hsl(var(--primary)) !important;
+}
+
+/* Ensure secondary text is visible */
+.text-secondary {
+  color: hsl(var(--secondary-foreground)) !important;
 }
