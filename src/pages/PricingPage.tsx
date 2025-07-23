@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -132,6 +133,8 @@ const features = [
 ];
 
 export default function PricingPage() {
+  const { t } = useTranslation('marketing');
+  
   useEffect(() => {
     window.scrollTo(0, 0);
     document.title = "Pricing | Feasly";
@@ -178,7 +181,7 @@ export default function PricingPage() {
                     >
                       {plan.popular && (
                         <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
-                          Most Popular
+                          {t('common.mostPopular')}
                         </Badge>
                       )}
                       
@@ -225,7 +228,7 @@ export default function PricingPage() {
             {/* Additional info below pricing */}
               <ScrollProgressiveReveal direction="fade" delay={0.8}>
                 <div className="max-w-4xl mx-auto text-center mt-12 space-y-4">
-                  <p className="text-muted-foreground text-sm">Free trial? Yes, 14 days. Can I export to Excel? Yes, formulas stay intact.</p>
+                  <p className="text-muted-foreground text-sm">{t('pricing.faq.freeTrial')} {t('pricing.faq.exportExcel')}</p>
                 </div>
               </ScrollProgressiveReveal>
           </div>

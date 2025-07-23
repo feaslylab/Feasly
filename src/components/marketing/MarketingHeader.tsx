@@ -105,7 +105,7 @@ export function MarketingHeader() {
             variant="ghost"
             size="icon"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle menu"
+            aria-label={t('common.toggleMenu')}
           >
             {mobileMenuOpen ? <X /> : <Menu />}
           </Button>
