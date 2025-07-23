@@ -87,7 +87,8 @@ export function MarketingFooter() {
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-sm text-muted-foreground">
             <p>© {new Date().getFullYear()} Feasly. Model the future. Manage with precision.</p>
-            <p className="text-xs mt-1">Feasly DIFC Ltd, registered DIFC licence # XXXX</p>
+            <p className="text-xs mt-1">Feasly Technologies (DIFC) Ltd</p>
+            <p className="text-xs">Registered office: Unit GA, Level 1 Gate Avenue - South Zone, DIFC</p>
           </div>
           <div className="flex space-x-6">
             <a href="#linkedin" className="text-muted-foreground hover:text-foreground">
