@@ -80,6 +80,12 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
           <GradientText animated={true}>
             {title}
           </GradientText>
+          <br />
+          <div className="text-center">
+            <GradientText animated={true}>
+              {t('home.hero.titleSpeed')}
+            </GradientText>
+          </div>
         </h1>
       </motion.div>
 
