@@ -237,8 +237,12 @@ export function ScrollCounter({
 export function GlitchText({ text, className = "" }: { text: string; className?: string }) {
   return (
     <motion.div
-      className={`relative inline-block ${className}`}
+      className={`relative text-center ${className}`}
       whileHover="hover"
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
     >
       <motion.span
         variants={{
@@ -252,6 +256,7 @@ export function GlitchText({ text, className = "" }: { text: string; className?:
           }
         }}
         transition={{ duration: 0.3 }}
+        className="block"
       >
         {text}
       </motion.span>

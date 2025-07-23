@@ -59,10 +59,10 @@ export function TextReveal({ text, className = "" }: { text: string; className?:
   return (
     <motion.div className={`overflow-hidden ${className}`}>
       <motion.div
-        initial={{ y: "100%" }}
-        whileInView={{ y: 0 }}
+        initial={{ y: "50%", opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
         viewport={{ once: true, margin: "-20px" }}
-        transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
+        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
       >
         {text}
       </motion.div>
@@ -75,7 +75,7 @@ export function MorphingBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden">
       <motion.div
-        className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] opacity-10"
+        className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] opacity-5 morphing-bg"
         animate={{
           borderRadius: [
             "60% 40% 30% 70% / 60% 30% 70% 40%",

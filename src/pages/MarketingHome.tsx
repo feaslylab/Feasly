@@ -171,7 +171,7 @@ export default function MarketingHome() {
           <MorphingBackground />
         </div>
         <div className="container mx-auto px-4 relative z-10 content-layer">
-          <TextReveal text="Stop building feasibility models in Excel" className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent text-reveal" />
+          <TextReveal text="Stop building feasibility models in Excel" className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 bg-gradient-to-r from-primary via-primary to-primary-light bg-clip-text text-transparent text-reveal" />
           <div className="text-center mb-8">
             <TypewriterText 
               text="Next-gen real estate financial modeling" 
