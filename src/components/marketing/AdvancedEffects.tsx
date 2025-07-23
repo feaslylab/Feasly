@@ -169,6 +169,70 @@ export function TiltCard({ children, tiltStrength = 15 }: { children: React.Reac
   );
 }
 
+// 15. Scroll-Triggered Counter
+export function ScrollCounter({ 
+  target, 
+  duration = 2, 
+  prefix = "", 
+  suffix = "" 
+}: { 
+  target: number; 
+  duration?: number; 
+  prefix?: string; 
+  suffix?: string; 
+}) {
+  const [count, setCount] = useState(0);
+  const [hasStarted, setHasStarted] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasStarted) {
+          setHasStarted(true);
+          const startTime = Date.now();
+          const startValue = 0;
+
+          const animate = () => {
+            const elapsed = Date.now() - startTime;
+            const progress = Math.min(elapsed / (duration * 1000), 1);
+            const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+            const current = Math.floor(startValue + (target - startValue) * easeOutQuart);
+            
+            setCount(current);
+            
+            if (progress < 1) {
+              requestAnimationFrame(animate);
+            }
+          };
+          
+          requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, [target, duration, hasStarted]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, scale: 0.5 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
+      className="text-4xl font-bold"
+    >
+      {prefix}{count.toLocaleString()}{suffix}
+    </motion.div>
+  );
+}
+
 // 12. Glitch Effect
 export function GlitchText({ text, className = "" }: { text: string; className?: string }) {
   return (

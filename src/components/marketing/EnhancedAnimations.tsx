@@ -183,3 +183,45 @@ export function ProgressiveBlur({ children }: { children: React.ReactNode }) {
     </motion.div>
   );
 }
+
+// 11. 3D Tilt Effect
+export function TiltCard({ children, tiltStrength = 15 }: { children: React.ReactNode; tiltStrength?: number }) {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    const tiltX = ((e.clientY - centerY) / rect.height) * tiltStrength;
+    const tiltY = ((e.clientX - centerX) / rect.width) * -tiltStrength;
+    
+    setTilt({ x: tiltX, y: tiltY });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      animate={{
+        rotateX: tilt.x,
+        rotateY: tilt.y,
+      }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      style={{
+        transformStyle: "preserve-3d",
+        perspective: "1000px",
+      }}
+      className="cursor-pointer"
+    >
+      {children}
+    </motion.div>
+  );
+}

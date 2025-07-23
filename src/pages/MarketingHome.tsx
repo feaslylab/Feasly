@@ -46,6 +46,10 @@ import { CurrencyConverter } from "@/components/marketing/CurrencyConverter";
 import { TimelineProgress } from "@/components/marketing/TimelineProgress";
 import { AnimationTest } from "@/components/marketing/AnimationTest";
 import { motion } from "framer-motion";
+// Enhanced Animations
+import { ParallaxSection, MagneticButton, TextReveal, MorphingBackground, StaggerGrid, TiltCard } from "@/components/marketing/EnhancedAnimations";
+import { SpotlightCard, TypewriterText, ParticleBackground, GlitchText, ScrollCounter } from "@/components/marketing/AdvancedEffects";
+import { CursorTrail, InteractiveBlob, WaveBackground } from "@/components/marketing/NextLevelAnimations";
 
 const features = [
   {
@@ -157,25 +161,55 @@ export default function MarketingHome() {
 
   return (
     <div className="flex flex-col">
+      {/* Cursor Trail Effect */}
+      <CursorTrail />
+      
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-        <AnimatedBackground />
+        <MorphingBackground />
+        <ParticleBackground particleCount={30} />
         <div className="container mx-auto px-4 relative z-10">
-          <AnimatedHero
-            title="Stop building feasibility models in Excel"
-            subtitle="Next-gen real estate financial modeling"
-            description="Replace spreadsheets with intelligent modeling. Get accurate projections, real-time collaboration, and compliance-ready outputs for complex development projects."
-          />
+          <TextReveal text="Stop building feasibility models in Excel" className="text-5xl md:text-7xl font-bold text-center mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent" />
+          <div className="text-center mb-8">
+            <TypewriterText 
+              text="Next-gen real estate financial modeling" 
+              className="text-xl md:text-2xl text-muted-foreground"
+              speed={60}
+            />
+          </div>
+          <ParallaxSection speed={0.3}>
+            <div className="text-center space-y-8">
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                Replace spreadsheets with intelligent modeling. Get accurate projections, real-time collaboration, and compliance-ready outputs for complex development projects.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-6">
+                <MagneticButton strength={0.2}>
+                  <PulsingButton size="lg" className="px-8 py-4 text-lg" asChild>
+                    <Link to="/demo">
+                      <Play className="mr-2 h-5 w-5" />
+                      Try the Demo
+                    </Link>
+                  </PulsingButton>
+                </MagneticButton>
+                <MagneticButton strength={0.15}>
+                  <Button variant="outline" size="lg" className="px-8 py-4 text-lg" asChild>
+                    <Link to="/welcome">
+                      Create Account <ArrowRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </MagneticButton>
+              </div>
+            </div>
+          </ParallaxSection>
         </div>
+        <WaveBackground />
       </section>
 
       {/* The Problem We Solve */}
       <section className="py-20 bg-muted/20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-              Feasibility modeling is broken.
-            </h2>
+            <GlitchText text="Feasibility modeling is broken." className="text-3xl md:text-4xl font-bold mb-6 text-center" />
             <div className="space-y-6 text-lg text-muted-foreground max-w-2xl mx-auto">
               <motion.div 
                 className="flex items-start gap-4"
@@ -299,9 +333,10 @@ export default function MarketingHome() {
               </div>
             </div>
 
-            {/* Visual */}
+            {/* Visual with Interactive Blob */}
             <div className="relative">
-              <div className="bg-card rounded-2xl border border-border shadow-xl overflow-hidden">
+              <InteractiveBlob size={300} />
+              <div className="bg-card rounded-2xl border border-border shadow-xl overflow-hidden relative z-10">
                 <div className="aspect-[4/3] w-full bg-gradient-to-br from-background to-muted/50 flex items-center justify-center">
                   <div className="text-center space-y-3">
                     <LineChart className="h-12 w-12 text-primary mx-auto" />
@@ -310,7 +345,7 @@ export default function MarketingHome() {
                 </div>
               </div>
               {/* Floating card */}
-              <div className="absolute -bottom-4 -left-4 bg-card border border-border rounded-xl p-4 shadow-lg">
+              <div className="absolute -bottom-4 -left-4 bg-card border border-border rounded-xl p-4 shadow-lg z-20">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-success"></div>
                   <span className="text-sm font-medium">Live Updates</span>
@@ -344,17 +379,19 @@ export default function MarketingHome() {
             </div>
           </MobileScrollReveal>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <StaggerGrid columns={3}>
             {features.map((feature, index) => (
-              <AnimatedFeatureCard key={feature.title} index={index}>
-                <div className={cn("p-4 rounded-lg mb-4 w-fit", feature.color)}>
-                  <feature.icon className={cn("h-8 w-8", feature.iconColor)} />
+              <SpotlightCard key={feature.title} className="h-full">
+                <div className="p-6">
+                  <div className={cn("p-4 rounded-lg mb-4 w-fit", feature.color)}>
+                    <feature.icon className={cn("h-8 w-8", feature.iconColor)} />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                  <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
-              </AnimatedFeatureCard>
+              </SpotlightCard>
             ))}
-          </div>
+          </StaggerGrid>
 
           <MobileScrollReveal>
             <div className="text-center mt-12">
@@ -392,47 +429,55 @@ export default function MarketingHome() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300">
-              <div className="bg-primary/10 p-3 rounded-full">
-                <Building2 className="h-6 w-6 text-primary" />
+          <StaggerGrid columns={2}>
+            <TiltCard>
+              <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300 h-full">
+                <div className="bg-primary/10 p-3 rounded-full">
+                  <Building2 className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Designed for $100M+ real estate developments</h3>
+                  <p className="text-muted-foreground">Handle complex, large-scale projects with confidence and precision.</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Designed for $100M+ real estate developments</h3>
-                <p className="text-muted-foreground">Handle complex, large-scale projects with confidence and precision.</p>
-              </div>
-            </div>
+            </TiltCard>
             
-            <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300">
-              <div className="bg-success/10 p-3 rounded-full">
-                <BarChart4 className="h-6 w-6 text-success" />
+            <TiltCard>
+              <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300 h-full">
+                <div className="bg-success/10 p-3 rounded-full">
+                  <BarChart4 className="h-6 w-6 text-success" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Used by feasibility teams, analysts, and investment professionals</h3>
+                  <p className="text-muted-foreground">Trusted by the experts who build the future of real estate.</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Used by feasibility teams, analysts, and investment professionals</h3>
-                <p className="text-muted-foreground">Trusted by the experts who build the future of real estate.</p>
-              </div>
-            </div>
+            </TiltCard>
             
-            <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300">
-              <div className="bg-warning/10 p-3 rounded-full">
-                <Globe2 className="h-6 w-6 text-warning" />
+            <TiltCard>
+              <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300 h-full">
+                <div className="bg-warning/10 p-3 rounded-full">
+                  <Globe2 className="h-6 w-6 text-warning" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Optimized for GCC mandates and Arabic-first workflows</h3>
+                  <p className="text-muted-foreground">Built specifically for the Gulf region's unique market conditions.</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Optimized for GCC mandates and Arabic-first workflows</h3>
-                <p className="text-muted-foreground">Built specifically for the Gulf region's unique market conditions.</p>
-              </div>
-            </div>
+            </TiltCard>
             
-            <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300">
-              <div className="bg-secondary/10 p-3 rounded-full">
-                <Layers className="h-6 w-6 text-secondary" />
+            <TiltCard>
+              <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300 h-full">
+                <div className="bg-secondary/10 p-3 rounded-full">
+                  <Layers className="h-6 w-6 text-secondary" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold mb-2">Handles project types from single towers to giga-project portfolios</h3>
+                  <p className="text-muted-foreground">Scale from individual developments to massive portfolio analysis.</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Handles project types from single towers to giga-project portfolios</h3>
-                <p className="text-muted-foreground">Scale from individual developments to massive portfolio analysis.</p>
-              </div>
-            </div>
-          </div>
+            </TiltCard>
+          </StaggerGrid>
         </div>
       </section>
 
@@ -535,7 +580,7 @@ export default function MarketingHome() {
                 <ScrollReveal delay={0.2}>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-primary mb-2">
-                      <NumberCounter target={15} suffix="min" />
+                      <ScrollCounter target={15} suffix="min" />
                     </div>
                     <p className="text-sm text-muted-foreground">Average setup time from Excel import</p>
                   </div>
@@ -543,7 +588,7 @@ export default function MarketingHome() {
                 <ScrollReveal delay={0.4}>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-primary mb-2">
-                      <NumberCounter target={3} suffix="x" />
+                      <ScrollCounter target={3} suffix="x" />
                     </div>
                     <p className="text-sm text-muted-foreground">Faster scenario analysis</p>
                   </div>
@@ -551,7 +596,7 @@ export default function MarketingHome() {
                 <ScrollReveal delay={0.6}>
                   <div className="text-center">
                     <div className="text-3xl font-bold text-primary mb-2">
-                      <NumberCounter target={100} suffix="%" />
+                      <ScrollCounter target={100} suffix="%" />
                     </div>
                     <p className="text-sm text-muted-foreground">Audit-ready version history</p>
                   </div>
