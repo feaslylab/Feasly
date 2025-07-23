@@ -167,17 +167,17 @@ export default function MarketingHome() {
       
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
           <MorphingBackground />
         </div>
         <div className="container mx-auto px-4 relative z-10 content-layer">
-          <TextReveal text="Stop building feasibility models in Excel" className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 bg-gradient-to-r from-primary via-primary to-primary-light bg-clip-text text-transparent text-reveal" />
+          <h1 className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 bg-gradient-to-r from-primary via-primary to-primary-light bg-clip-text text-transparent">
+            Stop building feasibility models in Excel
+          </h1>
           <div className="text-center mb-8">
-            <TypewriterText 
-              text="Next-gen real estate financial modeling" 
-              className="hero-subtitle text-xl md:text-2xl text-muted-foreground"
-              speed={60}
-            />
+            <p className="hero-subtitle text-xl md:text-2xl text-muted-foreground">
+              Next-gen real estate financial modeling
+            </p>
           </div>
           <ParallaxSection speed={0.3}>
             <div className="text-center space-y-8">
@@ -346,7 +346,9 @@ export default function MarketingHome() {
             {/* Visual with Interactive Blob */}
             <ScrollProgressiveReveal direction="right" delay={0.6}>
               <div className="relative">
-                <InteractiveBlob size={300} />
+                <div className="absolute inset-0 opacity-30 pointer-events-none z-0">
+                  <InteractiveBlob size={300} />
+                </div>
                 <div className="bg-card rounded-2xl border border-border shadow-xl overflow-hidden relative z-10">
                   <div className="aspect-[4/3] w-full bg-gradient-to-br from-background to-muted/50 flex items-center justify-center">
                     <div className="text-center space-y-3">
