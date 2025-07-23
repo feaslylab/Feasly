@@ -1,3 +1,4 @@
+
 @import './components/ui/feasly-design-system.css';
 @import './components/ui/mobile-animations.css';
 @import './components/ui/visual-fixes.css';
@@ -378,5 +379,19 @@
   /* Cursor hiding for custom cursor */
   .custom-cursor * {
     cursor: none !important;
+  }
+
+  /* Gradient Animation */
+  .animate-gradient-x {
+    animation: gradient-x 3s ease infinite;
+  }
+
+  @keyframes gradient-x {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
   }
 }
