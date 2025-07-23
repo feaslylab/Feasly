@@ -162,15 +162,15 @@ export default function PricingPage() {
         <ScrollSection background="muted" className="py-20">
           <div className="container mx-auto px-4">
             <ScrollProgressiveReveal direction="up" delay={0.3} stagger={true} staggerDelay={0.2}>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
                 {plans.map((plan, index) => (
                   <ScrollCard key={index} index={index} totalCards={plans.length}>
                     <SpotlightCard 
                       className={`relative rounded-xl border ${
                         plan.popular 
-                          ? 'border-primary shadow-xl scale-105' 
+                          ? 'border-primary shadow-xl lg:scale-105' 
                           : 'border-border'
-                      } bg-background p-8 h-full`}
+                      } bg-background p-6 h-full flex flex-col`}
                     >
                       {plan.popular && (
                         <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
@@ -178,16 +178,16 @@ export default function PricingPage() {
                         </Badge>
                       )}
                       
-                      <div className="text-center mb-8">
-                        <div className={`bg-gradient-to-r ${plan.color} p-4 rounded-full w-fit mx-auto mb-4`}>
-                          <plan.icon className="h-8 w-8 text-primary" />
+                      <div className="text-center mb-6 flex-shrink-0">
+                        <div className={`bg-gradient-to-r ${plan.color} p-3 rounded-full w-fit mx-auto mb-4`}>
+                          <plan.icon className="h-6 w-6 text-primary" />
                         </div>
-                        <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                        <p className="text-muted-foreground mb-4">{plan.description}</p>
-                        <div className="mb-6">
-                          <span className="text-4xl font-bold">{plan.price}</span>
+                        <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
+                        <p className="text-muted-foreground mb-3 text-sm">{plan.description}</p>
+                        <div className="mb-4">
+                          <span className="text-3xl font-bold">{plan.price}</span>
                           {plan.period && (
-                            <span className="text-muted-foreground ml-2">/{plan.period}</span>
+                            <span className="text-muted-foreground ml-1 text-sm">/{plan.period}</span>
                           )}
                         </div>
                         {plan.name === 'Enterprise' ? (
@@ -195,6 +195,7 @@ export default function PricingPage() {
                             <Button 
                               className="w-full" 
                               variant={plan.ctaVariant}
+                              size="sm"
                               asChild
                             >
                               <Link to="#contact">
@@ -203,7 +204,7 @@ export default function PricingPage() {
                             </Button>
                           </MagneticButton>
                         ) : (
-                          <div className="space-y-3">
+                          <div className="space-y-2">
                             <WaitlistForm 
                               placeholder="Enter your email"
                               buttonText="Join Waitlist"
@@ -214,11 +215,11 @@ export default function PricingPage() {
                         )}
                       </div>
 
-                      <div className="space-y-3">
+                      <div className="space-y-2 flex-grow">
                         {plan.features.map((feature, featureIndex) => (
-                          <div key={featureIndex} className="flex items-center gap-3">
-                            <Check className="h-5 w-5 text-success flex-shrink-0" />
-                            <span className="text-sm">{feature}</span>
+                          <div key={featureIndex} className="flex items-start gap-2">
+                            <Check className="h-4 w-4 text-success flex-shrink-0 mt-0.5" />
+                            <span className="text-xs leading-relaxed">{feature}</span>
                           </div>
                         ))}
                       </div>
@@ -230,164 +231,196 @@ export default function PricingPage() {
             
             {/* Additional info below pricing */}
             <ScrollProgressiveReveal direction="fade" delay={0.8}>
-              <div className="max-w-4xl mx-auto text-center mt-16 space-y-4">
-                <p className="text-muted-foreground">Free onboarding included. Bulk licensing available. No credit card required.</p>
+              <div className="max-w-4xl mx-auto text-center mt-12 space-y-4">
+                <p className="text-muted-foreground text-sm">Free onboarding included. Bulk licensing available. No credit card required.</p>
               </div>
             </ScrollProgressiveReveal>
           </div>
         </ScrollSection>
 
         {/* Feature Comparison Table */}
-        <section className="py-20">
+        <ScrollSection className="py-20">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  Detailed Feature Comparison
-                </h2>
-                <p className="text-xl text-muted-foreground">
-                  See exactly what's included in each plan
-                </p>
-              </div>
+              <ScrollProgressiveReveal direction="up" delay={0.2}>
+                <div className="text-center mb-16">
+                  <ScrollTextReveal 
+                    text="Detailed Feature Comparison"
+                    className="text-3xl md:text-4xl font-bold mb-4"
+                    cascade={true}
+                  />
+                  <p className="text-xl text-muted-foreground">
+                    See exactly what's included in each plan
+                  </p>
+                </div>
+              </ScrollProgressiveReveal>
 
-              <div className="overflow-x-auto">
-                <table className="w-full border border-border rounded-lg overflow-hidden">
-                  <thead className="bg-muted">
-                    <tr>
-                      <th className="text-left p-4 font-medium">Features</th>
-                      <th className="text-center p-4 font-medium">Starter</th>
-                      <th className="text-center p-4 font-medium">Pro</th>
-                      <th className="text-center p-4 font-medium">Enterprise</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {features.map((category, categoryIndex) => (
-                      <React.Fragment key={categoryIndex}>
-                        <tr className="bg-muted/50">
-                          <td colSpan={4} className="p-4 font-semibold text-sm uppercase tracking-wide">
-                            {category.category}
-                          </td>
+              <ScrollProgressiveReveal direction="scale" delay={0.4}>
+                <div className="overflow-x-auto">
+                  <SpotlightCard className="border border-border rounded-lg overflow-hidden bg-background">
+                    <table className="w-full">
+                      <thead className="bg-muted">
+                        <tr>
+                          <th className="text-left p-3 md:p-4 font-medium text-sm">Features</th>
+                          <th className="text-center p-3 md:p-4 font-medium text-sm">Starter</th>
+                          <th className="text-center p-3 md:p-4 font-medium text-sm">Pro</th>
+                          <th className="text-center p-3 md:p-4 font-medium text-sm">Enterprise</th>
                         </tr>
-                        {category.items.map((item, itemIndex) => (
-                          <tr key={itemIndex} className="border-t border-border">
-                            <td className="p-4">{item.name}</td>
-                            <td className="p-4 text-center">
-                              {typeof item.pilot === 'boolean' ? (
-                                item.pilot ? (
-                                  <Check className="h-5 w-5 text-success mx-auto" />
-                                ) : (
-                                  <span className="text-muted-foreground">—</span>
-                                )
-                              ) : (
-                                <span className="text-sm">{item.pilot}</span>
-                              )}
-                            </td>
-                            <td className="p-4 text-center">
-                              {typeof item.pro === 'boolean' ? (
-                                item.pro ? (
-                                  <Check className="h-5 w-5 text-success mx-auto" />
-                                ) : (
-                                  <span className="text-muted-foreground">—</span>
-                                )
-                              ) : (
-                                <span className="text-sm">{item.pro}</span>
-                              )}
-                            </td>
-                            <td className="p-4 text-center">
-                              {typeof item.enterprise === 'boolean' ? (
-                                item.enterprise ? (
-                                  <Check className="h-5 w-5 text-success mx-auto" />
-                                ) : (
-                                  <span className="text-muted-foreground">—</span>
-                                )
-                              ) : (
-                                <span className="text-sm">{item.enterprise}</span>
-                              )}
-                            </td>
-                          </tr>
+                      </thead>
+                      <tbody>
+                        {features.map((category, categoryIndex) => (
+                          <React.Fragment key={categoryIndex}>
+                            <tr className="bg-muted/50">
+                              <td colSpan={4} className="p-3 md:p-4 font-semibold text-xs uppercase tracking-wide">
+                                {category.category}
+                              </td>
+                            </tr>
+                            {category.items.map((item, itemIndex) => (
+                              <tr key={itemIndex} className="border-t border-border hover:bg-muted/20 transition-colors">
+                                <td className="p-3 md:p-4 text-sm">{item.name}</td>
+                                <td className="p-3 md:p-4 text-center">
+                                  {typeof item.pilot === 'boolean' ? (
+                                    item.pilot ? (
+                                      <Check className="h-4 w-4 text-success mx-auto" />
+                                    ) : (
+                                      <span className="text-muted-foreground">—</span>
+                                    )
+                                  ) : (
+                                    <span className="text-xs">{item.pilot}</span>
+                                  )}
+                                </td>
+                                <td className="p-3 md:p-4 text-center">
+                                  {typeof item.pro === 'boolean' ? (
+                                    item.pro ? (
+                                      <Check className="h-4 w-4 text-success mx-auto" />
+                                    ) : (
+                                      <span className="text-muted-foreground">—</span>
+                                    )
+                                  ) : (
+                                    <span className="text-xs">{item.pro}</span>
+                                  )}
+                                </td>
+                                <td className="p-3 md:p-4 text-center">
+                                  {typeof item.enterprise === 'boolean' ? (
+                                    item.enterprise ? (
+                                      <Check className="h-4 w-4 text-success mx-auto" />
+                                    ) : (
+                                      <span className="text-muted-foreground">—</span>
+                                    )
+                                  ) : (
+                                    <span className="text-xs">{item.enterprise}</span>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </React.Fragment>
                         ))}
-                      </React.Fragment>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                      </tbody>
+                    </table>
+                  </SpotlightCard>
+                </div>
+              </ScrollProgressiveReveal>
             </div>
           </div>
-        </section>
+        </ScrollSection>
 
         {/* FAQ Section */}
-        <section className="py-20 bg-muted/30">
+        <ScrollSection background="muted" className="py-20">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <div className="text-center mb-16">
-                <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                  Frequently Asked Questions
-                </h2>
-              </div>
+              <ScrollProgressiveReveal direction="up" delay={0.2}>
+                <div className="text-center mb-16">
+                  <ScrollTextReveal 
+                    text="Frequently Asked Questions"
+                    className="text-3xl md:text-4xl font-bold mb-4"
+                    cascade={true}
+                  />
+                </div>
+              </ScrollProgressiveReveal>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Can I upgrade or downgrade anytime?</h3>
-                    <p className="text-muted-foreground">Yes, you can change your plan at any time. Changes take effect immediately.</p>
+              <ScrollProgressiveReveal direction="up" delay={0.4} stagger={true} staggerDelay={0.1}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-6">
+                    <ScrollCard index={0} totalCards={6}>
+                      <SpotlightCard className="p-6 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg h-full">
+                        <h3 className="text-lg font-semibold mb-2">Can I upgrade or downgrade anytime?</h3>
+                        <p className="text-muted-foreground text-sm">Yes, you can change your plan at any time. Changes take effect immediately.</p>
+                      </SpotlightCard>
+                    </ScrollCard>
+                    <ScrollCard index={1} totalCards={6}>
+                      <SpotlightCard className="p-6 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg h-full">
+                        <h3 className="text-lg font-semibold mb-2">Is there a free trial for Pro?</h3>
+                        <p className="text-muted-foreground text-sm">Yes, we offer a 14-day free trial for the Pro plan with full access to all features.</p>
+                      </SpotlightCard>
+                    </ScrollCard>
+                    <ScrollCard index={2} totalCards={6}>
+                      <SpotlightCard className="p-6 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg h-full">
+                        <h3 className="text-lg font-semibold mb-2">What payment methods do you accept?</h3>
+                        <p className="text-muted-foreground text-sm">We accept all major credit cards and bank transfers for Enterprise customers.</p>
+                      </SpotlightCard>
+                    </ScrollCard>
                   </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Is there a free trial for Pro?</h3>
-                    <p className="text-muted-foreground">Yes, we offer a 14-day free trial for the Pro plan with full access to all features.</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">What payment methods do you accept?</h3>
-                    <p className="text-muted-foreground">We accept all major credit cards and bank transfers for Enterprise customers.</p>
+                  <div className="space-y-6">
+                    <ScrollCard index={3} totalCards={6}>
+                      <SpotlightCard className="p-6 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg h-full">
+                        <h3 className="text-lg font-semibold mb-2">Do you offer custom enterprise solutions?</h3>
+                        <p className="text-muted-foreground text-sm">Yes, our Enterprise plan includes custom integrations, workflows, and dedicated support.</p>
+                      </SpotlightCard>
+                    </ScrollCard>
+                    <ScrollCard index={4} totalCards={6}>
+                      <SpotlightCard className="p-6 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg h-full">
+                        <h3 className="text-lg font-semibold mb-2">Is my data secure?</h3>
+                        <p className="text-muted-foreground text-sm">Absolutely. We use enterprise-grade security with encryption at rest and in transit.</p>
+                      </SpotlightCard>
+                    </ScrollCard>
+                    <ScrollCard index={5} totalCards={6}>
+                      <SpotlightCard className="p-6 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg h-full">
+                        <h3 className="text-lg font-semibold mb-2">Can I cancel anytime?</h3>
+                        <p className="text-muted-foreground text-sm">Yes, you can cancel your subscription at any time with no cancellation fees.</p>
+                      </SpotlightCard>
+                    </ScrollCard>
                   </div>
                 </div>
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Do you offer custom enterprise solutions?</h3>
-                    <p className="text-muted-foreground">Yes, our Enterprise plan includes custom integrations, workflows, and dedicated support.</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Is my data secure?</h3>
-                    <p className="text-muted-foreground">Absolutely. We use enterprise-grade security with encryption at rest and in transit.</p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-2">Can I cancel anytime?</h3>
-                    <p className="text-muted-foreground">Yes, you can cancel your subscription at any time with no cancellation fees.</p>
-                  </div>
-                </div>
-              </div>
+              </ScrollProgressiveReveal>
             </div>
           </div>
-        </section>
+        </ScrollSection>
 
         {/* CTA Section */}
-        <section className="py-20 relative overflow-hidden">
+        <ScrollSection className="py-20">
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
           
           <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Ready to Get Started?
-              </h2>
-              <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-                Join developers across the GCC who trust Feasly for their real estate financial modeling.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <div className="max-w-md mx-auto">
-                  <WaitlistForm 
-                    placeholder="Enter your email for early access"
-                    buttonText="Join Waitlist"
-                    className="justify-center"
-                  />
+            <ScrollProgressiveReveal direction="scale" delay={0.2}>
+              <div className="max-w-4xl mx-auto text-center">
+                <ScrollTextReveal 
+                  text="Ready to Get Started?"
+                  className="text-3xl md:text-4xl font-bold mb-6"
+                  cascade={true}
+                />
+                <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
+                  Join developers across the GCC who trust Feasly for their real estate financial modeling.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <div className="max-w-md mx-auto">
+                    <WaitlistForm 
+                      placeholder="Enter your email for early access"
+                      buttonText="Join Waitlist"
+                      className="justify-center"
+                    />
+                  </div>
+                  <MagneticButton strength={0.1}>
+                    <Button variant="outline" size="lg" asChild>
+                      <Link to="#contact">
+                        Contact Sales
+                      </Link>
+                    </Button>
+                  </MagneticButton>
                 </div>
-                <Button variant="outline" size="lg" asChild>
-                  <Link to="#contact">
-                    Contact Sales
-                  </Link>
-                </Button>
               </div>
-            </div>
+            </ScrollProgressiveReveal>
           </div>
-        </section>
+        </ScrollSection>
       </div>
     </MarketingLayout>
   );
