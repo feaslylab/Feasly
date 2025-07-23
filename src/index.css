@@ -17,7 +17,7 @@
     
     /* Base Colors */
     --background: 220 18% 98%;
-    --surface: 0 0% 100%;
+    --surface: 220 14% 99%;
     --foreground: 213 31% 13%;
 
     --card: 0 0% 100%;
@@ -100,41 +100,46 @@
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Three clear elevation steps with ≥4 L* between each */
+    --background: 222 40% 6%;
+    --surface: 222 32% 10%;
+    --foreground: 210 38% 96%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 222 28% 15%;
+    --card-foreground: 210 38% 96%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 222 28% 15%;
+    --popover-foreground: 210 38% 96%;
 
-    --primary: 210 40% 98%;
+    /* Adjusted primary: +2° hue, +10% lightness for better contrast */
+    --primary: 219 90% 60%;
     --primary-foreground: 222.2 47.4% 11.2%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 222 28% 15%;
+    --secondary-foreground: 210 38% 96%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 222 28% 15%;
+    --muted-foreground: 210 14% 70%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 222 28% 15%;
+    --accent-foreground: 210 38% 96%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 220 13% 28%;
+    --input: 220 13% 28%;
+    --ring: 219 90% 60%;
+    
+    /* Enhanced sidebar colors */
+    --sidebar-background: 222 40% 6%;
+    --sidebar-foreground: 210 38% 96%;
+    --sidebar-primary: 219 90% 60%;
+    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+    --sidebar-accent: 222 28% 15%;
+    --sidebar-accent-foreground: 210 38% 96%;
+    --sidebar-border: 220 13% 28%;
+    --sidebar-ring: 219 90% 60%;
   }
 }
 
@@ -218,6 +223,21 @@
   .rtl textarea::placeholder {
     text-align: right;
   }
+
+  /* Dark mode focus ring */
+  .dark :focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 2px;
+  }
+
+  /* Dark mode typography contrast */
+  .dark h1, .dark h2, .dark h3 { 
+    color: hsl(var(--foreground)); 
+  }
+  
+  .dark .muted { 
+    color: hsl(var(--muted-foreground)); 
+  }
 }
 
 /* Feasly Global Utility Classes */
@@ -242,15 +262,19 @@
 
   /* Card Variants */
   .feasly-card {
-    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200;
+    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md dark:shadow-elevation transition-shadow duration-200;
   }
 
   .feasly-card-elevated {
-    @apply bg-card border border-border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200;
+    @apply bg-card border border-border rounded-lg shadow-md hover:shadow-lg dark:shadow-elevation transition-shadow duration-200;
   }
 
   .feasly-card-interactive {
-    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-200 cursor-pointer;
+    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md dark:shadow-elevation hover:border-primary/20 transition-all duration-200 cursor-pointer;
+  }
+
+  .feasly-surface {
+    @apply bg-surface border border-border rounded-lg shadow-sm dark:shadow-elevation;
   }
 
   .feasly-chart-card {

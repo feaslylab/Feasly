@@ -89,6 +89,9 @@ export default {
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
 			},
+			boxShadow: {
+				'elevation': '0 2px 4px rgba(0,0,0,.6), 0 4px 16px rgba(0,0,0,.45)',
+			},
 			keyframes: {
 				'accordion-down': {
 					from: {
