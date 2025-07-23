@@ -38,6 +38,10 @@ import { AnimatedFeatureCard } from "@/components/marketing/AnimatedFeatureCard"
 import { ScrollReveal } from "@/components/marketing/ScrollReveal";
 import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
 import { PulsingButton, NumberCounter } from "@/components/marketing/AnimatedCTA";
+import { Card3D } from "@/components/ui/3d-card";
+import { AnimatedChart } from "@/components/marketing/AnimatedChart";
+import { CurrencyConverter } from "@/components/marketing/CurrencyConverter";
+import { TimelineProgress } from "@/components/marketing/TimelineProgress";
 import { motion } from "framer-motion";
 
 const features = [

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -37,7 +38,9 @@ export function MarketingHeader() {
   }, []);
 
   return (
-    <header
+    <>
+      <ScrollProgress />
+      <header
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300",
         scrolled
@@ -144,6 +147,7 @@ export function MarketingHeader() {
           </nav>
         </div>
       )}
-    </header>
+      </header>
+    </>
   );
 }

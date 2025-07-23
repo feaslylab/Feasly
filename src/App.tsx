@@ -2,11 +2,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { PageTransition } from "@/components/ui/page-transition";
+import { CursorEffects } from "@/components/ui/cursor-effects";
 import { AuthPage } from "@/pages/Auth";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
@@ -37,6 +39,7 @@ const queryClient = new QueryClient();
 
 const AppRoutes = () => {
   const { user, loading } = useAuth();
+  const location = useLocation();
   
   // Check if we're on the marketing site
   const isMarketingRoute = window.location.pathname === '/';
@@ -44,18 +47,20 @@ const AppRoutes = () => {
   // If we're on the marketing site path, show marketing content
   if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms')) {
     return (
-      <Routes>
-        <Route path="/" element={<MarketingWrapper />} />
-        <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/use-cases" element={<UseCasesPage />} />
-          <Route path="/docs" element={<DocsPage />} />
-          <Route path="/demo" element={<DemoPage />} />
-          <Route path="/press" element={<PressPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
-          <Route path="/terms" element={<TermsPage />} />
-        <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.reload()} />} />
-      </Routes>
+      <PageTransition routeKey={location.pathname}>
+        <Routes>
+          <Route path="/" element={<MarketingWrapper />} />
+          <Route path="/features" element={<FeaturesPage />} />
+            <Route path="/pricing" element={<PricingPage />} />
+            <Route path="/use-cases" element={<UseCasesPage />} />
+            <Route path="/docs" element={<DocsPage />} />
+            <Route path="/demo" element={<DemoPage />} />
+            <Route path="/press" element={<PressPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+          <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.reload()} />} />
+        </Routes>
+      </PageTransition>
     );
   }
 
