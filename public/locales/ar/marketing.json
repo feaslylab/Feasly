@@ -48,6 +48,35 @@
       "subtitle": "PDF وExcel بالعربية والإنجليزية."
     }
   },
+  "features": {
+    "excelImport": {
+      "title": "استيراد إكسل",
+      "description": "ارفع الجداول الخام. احصل على نموذج منظم فوراً."
+    },
+    "edmfSupport": {
+      "title": "دعم ملفات EstateMaster", 
+      "description": "استيراد .edmf مباشر، لا حاجة لإعادة البناء."
+    },
+    "scenarioModeling": {
+      "title": "نمذجة السيناريوهات",
+      "description": "بدّل بين الأساسي والمتفائل والمتشائم. فورياً."
+    },
+    "realTimeCalc": {
+      "title": "حسابات فورية",
+      "description": "لا انتظار. التغييرات تنعكس عبر النموذج."
+    },
+    "arabicSupport": {
+      "title": "دعم اللغة العربية",
+      "description": "RTL وتسميات أصلية مدمجة."
+    },
+    "shareable": {
+      "title": "مشاريع قابلة للمشاركة",
+      "description": "أرسل روابط للقراءة فقط بأمان."
+    }
+  },
+  "social": {
+    "proof": "٥ ملايين درهم مشروعات مُنمذجة · موثوق لدى مطوّري الخليج · من خبراء عقار سعوديين"
+  },
   "pricing": {
     "starter": {
       "name": "البداية",

@@ -48,6 +48,35 @@
       "subtitle": "PDF, Excel, Arabic or English."
     }
   },
+  "features": {
+    "excelImport": {
+      "title": "Excel Import",
+      "description": "Upload raw spreadsheets. Get a structured model instantly."
+    },
+    "edmfSupport": {
+      "title": "EstateMaster File Support", 
+      "description": "Direct .edmf import, no rebuilds required."
+    },
+    "scenarioModeling": {
+      "title": "Scenario Modeling",
+      "description": "Toggle Base, Optimistic, Pessimistic. Instantly."
+    },
+    "realTimeCalc": {
+      "title": "Real-Time Calculations",
+      "description": "No waiting. Changes reflect across the model."
+    },
+    "arabicSupport": {
+      "title": "Arabic Language Support",
+      "description": "RTL and native labels built in."
+    },
+    "shareable": {
+      "title": "Shareable Projects",
+      "description": "Send read-only project links securely."
+    }
+  },
+  "social": {
+    "proof": "5 M AED in projects modelled · Trusted by GCC developers · Built by Saudi real-estate pros"
+  },
   "pricing": {
     "starter": {
       "name": "Starter",
