@@ -24,6 +24,10 @@ import FeaslyInsights from "./pages/FeaslyInsights";
 import FeaslyAlerts from "./pages/FeaslyAlerts";
 import NotFound from "./pages/NotFound";
 import MarketingWrapper from "./pages/MarketingWrapper";
+import FeaturesPage from "./pages/FeaturesPage";
+import PricingPage from "./pages/PricingPage";
+import UseCasesPage from "./pages/UseCasesPage";
+import DocsPage from "./pages/DocsPage";
 
 const queryClient = new QueryClient();
 
@@ -34,10 +38,14 @@ const AppRoutes = () => {
   const isMarketingRoute = window.location.pathname === '/';
   
   // If we're on the marketing site path, show marketing content
-  if (isMarketingRoute) {
+  if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs')) {
     return (
       <Routes>
         <Route path="/" element={<MarketingWrapper />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/use-cases" element={<UseCasesPage />} />
+        <Route path="/docs" element={<DocsPage />} />
         <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.reload()} />} />
       </Routes>
     );

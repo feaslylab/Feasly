@@ -125,13 +125,13 @@ export default function MarketingHome() {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button size="lg" className="group" asChild>
-                <Link to="#get-started">
-                  Get Started <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                <Link to="/features">
+                  Explore Features <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </Button>
               <Button variant="outline" size="lg" className="gap-2" asChild>
-                <Link to="#watch-demo">
-                  <Play className="h-4 w-4" /> Watch Demo
+                <Link to="/welcome">
+                  <Play className="h-4 w-4" /> Login
                 </Link>
               </Button>
             </div>
@@ -249,34 +249,53 @@ export default function MarketingHome() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 relative overflow-hidden" id="get-started">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5 z-0" />
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Ready to Transform Your Real Estate Financial Modeling?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-              Join leading developers and investors across the GCC who are using Feasly to make better investment decisions.
-            </p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Button size="lg" className="group" asChild>
-                <Link to="#get-started">
-                  Get Started <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild>
-                <Link to="/welcome">
-                  Login to Dashboard
-                </Link>
-              </Button>
+        {/* Client Logos Placeholder */}
+        <section className="py-16 bg-muted/20">
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <p className="text-sm text-muted-foreground uppercase tracking-wide mb-8">
+                Trusted by Leading Developers Across the GCC
+              </p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center opacity-60">
+                {['NEOM', 'Almarai', 'Saudi Aramco', 'ROSHN'].map((company) => (
+                  <div key={company} className="text-center">
+                    <div className="h-12 bg-muted rounded flex items-center justify-center">
+                      <span className="text-sm font-medium">{company}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-20 relative overflow-hidden" id="get-started">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5 z-0" />
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                Ready to Transform Your Real Estate Financial Modeling?
+              </h2>
+              <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
+                Join leading developers and investors across the GCC who are using Feasly to make better investment decisions.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <Button size="lg" className="group" asChild>
+                  <Link to="/pricing">
+                    Get Started <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+                <Button variant="outline" size="lg" asChild>
+                  <Link to="/welcome">
+                    Login to Dashboard
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </section>
     </div>
   );
 }

@@ -6,10 +6,10 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { name: "Features", href: "#features" },
-  { name: "Compliance", href: "#compliance" },
-  { name: "Use Cases", href: "#use-cases" },
-  { name: "About", href: "#about" },
+  { name: "Features", href: "/features" },
+  { name: "Pricing", href: "/pricing" },
+  { name: "Use Cases", href: "/use-cases" },
+  { name: "Docs", href: "/docs" },
 ];
 
 export function MarketingHeader() {
