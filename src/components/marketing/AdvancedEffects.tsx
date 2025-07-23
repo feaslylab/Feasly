@@ -87,8 +87,8 @@ export function TypewriterText({
   );
 }
 
-// 10. Particle System
-export function ParticleBackground({ particleCount = 50 }: { particleCount?: number }) {
+// 10. Particle System - Performance Optimized
+export function ParticleBackground({ particleCount = 20 }: { particleCount?: number }) {
   const particles = Array.from({ length: particleCount }, (_, i) => ({
     id: i,
     size: Math.random() * 4 + 1,
@@ -103,7 +103,7 @@ export function ParticleBackground({ particleCount = 50 }: { particleCount?: num
       {particles.map((particle) => (
         <motion.div
           key={particle.id}
-          className="absolute rounded-full bg-primary/30"
+          className="absolute rounded-full bg-primary/10"
           style={{
             width: particle.size,
             height: particle.size,

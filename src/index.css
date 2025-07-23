@@ -1,5 +1,6 @@
 @import './components/ui/feasly-design-system.css';
 @import './components/ui/mobile-animations.css';
+@import './components/ui/visual-fixes.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

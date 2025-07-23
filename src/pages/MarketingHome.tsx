@@ -167,14 +167,15 @@ export default function MarketingHome() {
       
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-        <MorphingBackground />
-        <ParticleBackground particleCount={30} />
-        <div className="container mx-auto px-4 relative z-10">
-          <TextReveal text="Stop building feasibility models in Excel" className="text-5xl md:text-7xl font-bold text-center mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent" />
+        <div className="absolute inset-0 z-0">
+          <MorphingBackground />
+        </div>
+        <div className="container mx-auto px-4 relative z-10 content-layer">
+          <TextReveal text="Stop building feasibility models in Excel" className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent text-reveal" />
           <div className="text-center mb-8">
             <TypewriterText 
               text="Next-gen real estate financial modeling" 
-              className="text-xl md:text-2xl text-muted-foreground"
+              className="hero-subtitle text-xl md:text-2xl text-muted-foreground"
               speed={60}
             />
           </div>

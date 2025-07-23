@@ -75,7 +75,7 @@ export function MorphingBackground() {
   return (
     <div className="absolute inset-0 overflow-hidden">
       <motion.div
-        className="absolute -top-1/2 -left-1/2 w-full h-full opacity-20"
+        className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] opacity-10"
         animate={{
           borderRadius: [
             "60% 40% 30% 70% / 60% 30% 70% 40%",
@@ -85,7 +85,7 @@ export function MorphingBackground() {
           rotate: [0, 180, 360],
         }}
         transition={{
-          duration: 20,
+          duration: 30,
           repeat: Infinity,
           ease: "linear"
         }}

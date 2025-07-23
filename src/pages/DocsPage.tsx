@@ -6,6 +6,10 @@ import { ScrollReveal } from "@/components/marketing/ScrollReveal";
 import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
 import { PulsingButton } from "@/components/marketing/AnimatedCTA";
 import { motion } from "framer-motion";
+// Enhanced Animations
+import { ScrollProgressiveReveal, ScrollSection, ScrollCard } from "@/components/marketing/ScrollProgressiveReveal";
+import { MagneticButton, MorphingBackground } from "@/components/marketing/EnhancedAnimations";
+import { SpotlightCard } from "@/components/marketing/AdvancedEffects";
 import {
   ArrowRight,
   Book,

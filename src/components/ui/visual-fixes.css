@@ -1,0 +1,82 @@
+/* Critical Visual Fixes for Site-Wide Issues */
+
+/* Prevent scroll sections from disappearing completely */
+[data-scroll-section] {
+  min-opacity: 0.6 !important;
+}
+
+/* Fix z-index layering issues */
+.morphing-background {
+  z-index: -1;
+}
+
+.content-layer {
+  z-index: 10;
+  position: relative;
+}
+
+/* Prevent text from being too large on mobile */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.25rem !important;
+  }
+}
+
+/* Ensure buttons remain visible and clickable */
+.magnetic-button {
+  position: relative;
+  z-index: 20;
+}
+
+/* Fix card overflow issues */
+.pricing-card {
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* Ensure proper contrast for text */
+.text-reveal {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Fix morphing background performance */
+.morphing-bg {
+  will-change: border-radius, transform;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Prevent cursor trail from interfering with content */
+.cursor-trail {
+  pointer-events: none !important;
+  z-index: 1000;
+}
+
+/* Ensure spotlight cards don't break layout */
+.spotlight-card {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fix table responsiveness */
+@media (max-width: 768px) {
+  .comparison-table {
+    font-size: 0.875rem;
+  }
+  
+  .comparison-table th,
+  .comparison-table td {
+    padding: 0.5rem !important;
+  }
+}
+
+/* Ensure animations don't cause layout shift */
+[data-framer-motion] {
+  transform-origin: center;
+  will-change: transform, opacity;
+}
