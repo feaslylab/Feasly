@@ -77,7 +77,7 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
       {/* Main title with proper color */}
       <motion.div variants={itemVariants}>
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight text-foreground">
-          <GradientText>
+          <GradientText animated={true}>
             {title}
           </GradientText>
         </h1>
