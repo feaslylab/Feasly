@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
@@ -13,9 +14,9 @@ export function AnimatedBackground() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  const shapes = Array.from({ length: 8 }, (_, i) => ({
+  const shapes = Array.from({ length: 6 }, (_, i) => ({
     id: i,
-    size: Math.random() * 60 + 20,
+    size: Math.random() * 40 + 15, // Reduced max size from 80 to 55
     x: Math.random() * 100,
     y: Math.random() * 100,
     delay: Math.random() * 2,
@@ -25,12 +26,12 @@ export function AnimatedBackground() {
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {/* Animated gradient background */}
       <motion.div
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-20"
         animate={{
           background: [
-            "radial-gradient(circle at 20% 80%, hsl(var(--primary)) 0%, transparent 50%)",
-            "radial-gradient(circle at 80% 20%, hsl(var(--accent)) 0%, transparent 50%)",
-            "radial-gradient(circle at 40% 40%, hsl(var(--primary)) 0%, transparent 50%)",
+            "radial-gradient(circle at 20% 80%, hsl(var(--primary) / 0.1) 0%, transparent 50%)",
+            "radial-gradient(circle at 80% 20%, hsl(var(--accent) / 0.1) 0%, transparent 50%)",
+            "radial-gradient(circle at 40% 40%, hsl(var(--primary) / 0.1) 0%, transparent 50%)",
           ]
         }}
         transition={{
@@ -44,7 +45,7 @@ export function AnimatedBackground() {
       {shapes.map((shape) => (
         <motion.div
           key={shape.id}
-          className="absolute rounded-full bg-gradient-to-r from-primary/40 to-accent/40 blur-sm"
+          className="absolute rounded-full bg-gradient-to-r from-primary/20 to-accent/20 blur-sm"
           style={{
             width: shape.size,
             height: shape.size,
@@ -52,13 +53,13 @@ export function AnimatedBackground() {
             top: `${shape.y}%`,
           }}
           animate={{
-            y: [0, -30, 0],
-            x: [0, 15, 0],
-            scale: [1, 1.1, 1],
-            opacity: [0.5, 0.8, 0.5],
+            y: [0, -20, 0], // Reduced movement from -30 to -20
+            x: [0, 10, 0], // Reduced movement from 15 to 10
+            scale: [1, 1.05, 1], // Reduced scale from 1.1 to 1.05
+            opacity: [0.3, 0.6, 0.3], // Reduced opacity range
           }}
           transition={{
-            duration: 2 + shape.delay, // Reduced from 3 to 2 for even faster movement
+            duration: 3 + shape.delay, // Slower animation
             repeat: Infinity,
             delay: shape.delay,
             ease: "easeInOut"
@@ -66,17 +67,17 @@ export function AnimatedBackground() {
         />
       ))}
 
-      {/* Mouse-following glow */}
+      {/* Mouse-following glow - made smaller and more subtle */}
       <motion.div
-        className="absolute w-96 h-96 rounded-full bg-gradient-to-r from-primary/10 to-accent/10 blur-3xl"
+        className="absolute w-64 h-64 rounded-full bg-gradient-to-r from-primary/5 to-accent/5 blur-3xl"
         animate={{
-          x: mousePosition.x - 192,
-          y: mousePosition.y - 192,
+          x: mousePosition.x - 128, // Adjusted for smaller size
+          y: mousePosition.y - 128,
         }}
         transition={{
           type: "spring",
-          damping: 30,
-          stiffness: 200,
+          damping: 40, // Increased damping for smoother movement
+          stiffness: 150, // Reduced stiffness
         }}
       />
 
