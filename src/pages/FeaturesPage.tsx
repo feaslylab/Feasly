@@ -7,6 +7,11 @@ import { AnimatedFeatureCard } from "@/components/marketing/AnimatedFeatureCard"
 import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
 import { PulsingButton } from "@/components/marketing/AnimatedCTA";
 import { motion } from "framer-motion";
+// Enhanced Animations
+import { ScrollProgressiveReveal, ScrollSection, ScrollCard, ScrollTextReveal } from "@/components/marketing/ScrollProgressiveReveal";
+import { CursorTrail, InteractiveBlob } from "@/components/marketing/NextLevelAnimations";
+import { MagneticButton, MorphingBackground, TiltCard } from "@/components/marketing/EnhancedAnimations";
+import { SpotlightCard, TypewriterText } from "@/components/marketing/AdvancedEffects";
 import {
   ArrowRight,
   Building2,
@@ -116,122 +121,120 @@ export default function FeaturesPage() {
 
   return (
     <MarketingLayout>
+      <CursorTrail />
       <div className="flex flex-col">
         {/* Hero Section */}
-        <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-          <AnimatedBackground />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
-          
+        <ScrollSection className="pt-32 pb-20 md:pt-40 md:pb-32">
+          <MorphingBackground />
           <div className="container mx-auto px-4 relative z-10">
-            <motion.div 
-              className="max-w-4xl mx-auto text-center"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-            >
-              <motion.h1 
-                className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-              >
-                Features Built for Real Estate Excellence
-              </motion.h1>
-              <motion.p 
-                className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-              >
-                Every feature designed to solve real problems faced by developers, investors, and finance teams in the GCC market.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-              >
-                <Button size="lg" className="group" asChild>
-                  <Link to="#features">
-                    Explore Features <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-              </motion.div>
-            </motion.div>
+            <ScrollProgressiveReveal direction="scale" delay={0.2}>
+              <div className="max-w-4xl mx-auto text-center">
+                <ScrollTextReveal 
+                  text="Features Built for Real Estate Excellence"
+                  className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent"
+                  cascade={true}
+                />
+                <TypewriterText 
+                  text="Every feature designed to solve real problems faced by developers, investors, and finance teams in the GCC market."
+                  className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto"
+                  speed={45}
+                />
+                <MagneticButton strength={0.15}>
+                  <Button size="lg" className="group" asChild>
+                    <Link to="#features">
+                      Explore Features <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </Button>
+                </MagneticButton>
+              </div>
+            </ScrollProgressiveReveal>
           </div>
-        </section>
+        </ScrollSection>
 
         {/* Features Grid */}
-        <section className="py-20 bg-muted/30" id="features">
+        <ScrollSection background="muted" className="py-20" id="features">
           <div className="container mx-auto px-4">
             <div className="space-y-24">
               {features.map((feature, index) => (
-                <ScrollReveal key={index} delay={index * 0.2}>
+                <ScrollCard key={index} index={index} totalCards={features.length}>
                   <div className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-16`}>
-                  {/* Content */}
-                  <div className="flex-1 space-y-6">
-                    <div className={`bg-gradient-to-r ${feature.color} p-4 rounded-full w-fit`}>
-                      <feature.icon className={`h-8 w-8 ${feature.iconColor}`} />
-                    </div>
-                    <div>
-                      <h3 className="text-3xl font-bold mb-2">{feature.title}</h3>
-                      <p className="text-xl text-primary font-semibold mb-4">{feature.benefit}</p>
-                      <p className="text-lg text-muted-foreground mb-6">{feature.description}</p>
-                      {feature.quote && (
-                        <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground">
-                          "{feature.quote}"
-                        </blockquote>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Visual Placeholder */}
-                  <div className="flex-1">
-                    <div className="bg-card rounded-xl border border-border shadow-lg overflow-hidden">
-                      <div className="aspect-[4/3] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
-                        <div className="text-center space-y-2">
-                          <feature.icon className={`h-12 w-12 ${feature.iconColor} mx-auto`} />
-                          <p className="text-sm text-muted-foreground">Feature Screenshot</p>
-                        </div>
+                    {/* Content */}
+                    <div className="flex-1 space-y-6">
+                      <div className={`bg-gradient-to-r ${feature.color} p-4 rounded-full w-fit`}>
+                        <feature.icon className={`h-8 w-8 ${feature.iconColor}`} />
+                      </div>
+                      <div>
+                        <ScrollTextReveal 
+                          text={feature.title}
+                          className="text-3xl font-bold mb-2"
+                          delay={index * 0.1}
+                        />
+                        <p className="text-xl text-primary font-semibold mb-4">{feature.benefit}</p>
+                        <p className="text-lg text-muted-foreground mb-6">{feature.description}</p>
+                        {feature.quote && (
+                          <ScrollProgressiveReveal direction="left" delay={0.3}>
+                            <blockquote className="border-l-4 border-primary pl-4 italic text-muted-foreground bg-background/50 backdrop-blur-sm p-4 rounded-r-lg">
+                              "{feature.quote}"
+                            </blockquote>
+                          </ScrollProgressiveReveal>
+                        )}
                       </div>
                     </div>
+
+                    {/* Visual Placeholder with Interactive Blob */}
+                    <ScrollProgressiveReveal direction="right" delay={0.2} className="flex-1">
+                      <div className="relative">
+                        <InteractiveBlob size={150} />
+                        <SpotlightCard className="bg-card rounded-xl border border-border shadow-lg overflow-hidden relative z-10">
+                          <div className="aspect-[4/3] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
+                            <div className="text-center space-y-2">
+                              <feature.icon className={`h-12 w-12 ${feature.iconColor} mx-auto`} />
+                              <p className="text-sm text-muted-foreground">Feature Screenshot</p>
+                            </div>
+                          </div>
+                        </SpotlightCard>
+                      </div>
+                    </ScrollProgressiveReveal>
                   </div>
-                </div>
-                </ScrollReveal>
+                </ScrollCard>
               ))}
             </div>
           </div>
-        </section>
+        </ScrollSection>
 
         {/* CTA Section */}
-        <section className="py-20 relative overflow-hidden">
-          <AnimatedBackground />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
-          
+        <ScrollSection className="py-20">
           <div className="container mx-auto px-4 relative z-10">
-            <ScrollReveal>
+            <ScrollProgressiveReveal direction="scale" delay={0.2}>
               <div className="max-w-4xl mx-auto text-center">
-                <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                  Ready to Transform Your Development Process?
-                </h2>
+                <ScrollTextReveal 
+                  text="Ready to Transform Your Development Process?"
+                  className="text-3xl md:text-4xl font-bold mb-6"
+                  cascade={true}
+                />
                 <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
                   Join developers across the GCC who are using Feasly to make better, faster investment decisions.
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  <PulsingButton size="lg" className="group" asChild>
-                    <Link to="/pricing">
-                      View Pricing <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </PulsingButton>
-                  <Button variant="outline" size="lg" asChild>
-                    <Link to="/welcome">
-                      Try Feasly Now
-                    </Link>
-                  </Button>
+                  <MagneticButton strength={0.2}>
+                    <PulsingButton size="lg" className="group" asChild>
+                      <Link to="/pricing">
+                        View Pricing <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                      </Link>
+                    </PulsingButton>
+                  </MagneticButton>
+                  <MagneticButton strength={0.1}>
+                    <Button variant="outline" size="lg" asChild>
+                      <Link to="/welcome">
+                        Try Feasly Now
+                      </Link>
+                    </Button>
+                  </MagneticButton>
                 </div>
               </div>
-            </ScrollReveal>
+            </ScrollProgressiveReveal>
           </div>
-        </section>
+        </ScrollSection>
       </div>
     </MarketingLayout>
   );

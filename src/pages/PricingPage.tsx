@@ -8,6 +8,11 @@ import { ScrollReveal } from "@/components/marketing/ScrollReveal";
 import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
 import { PulsingButton } from "@/components/marketing/AnimatedCTA";
 import { motion } from "framer-motion";
+// Enhanced Animations
+import { ScrollProgressiveReveal, ScrollSection, ScrollCard, ScrollTextReveal } from "@/components/marketing/ScrollProgressiveReveal";
+import { CursorTrail, InteractiveBlob } from "@/components/marketing/NextLevelAnimations";
+import { MagneticButton, MorphingBackground } from "@/components/marketing/EnhancedAnimations";
+import { SpotlightCard, TypewriterText } from "@/components/marketing/AdvancedEffects";
 import {
   ArrowRight,
   Check,
@@ -130,94 +135,107 @@ export default function PricingPage() {
 
   return (
     <MarketingLayout>
+      <CursorTrail />
       <div className="flex flex-col">
         {/* Hero Section */}
-        <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
-          
+        <ScrollSection className="pt-32 pb-20 md:pt-40 md:pb-32">
+          <MorphingBackground />
           <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
-                Simple pricing that scales with your team
-              </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-                Choose the plan that fits your development portfolio. Start free, scale as you grow.
-              </p>
-            </div>
+            <ScrollProgressiveReveal direction="scale" delay={0.2}>
+              <div className="max-w-4xl mx-auto text-center">
+                <ScrollTextReveal 
+                  text="Simple pricing that scales with your team"
+                  className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent"
+                  cascade={true}
+                />
+                <TypewriterText 
+                  text="Choose the plan that fits your development portfolio. Start free, scale as you grow."
+                  className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto"
+                  speed={40}
+                />
+              </div>
+            </ScrollProgressiveReveal>
           </div>
-        </section>
+        </ScrollSection>
 
         {/* Pricing Cards */}
-        <section className="py-20 bg-muted/30">
+        <ScrollSection background="muted" className="py-20">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {plans.map((plan, index) => (
-                <div
-                  key={index}
-                  className={`relative rounded-xl border ${
-                    plan.popular 
-                      ? 'border-primary shadow-xl scale-105' 
-                      : 'border-border'
-                  } bg-background p-8 transition-all duration-300 hover:shadow-lg`}
-                >
-                  {plan.popular && (
-                    <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
-                      Most Popular
-                    </Badge>
-                  )}
-                  
-                  <div className="text-center mb-8">
-                    <div className={`bg-gradient-to-r ${plan.color} p-4 rounded-full w-fit mx-auto mb-4`}>
-                      <plan.icon className="h-8 w-8 text-primary" />
-                    </div>
-                    <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                    <p className="text-muted-foreground mb-4">{plan.description}</p>
-                    <div className="mb-6">
-                      <span className="text-4xl font-bold">{plan.price}</span>
-                      {plan.period && (
-                        <span className="text-muted-foreground ml-2">/{plan.period}</span>
+            <ScrollProgressiveReveal direction="up" delay={0.3} stagger={true} staggerDelay={0.2}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                {plans.map((plan, index) => (
+                  <ScrollCard key={index} index={index} totalCards={plans.length}>
+                    <SpotlightCard 
+                      className={`relative rounded-xl border ${
+                        plan.popular 
+                          ? 'border-primary shadow-xl scale-105' 
+                          : 'border-border'
+                      } bg-background p-8 h-full`}
+                    >
+                      {plan.popular && (
+                        <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground">
+                          Most Popular
+                        </Badge>
                       )}
-                    </div>
-                    {plan.name === 'Enterprise' ? (
-                      <Button 
-                        className="w-full" 
-                        variant={plan.ctaVariant}
-                        asChild
-                      >
-                        <Link to="#contact">
-                          {plan.cta}
-                        </Link>
-                      </Button>
-                    ) : (
-                      <div className="space-y-3">
-                        <WaitlistForm 
-                          placeholder="Enter your email"
-                          buttonText="Join Waitlist"
-                          size="sm"
-                          className="flex-col gap-2"
-                        />
+                      
+                      <div className="text-center mb-8">
+                        <div className={`bg-gradient-to-r ${plan.color} p-4 rounded-full w-fit mx-auto mb-4`}>
+                          <plan.icon className="h-8 w-8 text-primary" />
+                        </div>
+                        <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                        <p className="text-muted-foreground mb-4">{plan.description}</p>
+                        <div className="mb-6">
+                          <span className="text-4xl font-bold">{plan.price}</span>
+                          {plan.period && (
+                            <span className="text-muted-foreground ml-2">/{plan.period}</span>
+                          )}
+                        </div>
+                        {plan.name === 'Enterprise' ? (
+                          <MagneticButton strength={0.1}>
+                            <Button 
+                              className="w-full" 
+                              variant={plan.ctaVariant}
+                              asChild
+                            >
+                              <Link to="#contact">
+                                {plan.cta}
+                              </Link>
+                            </Button>
+                          </MagneticButton>
+                        ) : (
+                          <div className="space-y-3">
+                            <WaitlistForm 
+                              placeholder="Enter your email"
+                              buttonText="Join Waitlist"
+                              size="sm"
+                              className="flex-col gap-2"
+                            />
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  <div className="space-y-3">
-                    {plan.features.map((feature, featureIndex) => (
-                      <div key={featureIndex} className="flex items-center gap-3">
-                        <Check className="h-5 w-5 text-success flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
+                      <div className="space-y-3">
+                        {plan.features.map((feature, featureIndex) => (
+                          <div key={featureIndex} className="flex items-center gap-3">
+                            <Check className="h-5 w-5 text-success flex-shrink-0" />
+                            <span className="text-sm">{feature}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
+                    </SpotlightCard>
+                  </ScrollCard>
+                ))}
+              </div>
+            </ScrollProgressiveReveal>
             
             {/* Additional info below pricing */}
-            <div className="max-w-4xl mx-auto text-center mt-16 space-y-4">
-              <p className="text-muted-foreground">Free onboarding included. Bulk licensing available. No credit card required.</p>
-            </div>
+            <ScrollProgressiveReveal direction="fade" delay={0.8}>
+              <div className="max-w-4xl mx-auto text-center mt-16 space-y-4">
+                <p className="text-muted-foreground">Free onboarding included. Bulk licensing available. No credit card required.</p>
+              </div>
+            </ScrollProgressiveReveal>
           </div>
-        </section>
+        </ScrollSection>
 
         {/* Feature Comparison Table */}
         <section className="py-20">

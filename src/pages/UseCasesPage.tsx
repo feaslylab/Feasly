@@ -6,6 +6,11 @@ import { ScrollReveal } from "@/components/marketing/ScrollReveal";
 import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
 import { PulsingButton } from "@/components/marketing/AnimatedCTA";
 import { motion } from "framer-motion";
+// Enhanced Animations
+import { ScrollProgressiveReveal, ScrollSection, ScrollCard, ScrollTextReveal } from "@/components/marketing/ScrollProgressiveReveal";
+import { CursorTrail, InteractiveBlob } from "@/components/marketing/NextLevelAnimations";
+import { MagneticButton, MorphingBackground, TiltCard } from "@/components/marketing/EnhancedAnimations";
+import { SpotlightCard, TypewriterText } from "@/components/marketing/AdvancedEffects";
 import {
   ArrowRight,
   Building2,
@@ -127,61 +132,67 @@ export default function UseCasesPage() {
 
   return (
     <MarketingLayout>
+      <CursorTrail />
       <div className="flex flex-col">
         {/* Hero Section */}
-        <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-          <AnimatedBackground />
-          
+        <ScrollSection className="pt-32 pb-20 md:pt-40 md:pb-32">
+          <MorphingBackground />
           <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              <motion.h1 
-                className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                Built for Every Scale of Development
-              </motion.h1>
-              <motion.p 
-                className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                From solo developers to government giga projects, Feasly scales to meet your financial modeling needs.
-              </motion.p>
-            </div>
+            <ScrollProgressiveReveal direction="scale" delay={0.2}>
+              <div className="max-w-4xl mx-auto text-center">
+                <ScrollTextReveal 
+                  text="Built for Every Scale of Development"
+                  className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent"
+                  cascade={true}
+                />
+                <TypewriterText 
+                  text="From solo developers to government giga projects, Feasly scales to meet your financial modeling needs."
+                  className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto"
+                  speed={40}
+                />
+              </div>
+            </ScrollProgressiveReveal>
           </div>
-        </section>
+        </ScrollSection>
 
         {/* Project Lifecycle */}
-        <section className="py-20 bg-muted/30">
+        <ScrollSection background="muted" className="py-20">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Complete Project Lifecycle Management
-              </h2>
-              <p className="text-xl text-muted-foreground">
-                From initial feasibility to portfolio consolidation, Feasly supports every stage of your development journey.
-              </p>
-            </div>
+            <ScrollProgressiveReveal direction="up" delay={0.2}>
+              <div className="max-w-4xl mx-auto text-center mb-16">
+                <ScrollTextReveal 
+                  text="Complete Project Lifecycle Management"
+                  className="text-3xl md:text-4xl font-bold mb-4"
+                  cascade={true}
+                />
+                <p className="text-xl text-muted-foreground">
+                  From initial feasibility to portfolio consolidation, Feasly supports every stage of your development journey.
+                </p>
+              </div>
+            </ScrollProgressiveReveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              {workflows.map((workflow, index) => (
-                <div key={index} className="text-center">
-                  <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <workflow.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <div className="bg-primary text-primary-foreground rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mx-auto mb-4">
-                    {workflow.step}
-                  </div>
-                  <h3 className="text-xl font-semibold mb-2">{workflow.title}</h3>
-                  <p className="text-muted-foreground">{workflow.description}</p>
-                </div>
-              ))}
-            </div>
+            <ScrollProgressiveReveal direction="up" delay={0.4} stagger={true} staggerDelay={0.15}>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                {workflows.map((workflow, index) => (
+                  <ScrollCard key={index} index={index} totalCards={workflows.length}>
+                    <TiltCard>
+                      <div className="text-center p-6 bg-background/50 backdrop-blur-sm border border-border/50 rounded-lg h-full">
+                        <div className="bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                          <workflow.icon className="h-8 w-8 text-primary" />
+                        </div>
+                        <div className="bg-primary text-primary-foreground rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mx-auto mb-4">
+                          {workflow.step}
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">{workflow.title}</h3>
+                        <p className="text-muted-foreground">{workflow.description}</p>
+                      </div>
+                    </TiltCard>
+                  </ScrollCard>
+                ))}
+              </div>
+            </ScrollProgressiveReveal>
           </div>
-        </section>
+        </ScrollSection>
 
         {/* Use Cases Grid */}
         <section className="py-20">
