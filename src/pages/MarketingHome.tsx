@@ -171,7 +171,7 @@ export default function MarketingHome() {
           <MorphingBackground />
         </div>
         <div className="container mx-auto px-4 relative z-10 content-layer">
-          <h1 className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 bg-gradient-to-r from-primary via-primary to-primary-light bg-clip-text text-transparent">
+          <h1 className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 text-foreground">
             Stop building feasibility models in Excel
           </h1>
           <div className="text-center mb-8">
