@@ -24,6 +24,12 @@ import {
   Layout,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { WhyFeaslyWorks } from "@/components/marketing/WhyFeaslyWorks";
+import { WhoUsesFeasly } from "@/components/marketing/WhoUsesFeasly";
+import { HowRealTeamsUseFeasly } from "@/components/marketing/HowRealTeamsUseFeasly";
+import { TryFeaslyDemo } from "@/components/marketing/TryFeaslyDemo";
+import { FeaslyVsOldWay } from "@/components/marketing/FeaslyVsOldWay";
+import { EnterpriseScale } from "@/components/marketing/EnterpriseScale";
 
 const features = [
   {
@@ -308,6 +314,12 @@ export default function MarketingHome() {
         </div>
       </section>
 
+      {/* Why Feasly Works - Visual Walkthrough */}
+      <WhyFeaslyWorks />
+
+      {/* Who Uses Feasly */}
+      <WhoUsesFeasly />
+
       {/* Features Grid */}
       <section className="py-20 bg-muted/30" id="features">
         <div className="container mx-auto px-4">
@@ -347,6 +359,15 @@ export default function MarketingHome() {
           </div>
         </div>
       </section>
+
+      {/* How Real Teams Use Feasly */}
+      <HowRealTeamsUseFeasly />
+
+      {/* Try Feasly Demo */}
+      <TryFeaslyDemo />
+
+      {/* Feasly vs Old Way */}
+      <FeaslyVsOldWay />
 
       {/* Built for Real Projects */}
       <section className="py-20" id="compliance">
@@ -485,6 +506,9 @@ export default function MarketingHome() {
           </div>
         </div>
       </section>
+
+      {/* Enterprise Scale */}
+      <EnterpriseScale />
 
         {/* Trust Signals */}
         <section className="py-16 bg-muted/20">

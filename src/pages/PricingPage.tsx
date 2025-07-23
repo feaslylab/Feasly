@@ -32,7 +32,7 @@ const plans = [
       "Community Support",
       "Basic Compliance Checks",
     ],
-    cta: "Start Free",
+    cta: "Launching Soon – Join Waitlist",
     ctaVariant: "outline" as const,
   },
   {
@@ -56,7 +56,7 @@ const plans = [
       "Priority Support",
       "Advanced Reporting",
     ],
-    cta: "Start Free",
+    cta: "Launching Soon – Join Waitlist",
     ctaVariant: "default" as const,
   },
   {
@@ -80,7 +80,7 @@ const plans = [
       "Premium Support",
       "Custom Reporting & Analytics",
     ],
-    cta: "Request Proposal",
+    cta: "Request Custom Quote",
     ctaVariant: "outline" as const,
   },
 ];
@@ -173,7 +173,7 @@ export default function PricingPage() {
                       variant={plan.ctaVariant}
                       asChild
                     >
-                      <Link to={plan.name === 'Enterprise' ? '#contact' : '/welcome'}>
+                      <Link to={plan.name === 'Enterprise' ? '#contact' : '/waitlist'}>
                         {plan.cta}
                       </Link>
                     </Button>
@@ -193,9 +193,7 @@ export default function PricingPage() {
             
             {/* Additional info below pricing */}
             <div className="max-w-4xl mx-auto text-center mt-16 space-y-4">
-              <p className="text-muted-foreground">Free onboarding for early users</p>
-              <p className="text-muted-foreground">No credit card required to get started</p>
-              <p className="text-muted-foreground">Bulk licensing available for enterprise clients</p>
+              <p className="text-muted-foreground">Free onboarding included. Bulk licensing available. No credit card required.</p>
             </div>
           </div>
         </section>
@@ -336,8 +334,8 @@ export default function PricingPage() {
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <Button size="lg" className="group" asChild>
-                  <Link to="/welcome">
-                    Start Free <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  <Link to="/waitlist">
+                    Join Waitlist <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild>
