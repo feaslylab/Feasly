@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Play } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { GradientText } from "./GradientText";
 
 interface AnimatedHeroProps {
@@ -13,10 +14,11 @@ interface AnimatedHeroProps {
 }
 
 export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps) {
+  const { t } = useTranslation('marketing');
   const [displayedText, setDisplayedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  const typewriterText = "Next-gen real estate financial modeling";
+  const typewriterText = t('common.nextGenModeling');
 
   useEffect(() => {
     if (currentIndex < typewriterText.length) {
@@ -100,7 +102,7 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
           <Button size="lg" className="group px-8 py-4 text-lg" asChild>
             <Link to="/demo">
               <Play className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" /> 
-              View Live Demo
+              {t('cta.viewLiveDemo')}
             </Link>
           </Button>
         </motion.div>
@@ -111,7 +113,7 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
         >
           <Button variant="outline" size="lg" className="group px-8 py-4 text-lg" asChild>
             <Link to="/welcome">
-              Get Started Free 
+              {t('cta.getStartedFree')}
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>

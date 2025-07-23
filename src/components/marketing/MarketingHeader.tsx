@@ -8,11 +8,11 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
-const navLinks = [
-  { name: "Features", href: "#features", isAnchor: true },
-  { name: "Demo", href: "#demo", isAnchor: true },
-  { name: "Pricing", href: "/pricing", isAnchor: false },
-  { name: "Docs", href: "/docs", isAnchor: false },
+const getNavLinks = (t: (key: string) => string) => [
+  { name: t('nav.features'), href: "#features", isAnchor: true },
+  { name: t('nav.demo'), href: "#demo", isAnchor: true },
+  { name: t('nav.pricing'), href: "/pricing", isAnchor: false },
+  { name: t('nav.docs'), href: "/docs", isAnchor: false },
 ];
 
 const handleAnchorClick = (href: string, setMobileMenuOpen?: (open: boolean) => void) => {
@@ -29,6 +29,8 @@ export function MarketingHeader() {
   const { t } = useTranslation('marketing');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const navLinks = getNavLinks(t);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,10 +90,10 @@ export function MarketingHeader() {
           <LanguageSwitcher />
           <ThemeToggle />
           <Button variant="outline" asChild>
-            <Link to="/welcome">Login</Link>
+            <Link to="/welcome">{t('nav.login')}</Link>
           </Button>
           <Button asChild>
-            <Link to="/welcome">Get Started</Link>
+            <Link to="/welcome">{t('nav.startFreeTrial')}</Link>
           </Button>
         </div>
 
@@ -137,12 +139,12 @@ export function MarketingHeader() {
             <div className="flex flex-col space-y-3 pt-2">
               <Button variant="outline" asChild className="w-full">
                 <Link to="/welcome" onClick={() => setMobileMenuOpen(false)}>
-                  Login
+                  {t('nav.login')}
                 </Link>
               </Button>
               <Button asChild className="w-full">
                 <Link to="/welcome" onClick={() => setMobileMenuOpen(false)}>
-                  Get Started
+                  {t('nav.startFreeTrial')}
                 </Link>
               </Button>
             </div>

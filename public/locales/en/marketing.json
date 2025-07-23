@@ -1,6 +1,7 @@
 {
   "nav": {
     "features": "Features",
+    "demo": "Demo",
     "pricing": "Pricing", 
     "docs": "Docs",
     "blog": "Blog",
@@ -82,6 +83,53 @@
     "difc": "Feasly DIFC Ltd, registered DIFC licence # XXXX"
   },
   "cta": {
-    "readyToKill": "Ready to kill the spreadsheet?"
+    "readyToKill": "Ready to kill the spreadsheet?",
+    "viewLiveDemo": "View Live Demo",
+    "getStartedFree": "Get Started Free"
+  },
+  "common": {
+    "nextGenModeling": "Next-gen real estate financial modeling",
+    "mostPopular": "Most Popular",
+    "toggleMenu": "Toggle menu"
+  },
+  "home": {
+    "hero": {
+      "typewriter": "Next-gen real estate financial modeling",
+      "title": "Build feasibility models 5 × faster.",
+      "subtitle": "One live model. Zero spreadsheet drama.",
+      "description": "8 core inputs per asset · Base / Optimistic / Pessimistic toggle · Drag-and-drop Excel + EDMF import"
+    },
+    "problems": {
+      "title": "Feasibility modeling is broken.",
+      "excelFragile": "Excel models are fragile, unstructured, and hard to audit",
+      "legacyTools": "Legacy tools like EstateMaster are outdated, slow, and siloed",
+      "missingArabic": "Most platforms ignore Arabic language and GCC-specific needs",
+      "sharingMess": "Sharing models with stakeholders is a mess",
+      "solution": "Feasly is purpose-built to fix all of this."
+    },
+    "benefits": {
+      "title": "Model Faster. Decide Smarter.",
+      "subtitle": "Everything you need for professional real estate financial modeling",
+      "importSeconds": {
+        "title": "Import in Seconds",
+        "description": "Upload Excel files or legacy EstateMaster .edmf files. Our AI handles the rest."
+      },
+      "sideByScenarios": {
+        "title": "Side-by-Side Scenarios",
+        "description": "Compare Base, Optimistic, and Pessimistic outcomes in real-time."
+      },
+      "arabicSupport": {
+        "title": "Arabic & RTL Support",
+        "description": "Native Arabic interface with right-to-left layout support."
+      },
+      "secureSharing": {
+        "title": "Secure Sharing",
+        "description": "Generate read-only links for stakeholders. Control access with precision."
+      }
+    },
+    "features": {
+      "title": "Core Features That Make Feasly Different",
+      "subtitle": "Built for real estate professionals who need accuracy, speed, and compliance in their financial modeling."
+    }
   }
 }

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { usePWA } from "@/hooks/usePWA";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import {
   ArrowRight,
@@ -154,6 +155,7 @@ const advantages = [
 
 export default function MarketingHome() {
   const { isOnline } = usePWA();
+  const { t } = useTranslation('marketing');
 
   useEffect(() => {
     // Scroll to top on page load
@@ -175,31 +177,31 @@ export default function MarketingHome() {
         </div>
         <div className="container mx-auto px-4 relative z-10 content-layer">
           <h1 className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 text-foreground">
-            Build feasibility models 5 × faster.
+            {t('home.hero.title')}
           </h1>
           <div className="text-center mb-8">
             <p className="hero-subtitle text-xl md:text-2xl text-muted-foreground">
-              One live model. Zero spreadsheet drama.
+              {t('home.hero.subtitle')}
             </p>
           </div>
           <ParallaxSection speed={0.3}>
             <div className="text-center space-y-8">
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                8 core inputs per asset · Base / Optimistic / Pessimistic toggle · Drag-and-drop Excel + EDMF import
+                {t('home.hero.description')}
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-6">
                 <MagneticButton strength={0.2}>
                   <PulsingButton size="lg" className="px-8 py-4 text-lg" asChild>
-                    <Link to="/demo" aria-label="Try the Demo">
+                    <Link to="/demo" aria-label={t('hero.tryDemo')}>
                       <Play className="mr-2 h-5 w-5" />
-                      Try the Demo
+                      {t('hero.tryDemo')}
                     </Link>
                   </PulsingButton>
                 </MagneticButton>
                 <MagneticButton strength={0.15}>
                   <Button variant="outline" size="lg" className="px-8 py-4 text-lg" asChild>
-                    <Link to="/welcome" aria-label="Start free trial">
-                      Start free trial <ArrowRight className="ml-2 h-4 w-4" />
+                    <Link to="/welcome" aria-label={t('hero.startFreeTrial')}>
+                      {t('hero.startFreeTrial')} <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </MagneticButton>
@@ -215,7 +217,7 @@ export default function MarketingHome() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto mb-16">
             <ScrollProgressiveReveal direction="scale" delay={0.2}>
-              <GlitchText text="Feasibility modeling is broken." className="text-3xl md:text-4xl font-bold mb-6 text-center" />
+              <GlitchText text={t('home.problems.title')} className="text-3xl md:text-4xl font-bold mb-6 text-center" />
             </ScrollProgressiveReveal>
             
             <ScrollProgressiveReveal direction="up" delay={0.4} stagger={true} staggerDelay={0.2} className="space-y-6 text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -224,7 +226,7 @@ export default function MarketingHome() {
                   <div className="pt-1">
                     <AnimatedRedX delay={0.2} />
                   </div>
-                  <p className="flex-1">Excel models are fragile, unstructured, and hard to audit</p>
+                  <p className="flex-1">{t('home.problems.excelFragile')}</p>
                 </div>
               </ScrollCard>
               
@@ -233,7 +235,7 @@ export default function MarketingHome() {
                   <div className="pt-1">
                     <AnimatedRedX delay={0.4} />
                   </div>
-                  <p className="flex-1">Legacy tools like EstateMaster are outdated, slow, and siloed</p>
+                  <p className="flex-1">{t('home.problems.legacyTools')}</p>
                 </div>
               </ScrollCard>
               
@@ -242,7 +244,7 @@ export default function MarketingHome() {
                   <div className="pt-1">
                     <AnimatedRedX delay={0.6} />
                   </div>
-                  <p className="flex-1">Most platforms ignore Arabic language and GCC-specific needs</p>
+                  <p className="flex-1">{t('home.problems.missingArabic')}</p>
                 </div>
               </ScrollCard>
               
@@ -251,7 +253,7 @@ export default function MarketingHome() {
                   <div className="pt-1">
                     <AnimatedRedX delay={0.8} />
                   </div>
-                  <p className="flex-1">Sharing models with stakeholders is a mess</p>
+                  <p className="flex-1">{t('home.problems.sharingMess')}</p>
                 </div>
               </ScrollCard>
             </ScrollProgressiveReveal>
@@ -259,7 +261,7 @@ export default function MarketingHome() {
             <ScrollProgressiveReveal direction="scale" delay={0.8}>
               <div className="mt-12 text-center">
                 <ScrollTextReveal 
-                  text="Feasly is purpose-built to fix all of this." 
+                  text={t('home.problems.solution')}
                   className="text-2xl font-bold text-primary"
                   cascade={true}
                   delay={0.2}
@@ -276,12 +278,12 @@ export default function MarketingHome() {
           <ScrollProgressiveReveal direction="up" delay={0.2}>
             <div className="max-w-4xl mx-auto text-center mb-16">
               <ScrollTextReveal 
-                text="Model Faster. Decide Smarter." 
+                text={t('home.benefits.title')}
                 className="text-3xl md:text-4xl font-bold mb-6"
                 cascade={true}
               />
               <p className="text-xl text-muted-foreground">
-                Everything you need for professional real estate financial modeling
+                {t('home.benefits.subtitle')}
               </p>
             </div>
           </ScrollProgressiveReveal>
@@ -295,9 +297,9 @@ export default function MarketingHome() {
                     <BarChart4 className="h-6 w-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Import in Seconds</h3>
+                    <h3 className="text-xl font-semibold mb-2">{t('home.benefits.importSeconds.title')}</h3>
                     <p className="text-muted-foreground">
-                      Upload Excel files or legacy EstateMaster .edmf files. Our AI handles the rest.
+                      {t('home.benefits.importSeconds.description')}
                     </p>
                   </div>
                 </div>
@@ -309,9 +311,9 @@ export default function MarketingHome() {
                     <Expand className="h-6 w-6 text-success" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Side-by-Side Scenarios</h3>
+                    <h3 className="text-xl font-semibold mb-2">{t('home.benefits.sideByScenarios.title')}</h3>
                     <p className="text-muted-foreground">
-                      Compare Base, Optimistic, and Pessimistic outcomes in real-time.
+                      {t('home.benefits.sideByScenarios.description')}
                     </p>
                   </div>
                 </div>
@@ -323,9 +325,9 @@ export default function MarketingHome() {
                     <Globe2 className="h-6 w-6 text-warning" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Arabic & RTL Support</h3>
+                    <h3 className="text-xl font-semibold mb-2">{t('home.benefits.arabicSupport.title')}</h3>
                     <p className="text-muted-foreground">
-                      Native Arabic interface with right-to-left layout support.
+                      {t('home.benefits.arabicSupport.description')}
                     </p>
                   </div>
                 </div>
@@ -337,9 +339,9 @@ export default function MarketingHome() {
                     <Lock className="h-6 w-6 text-secondary" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold mb-2">Secure Sharing</h3>
+                    <h3 className="text-xl font-semibold mb-2">{t('home.benefits.secureSharing.title')}</h3>
                     <p className="text-muted-foreground">
-                      Generate read-only links for stakeholders. Control access with precision.
+                      {t('home.benefits.secureSharing.description')}
                     </p>
                   </div>
                 </div>
@@ -385,12 +387,12 @@ export default function MarketingHome() {
           <ScrollProgressiveReveal direction="scale" delay={0.2}>
             <div className="text-center mb-16">
               <ScrollTextReveal 
-                text="Core Features That Make Feasly Different"
+                text={t('home.features.title')}
                 className="text-3xl md:text-4xl font-bold mb-4"
                 cascade={true}
               />
               <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Built for real estate professionals who need accuracy, speed, and compliance in their financial modeling.
+                {t('home.features.subtitle')}
               </p>
             </div>
           </ScrollProgressiveReveal>

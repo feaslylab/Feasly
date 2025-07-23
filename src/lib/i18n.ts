@@ -36,6 +36,11 @@ i18n
       escapeValue: false,
     },
     
+    // Safe fallback configuration
+    returnEmptyString: false,
+    returnNull: false,
+    returnObjects: false,
+    
     // Performance optimizations
     load: 'languageOnly',
     preload: ['en'], // Preload English
