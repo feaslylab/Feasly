@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
 import { cn } from "@/lib/utils";
 
 interface AuthPageProps {
@@ -19,28 +21,54 @@ export const AuthPage = ({ onSuccess }: AuthPageProps) => {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-primary-light via-background to-accent flex items-center justify-center p-4 relative">
+      {/* Animated Background */}
+      <AnimatedBackground />
+      
       {/* Feasly Logo in top-left corner */}
-      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20">
-        <Link to="/" className="flex items-center">
-          <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent hover:scale-105 transition-transform duration-200">
+      <motion.div 
+        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-20"
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+      >
+        <Link to="/" className="flex items-center group">
+          <motion.span 
+            className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent transition-transform duration-200"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             Feasly
-          </span>
+          </motion.span>
         </Link>
-      </div>
+      </motion.div>
 
       {/* Language and Theme switchers in top-right corner */}
-      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2 sm:gap-3 z-20 bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20">
+      <motion.div 
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2 sm:gap-3 z-20 bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20"
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+      >
         <ThemeToggle />
         <LanguageSwitcher />
-      </div>
+      </motion.div>
 
-      <div className="w-full max-w-[90vw] sm:max-w-md relative z-10">
+      <motion.div 
+        className="w-full max-w-[90vw] sm:max-w-md relative z-10"
+        initial={{ opacity: 0, y: 30, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ 
+          duration: 0.8, 
+          delay: 0.1,
+          ease: [0.25, 0.46, 0.45, 0.94]
+        }}
+      >
         {isLoginMode ? (
           <LoginForm onToggleMode={toggleMode} onSuccess={onSuccess} />
         ) : (
           <SignUpForm onToggleMode={toggleMode} onSuccess={onSuccess} />
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };

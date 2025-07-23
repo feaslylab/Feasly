@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -137,25 +138,45 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-elegant border-0 bg-background/95 backdrop-blur-sm relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary-light/5 pointer-events-none" />
-      
-      <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-primary-glow/20 to-transparent blur-3xl" />
-      <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-gradient-to-tr from-primary-glow/10 to-transparent blur-3xl" />
-      
-      <CardHeader className={cn("text-center space-y-6 relative z-10", isRTL && "text-right")}>
-        <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center shadow-glow transform transition-all duration-500 hover:scale-105 hover:shadow-lg">
-          <Building2 className="w-8 h-8 text-primary-foreground" />
-        </div>
-        <div>
-          <CardTitle className="text-3xl font-semibold tracking-tight">{t('welcomeBack')}</CardTitle>
-          <CardDescription className="text-muted-foreground mt-3 text-base">
-            {t('loginToAccount')}
-          </CardDescription>
-        </div>
-      </CardHeader>
-      <CardContent className="relative z-10">
-        <form onSubmit={handleLogin} className="space-y-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+    >
+      <Card className="w-full max-w-md shadow-elegant border-0 bg-background/95 backdrop-blur-sm relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary-light/5 pointer-events-none" />
+        
+        <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-primary-glow/20 to-transparent blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-gradient-to-tr from-primary-glow/10 to-transparent blur-3xl" />
+        
+        <CardHeader className={cn("text-center space-y-6 relative z-10", isRTL && "text-right")}>
+          <motion.div 
+            className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center shadow-glow transform transition-all duration-500 hover:scale-105 hover:shadow-lg"
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+          >
+            <Building2 className="w-8 h-8 text-primary-foreground" />
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <CardTitle className="text-3xl font-semibold tracking-tight">{t('welcomeBack')}</CardTitle>
+            <CardDescription className="text-muted-foreground mt-3 text-base">
+              {t('loginToAccount')}
+            </CardDescription>
+          </motion.div>
+        </CardHeader>
+        <CardContent className="relative z-10">
+          <motion.form 
+            onSubmit={handleLogin} 
+            className="space-y-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
           <div className="space-y-3">
             <Label htmlFor="email" className={cn("text-sm font-medium", isRTL && "text-right")}>{t('email')}</Label>
             <div className="relative group">
@@ -303,19 +324,24 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
               <span className="relative z-10">{t('login')}</span>
             )}
           </Button>
-        </form>
+          </motion.form>
 
-        <div className="mt-8">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator className="w-full opacity-30" />
+          <motion.div 
+            className="mt-8"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <Separator className="w-full opacity-30" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-3 text-muted-foreground/60 font-medium tracking-wider">
+                  {t('or', 'OR')}
+                </span>
+              </div>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-3 text-muted-foreground/60 font-medium tracking-wider">
-                {t('or', 'OR')}
-              </span>
-            </div>
-          </div>
           <p className={cn(
             "text-center text-sm text-muted-foreground mt-6",
             isRTL && "text-right"
@@ -332,8 +358,9 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
               {t('signUpHere')}
             </Button>
           </p>
-        </div>
+        </motion.div>
       </CardContent>
     </Card>
+    </motion.div>
   );
 };
