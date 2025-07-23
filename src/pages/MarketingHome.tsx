@@ -33,6 +33,12 @@ import { EnterpriseScale } from "@/components/marketing/EnterpriseScale";
 import { WaitlistForm } from "@/components/marketing/WaitlistForm";
 import { PersonaSelector } from "@/components/marketing/PersonaSelector";
 import { AIFeaturesVisual } from "@/components/marketing/AIFeaturesVisual";
+import { AnimatedHero } from "@/components/marketing/AnimatedHero";
+import { AnimatedFeatureCard } from "@/components/marketing/AnimatedFeatureCard";
+import { ScrollReveal } from "@/components/marketing/ScrollReveal";
+import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
+import { PulsingButton, NumberCounter } from "@/components/marketing/AnimatedCTA";
+import { motion } from "framer-motion";
 
 const features = [
   {
@@ -146,63 +152,13 @@ export default function MarketingHome() {
     <div className="flex flex-col">
       {/* Hero Section */}
       <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/5" />
-        
-        {/* Floating Elements */}
-        <div className="absolute top-20 right-[20%] w-72 h-72 bg-primary/10 rounded-full filter blur-3xl opacity-30 animate-pulse" />
-        <div className="absolute bottom-20 left-[10%] w-64 h-64 bg-secondary/10 rounded-full filter blur-3xl opacity-20 animate-pulse" />
-        
+        <AnimatedBackground />
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-5xl mx-auto text-center">
-            <h1 className="text-4xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-primary via-primary-light to-accent bg-clip-text text-transparent leading-tight">
-              Model the Future.
-              <br />
-              Manage with Precision.
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-4xl mx-auto leading-relaxed">
-              Built for $100M+ projects. Import Excel or legacy EstateMaster files. Model in Arabic. Share with stakeholders. Export with confidence.
-            </p>
-            
-            {/* Dual CTA */}
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
-              <Button size="lg" className="group px-8 py-4 text-lg" asChild>
-                <Link to="/demo">
-                  <Play className="mr-2 h-5 w-5" /> View Live Demo
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" className="px-8 py-4 text-lg" asChild>
-                <Link to="/welcome">
-                  Get Started Free
-                </Link>
-              </Button>
-            </div>
-
-            {/* Trust Signal */}
-            <p className="text-sm text-muted-foreground/80 mb-8">
-              Used by leading real estate teams • No credit card required
-            </p>
-
-            {/* Waitlist Form */}
-            <div className="max-w-md mx-auto mb-16">
-              <WaitlistForm 
-                placeholder="Enter your email for early access"
-                buttonText="Join Waitlist"
-                className="justify-center"
-              />
-            </div>
-          </div>
-          
-          {/* Hero Visual */}
-          <div className="max-w-7xl mx-auto">
-            <div className="bg-card rounded-2xl border border-border shadow-2xl overflow-hidden">
-              <div className="aspect-[16/10] w-full bg-gradient-to-br from-background via-muted/30 to-muted flex items-center justify-center">
-                <div className="text-center space-y-4">
-                  <Building2 className="h-16 w-16 text-primary mx-auto" />
-                  <p className="text-lg text-muted-foreground">Live Dashboard Preview</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <AnimatedHero
+            title="Stop building feasibility models in Excel"
+            subtitle="Next-gen real estate financial modeling"
+            description="Replace spreadsheets with intelligent modeling. Get accurate projections, real-time collaboration, and compliance-ready outputs for complex development projects."
+          />
         </div>
       </section>
 
@@ -338,40 +294,38 @@ export default function MarketingHome() {
       {/* Features Grid */}
       <section className="py-20 bg-muted/30" id="features">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Core Features That Make Feasly Different
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Every feature designed to solve real problems faced by developers and analysts.
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Core Features That Make Feasly Different
+              </h2>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                Built for real estate professionals who need accuracy, speed, and compliance in their financial modeling.
+              </p>
+            </div>
+          </ScrollReveal>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "rounded-xl border border-border p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1",
-                  feature.color
-                )}
-              >
-                <div className={cn("p-3 rounded-full w-fit mb-4", feature.color)}>
-                  <feature.icon className={cn("h-6 w-6", feature.iconColor)} />
+              <AnimatedFeatureCard key={feature.title} index={index}>
+                <div className={cn("p-4 rounded-lg mb-4 w-fit", feature.color)}>
+                  <feature.icon className={cn("h-8 w-8", feature.iconColor)} />
                 </div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground">{feature.description}</p>
-              </div>
+                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+              </AnimatedFeatureCard>
             ))}
           </div>
 
-          <div className="text-center mt-12">
-            <Button size="lg" asChild>
-              <Link to="/features">
-                View All Features <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </div>
+          <ScrollReveal delay={0.6}>
+            <div className="text-center mt-12">
+              <Button size="lg" asChild>
+                <Link to="/features">
+                  View All Features <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -532,23 +486,37 @@ export default function MarketingHome() {
         <section className="py-16 bg-muted/20">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
-              <p className="text-sm text-muted-foreground uppercase tracking-wide mb-12">
-                Built for $100M+ Projects • Designed with Input from Developers and Analysts
-              </p>
+              <ScrollReveal>
+                <p className="text-sm text-muted-foreground uppercase tracking-wide mb-12">
+                  Built for $100M+ Projects • Designed with Input from Developers and Analysts
+                </p>
+              </ScrollReveal>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-2">15min</div>
-                  <p className="text-sm text-muted-foreground">Average setup time from Excel import</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-2">3x</div>
-                  <p className="text-sm text-muted-foreground">Faster scenario analysis</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-primary mb-2">100%</div>
-                  <p className="text-sm text-muted-foreground">Audit-ready version history</p>
-                </div>
+                <ScrollReveal delay={0.2}>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      <NumberCounter target={15} suffix="min" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">Average setup time from Excel import</p>
+                  </div>
+                </ScrollReveal>
+                <ScrollReveal delay={0.4}>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      <NumberCounter target={3} suffix="x" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">Faster scenario analysis</p>
+                  </div>
+                </ScrollReveal>
+                <ScrollReveal delay={0.6}>
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-primary mb-2">
+                      <NumberCounter target={100} suffix="%" />
+                    </div>
+                    <p className="text-sm text-muted-foreground">Audit-ready version history</p>
+                  </div>
+                </ScrollReveal>
               </div>
             </div>
           </div>
@@ -556,31 +524,39 @@ export default function MarketingHome() {
 
         {/* Persistent CTA Bar */}
         <section className="py-20 relative overflow-hidden" id="get-started">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-accent/5" />
+          <AnimatedBackground />
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-5xl mx-auto text-center">
-              <h2 className="text-3xl md:text-5xl font-bold mb-6">
-                Feasibility modeling doesn't need to be painful.
-              </h2>
+              <ScrollReveal>
+                <h2 className="text-3xl md:text-5xl font-bold mb-6">
+                  Feasibility modeling doesn't need to be painful.
+                </h2>
+              </ScrollReveal>
               
-              <div className="flex flex-col sm:flex-row justify-center gap-6 mb-8">
-                <Button size="lg" className="group px-8 py-4 text-lg" asChild>
-                  <Link to="/demo">
-                    <Play className="mr-2 h-5 w-5" />
-                    Try the Demo
-                  </Link>
-                </Button>
-                <Button variant="outline" size="lg" className="px-8 py-4 text-lg" asChild>
-                  <Link to="/welcome">
-                    Create Account
-                  </Link>
-                </Button>
-              </div>
+              <ScrollReveal delay={0.3}>
+                <div className="flex flex-col sm:flex-row justify-center gap-6 mb-8">
+                  <PulsingButton size="lg" className="px-8 py-4 text-lg" asChild>
+                    <Link to="/demo">
+                      <Play className="mr-2 h-5 w-5" />
+                      Try the Demo
+                    </Link>
+                  </PulsingButton>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button variant="outline" size="lg" className="px-8 py-4 text-lg" asChild>
+                      <Link to="/welcome">
+                        Create Account
+                      </Link>
+                    </Button>
+                  </motion.div>
+                </div>
+              </ScrollReveal>
               
-              <p className="text-sm text-muted-foreground">
-                No credit card required • Full Arabic support • Import .edmf files
-              </p>
+              <ScrollReveal delay={0.6}>
+                <p className="text-sm text-muted-foreground">
+                  No credit card required • Full Arabic support • Import .edmf files
+                </p>
+              </ScrollReveal>
             </div>
           </div>
         </section>
