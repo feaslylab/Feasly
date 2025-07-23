@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
+import { WaitlistForm } from "@/components/marketing/WaitlistForm";
 
 export function StickyCTAFooter() {
   return (
@@ -11,18 +12,28 @@ export function StickyCTAFooter() {
             Feasibility modeling doesn't need to be painful.
           </h2>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button size="lg" className="px-8 py-3" asChild>
-              <Link to="/demo">
-                <Play className="mr-2 h-4 w-4" />
-                Try the Demo
-              </Link>
-            </Button>
-            <Button variant="outline" size="lg" className="px-8 py-3" asChild>
-              <Link to="/welcome">
-                Create Account
-              </Link>
-            </Button>
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <Button size="lg" className="px-8 py-3" asChild>
+                <Link to="/demo">
+                  <Play className="mr-2 h-4 w-4" />
+                  Try the Demo
+                </Link>
+              </Button>
+              <Button variant="outline" size="lg" className="px-8 py-3" asChild>
+                <Link to="/welcome">
+                  Create Account
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="max-w-md mx-auto">
+              <WaitlistForm 
+                placeholder="Enter your email for early access"
+                buttonText="Join Waitlist"
+                className="justify-center"
+              />
+            </div>
           </div>
         </div>
       </div>

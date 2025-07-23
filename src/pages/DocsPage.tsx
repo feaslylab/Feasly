@@ -112,27 +112,225 @@ export default function DocsPage() {
           </div>
         </section>
 
-        {/* Coming Soon Notice */}
-        <section className="py-12 bg-muted/30">
+        {/* Key Workflows Section */}
+        <section className="py-20" id="getting-started">
           <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <div className="bg-primary/10 border border-primary/20 rounded-lg p-8">
-                <Book className="h-12 w-12 text-primary mx-auto mb-4" />
-                <h2 className="text-2xl font-bold mb-4">Documentation Coming Soon</h2>
-                <p className="text-lg text-muted-foreground mb-6">
-                  We're working hard to create comprehensive documentation, tutorials, and resources for Feasly users. 
-                  This section will be available with our official launch.
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-3xl font-bold text-center mb-16">Key Feasly Workflows</h2>
+              
+              {/* Workflow Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                {/* Getting Started */}
+                <div className="bg-background rounded-xl border border-border p-6 hover:shadow-lg transition-shadow">
+                  <div className="bg-primary/10 p-3 rounded-full w-fit mb-4">
+                    <Zap className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Getting Started</h3>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Create your account and choose project template</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Set up basic project metadata and timeline</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Navigate the Feasly interface efficiently</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* File Import */}
+                <div className="bg-background rounded-xl border border-border p-6 hover:shadow-lg transition-shadow">
+                  <div className="bg-success/10 p-3 rounded-full w-fit mb-4">
+                    <Download className="h-6 w-6 text-success" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Uploading Excel & EDMF</h3>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Import Excel spreadsheets with automatic parsing</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Direct .edmf file support from EstateMaster</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Validate and map imported data fields</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Scenarios */}
+                <div className="bg-background rounded-xl border border-border p-6 hover:shadow-lg transition-shadow">
+                  <div className="bg-warning/10 p-3 rounded-full w-fit mb-4">
+                    <FileText className="h-6 w-6 text-warning" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Switching Scenarios</h3>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-warning rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Compare Base, Optimistic & Pessimistic cases</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-warning rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Create custom scenario parameters</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-warning rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Run sensitivity analysis on key variables</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sharing */}
+                <div className="bg-background rounded-xl border border-border p-6 hover:shadow-lg transition-shadow">
+                  <div className="bg-secondary/10 p-3 rounded-full w-fit mb-4">
+                    <Users className="h-6 w-6 text-secondary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Sharing Projects</h3>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-secondary rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Generate secure read-only project links</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-secondary rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Set granular access permissions by role</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-secondary rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Track viewer engagement and feedback</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Reporting */}
+                <div className="bg-background rounded-xl border border-border p-6 hover:shadow-lg transition-shadow">
+                  <div className="bg-primary/10 p-3 rounded-full w-fit mb-4">
+                    <Video className="h-6 w-6 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Generating Reports</h3>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Export professional PDF reports with branding</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Generate Excel workbooks for stakeholders</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Customize report templates and layouts</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Access Control */}
+                <div className="bg-background rounded-xl border border-border p-6 hover:shadow-lg transition-shadow" id="security">
+                  <div className="bg-success/10 p-3 rounded-full w-fit mb-4">
+                    <Shield className="h-6 w-6 text-success" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3">Access Control</h3>
+                  <div className="space-y-3 text-sm text-muted-foreground">
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Role-based permissions for team members</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Audit logs for all project modifications</p>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full mt-1.5 flex-shrink-0" />
+                      <p>Enterprise SSO integration support</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Security & Infrastructure Section */}
+        <section className="py-20 bg-muted/30">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-12">
+                <Shield className="h-12 w-12 text-primary mx-auto mb-4" />
+                <h2 className="text-3xl font-bold mb-4">Security & Infrastructure</h2>
+                <p className="text-lg text-muted-foreground">
+                  Enterprise-grade security and compliance for your financial data.
                 </p>
-                <div className="flex flex-col sm:flex-row justify-center gap-4">
-                  <Button asChild>
-                    <Link to="/welcome">
-                      Try Feasly Now
-                    </Link>
-                  </Button>
-                  <Button variant="outline" asChild>
-                    <Link to="#notify">
-                      Notify Me When Ready
-                    </Link>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="bg-background rounded-xl border border-border p-6">
+                  <h3 className="text-lg font-semibold mb-4">Security Features</h3>
+                  <ul className="space-y-3 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full" />
+                      Hosted on secure cloud infrastructure (SOC2-ready)
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full" />
+                      End-to-end encryption for all data in transit
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full" />
+                      AES-256 encryption for data at rest
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full" />
+                      Multi-factor authentication support
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-success rounded-full" />
+                      Regular security audits and penetration testing
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-background rounded-xl border border-border p-6">
+                  <h3 className="text-lg font-semibold mb-4">Compliance & Governance</h3>
+                  <ul className="space-y-3 text-sm text-muted-foreground">
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                      Full audit trail & export history
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                      Role-based access control (RBAC)
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                      No data shared across clients
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                      Arabic and GCC compliance modeling
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-primary rounded-full" />
+                      GDPR and regional privacy law compliance
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="text-center mt-12">
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold mb-2">Need Enterprise Security Details?</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Get our complete security whitepaper and compliance documentation.
+                  </p>
+                  <Button>
+                    Request Security Documentation
                   </Button>
                 </div>
               </div>

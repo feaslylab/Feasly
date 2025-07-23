@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { WaitlistForm } from "@/components/marketing/WaitlistForm";
 
 const footerLinks = [
   {
@@ -22,7 +23,7 @@ const footerLinks = [
     links: [
       { name: "Help Center", href: "#help" },
       { name: "Contact", href: "#contact" },
-      { name: "FAQs", href: "#faqs" },
+      { name: "Security & Infrastructure", href: "/docs#security" },
     ],
   },
 ];
@@ -39,10 +40,18 @@ export function MarketingFooter() {
                 Feasly
               </span>
             </Link>
-            <p className="text-sm text-muted-foreground max-w-xs">
+            <p className="text-sm text-muted-foreground max-w-xs mb-4">
               Next-gen real estate financial modeling platform, 
               built for the GCC and beyond.
             </p>
+            <div className="max-w-xs">
+              <WaitlistForm 
+                placeholder="Your email"
+                buttonText="Join Waitlist"
+                size="sm"
+                className="flex-col gap-2"
+              />
+            </div>
           </div>
 
           {/* Links Columns */}

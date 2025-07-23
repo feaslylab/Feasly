@@ -30,6 +30,9 @@ import { HowRealTeamsUseFeasly } from "@/components/marketing/HowRealTeamsUseFea
 import { TryFeaslyDemo } from "@/components/marketing/TryFeaslyDemo";
 import { FeaslyVsOldWay } from "@/components/marketing/FeaslyVsOldWay";
 import { EnterpriseScale } from "@/components/marketing/EnterpriseScale";
+import { WaitlistForm } from "@/components/marketing/WaitlistForm";
+import { PersonaSelector } from "@/components/marketing/PersonaSelector";
+import { AIFeaturesVisual } from "@/components/marketing/AIFeaturesVisual";
 
 const features = [
   {
@@ -175,9 +178,18 @@ export default function MarketingHome() {
             </div>
 
             {/* Trust Signal */}
-            <p className="text-sm text-muted-foreground/80 mb-16">
+            <p className="text-sm text-muted-foreground/80 mb-8">
               Used by leading real estate teams • No credit card required
             </p>
+
+            {/* Waitlist Form */}
+            <div className="max-w-md mx-auto mb-16">
+              <WaitlistForm 
+                placeholder="Enter your email for early access"
+                buttonText="Join Waitlist"
+                className="justify-center"
+              />
+            </div>
           </div>
           
           {/* Hero Visual */}
@@ -317,6 +329,9 @@ export default function MarketingHome() {
       {/* Why Feasly Works - Visual Walkthrough */}
       <WhyFeaslyWorks />
 
+      {/* Interactive Persona Selector */}
+      <PersonaSelector />
+
       {/* Who Uses Feasly */}
       <WhoUsesFeasly />
 
@@ -359,6 +374,9 @@ export default function MarketingHome() {
           </div>
         </div>
       </section>
+
+      {/* AI Features Visual Section */}
+      <AIFeaturesVisual />
 
       {/* How Real Teams Use Feasly */}
       <HowRealTeamsUseFeasly />

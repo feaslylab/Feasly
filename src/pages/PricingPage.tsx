@@ -3,6 +3,7 @@ import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
+import { WaitlistForm } from "@/components/marketing/WaitlistForm";
 import {
   ArrowRight,
   Check,
@@ -168,15 +169,26 @@ export default function PricingPage() {
                         <span className="text-muted-foreground ml-2">/{plan.period}</span>
                       )}
                     </div>
-                    <Button 
-                      className="w-full" 
-                      variant={plan.ctaVariant}
-                      asChild
-                    >
-                      <Link to={plan.name === 'Enterprise' ? '#contact' : '/waitlist'}>
-                        {plan.cta}
-                      </Link>
-                    </Button>
+                    {plan.name === 'Enterprise' ? (
+                      <Button 
+                        className="w-full" 
+                        variant={plan.ctaVariant}
+                        asChild
+                      >
+                        <Link to="#contact">
+                          {plan.cta}
+                        </Link>
+                      </Button>
+                    ) : (
+                      <div className="space-y-3">
+                        <WaitlistForm 
+                          placeholder="Enter your email"
+                          buttonText="Join Waitlist"
+                          size="sm"
+                          className="flex-col gap-2"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   <div className="space-y-3">
@@ -333,11 +345,13 @@ export default function PricingPage() {
                 Join developers across the GCC who trust Feasly for their real estate financial modeling.
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button size="lg" className="group" asChild>
-                  <Link to="/waitlist">
-                    Join Waitlist <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
+                <div className="max-w-md mx-auto">
+                  <WaitlistForm 
+                    placeholder="Enter your email for early access"
+                    buttonText="Join Waitlist"
+                    className="justify-center"
+                  />
+                </div>
                 <Button variant="outline" size="lg" asChild>
                   <Link to="#contact">
                     Contact Sales
