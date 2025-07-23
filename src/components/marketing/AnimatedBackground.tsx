@@ -44,7 +44,7 @@ export function AnimatedBackground() {
       {shapes.map((shape) => (
         <motion.div
           key={shape.id}
-          className="absolute rounded-full bg-gradient-to-r from-primary/20 to-accent/20 blur-sm"
+          className="absolute rounded-full bg-gradient-to-r from-primary/40 to-accent/40 blur-sm"
           style={{
             width: shape.size,
             height: shape.size,
@@ -55,7 +55,7 @@ export function AnimatedBackground() {
             y: [0, -30, 0],
             x: [0, 15, 0],
             scale: [1, 1.1, 1],
-            opacity: [0.3, 0.7, 0.3],
+            opacity: [0.5, 0.8, 0.5],
           }}
           transition={{
             duration: 2 + shape.delay, // Reduced from 3 to 2 for even faster movement
