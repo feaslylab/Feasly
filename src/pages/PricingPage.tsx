@@ -16,10 +16,10 @@ import {
 
 const plans = [
   {
-    name: "Pilot",
-    description: "Perfect for individual developers and small projects",
-    price: "Free",
-    period: "forever",
+    name: "Starter",
+    description: "Perfect for individual analysts",
+    price: "TBD",
+    period: "",
     icon: Building2,
     color: "from-muted/20 to-muted/40",
     popular: false,
@@ -37,9 +37,9 @@ const plans = [
   },
   {
     name: "Pro",
-    description: "Designed for growing development teams and multiple projects",
-    price: "$99",
-    period: "per user/month",
+    description: "Consultants + small firms",
+    price: "TBD",
+    period: "",
     icon: Users,
     color: "from-primary/20 to-primary-light/20",
     popular: true,
@@ -56,14 +56,14 @@ const plans = [
       "Priority Support",
       "Advanced Reporting",
     ],
-    cta: "Start Pro Trial",
+    cta: "Start Free",
     ctaVariant: "default" as const,
   },
   {
     name: "Enterprise",
-    description: "For large organizations and giga projects requiring full customization",
+    description: "Multi-project teams",
     price: "Custom",
-    period: "pricing",
+    period: "",
     icon: Crown,
     color: "from-secondary/20 to-accent/20",
     popular: false,
@@ -80,7 +80,7 @@ const plans = [
       "Premium Support",
       "Custom Reporting & Analytics",
     ],
-    cta: "Contact Sales",
+    cta: "Request Proposal",
     ctaVariant: "outline" as const,
   },
 ];
@@ -128,7 +128,7 @@ export default function PricingPage() {
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
               <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
-                Simple, Transparent Pricing
+                Simple pricing that scales with your team
               </h1>
               <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto">
                 Choose the plan that fits your development portfolio. Start free, scale as you grow.
@@ -190,6 +190,13 @@ export default function PricingPage() {
                 </div>
               ))}
             </div>
+            
+            {/* Additional info below pricing */}
+            <div className="max-w-4xl mx-auto text-center mt-16 space-y-4">
+              <p className="text-muted-foreground">Free onboarding for early users</p>
+              <p className="text-muted-foreground">No credit card required to get started</p>
+              <p className="text-muted-foreground">Bulk licensing available for enterprise clients</p>
+            </div>
           </div>
         </section>
 
@@ -211,7 +218,7 @@ export default function PricingPage() {
                   <thead className="bg-muted">
                     <tr>
                       <th className="text-left p-4 font-medium">Features</th>
-                      <th className="text-center p-4 font-medium">Pilot</th>
+                      <th className="text-center p-4 font-medium">Starter</th>
                       <th className="text-center p-4 font-medium">Pro</th>
                       <th className="text-center p-4 font-medium">Enterprise</th>
                     </tr>

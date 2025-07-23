@@ -15,57 +15,86 @@ import {
   Cloud,
   Building2,
   BarChart4,
+  Upload,
+  Languages,
+  Share2,
+  Download,
+  Eye,
+  Smartphone,
+  Layout,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const features = [
   {
-    title: "Development Feasibility",
-    description:
-      "Comprehensive financial modeling tailored for real estate development projects.",
-    icon: Building2,
+    title: "Excel Import",
+    description: "Upload raw spreadsheets. Get a structured model instantly.",
+    icon: Upload,
     color: "bg-gradient-to-r from-primary/10 to-primary-light/10",
     iconColor: "text-primary",
   },
   {
-    title: "Saudi Compliance",
-    description:
-      "Built-in support for Zakat calculation, Escrow compliance, and Saudi regulations.",
-    icon: ShieldCheck,
-    color: "bg-gradient-to-r from-success/10 to-success-light/10",
+    title: "EstateMaster File Support",
+    description: "Direct .edmf import, no rebuilds required.",
+    icon: FileText,
+    color: "bg-gradient-to-r from-success/10 to-success-light/10", 
     iconColor: "text-success",
   },
   {
-    title: "Smart Insights",
-    description:
-      "AI-driven analysis provides actionable insights from your financial data.",
-    icon: LineChart,
+    title: "Scenario Modeling",
+    description: "Toggle Base, Optimistic, Pessimistic. Instantly.",
+    icon: Expand,
     color: "bg-gradient-to-r from-warning/10 to-warning-light/10",
     iconColor: "text-warning",
   },
   {
-    title: "Consolidation & Reporting",
-    description:
-      "Aggregate data across projects for portfolio-wide performance analysis.",
-    icon: FileText,
+    title: "Real-Time Calculations",
+    description: "No waiting. Changes reflect across the model.",
+    icon: LineChart,
     color: "bg-gradient-to-r from-secondary/10 to-accent/10",
     iconColor: "text-secondary",
   },
   {
-    title: "Audit-Ready Versioning",
-    description:
-      "Track changes across all financial models with detailed audit logs.",
-    icon: Layers,
+    title: "Arabic Language Support",
+    description: "RTL and native labels built in.",
+    icon: Languages,
     color: "bg-gradient-to-r from-primary/10 to-secondary/10",
     iconColor: "text-primary",
   },
   {
-    title: "Multi-Scenario Modeling",
-    description:
-      "Test multiple scenarios to see how different variables affect outcomes.",
-    icon: Expand,
+    title: "Shareable Projects", 
+    description: "Send read-only project links securely.",
+    icon: Share2,
     color: "bg-gradient-to-r from-success/10 to-primary/10",
     iconColor: "text-success",
+  },
+  {
+    title: "Full Export History",
+    description: "Every version saved and downloadable.",
+    icon: Download,
+    color: "bg-gradient-to-r from-warning/10 to-secondary/10",
+    iconColor: "text-warning",
+  },
+  {
+    title: "Public Demo Access",
+    description: "Try without creating an account.",
+    icon: Eye,
+    color: "bg-gradient-to-r from-primary/10 to-accent/10",
+    iconColor: "text-primary",
+  },
+  {
+    title: "Mobile-Responsive Access",
+    description: "Model from anywhere.",
+    icon: Smartphone,
+    color: "bg-gradient-to-r from-success/10 to-warning/10",
+    iconColor: "text-success",
+  },
+  {
+    title: "Asset-Specific Templates",
+    description: "Residential, Retail, Hospitality, and more.",
+    icon: Layout,
+    color: "bg-gradient-to-r from-secondary/10 to-primary/10",
+    iconColor: "text-secondary",
   },
 ];
 
@@ -159,45 +188,35 @@ export default function MarketingHome() {
         </div>
       </section>
 
-      {/* Problems Section */}
+      {/* The Problem We Solve */}
       <section className="py-20 bg-muted/20">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Stop Fighting Spreadsheets
+              Feasibility modeling is broken.
             </h2>
-            <p className="text-xl text-muted-foreground">
-              Real estate financial modeling shouldn't require a PhD in Excel
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
-                <FileText className="h-8 w-8 text-destructive" />
+            <div className="space-y-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+              <div className="flex items-center gap-3 justify-center">
+                <div className="w-2 h-2 rounded-full bg-destructive flex-shrink-0"></div>
+                <p>Excel models are fragile, unstructured, and hard to audit</p>
               </div>
-              <h3 className="text-xl font-semibold">Excel Chaos</h3>
-              <p className="text-muted-foreground">
-                Broken formulas, version conflicts, and hours lost on formatting instead of analysis
-              </p>
+              <div className="flex items-center gap-3 justify-center">
+                <div className="w-2 h-2 rounded-full bg-destructive flex-shrink-0"></div>
+                <p>Legacy tools like EstateMaster are outdated, slow, and siloed</p>
+              </div>
+              <div className="flex items-center gap-3 justify-center">
+                <div className="w-2 h-2 rounded-full bg-destructive flex-shrink-0"></div>
+                <p>Most platforms ignore Arabic language and GCC-specific needs</p>
+              </div>
+              <div className="flex items-center gap-3 justify-center">
+                <div className="w-2 h-2 rounded-full bg-destructive flex-shrink-0"></div>
+                <p>Sharing models with stakeholders is a mess</p>
+              </div>
             </div>
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-warning/10 flex items-center justify-center mx-auto">
-                <Lock className="h-8 w-8 text-warning" />
-              </div>
-              <h3 className="text-xl font-semibold">No Visibility</h3>
-              <p className="text-muted-foreground">
-                Stakeholders can't see updates, scenarios live in isolation, decision-making slows down
-              </p>
-            </div>
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 rounded-full bg-secondary/10 flex items-center justify-center mx-auto">
-                <Globe2 className="h-8 w-8 text-secondary" />
-              </div>
-              <h3 className="text-xl font-semibold">Outdated Tools</h3>
-              <p className="text-muted-foreground">
-                Legacy software that doesn't support Arabic, mobile access, or modern collaboration
-              </p>
+            <div className="mt-12">
+              <h3 className="text-2xl font-bold text-primary">
+                Feasly is purpose-built to fix all of this.
+              </h3>
             </div>
           </div>
         </div>
@@ -294,7 +313,7 @@ export default function MarketingHome() {
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Built for Real Estate Professionals
+              Core Features That Make Feasly Different
             </h2>
             <p className="text-xl text-muted-foreground">
               Every feature designed to solve real problems faced by developers and analysts.
@@ -329,12 +348,12 @@ export default function MarketingHome() {
         </div>
       </section>
 
-      {/* Why Feasly Section */}
+      {/* Built for Real Projects */}
       <section className="py-20" id="compliance">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Why Choose Feasly?
+              Built for Real Projects
             </h2>
             <p className="text-xl text-muted-foreground">
               Designed from the ground up for the unique requirements of the GCC real estate market.
@@ -342,57 +361,126 @@ export default function MarketingHome() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {advantages.map((advantage, index) => (
-              <div
-                key={index}
-                className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300"
-              >
-                <div className="bg-primary/10 p-3 rounded-full">
-                  <advantage.icon className="h-6 w-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">{advantage.title}</h3>
-                  <p className="text-muted-foreground">{advantage.description}</p>
-                </div>
+            <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300">
+              <div className="bg-primary/10 p-3 rounded-full">
+                <Building2 className="h-6 w-6 text-primary" />
               </div>
-            ))}
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Designed for $100M+ real estate developments</h3>
+                <p className="text-muted-foreground">Handle complex, large-scale projects with confidence and precision.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300">
+              <div className="bg-success/10 p-3 rounded-full">
+                <BarChart4 className="h-6 w-6 text-success" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Used by feasibility teams, analysts, and investment professionals</h3>
+                <p className="text-muted-foreground">Trusted by the experts who build the future of real estate.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300">
+              <div className="bg-warning/10 p-3 rounded-full">
+                <Globe2 className="h-6 w-6 text-warning" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Optimized for GCC mandates and Arabic-first workflows</h3>
+                <p className="text-muted-foreground">Built specifically for the Gulf region's unique market conditions.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300">
+              <div className="bg-secondary/10 p-3 rounded-full">
+                <Layers className="h-6 w-6 text-secondary" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Handles project types from single towers to giga-project portfolios</h3>
+                <p className="text-muted-foreground">Scale from individual developments to massive portfolio analysis.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Product Screenshots Section */}
+      {/* Screenshots / Visual Proof */}
       <section className="py-20 bg-muted/30" id="use-cases">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Powerful Real Estate Analytics
+              Screenshots / Visual Proof
             </h2>
             <p className="text-xl text-muted-foreground">
-              Visualize complex financial data with intuitive dashboards and reports.
+              See Feasly in action with real screenshots from the platform.
             </p>
           </div>
 
-          {/* Mockup Screens - Vertical Scroll */}
+          {/* Screenshots with Captions */}
           <div className="max-w-6xl mx-auto space-y-16">
-            {/* First Screenshot */}
-            <div className="rounded-xl border border-border overflow-hidden shadow-xl">
-              <div className="aspect-[16/9] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
-                <p className="text-lg text-muted-foreground">Financial Dashboard Preview</p>
+            {/* Excel Upload → Structured Model */}
+            <div className="text-center space-y-4">
+              <div className="rounded-xl border border-border overflow-hidden shadow-xl">
+                <div className="aspect-[16/9] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
+                  <div className="text-center space-y-3">
+                    <Upload className="h-12 w-12 text-primary mx-auto" />
+                    <p className="text-lg text-muted-foreground">Excel Upload Interface</p>
+                  </div>
+                </div>
               </div>
+              <p className="text-muted-foreground font-medium">Structured model auto-generated from messy Excel</p>
             </div>
             
-            {/* Second Screenshot */}
-            <div className="rounded-xl border border-border overflow-hidden shadow-xl">
-              <div className="aspect-[16/9] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
-                <p className="text-lg text-muted-foreground">Multi-Scenario Analysis Preview</p>
+            {/* Modeling View with Tabs */}
+            <div className="text-center space-y-4">
+              <div className="rounded-xl border border-border overflow-hidden shadow-xl">
+                <div className="aspect-[16/9] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
+                  <div className="text-center space-y-3">
+                    <Expand className="h-12 w-12 text-success mx-auto" />
+                    <p className="text-lg text-muted-foreground">Scenario Comparison View</p>
+                  </div>
+                </div>
               </div>
+              <p className="text-muted-foreground font-medium">Compare multiple scenarios with a click</p>
             </div>
             
-            {/* Third Screenshot */}
-            <div className="rounded-xl border border-border overflow-hidden shadow-xl">
-              <div className="aspect-[16/9] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
-                <p className="text-lg text-muted-foreground">Compliance Reporting Preview</p>
+            {/* Arabic RTL Interface */}
+            <div className="text-center space-y-4">
+              <div className="rounded-xl border border-border overflow-hidden shadow-xl">
+                <div className="aspect-[16/9] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
+                  <div className="text-center space-y-3">
+                    <Languages className="h-12 w-12 text-warning mx-auto" />
+                    <p className="text-lg text-muted-foreground">Arabic RTL Interface</p>
+                  </div>
+                </div>
               </div>
+              <p className="text-muted-foreground font-medium">Full Arabic language support</p>
+            </div>
+            
+            {/* Public Demo Mode */}
+            <div className="text-center space-y-4">
+              <div className="rounded-xl border border-border overflow-hidden shadow-xl">
+                <div className="aspect-[16/9] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
+                  <div className="text-center space-y-3">
+                    <Eye className="h-12 w-12 text-secondary mx-auto" />
+                    <p className="text-lg text-muted-foreground">Public Demo Banner</p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-muted-foreground font-medium">Try without creating an account</p>
+            </div>
+            
+            {/* Export + Version History */}
+            <div className="text-center space-y-4">
+              <div className="rounded-xl border border-border overflow-hidden shadow-xl">
+                <div className="aspect-[16/9] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
+                  <div className="text-center space-y-3">
+                    <Download className="h-12 w-12 text-primary mx-auto" />
+                    <p className="text-lg text-muted-foreground">Export & Version History</p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-muted-foreground font-medium">Complete audit trail and export options</p>
             </div>
           </div>
         </div>
@@ -431,22 +519,19 @@ export default function MarketingHome() {
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-5xl mx-auto text-center">
               <h2 className="text-3xl md:text-5xl font-bold mb-6">
-                Start Modeling Today
+                Feasibility modeling doesn't need to be painful.
               </h2>
-              <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto">
-                Import your Excel files, explore scenarios, and share with stakeholders. Free onboarding for early users.
-              </p>
               
               <div className="flex flex-col sm:flex-row justify-center gap-6 mb-8">
                 <Button size="lg" className="group px-8 py-4 text-lg" asChild>
                   <Link to="/demo">
                     <Play className="mr-2 h-5 w-5" />
-                    Try Live Demo
+                    Try the Demo
                   </Link>
                 </Button>
                 <Button variant="outline" size="lg" className="px-8 py-4 text-lg" asChild>
                   <Link to="/welcome">
-                    Get Started Free
+                    Create Account
                   </Link>
                 </Button>
               </div>
