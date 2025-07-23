@@ -59,8 +59,8 @@ export function TextReveal({ text, className = "" }: { text: string; className?:
   return (
     <motion.div className={`overflow-hidden ${className}`}>
       <motion.div
-        initial={{ y: "50%", opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
+        initial={{ y: 0, opacity: 1 }}
+        whileInView={{ y: 0, opacity: 1 }}
         viewport={{ once: true, margin: "-20px" }}
         transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] as [number, number, number, number] }}
       >
@@ -73,9 +73,9 @@ export function TextReveal({ text, className = "" }: { text: string; className?:
 // 4. Morphing Shape Background
 export function MorphingBackground() {
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <motion.div
-        className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] opacity-5 morphing-bg"
+        className="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] opacity-3 morphing-bg"
         animate={{
           borderRadius: [
             "60% 40% 30% 70% / 60% 30% 70% 40%",
@@ -90,8 +90,9 @@ export function MorphingBackground() {
           ease: "linear"
         }}
         style={{
-          background: "linear-gradient(45deg, hsl(var(--primary)), hsl(var(--accent)))",
-          filter: "blur(60px)"
+          background: "linear-gradient(45deg, hsl(var(--primary) / 0.3), hsl(var(--accent) / 0.3))",
+          filter: "blur(80px)",
+          zIndex: -1
         }}
       />
     </div>

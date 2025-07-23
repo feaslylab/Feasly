@@ -135,9 +135,12 @@ h1, h2, h3, h4, h5, h6 {
   text-align: inherit !important;
 }
 
-/* Ensure all text elements are visible */
-* {
+/* Ensure critical text elements are visible */
+.hero-title,
+.hero-subtitle,
+h1, h2, h3 {
   opacity: 1 !important;
+  visibility: visible !important;
 }
 
 /* Override any problematic animation initial states */

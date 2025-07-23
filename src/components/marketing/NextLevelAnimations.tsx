@@ -73,11 +73,12 @@ export function InteractiveBlob({ size = 200 }: { size?: number }) {
       onMouseLeave={handleMouseLeave}
     >
       <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-primary to-accent rounded-full blur-xl opacity-70"
+        className="absolute inset-0 bg-gradient-to-r from-primary/20 to-accent/20 rounded-full blur-xl opacity-40 pointer-events-none"
         style={{
           x: springX,
           y: springY,
           scale: springScale,
+          zIndex: -1,
         }}
         animate={{
           borderRadius: [
