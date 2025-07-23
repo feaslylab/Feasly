@@ -1,54 +1,47 @@
 import { BarChart4, Building2, Users } from "lucide-react";
-
-const personas = [
-  {
-    title: "For Analysts",
-    icon: BarChart4,
-    color: "from-primary/10 to-primary-light/10",
-    iconColor: "text-primary",
-    features: [
-      "Upload Excel & run cases",
-      "Compare IRR & metrics", 
-      "Export investor-ready reports"
-    ]
-  },
-  {
-    title: "For Developers",
-    icon: Building2,
-    color: "from-success/10 to-success-light/10", 
-    iconColor: "text-success",
-    features: [
-      "Import feasibility plans",
-      "Share project snapshots",
-      "Toggle Arabic & English"
-    ]
-  },
-  {
-    title: "For Enterprises",
-    icon: Users,
-    color: "from-secondary/10 to-accent/10",
-    iconColor: "text-secondary", 
-    features: [
-      "Consolidate giga-projects",
-      "Control access & auditing",
-      "Request custom modules"
-    ]
-  }
-];
+import { useTranslation } from "react-i18next";
 
 export function WhoUsesFeasly() {
+  const { t } = useTranslation('marketing');
+
+  const getPersonas = () => [
+    {
+      title: t('home.whoUses.analysts.title'),
+      icon: BarChart4,
+      color: "from-primary/10 to-primary-light/10",
+      iconColor: "text-primary",
+      features: t('home.whoUses.analysts.features', { returnObjects: true }) as string[]
+    },
+    {
+      title: t('home.whoUses.developers.title'),
+      icon: Building2,
+      color: "from-success/10 to-success-light/10", 
+      iconColor: "text-success",
+      features: t('home.whoUses.developers.features', { returnObjects: true }) as string[]
+    },
+    {
+      title: t('home.whoUses.enterprises.title'),
+      icon: Users,
+      color: "from-secondary/10 to-accent/10",
+      iconColor: "text-secondary", 
+      features: t('home.whoUses.enterprises.features', { returnObjects: true }) as string[]
+    }
+  ];
+
+  const personas = getPersonas();
+
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Who Uses Feasly?
+            {t('home.whoUses.title')}
           </h2>
           <p className="text-xl text-muted-foreground mb-4">
-            Built for every role in real estate development
+            {t('home.whoUses.subtitle')}
           </p>
           <p className="text-sm text-muted-foreground uppercase tracking-wide">
-            5 M AED in projects modelled • Trusted by GCC developers • Built by Saudi real-estate pros
+            {t('home.whoUses.socialProof')}
           </p>
         </div>
 

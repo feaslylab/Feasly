@@ -250,6 +250,35 @@
     "features": {
       "title": "Core Features That Make Feasly Different",
       "subtitle": "Built for real estate professionals who need accuracy, speed, and compliance in their financial modeling."
+    },
+    "whoUses": {
+      "title": "Who Uses Feasly?",
+      "subtitle": "Built for every role in real estate development",
+      "socialProof": "5 M AED in projects modelled • Trusted by GCC developers • Built by Saudi real-estate pros",
+      "analysts": {
+        "title": "For Analysts",
+        "features": [
+          "Upload Excel & run cases",
+          "Compare IRR & metrics",
+          "Export investor-ready reports"
+        ]
+      },
+      "developers": {
+        "title": "For Developers", 
+        "features": [
+          "Import feasibility plans",
+          "Share project snapshots",
+          "Toggle Arabic & English"
+        ]
+      },
+      "enterprises": {
+        "title": "For Enterprises",
+        "features": [
+          "Consolidate giga-projects",
+          "Control access & auditing", 
+          "Request custom modules"
+        ]
+      }
     }
   }
 }
