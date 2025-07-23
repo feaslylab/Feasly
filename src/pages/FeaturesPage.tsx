@@ -119,22 +119,44 @@ export default function FeaturesPage() {
       <div className="flex flex-col">
         {/* Hero Section */}
         <section className="pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+          <AnimatedBackground />
           <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
           
           <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+            <motion.div 
+              className="max-w-4xl mx-auto text-center"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
+              <motion.h1 
+                className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
                 Features Built for Real Estate Excellence
-              </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto">
+              </motion.h1>
+              <motion.p 
+                className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
                 Every feature designed to solve real problems faced by developers, investors, and finance teams in the GCC market.
-              </p>
-              <Button size="lg" className="group" asChild>
-                <Link to="#features">
-                  Explore Features <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </Button>
-            </div>
+              </motion.p>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+              >
+                <Button size="lg" className="group" asChild>
+                  <Link to="#features">
+                    Explore Features <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </Button>
+              </motion.div>
+            </motion.div>
           </div>
         </section>
 
@@ -143,7 +165,8 @@ export default function FeaturesPage() {
           <div className="container mx-auto px-4">
             <div className="space-y-24">
               {features.map((feature, index) => (
-                <div key={index} className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-16`}>
+                <ScrollReveal key={index} delay={index * 0.2}>
+                  <div className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-12 lg:gap-16`}>
                   {/* Content */}
                   <div className="flex-1 space-y-6">
                     <div className={`bg-gradient-to-r ${feature.color} p-4 rounded-full w-fit`}>
@@ -173,6 +196,7 @@ export default function FeaturesPage() {
                     </div>
                   </div>
                 </div>
+                </ScrollReveal>
               ))}
             </div>
           </div>
@@ -180,29 +204,32 @@ export default function FeaturesPage() {
 
         {/* CTA Section */}
         <section className="py-20 relative overflow-hidden">
+          <AnimatedBackground />
           <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
           
           <div className="container mx-auto px-4 relative z-10">
-            <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6">
-                Ready to Transform Your Development Process?
-              </h2>
-              <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
-                Join developers across the GCC who are using Feasly to make better, faster investment decisions.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-4">
-                <Button size="lg" className="group" asChild>
-                  <Link to="/pricing">
-                    View Pricing <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </Button>
-                <Button variant="outline" size="lg" asChild>
-                  <Link to="/welcome">
-                    Try Feasly Now
-                  </Link>
-                </Button>
+            <ScrollReveal>
+              <div className="max-w-4xl mx-auto text-center">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6">
+                  Ready to Transform Your Development Process?
+                </h2>
+                <p className="text-xl text-muted-foreground mb-10 max-w-3xl mx-auto">
+                  Join developers across the GCC who are using Feasly to make better, faster investment decisions.
+                </p>
+                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                  <PulsingButton size="lg" className="group" asChild>
+                    <Link to="/pricing">
+                      View Pricing <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </PulsingButton>
+                  <Button variant="outline" size="lg" asChild>
+                    <Link to="/welcome">
+                      Try Feasly Now
+                    </Link>
+                  </Button>
+                </div>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </section>
       </div>
