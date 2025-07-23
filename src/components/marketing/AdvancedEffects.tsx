@@ -91,7 +91,7 @@ export function TypewriterText({
 export function ParticleBackground({ particleCount = 8 }: { particleCount?: number }) {
   const particles = Array.from({ length: particleCount }, (_, i) => ({
     id: i,
-    size: Math.random() * 21.6 + 10.8, // Increased size by 80% (10.8px to 32.4px)
+    size: Math.random() * 43.2 + 21.6, // Doubled size again (21.6px to 64.8px)
     x: Math.random() * 100,
     y: Math.random() * 100,
     duration: Math.random() * 6 + 8, // Slower, less frequent updates
