@@ -175,22 +175,22 @@ export default function MarketingHome() {
         </div>
         <div className="container mx-auto px-4 relative z-10 content-layer">
           <h1 className="hero-title text-4xl md:text-6xl font-bold text-center mb-6 text-foreground">
-            Feasibility without the spreadsheet.
+            Build feasibility models 5 × faster.
           </h1>
           <div className="text-center mb-8">
             <p className="hero-subtitle text-xl md:text-2xl text-muted-foreground">
-              Feasly is the fastest way to model, compare, and share development feasibility, in real time, without Excel.
+              One live model. Zero spreadsheet drama.
             </p>
           </div>
           <ParallaxSection speed={0.3}>
             <div className="text-center space-y-8">
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                Replace spreadsheets with intelligent modeling. Get accurate projections, real-time collaboration, and compliance-ready outputs for complex development projects.
+                8 core inputs per asset · Base / Optimistic / Pessimistic toggle · Drag-and-drop Excel + EDMF import
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-6">
                 <MagneticButton strength={0.2}>
                   <PulsingButton size="lg" className="px-8 py-4 text-lg" asChild>
-                    <Link to="/demo">
+                    <Link to="/demo" aria-label="Try the Demo">
                       <Play className="mr-2 h-5 w-5" />
                       Try the Demo
                     </Link>
@@ -198,8 +198,8 @@ export default function MarketingHome() {
                 </MagneticButton>
                 <MagneticButton strength={0.15}>
                   <Button variant="outline" size="lg" className="px-8 py-4 text-lg" asChild>
-                    <Link to="/welcome">
-                      Create Account <ArrowRight className="ml-2 h-4 w-4" />
+                    <Link to="/welcome" aria-label="Start free trial">
+                      Start free trial <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
                 </MagneticButton>
@@ -588,13 +588,13 @@ export default function MarketingHome() {
       {/* Enterprise Scale */}
       <EnterpriseScale />
 
-        {/* Trust Signals */}
+        {/* Social Proof / Trust Signals */}
         <section className="py-16 bg-muted/20">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center">
               <ScrollReveal>
                 <p className="text-sm text-muted-foreground uppercase tracking-wide mb-12">
-                  Built for $100M+ Projects • Designed with Input from Developers and Analysts
+                  5 M AED in projects modelled • Trusted by GCC developers • Built by Saudi real-estate pros
                 </p>
               </ScrollReveal>
               
@@ -636,7 +636,7 @@ export default function MarketingHome() {
             <div className="max-w-5xl mx-auto text-center">
               <ScrollReveal>
                 <h2 className="text-3xl md:text-5xl font-bold mb-6">
-                  Feasibility modeling doesn't need to be painful.
+                  Ready to kill the spreadsheet?
                 </h2>
               </ScrollReveal>
               

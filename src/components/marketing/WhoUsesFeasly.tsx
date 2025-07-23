@@ -44,8 +44,11 @@ export function WhoUsesFeasly() {
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Who Uses Feasly?
           </h2>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-xl text-muted-foreground mb-4">
             Built for every role in real estate development
+          </p>
+          <p className="text-sm text-muted-foreground uppercase tracking-wide">
+            5 M AED in projects modelled • Trusted by GCC developers • Built by Saudi real-estate pros
           </p>
         </div>
 

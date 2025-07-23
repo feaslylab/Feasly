@@ -6,6 +6,7 @@ import Backend from 'i18next-http-backend';
 export const namespaces = {
   COMMON: 'common',
   AUTH: 'auth',
+  MARKETING: 'marketing',
   MODEL: 'feasly.model',
   FLOW: 'feasly.flow',
   FINANCE: 'feasly.finance',
@@ -20,7 +21,7 @@ i18n
   .init({
     fallbackLng: 'en',
     supportedLngs: ['en', 'ar'],
-    ns: ['common', 'auth', 'feasly.model', 'feasly.flow', 'feasly.finance', 'feasly.consolidate', 'feasly.insights'],
+    ns: ['common', 'auth', 'marketing', 'feasly.model', 'feasly.flow', 'feasly.finance', 'feasly.consolidate', 'feasly.insights'],
     defaultNS: 'common',
     
     backend: {

@@ -30,8 +30,8 @@ import {
 
 const features = [
   {
-    title: "Smart Excel & Legacy File Import",
-    benefit: "Import your existing work in seconds",
+    title: "Smart Excel & EDMF import",
+    benefit: "Upload raw files. Our AI maps every cell.",
     description: "Upload Excel files (structured or raw) or import legacy EstateMaster .edmf files directly. Our AI handles the mapping and formatting automatically.",
     icon: FileText,
     color: "from-primary/20 to-primary-light/20",
@@ -39,8 +39,8 @@ const features = [
     quote: "Importing our 5-year-old EstateMaster model took just 30 seconds.",
   },
   {
-    title: "Multi-Scenario Financial Modeling",
-    benefit: "Test every possibility before you invest",
+    title: "Multi-scenario modelling",
+    benefit: "Flip Base, Optimistic, Pessimistic in one click.",
     description: "Create unlimited scenarios to stress-test your development projects. Compare optimistic, realistic, and pessimistic outcomes side-by-side with advanced sensitivity analysis.",
     icon: BarChart4,
     color: "from-success/20 to-success-light/20",
@@ -48,8 +48,8 @@ const features = [
     quote: "We saved 6 months of analysis time with Feasly's scenario modeling.",
   },
   {
-    title: "Saudi Compliance & Zakat Calculation",
-    benefit: "Built for GCC regulations from day one",
+    title: "Saudi compliance & Zakat",
+    benefit: "Built-in escrow and tax rules.",
     description: "Automatic Zakat calculations, Escrow compliance tracking, and full Saudi Arabia real estate regulation support. No more manual compliance calculations.",
     icon: ShieldCheck,
     color: "from-success/20 to-success-light/20",
@@ -57,8 +57,8 @@ const features = [
     quote: "Finally, a tool that understands Saudi real estate requirements.",
   },
   {
-    title: "AI-Powered Smart Insights",
-    benefit: "Let AI find the opportunities you might miss",
+    title: "AI-powered smart insights",
+    benefit: "Spot risks before they cost you.",
     description: "Advanced algorithms analyze your financial models to surface optimization opportunities, risk factors, and investment insights automatically.",
     icon: LineChart,
     color: "from-warning/20 to-warning-light/20",
@@ -66,17 +66,8 @@ const features = [
     quote: "The AI insights helped us identify $2M in cost savings.",
   },
   {
-    title: "Intelligent Alerts & Monitoring",
-    benefit: "Never miss a critical threshold again",
-    description: "Set custom alerts for KPI thresholds, cash flow warnings, and compliance deadlines. Get notified before issues become problems.",
-    icon: AlertTriangle,
-    color: "from-destructive/20 to-destructive-light/20",
-    iconColor: "text-destructive",
-    quote: "Early warnings saved our project from going over budget.",
-  },
-  {
-    title: "Audit-Ready Version Control",
-    benefit: "Complete transparency for investors and auditors",
+    title: "Audit-ready version control",
+    benefit: "Every change tracked, time-stamped.",
     description: "Every change is tracked with detailed audit logs. Compare versions, see who changed what, and maintain full accountability across your team.",
     icon: Layers,
     color: "from-secondary/20 to-accent/20",
@@ -84,8 +75,8 @@ const features = [
     quote: "Audit season is now stress-free with complete change tracking.",
   },
   {
-    title: "Portfolio Consolidation",
-    benefit: "Manage multiple projects from one dashboard",
+    title: "Portfolio consolidation",
+    benefit: "View KPIs across projects.",
     description: "Aggregate data across all your development projects. Get portfolio-wide KPIs, consolidated reporting, and cross-project insights.",
     icon: Building2,
     color: "from-primary/20 to-secondary/20",
@@ -93,8 +84,8 @@ const features = [
     quote: "Managing 12 projects simultaneously has never been easier.",
   },
   {
-    title: "Professional Export & Reporting",
-    benefit: "Investor-ready reports in seconds",
+    title: "Investor-ready exports",
+    benefit: "PDF, Excel, Arabic or English.",
     description: "Generate beautiful PDF reports and Excel exports with your branding. Custom templates for different stakeholder needs.",
     icon: Download,
     color: "from-primary/20 to-primary-light/20",

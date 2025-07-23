@@ -42,10 +42,9 @@ export function MarketingFooter() {
                 Feasly
               </span>
             </Link>
-            <p className="text-sm text-muted-foreground max-w-xs mb-4">
-              Next-gen real estate financial modeling platform, 
-              built for the GCC and beyond.
-            </p>
+          <p className="text-sm text-muted-foreground max-w-xs mb-4">
+            Model the future. Manage with precision.
+          </p>
             <div className="max-w-xs">
               <WaitlistForm 
                 placeholder="Your email"
@@ -86,9 +85,10 @@ export function MarketingFooter() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Feasly Technologies. All rights reserved.
-          </p>
+          <div className="text-sm text-muted-foreground">
+            <p>© {new Date().getFullYear()} Feasly. Model the future. Manage with precision.</p>
+            <p className="text-xs mt-1">Feasly DIFC Ltd, registered DIFC licence # XXXX</p>
+          </div>
           <div className="flex space-x-6">
             <a href="#linkedin" className="text-muted-foreground hover:text-foreground">
               LinkedIn

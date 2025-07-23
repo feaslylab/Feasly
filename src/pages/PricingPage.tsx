@@ -27,14 +27,15 @@ import {
 const plans = [
   {
     name: "Starter",
-    description: "Perfect for individual analysts",
-    price: "TBD",
-    period: "",
+    description: "Solo analysts",
+    price: "299 AED",
+    period: "month",
     icon: Building2,
     color: "from-muted/20 to-muted/40",
     popular: false,
     features: [
-      "1 Active Project",
+      "1 project",
+      "1 user",
       "Basic Financial Modeling",
       "3 Scenarios per Project",
       "Standard Templates",
@@ -42,19 +43,20 @@ const plans = [
       "Community Support",
       "Basic Compliance Checks",
     ],
-    cta: "Launching Soon – Join Waitlist",
+    cta: "Start free trial",
     ctaVariant: "outline" as const,
   },
   {
-    name: "Pro",
-    description: "Consultants + small firms",
-    price: "TBD",
-    period: "",
+    name: "Growth",
+    description: "Small teams",
+    price: "999 AED",
+    period: "month",
     icon: Users,
     color: "from-primary/20 to-primary-light/20",
     popular: true,
     features: [
-      "Unlimited Projects",
+      "10 projects",
+      "5 users",
       "Advanced Financial Modeling",
       "Unlimited Scenarios",
       "AI-Powered Insights",
@@ -66,19 +68,21 @@ const plans = [
       "Priority Support",
       "Advanced Reporting",
     ],
-    cta: "Launching Soon – Join Waitlist",
+    cta: "Start free trial",
     ctaVariant: "default" as const,
   },
   {
     name: "Enterprise",
-    description: "Multi-project teams",
+    description: "Giga-projects",
     price: "Custom",
     period: "",
     icon: Crown,
     color: "from-secondary/20 to-accent/20",
     popular: false,
     features: [
-      "Everything in Pro",
+      "Unlimited",
+      "SLA",
+      "Private cloud",
       "Custom Integrations",
       "White-label Solutions",
       "Dedicated Account Manager",
@@ -190,29 +194,18 @@ export default function PricingPage() {
                             <span className="text-muted-foreground ml-1 text-sm">/{plan.period}</span>
                           )}
                         </div>
-                        {plan.name === 'Enterprise' ? (
-                          <MagneticButton strength={0.1}>
-                            <Button 
-                              className="w-full" 
-                              variant={plan.ctaVariant}
-                              size="sm"
-                              asChild
-                            >
-                              <Link to="#contact">
-                                {plan.cta}
-                              </Link>
-                            </Button>
-                          </MagneticButton>
-                        ) : (
-                          <div className="space-y-2">
-                            <WaitlistForm 
-                              placeholder="Enter your email"
-                              buttonText="Join Waitlist"
-                              size="sm"
-                              className="flex-col gap-2"
-                            />
-                          </div>
-                        )}
+                        <MagneticButton strength={0.1}>
+                          <Button 
+                            className="w-full" 
+                            variant={plan.ctaVariant}
+                            size="sm"
+                            asChild
+                          >
+                            <Link to={plan.name === 'Enterprise' ? "#contact" : "/welcome"} aria-label={plan.cta}>
+                              {plan.cta}
+                            </Link>
+                          </Button>
+                        </MagneticButton>
                       </div>
 
                       <div className="space-y-2 flex-grow">
@@ -230,11 +223,11 @@ export default function PricingPage() {
             </ScrollProgressiveReveal>
             
             {/* Additional info below pricing */}
-            <ScrollProgressiveReveal direction="fade" delay={0.8}>
-              <div className="max-w-4xl mx-auto text-center mt-12 space-y-4">
-                <p className="text-muted-foreground text-sm">Free onboarding included. Bulk licensing available. No credit card required.</p>
-              </div>
-            </ScrollProgressiveReveal>
+              <ScrollProgressiveReveal direction="fade" delay={0.8}>
+                <div className="max-w-4xl mx-auto text-center mt-12 space-y-4">
+                  <p className="text-muted-foreground text-sm">Free trial? Yes, 14 days. Can I export to Excel? Yes, formulas stay intact.</p>
+                </div>
+              </ScrollProgressiveReveal>
           </div>
         </ScrollSection>
 

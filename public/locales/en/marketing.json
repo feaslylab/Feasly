@@ -1,0 +1,87 @@
+{
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing", 
+    "docs": "Docs",
+    "blog": "Blog",
+    "login": "Login",
+    "startFreeTrial": "Start free trial"
+  },
+  "hero": {
+    "headline": "Build feasibility models 5 × faster.",
+    "subline": "One live model. Zero spreadsheet drama.",
+    "miniFeatures": "8 core inputs per asset · Base / Optimistic / Pessimistic toggle · Drag-and-drop Excel + EDMF import",
+    "tryDemo": "Try the Demo",
+    "startFreeTrial": "Start free trial"
+  },
+  "socialProof": {
+    "strip": "5 M AED in projects modelled · Trusted by GCC developers · Built by Saudi real-estate pros"
+  },
+  "features": {
+    "importAnything": {
+      "title": "Smart Excel & EDMF import",
+      "subtitle": "Upload raw files. Our AI maps every cell."
+    },
+    "scenarioEngine": {
+      "title": "Multi-scenario modelling", 
+      "subtitle": "Flip Base, Optimistic, Pessimistic in one click."
+    },
+    "compliance": {
+      "title": "Saudi compliance & Zakat",
+      "subtitle": "Built-in escrow and tax rules."
+    },
+    "insights": {
+      "title": "AI-powered smart insights",
+      "subtitle": "Spot risks before they cost you."
+    },
+    "audit": {
+      "title": "Audit-ready version control",
+      "subtitle": "Every change tracked, time-stamped."
+    },
+    "portfolio": {
+      "title": "Portfolio consolidation",
+      "subtitle": "View KPIs across projects."
+    },
+    "reports": {
+      "title": "Investor-ready exports",
+      "subtitle": "PDF, Excel, Arabic or English."
+    }
+  },
+  "pricing": {
+    "starter": {
+      "name": "Starter",
+      "description": "Solo analysts",
+      "price": "299 AED",
+      "ideal": "1 project · 1 user"
+    },
+    "growth": {
+      "name": "Growth", 
+      "description": "Small teams",
+      "price": "999 AED",
+      "ideal": "10 projects · 5 users"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "description": "Giga-projects", 
+      "price": "Custom",
+      "ideal": "Unlimited · SLA · Private cloud"
+    },
+    "faq": {
+      "freeTrial": "Free trial? Yes, 14 days.",
+      "exportExcel": "Can I export to Excel? Yes, formulas stay intact."
+    }
+  },
+  "docs": {
+    "headline": "Get answers fast.",
+    "searchPlaceholder": "Type a question…",
+    "tiles": "Getting started · Excel import · Scenario engine · Arabic interface · API (soon)"
+  },
+  "footer": {
+    "tagline": "Model the future. Manage with precision.",
+    "copyright": "© 2025 Feasly. Model the future. Manage with precision.",
+    "difc": "Feasly DIFC Ltd, registered DIFC licence # XXXX"
+  },
+  "cta": {
+    "readyToKill": "Ready to kill the spreadsheet?"
+  }
+}

@@ -110,7 +110,7 @@ export default function DocsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                Documentation & Resources
+                Get answers fast.
               </motion.h1>
               <motion.p 
                 className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto"
@@ -118,7 +118,7 @@ export default function DocsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                Everything you need to master Feasly and build better financial models.
+                Getting started · Excel import · Scenario engine · Arabic interface · API (soon)
               </motion.p>
               <motion.div 
                 className="flex flex-col sm:flex-row justify-center gap-4"
