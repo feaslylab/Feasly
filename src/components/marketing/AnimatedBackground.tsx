@@ -58,7 +58,7 @@ export function AnimatedBackground() {
             opacity: [0.3, 0.7, 0.3],
           }}
           transition={{
-            duration: 6 + shape.delay,
+            duration: 3 + shape.delay, // Reduced from 6 to 3 for faster movement
             repeat: Infinity,
             delay: shape.delay,
             ease: "easeInOut"
