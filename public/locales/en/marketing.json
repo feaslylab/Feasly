@@ -186,7 +186,7 @@
       "title": "Build feasibility models",
       "titleSpeed": "5× faster.",
       "subtitle": "One live model. Zero spreadsheet drama.",
-      "description": "8 core inputs per asset · Base / Optimistic / Pessimistic toggle · Drag-and-drop Excel + EDMF import"
+      "description": "8 core inputs per asset · Base / Optimistic / Pessimistic toggle · Drag-and-drop Excel + .edmf import"
     },
     "problems": {
       "title": "Feasibility modeling is broken.",
