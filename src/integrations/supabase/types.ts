@@ -591,6 +591,68 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_members: {
+        Row: {
+          created_at: string
+          id: string
+          organization_id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          organization_id: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          organization_id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          created_by_user_id: string | null
+          id: string
+          name: string
+          slug: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_user_id?: string | null
+          id?: string
+          name: string
+          slug?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by_user_id?: string | null
+          id?: string
+          name?: string
+          slug?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       project_compliance: {
         Row: {
           calculated_amounts: Json | null
@@ -864,6 +926,7 @@ export type Database = {
           is_pinned: boolean | null
           is_public: boolean | null
           name: string
+          organization_id: string | null
           project_ai_summary: string | null
           release_rule_details: string | null
           release_threshold: number | null
@@ -902,6 +965,7 @@ export type Database = {
           is_pinned?: boolean | null
           is_public?: boolean | null
           name: string
+          organization_id?: string | null
           project_ai_summary?: string | null
           release_rule_details?: string | null
           release_threshold?: number | null
@@ -940,6 +1004,7 @@ export type Database = {
           is_pinned?: boolean | null
           is_public?: boolean | null
           name?: string
+          organization_id?: string | null
           project_ai_summary?: string | null
           release_rule_details?: string | null
           release_threshold?: number | null
@@ -959,7 +1024,15 @@ export type Database = {
           zakat_exclude_losses?: boolean | null
           zakat_rate_percent?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "projects_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       scenario_overrides: {
         Row: {
