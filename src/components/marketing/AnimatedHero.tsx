@@ -105,7 +105,7 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
           {/* Subhead */}
           <motion.div variants={itemVariants}>
             <p className="mt-6 text-lg md:text-2xl text-muted-foreground max-w-[45ch] mx-auto">
-              Cloud feasibility built for GCC developers. Faster than Excel, ready for Arabic, trusted by PIF teams.
+              Next-gen feasibility modeling for GCC developers. Faster than Excel, native Arabic support, enterprise-grade security.
             </p>
           </motion.div>
 
