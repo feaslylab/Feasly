@@ -159,7 +159,7 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
             <img 
               src="/lovable-uploads/e2dfa8aa-8ce7-4ce9-84fa-2e068edd9ea0.png" 
               alt="Feasly Logo" 
-              className="w-10 h-10 object-contain"
+              className="w-10 h-10 object-contain mix-blend-multiply dark:mix-blend-screen"
             />
           </motion.div>
           <motion.div

@@ -132,7 +132,7 @@ export const EnhancedSidebar = () => {
                   <img 
                     src="/lovable-uploads/e2dfa8aa-8ce7-4ce9-84fa-2e068edd9ea0.png" 
                     alt="Feasly Logo" 
-                    className="w-8 h-8 object-contain"
+                    className="w-8 h-8 object-contain mix-blend-multiply dark:mix-blend-screen"
                   />
                 </div>
                 
