@@ -1301,6 +1301,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      is_organization_admin: {
+        Args: { org_id: string; user_id: string }
+        Returns: boolean
+      }
+      is_organization_member: {
+        Args: { org_id: string; user_id: string }
+        Returns: boolean
+      }
       log_organization_activity: {
         Args: {
           p_organization_id: string
