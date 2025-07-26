@@ -68,6 +68,11 @@ export function MarketingHeader() {
         {/* Logo */}
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
+            <img 
+              src="/lovable-uploads/e2dfa8aa-8ce7-4ce9-84fa-2e068edd9ea0.png" 
+              alt="Feasly Logo" 
+              className="w-8 h-8 object-contain mr-2"
+            />
             <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
               Feasly
             </span>
