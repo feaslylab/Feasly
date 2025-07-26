@@ -130,9 +130,9 @@ export const EnhancedSidebar = () => {
                 {/* Feasly Logo */}
                 <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
                   <img 
-                    src="/lovable-uploads/e2dfa8aa-8ce7-4ce9-84fa-2e068edd9ea0.png" 
+                    src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
                     alt="Feasly Logo" 
-                    className="w-8 h-8 object-contain mix-blend-multiply dark:mix-blend-screen"
+                    className="w-8 h-8 object-contain"
                   />
                 </div>
                 

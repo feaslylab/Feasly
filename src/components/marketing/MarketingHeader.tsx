@@ -69,13 +69,9 @@ export function MarketingHeader() {
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
             <img 
-              src="/lovable-uploads/e2dfa8aa-8ce7-4ce9-84fa-2e068edd9ea0.png" 
+              src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
               alt="Feasly Logo" 
               className="w-8 h-8 object-contain mr-2"
-              style={{
-                filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
-                mixBlendMode: 'normal'
-              }}
             />
             <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
               Feasly
