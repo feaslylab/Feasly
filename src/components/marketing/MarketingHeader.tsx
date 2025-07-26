@@ -73,7 +73,7 @@ export function MarketingHeader() {
               alt="Feasly Logo" 
               className="w-8 h-8 object-contain mr-2"
             />
-            <span className="text-xl md:text-2xl font-bold" style={{ color: '#0891b2' }}>
+            <span className="text-xl md:text-2xl font-bold" style={{ color: '#1e3a8a' }}>
               Feasly
             </span>
           </Link>
