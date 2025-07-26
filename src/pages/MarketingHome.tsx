@@ -195,12 +195,9 @@ export default function MarketingHome() {
             
             <ScrollProgressiveReveal direction="scale" delay={0.8}>
               <div className="mt-12 text-center">
-                <ScrollTextReveal 
-                  text={t('home.problems.solution')}
-                  className="text-2xl font-bold text-primary"
-                  cascade={true}
-                  delay={0.2}
-                />
+                <div className="text-2xl font-bold" style={{ color: '#1e3a8a' }}>
+                  {t('home.problems.solution')}
+                </div>
               </div>
             </ScrollProgressiveReveal>
           </div>
