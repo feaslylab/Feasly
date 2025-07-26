@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
-import { SmartLogo } from "@/components/ui/smart-logo";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
@@ -69,11 +68,14 @@ export function MarketingHeader() {
         {/* Logo */}
         <div className="flex items-center">
           <Link to="/" className="flex items-center">
-            <SmartLogo 
+            <img 
               src="/lovable-uploads/e2dfa8aa-8ce7-4ce9-84fa-2e068edd9ea0.png" 
               alt="Feasly Logo" 
               className="w-8 h-8 object-contain mr-2"
-              fallbackClassName="w-8 h-8 object-contain mr-2 mix-blend-multiply dark:mix-blend-screen"
+              style={{
+                filter: 'brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(346deg) brightness(104%) contrast(97%)',
+                mixBlendMode: 'normal'
+              }}
             />
             <span className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
               Feasly
