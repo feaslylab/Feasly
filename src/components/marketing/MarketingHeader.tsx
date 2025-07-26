@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 
 const getNavLinks = (t: (key: string) => string) => [
   { name: t('nav.features'), href: "#features", isAnchor: true },
+  { name: "Comparison", href: "/comparison", isAnchor: false },
   { name: t('nav.demo'), href: "#demo", isAnchor: true },
   { name: t('nav.pricing'), href: "/pricing", isAnchor: false },
   { name: t('nav.docs'), href: "/docs", isAnchor: false },

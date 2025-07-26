@@ -7,6 +7,7 @@ const footerLinks = [
     links: [
       { name: "About", href: "/" },
       { name: "Press / Media Kit", href: "/press" },
+      { name: "Feature Comparison", href: "/comparison" },
     ],
   },
   {

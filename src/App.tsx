@@ -36,6 +36,7 @@ import DemoPage from "./pages/DemoPage";
 import PressPage from "./pages/PressPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
+import FeatureComparison from "./pages/FeatureComparison";
 
 const queryClient = new QueryClient();
 
@@ -47,7 +48,7 @@ const AppRoutes = () => {
   const isMarketingRoute = window.location.pathname === '/';
   
   // If we're on the marketing site path, show marketing content
-  if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms')) {
+  if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison')) {
     return (
       <PageTransition routeKey={location.pathname}>
         <Routes>
@@ -60,6 +61,7 @@ const AppRoutes = () => {
             <Route path="/press" element={<PressPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
+            <Route path="/comparison" element={<FeatureComparison />} />
           <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.reload()} />} />
         </Routes>
       </PageTransition>
