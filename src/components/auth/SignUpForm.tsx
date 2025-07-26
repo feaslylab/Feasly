@@ -97,7 +97,11 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
     <Card className="w-full max-w-md shadow-medium">
       <CardHeader className={cn("text-center space-y-4", isRTL && "text-right")}>
         <div className="mx-auto w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center">
-          <Building2 className="w-6 h-6 text-primary-foreground" />
+          <img 
+            src="/lovable-uploads/e2dfa8aa-8ce7-4ce9-84fa-2e068edd9ea0.png" 
+            alt="Feasly Logo" 
+            className="w-8 h-8 object-contain"
+          />
         </div>
         <div>
           <CardTitle className="text-2xl font-semibold">{t('auth.createAccount')}</CardTitle>

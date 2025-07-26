@@ -84,8 +84,12 @@ export const Sidebar = () => {
           {!isCollapsed && (
             <>
               {/* Feasly Logo */}
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-lg flex items-center justify-center flex-shrink-0">
-                <Building2 className="w-5 h-5 text-primary-foreground" />
+              <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+                <img 
+                  src="/lovable-uploads/e2dfa8aa-8ce7-4ce9-84fa-2e068edd9ea0.png" 
+                  alt="Feasly Logo" 
+                  className="w-8 h-8 object-contain"
+                />
               </div>
               
               {/* Brand and Module Title */}

@@ -156,7 +156,11 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
             animate={{ scale: 1, rotate: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <Building2 className="w-8 h-8 text-primary-foreground" />
+            <img 
+              src="/lovable-uploads/e2dfa8aa-8ce7-4ce9-84fa-2e068edd9ea0.png" 
+              alt="Feasly Logo" 
+              className="w-10 h-10 object-contain"
+            />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
