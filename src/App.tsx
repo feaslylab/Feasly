@@ -62,7 +62,7 @@ const AppRoutes = () => {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/comparison" element={<FeatureComparison />} />
-          <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.reload()} />} />
+          <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.href = '/dashboard'} />} />
         </Routes>
       </PageTransition>
     );
@@ -76,13 +76,17 @@ const AppRoutes = () => {
     );
   }
 
-  if (!user && window.location.pathname !== '/welcome') {
+  if (!user) {
     return <Navigate to="/welcome" replace />;
+  }
+
+  // If user is authenticated and on welcome page, redirect to dashboard
+  if (user && window.location.pathname === '/welcome') {
+    return <Navigate to="/dashboard" replace />;
   }
 
   return (
     <Routes>
-      <Route path="/welcome" element={<AuthPage onSuccess={() => window.location.reload()} />} />
       <Route path="/dashboard" element={<AppLayout />}>
         <Route index element={<Dashboard />} />
       </Route>
