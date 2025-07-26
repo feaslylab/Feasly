@@ -30,6 +30,18 @@ function PrivacyPage() {
             </CardContent>
           </Card>
 
+          <Card className="mb-8">
+            <CardContent className="p-8">
+              <h2 className="text-2xl font-bold mb-4">Jurisdiction</h2>
+              <p className="mb-4">
+                This website and our services are operated from the United Arab Emirates and are subject to UAE laws and regulations.
+              </p>
+              <p className="text-sm text-muted-foreground bg-muted/50 p-4 rounded-lg border border-muted-foreground/20">
+                This site is operated from the United Arab Emirates; we do not knowingly collect or store personal data of users in Australia.
+              </p>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardContent className="p-8">
               <h2 className="text-2xl font-bold mb-4">Contact Us</h2>

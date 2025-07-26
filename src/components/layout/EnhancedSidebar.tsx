@@ -13,6 +13,7 @@ import { useSidebarState } from "@/hooks/useSidebarState";
 import { TouchTarget } from "@/components/ui/mobile-optimized";
 import { componentClasses } from "@/lib/design-system";
 import { useEffect } from "react";
+import { TM } from "@/components/ui/trademark";
 
 const navigation = [
   { nameKey: "dashboard", href: "/dashboard", icon: BarChart3 },
@@ -134,7 +135,7 @@ export const EnhancedSidebar = () => {
                 {/* Brand and Module Title */}
                 <div className={cn("flex-1 min-w-0", isRTL && "text-right")}>
                   <div className="flex items-center gap-2">
-                    <h1 className="text-lg font-bold text-foreground">Feasly</h1>
+                    <h1 className="text-lg font-bold text-foreground">Feasly<TM /></h1>
                     <span className="text-muted-foreground hidden sm:block">—</span>
                     <span className="text-sm font-medium text-primary truncate hidden sm:block">
                       {currentModuleTitle}

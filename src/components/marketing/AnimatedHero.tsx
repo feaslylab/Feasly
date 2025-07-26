@@ -9,6 +9,7 @@ import { GradientText } from "./GradientText";
 import { HeroLoadingFallback } from "./HeroLoadingFallback";
 import { ProductMockup } from "./ProductMockup";
 import { useTranslationReady } from "@/hooks/useTranslationReady";
+import { TM } from "@/components/ui/trademark";
 
 interface AnimatedHeroProps {
   title: string;
@@ -105,7 +106,7 @@ export function AnimatedHero({ title, subtitle, description }: AnimatedHeroProps
           {/* Subhead */}
           <motion.div variants={itemVariants}>
             <p className="mt-6 text-lg md:text-2xl text-muted-foreground max-w-[45ch] mx-auto">
-              Next-gen feasibility modeling for GCC developers. Faster than Excel, native Arabic support, enterprise-grade security.
+              Next-gen feasibility modeling with Feasly<TM /> for GCC developers. Faster than Excel, native Arabic support, enterprise-grade security.
             </p>
           </motion.div>
 

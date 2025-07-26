@@ -12,3 +12,4 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /?au_redirect=true

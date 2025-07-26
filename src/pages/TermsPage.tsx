@@ -30,6 +30,18 @@ function TermsPage() {
             </CardContent>
           </Card>
 
+          <Card className="mb-8">
+            <CardContent className="p-8">
+              <h2 className="text-2xl font-bold mb-4">Intellectual Property</h2>
+              <p className="mb-4">
+                All content, features, and functionality of the Feasly platform are protected by intellectual property laws.
+              </p>
+              <p className="text-sm text-muted-foreground bg-muted/50 p-4 rounded-lg border border-muted-foreground/20">
+                Trade-mark applications filed in the United Arab Emirates, Saudi Arabia, Qatar, Bahrain, Oman and Kuwait.
+              </p>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardContent className="p-8">
               <h2 className="text-2xl font-bold mb-4">Contact Information</h2>

@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useSidebarState } from "@/hooks/useSidebarState";
+import { TM } from "@/components/ui/trademark";
 
 const navigation = [
   { nameKey: "dashboard", href: "/dashboard", icon: BarChart3 },
@@ -90,7 +91,7 @@ export const Sidebar = () => {
               {/* Brand and Module Title */}
               <div className={cn("flex-1 min-w-0", isRTL && "text-right")}>
                 <div className="flex items-center gap-2 md:gap-2">
-                  <h1 className="text-lg font-bold text-foreground flex-shrink-0">Feasly</h1>
+                  <h1 className="text-lg font-bold text-foreground flex-shrink-0">Feasly<TM /></h1>
                   <span className="text-muted-foreground hidden sm:block">—</span>
                   <span className="text-sm font-medium text-primary truncate hidden sm:block">
                     {currentModuleTitle}
