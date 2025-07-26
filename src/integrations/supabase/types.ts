@@ -591,11 +591,108 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_audit_logs: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          ip_address: unknown | null
+          organization_id: string
+          resource_id: string | null
+          resource_type: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          organization_id: string
+          resource_id?: string | null
+          resource_type: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          organization_id?: string
+          resource_id?: string | null
+          resource_type?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_audit_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invitation_token: string
+          invited_by: string
+          organization_id: string
+          role: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invitation_token?: string
+          invited_by: string
+          organization_id: string
+          role?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invitation_token?: string
+          invited_by?: string
+          organization_id?: string
+          role?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_members: {
         Row: {
           created_at: string
           id: string
+          invited_at: string | null
+          last_active: string | null
           organization_id: string
+          permissions: Json | null
           role: string
           updated_at: string
           user_id: string
@@ -603,7 +700,10 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          invited_at?: string | null
+          last_active?: string | null
           organization_id: string
+          permissions?: Json | null
           role?: string
           updated_at?: string
           user_id: string
@@ -611,7 +711,10 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          invited_at?: string | null
+          last_active?: string | null
           organization_id?: string
+          permissions?: Json | null
           role?: string
           updated_at?: string
           user_id?: string
@@ -1194,7 +1297,21 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      cleanup_expired_invitations: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      log_organization_activity: {
+        Args: {
+          p_organization_id: string
+          p_user_id: string
+          p_action: string
+          p_resource_type: string
+          p_resource_id?: string
+          p_details?: Json
+        }
+        Returns: string
+      }
     }
     Enums: {
       project_status: "draft" | "active" | "archived"
