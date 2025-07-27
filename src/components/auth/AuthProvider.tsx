@@ -101,6 +101,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       title: "Logged Out",
       description: "You have been successfully logged out.",
     });
+    // Explicitly redirect to welcome page after logout
+    window.location.href = '/welcome';
   };
 
   const value = {
