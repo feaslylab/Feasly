@@ -11,7 +11,7 @@ export default function CalcDemo() {
     retentionPercent: 0.05,
     retentionReleaseLag: 2
   }];
-  const { cash: row, kpi } = useFeaslyCalc(items, 36);
+  const { cash: row, kpi, interestRow } = useFeaslyCalc(items, 36);
 
   return (
     <div className="p-6">
@@ -43,6 +43,10 @@ export default function CalcDemo() {
         <strong>NPV:</strong> {kpi.npv.toLocaleString(undefined,{maximumFractionDigits:0})} &nbsp;
         <strong>Profit:</strong> {kpi.profit.toLocaleString(undefined,{maximumFractionDigits:0})} &nbsp;
         <strong>IRR:</strong> {kpi.projectIRR !== null ? (kpi.projectIRR*100).toFixed(2)+' %' : '—'}
+      </p>
+      
+      <p className="mt-2">
+        <strong>Monthly Interest P0:</strong> {(-interestRow[0]).toLocaleString()}
       </p>
     </div>
   );
