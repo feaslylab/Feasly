@@ -1,24 +1,50 @@
 import { useState, useEffect } from "react";
 import { useFeaslyCalc } from "../hooks/useFeaslyCalc";
 import { useConstructionStore } from "../hooks/useConstructionStore";
+import { useScenarioStore } from "../hooks/useScenarioStore";
+import { 
+  useConstructionStoreScenario, 
+  useSaleStore, 
+  useRentalStore,
+  constructionItemFromDB,
+  saleLineFromDB,
+  rentalLineFromDB,
+  constructionItemToDB,
+  saleLineToDB,
+  rentalLineToDB
+} from "../hooks/useTableStores";
 import { SaleLine, RentalLine, LoanFacility } from "../../packages/feasly-engine/src";
 
 export default function Dashboard() {
+  const projectId = 'demo-project';
   const [qty, setQty] = useState(12_000_000);
-  const [revenueLines, setRevenueLines] = useState<SaleLine[]>([]);
-  const [rentalLines, setRentalLines] = useState<RentalLine[]>([]);
   const [useLoan, setUseLoan] = useState(false);
-  const { items: storedItems, loading, saveItem, saveKPIs } = useConstructionStore();
   
-  // Use stored items if available, otherwise use demo item
-  const items = storedItems.length > 0 ? storedItems : [{
-    baseCost: qty,
-    startPeriod: 6,
-    endPeriod: 24,
-    escalationRate: 0.05,
-    retentionPercent: 0.05,
-    retentionReleaseLag: 2
-  }];
+  // Scenario management
+  const { scenarios, current, setCurrent, create } = useScenarioStore(projectId);
+  
+  // Scenario-aware stores
+  const { items: constructionItems, save: saveConstructionItem, loading: constructionLoading } = useConstructionStoreScenario(projectId, current?.id || null);
+  const { items: saleItems, save: saveSaleItem, loading: saleLoading } = useSaleStore(projectId, current?.id || null);
+  const { items: rentalItems, save: saveRentalItem, loading: rentalLoading } = useRentalStore(projectId, current?.id || null);
+  
+  // Fallback for legacy construction store
+  const { saveKPIs } = useConstructionStore();
+  
+  // Convert database items to engine format
+  const items = constructionItems.length > 0 
+    ? constructionItems.map(constructionItemFromDB)
+    : [{
+        baseCost: qty,
+        startPeriod: 6,
+        endPeriod: 24,
+        escalationRate: 0.05,
+        retentionPercent: 0.05,
+        retentionReleaseLag: 2
+      }];
+  
+  const revenueLines = saleItems.map(saleLineFromDB);
+  const rentalLines = rentalItems.map(rentalLineFromDB);
   
   // Define loan facility
   const loanFacility: LoanFacility | undefined = useLoan ? {
@@ -34,32 +60,34 @@ export default function Dashboard() {
 
   // Save KPIs whenever they change
   useEffect(() => {
-    if (!loading) {
+    if (!constructionLoading && current) {
       saveKPIs({
         npv: kpi.npv,
         irr: kpi.projectIRR,
         profit: kpi.profit
       });
     }
-  }, [kpi, saveKPIs, loading]);
+  }, [kpi, saveKPIs, constructionLoading, current]);
 
   // Save new item when qty changes
   const handleQtyChange = async (newQty: number) => {
     setQty(newQty);
-    if (storedItems.length === 0) { // Only save if no stored items yet
-      await saveItem({
+    if (constructionItems.length === 0 && current) {
+      await saveConstructionItem(constructionItemToDB({
         baseCost: newQty,
         startPeriod: 6,
         endPeriod: 24,
         escalationRate: 0.05,
         retentionPercent: 0.05,
         retentionReleaseLag: 2
-      });
+      }));
     }
   };
 
   // Add demo revenue line
-  const addRevenue = () => {
+  const addRevenue = async () => {
+    if (!current) return;
+    
     const newRevenueLine: SaleLine = {
       units: 80,
       pricePerUnit: 1_600_000,
@@ -67,11 +95,14 @@ export default function Dashboard() {
       endPeriod: 36,
       escalation: 0.04
     };
-    setRevenueLines(prev => [...prev, newRevenueLine]);
+    
+    await saveSaleItem(saleLineToDB(newRevenueLine));
   };
 
   // Add demo rental line
-  const addRental = () => {
+  const addRental = async () => {
+    if (!current) return;
+    
     const newRentalLine: RentalLine = {
       rooms: 150,
       adr: 800,
@@ -80,16 +111,53 @@ export default function Dashboard() {
       endPeriod: 60,
       annualEscalation: 0.05
     };
-    setRentalLines(prev => [...prev, newRentalLine]);
+    
+    await saveRentalItem(rentalLineToDB(newRentalLine));
   };
 
-  if (loading) {
-    return <div className="p-6">Loading construction data...</div>;
+  if (constructionLoading || saleLoading || rentalLoading) {
+    return <div className="p-6">Loading scenario data...</div>;
   }
 
   return (
     <div className="p-6">
       <h1 className="text-xl font-bold mb-4">Construction Cash-flow demo</h1>
+
+      {/* Scenario Selector */}
+      <div className="mb-4 p-4 bg-background border rounded-lg">
+        <label className="block mb-2 font-medium">Select Scenario:</label>
+        <div className="flex items-center gap-2">
+          <select
+            value={current?.id || ""}
+            onChange={(e) => {
+              const s = scenarios.find(x => x.id === e.target.value);
+              setCurrent(s || null);
+            }}
+            className="border px-3 py-2 rounded mr-2 bg-background"
+          >
+            <option value="">No scenario selected</option>
+            {scenarios.map(s => (
+              <option key={s.id} value={s.id}>{s.name}</option>
+            ))}
+          </select>
+          
+          <button
+            onClick={() => {
+              const name = prompt("Scenario name:");
+              if (name) create(name);
+            }}
+            className="bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
+          >
+            + New scenario
+          </button>
+        </div>
+        
+        {current && (
+          <p className="text-sm text-muted-foreground mt-2">
+            Current scenario: <strong>{current.name}</strong>
+          </p>
+        )}
+      </div>
 
       <label className="block mb-2">
         Base cost (AED):
@@ -102,14 +170,16 @@ export default function Dashboard() {
 
       <button 
         onClick={addRevenue}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-2 mr-2"
+        disabled={!current}
+        className="bg-blue-500 text-white px-4 py-2 rounded mb-2 mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Add Revenue (80 units @ 1.6M AED, P24-36)
       </button>
 
       <button 
         onClick={addRental}
-        className="bg-green-500 text-white px-4 py-2 rounded mb-4"
+        disabled={!current}
+        className="bg-green-500 text-white px-4 py-2 rounded mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Add Rental (150 rooms, ADR 800, 68% occ, P48-60)
       </button>
