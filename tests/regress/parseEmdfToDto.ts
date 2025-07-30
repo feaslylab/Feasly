@@ -52,18 +52,31 @@ export async function emdfToDto(
            escalationRate: 0, retentionPercent: 0, retentionReleaseLag: 0 }]
       : [];
 
-    // 2. sales (assumes one block in Option0/DF.xml)
-    const opt = await load("Option0/DF.xml");
-    const saleXml = opt.Option?.Sales?.Sale;
-    const sales: SaleLine[] = saleXml
-      ? [{
-          units:         Number(saleXml.Units),
-          pricePerUnit:  Number(saleXml.PricePerUnit),
-          startPeriod:   Number(saleXml.StartMonth),
-          endPeriod:     Number(saleXml.EndMonth),
-          escalation:    Number(saleXml.Escalation)
-        }]
-      : [];
+  // 2. sales (assumes one block in Option0/DF.xml)
+  const opt = await load("Option0/DF.xml");
+  const saleXml = opt.Option?.Sales?.Sale;
+  const sales: SaleLine[] = saleXml
+    ? [{
+        units:         Number(saleXml.Units),
+        pricePerUnit:  Number(saleXml.PricePerUnit),
+        startPeriod:   Number(saleXml.StartMonth),
+        endPeriod:     Number(saleXml.EndMonth),
+        escalation:    Number(saleXml.Escalation)
+      }]
+    : [];
+
+  // 2b. rentals (if present in Option0/DF.xml)
+  const rentalXml = opt.Option?.Rentals?.Rental;
+  const rentals: RentalLine[] = rentalXml
+    ? [{
+        rooms:           Number(rentalXml.Rooms),
+        adr:             Number(rentalXml.ADR),
+        occupancyRate:   Number(rentalXml.OccupancyRate),
+        startPeriod:     Number(rentalXml.StartMonth),
+        endPeriod:       Number(rentalXml.EndMonth),
+        annualEscalation: Number(rentalXml.AnnualEscalation)
+      }]
+    : [];
 
     // 3. loan (simplified – one senior facility)
     const fin = await load("DF_Common.xml");
@@ -77,7 +90,7 @@ export async function emdfToDto(
         interestOnly:   true
       } : undefined;
 
-    return { construction, sales, rentals: [], loan };
+    return { construction, sales, rentals, loan };
   } catch (error) {
     console.error('Error parsing EMDF:', error);
     return { construction: [], sales: [], rentals: [], loan: undefined };
@@ -121,6 +134,19 @@ async function parseFromDirectory(dirPath: string): Promise<{
       }]
     : [];
 
+  // 2b. rentals (if present in Option0/DF.xml)
+  const rentalXml = opt.Option?.Rentals?.Rental;
+  const rentals: RentalLine[] = rentalXml
+    ? [{
+        rooms:           Number(rentalXml.Rooms),
+        adr:             Number(rentalXml.ADR),
+        occupancyRate:   Number(rentalXml.OccupancyRate),
+        startPeriod:     Number(rentalXml.StartMonth),
+        endPeriod:       Number(rentalXml.EndMonth),
+        annualEscalation: Number(rentalXml.AnnualEscalation)
+      }]
+    : [];
+
   // 3. loan (simplified – one senior facility)
   const fin = await loadFile(path.join(dirPath, "DF_Common.xml"));
   const loanXml = fin.Common?.Finance?.Facility;
@@ -133,5 +159,5 @@ async function parseFromDirectory(dirPath: string): Promise<{
       interestOnly:   true
     } : undefined;
 
-  return { construction, sales, rentals: [], loan };
+  return { construction, sales, rentals, loan };
 }

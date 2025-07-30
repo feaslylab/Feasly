@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project>
+  <LandCost>15000000</LandCost>
+  <Name>Luxury Hotel Project</Name>
+  <Description>150-room hotel with mixed rental and sales revenue</Description>
+  <ConstructionCost>80000000</ConstructionCost>
+</Project>

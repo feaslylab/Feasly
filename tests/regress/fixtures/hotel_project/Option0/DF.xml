@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Option>
+  <Sales>
+    <Sale>
+      <Units>20</Units>
+      <PricePerUnit>3500000</PricePerUnit>
+      <StartMonth>30</StartMonth>
+      <EndMonth>42</EndMonth>
+      <Escalation>0.04</Escalation>
+    </Sale>
+  </Sales>
+  <Rentals>
+    <Rental>
+      <Rooms>150</Rooms>
+      <ADR>850</ADR>
+      <OccupancyRate>0.75</OccupancyRate>
+      <StartMonth>36</StartMonth>
+      <EndMonth>60</EndMonth>
+      <AnnualEscalation>0.035</AnnualEscalation>
+    </Rental>
+  </Rentals>
+</Option>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Common>
+  <Finance>
+    <Facility>
+      <Limit>60000000</Limit>
+      <LTCPerc>0.75</LTCPerc>
+      <EffRate>0.095</EffRate>
+    </Facility>
+  </Finance>
+</Common>

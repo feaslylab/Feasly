@@ -21,6 +21,19 @@ export function runEngine(dto: Awaited<ReturnType<typeof import("./parseEmdfToDt
     for (let i=0;i<horizon;i++) cash[i] += row[i];
   }
 
+  // rentals
+  for (const r of dto.rentals) {
+    const row = buildSaleRevenue({
+      units: r.rooms,
+      pricePerUnit: r.adr * 30.4167, // monthly revenue per room
+      startPeriod: r.startPeriod,
+      endPeriod: r.endPeriod,
+      escalation: r.annualEscalation / 12 // monthly escalation
+    }, horizon);
+    // Apply occupancy rate
+    for (let i=0;i<horizon;i++) cash[i] += row[i] * r.occupancyRate;
+  }
+
   // loan
   if (dto.loan) {
     const costOnly = cash.map(v => -Math.min(0, v));   // positive outflows
