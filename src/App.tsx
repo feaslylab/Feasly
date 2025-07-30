@@ -2,12 +2,11 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
-import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "@/components/auth/AuthProvider";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PageTransition } from "@/components/ui/page-transition";
 import { PerformanceMonitor } from "@/components/ui/performance-monitor";
 
@@ -103,11 +102,7 @@ const AppRoutes = () => {
         <Route path=":id/view" element={<ProjectView />} />
       </Route>
       <Route path="/feasly-model" element={<AppLayout />}>
-        <Route index element={
-          <ErrorBoundary>
-            <FeaslyModel />
-          </ErrorBoundary>
-        } />
+        <Route index element={<FeaslyModel />} />
       </Route>
       <Route path="/model" element={<Navigate to="/feasly-model" replace />} />
       <Route path="/feasly-flow" element={<AppLayout />}>
@@ -123,19 +118,11 @@ const AppRoutes = () => {
       </Route>
       <Route path="/consolidate" element={<Navigate to="/feasly-consolidate" replace />} />
       <Route path="/feasly-insights" element={<AppLayout />}>
-        <Route index element={
-          <ErrorBoundary>
-            <FeaslyInsights />
-          </ErrorBoundary>
-        } />
+        <Route index element={<FeaslyInsights />} />
       </Route>
       <Route path="/insights" element={<Navigate to="/feasly-insights" replace />} />
       <Route path="/feasly-alerts" element={<AppLayout />}>
-        <Route index element={
-          <ErrorBoundary>
-            <FeaslyAlerts />
-          </ErrorBoundary>
-        } />
+        <Route index element={<FeaslyAlerts />} />
       </Route>
       <Route path="/alerts" element={<Navigate to="/feasly-alerts" replace />} />
       <Route path="/demo" element={<DemoProject />} />
@@ -152,18 +139,14 @@ const App = () => (
   <ThemeProvider>
     <LanguageProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <OrganizationProvider>
-            <TooltipProvider>
-              <Toaster />
-              <Sonner />
-              <PerformanceMonitor />
-              <BrowserRouter>
-                <AppRoutes />
-              </BrowserRouter>
-            </TooltipProvider>
-          </OrganizationProvider>
-        </AuthProvider>
+        <OrganizationProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <PerformanceMonitor />
+            <AppRoutes />
+          </TooltipProvider>
+        </OrganizationProvider>
       </QueryClientProvider>
     </LanguageProvider>
   </ThemeProvider>

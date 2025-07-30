@@ -3,6 +3,9 @@ import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
+// Add verification that supabase client is defined
+if (!supabase) console.warn('⚠️  supabase client is undefined');
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
