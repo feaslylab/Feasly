@@ -11,12 +11,21 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<Theme>(() => {
-    const stored = localStorage.getItem('theme');
-    return (stored as Theme) || 'light';
-  });
-
+  const [theme, setTheme] = useState<Theme>('light');
   const [actualTheme, setActualTheme] = useState<'light' | 'dark'>('light');
+
+  // Initialize theme from localStorage safely
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('theme');
+      if (stored && ['light', 'dark', 'system'].includes(stored)) {
+        setTheme(stored as Theme);
+      }
+    } catch (error) {
+      console.warn('Failed to load theme from localStorage:', error);
+    }
+  }, []);
+
 
   useEffect(() => {
     const root = document.documentElement;
@@ -40,7 +49,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     };
 
     updateTheme();
-    localStorage.setItem('theme', theme);
+    
+    // Save theme to localStorage safely
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (error) {
+      console.warn('Failed to save theme to localStorage:', error);
+    }
 
     // Listen for system theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');

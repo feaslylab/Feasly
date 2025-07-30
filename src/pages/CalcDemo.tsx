@@ -21,7 +21,11 @@ export default function CalcDemo() {
   // Save KPIs whenever they change
   useEffect(() => {
     if (!loading) {
-      saveKPIs(kpi);
+      saveKPIs({
+        npv: kpi.npv,
+        irr: kpi.projectIRR,
+        profit: kpi.profit
+      });
     }
   }, [kpi, saveKPIs, loading]);
 
