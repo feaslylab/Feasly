@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useFeaslyCalc } from "../hooks/useFeaslyCalc";
 import { useConstructionStore } from "../hooks/useConstructionStore";
-import { SaleLine } from "../../packages/feasly-engine/src";
+import { SaleLine, RentalLine } from "../../packages/feasly-engine/src";
 
 export default function CalcDemo() {
   const [qty, setQty] = useState(12_000_000);
   const [revenueLines, setRevenueLines] = useState<SaleLine[]>([]);
+  const [rentalLines, setRentalLines] = useState<RentalLine[]>([]);
   const { items: storedItems, loading, saveItem, saveKPIs } = useConstructionStore();
   
   // Use stored items if available, otherwise use demo item
@@ -18,7 +19,7 @@ export default function CalcDemo() {
     retentionReleaseLag: 2
   }];
   
-  const { cash: row, kpi, interestRow } = useFeaslyCalc(items, 36, 0.10, revenueLines);
+  const { cash: row, kpi, interestRow } = useFeaslyCalc(items, 60, 0.10, revenueLines, rentalLines);
 
   // Save KPIs whenever they change
   useEffect(() => {
@@ -58,6 +59,19 @@ export default function CalcDemo() {
     setRevenueLines(prev => [...prev, newRevenueLine]);
   };
 
+  // Add demo rental line
+  const addRental = () => {
+    const newRentalLine: RentalLine = {
+      rooms: 150,
+      adr: 800,
+      occupancyRate: 0.68,
+      startPeriod: 48,
+      endPeriod: 60,
+      annualEscalation: 0.05
+    };
+    setRentalLines(prev => [...prev, newRentalLine]);
+  };
+
   if (loading) {
     return <div className="p-6">Loading construction data...</div>;
   }
@@ -77,26 +91,42 @@ export default function CalcDemo() {
 
       <button 
         onClick={addRevenue}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+        className="bg-blue-500 text-white px-4 py-2 rounded mb-2 mr-2"
       >
         Add Revenue (80 units @ 1.6M AED, P24-36)
       </button>
 
+      <button 
+        onClick={addRental}
+        className="bg-green-500 text-white px-4 py-2 rounded mb-4"
+      >
+        Add Rental (150 rooms, ADR 800, 68% occ, P48-60)
+      </button>
+
       {revenueLines.length > 0 && (
-        <p className="text-sm text-gray-600 mb-2">
-          Revenue lines: {revenueLines.length} (Total: {revenueLines.reduce((sum, line) => 
+        <p className="text-sm text-gray-600 mb-1">
+          Sale revenue lines: {revenueLines.length} (Total: {revenueLines.reduce((sum, line) => 
             sum + line.units * line.pricePerUnit, 0).toLocaleString()} AED)
         </p>
       )}
 
-      <table className="border mt-4">
+      {rentalLines.length > 0 && (
+        <p className="text-sm text-gray-600 mb-2">
+          Rental revenue lines: {rentalLines.length} (Avg monthly: {Math.round(
+            rentalLines.reduce((sum, line) => 
+              sum + line.adr * line.occupancyRate * line.rooms * 30.4167, 0)
+          ).toLocaleString()} AED)
+        </p>
+      )}
+
+      <table className="border mt-4 text-xs">
         <thead><tr>
-          {row.slice(0,36).map((_,i)=>
-            <th key={i} className="border px-1 text-xs">P{i}</th>)}
+          {row.slice(0,60).map((_,i)=>
+            <th key={i} className="border px-1">P{i}</th>)}
         </tr></thead>
         <tbody><tr>
-          {row.slice(0,36).map((v,i)=>
-            <td key={i} className="border px-1 text-right text-xs">
+          {row.slice(0,60).map((v,i)=>
+            <td key={i} className="border px-1 text-right">
               {v.toLocaleString(undefined,{maximumFractionDigits:0})}
             </td>)}
         </tr></tbody>

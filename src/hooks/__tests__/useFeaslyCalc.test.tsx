@@ -35,4 +35,20 @@ describe("useFeaslyCalc", () => {
     const totalRevenue = result.current.cash.reduce((sum, val) => sum + Math.max(0, val), 0);
     expect(totalRevenue).toBeCloseTo(1_000_000, -3); // 10 * 100k with interest offset
   });
+
+  it("adds rental revenue as positive cash flow at P48", () => {
+    const { result } = renderHook(() =>
+      useFeaslyCalc([], 60, 0.10, [], [{
+        rooms: 10,
+        adr: 100,
+        occupancyRate: 0.8,
+        startPeriod: 48,
+        endPeriod: 50,
+        annualEscalation: 0
+      }])
+    );
+    // Rental revenue should appear as positive in period 48
+    expect(result.current.cash[48]).toBeGreaterThan(0);
+    expect(result.current.cash[48]).toBeCloseTo(10 * 100 * 0.8 * 30.4167, 1); // rooms * adr * occ * days
+  });
 });

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ConstructionItem, buildConstructionRow, computeKPIs, accrueInterestRow, SaleLine, buildSaleRevenue } from "../../packages/feasly-engine/src";
+import { ConstructionItem, buildConstructionRow, computeKPIs, accrueInterestRow, SaleLine, buildSaleRevenue, RentalLine, buildRentalRevenue } from "../../packages/feasly-engine/src";
 
 /** Accepts an array of ConstructionItem objects and returns a
     consolidated monthly cash-outflow row (negative numbers).      */
@@ -7,7 +7,8 @@ export function useFeaslyCalc(
   items: ConstructionItem[], 
   horizon = 60, 
   discountRate = 0.10, 
-  revenueLines: SaleLine[] = []
+  revenueLines: SaleLine[] = [],
+  rentalLines: RentalLine[] = []
 ) {
   const { cash, interestRow } = useMemo(() => {
     const row = Array(horizon).fill(0);
@@ -29,8 +30,14 @@ export function useFeaslyCalc(
       for (let i = 0; i < horizon; i++) row[i] += r[i];   // revenue = inflow
     }
     
+    // Add rental revenue lines (positive)
+    for (const line of rentalLines) {
+      const r = buildRentalRevenue(line, horizon);
+      for (let i = 0; i < horizon; i++) row[i] += r[i];   // rental = inflow
+    }
+    
     return { cash: row, interestRow: interestExpense };
-  }, [JSON.stringify(items), horizon, JSON.stringify(revenueLines)]);
+  }, [JSON.stringify(items), horizon, JSON.stringify(revenueLines), JSON.stringify(rentalLines)]);
   
   const kpi = useMemo(() => computeKPIs(cash, { discountRate }), [cash, discountRate]);
   
