@@ -111,12 +111,12 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
 
     try {
       console.log('Attempting login with email:', email);
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      console.log('Login response - data:', data, 'error:', error);
+      console.log('Login response - error:', error);
 
       if (error) {
         console.log('Login failed with error:', error.message);

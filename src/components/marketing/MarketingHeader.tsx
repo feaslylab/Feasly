@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 const getNavLinks = (t: (key: string) => string) => [
   { name: t('nav.features'), href: "#features", isAnchor: true },
   { name: "Comparison", href: "/comparison", isAnchor: false },
+  { name: t('nav.demo'), href: "#demo", isAnchor: true },
   { name: t('nav.pricing'), href: "/pricing", isAnchor: false },
   { name: t('nav.docs'), href: "/docs", isAnchor: false },
 ];
@@ -108,6 +109,9 @@ export function MarketingHeader() {
           <Button variant="outline" asChild>
             <Link to="/welcome">{t('nav.login')}</Link>
           </Button>
+          <Button asChild>
+            <Link to="/welcome">{t('nav.startFreeTrial')}</Link>
+          </Button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -153,6 +157,11 @@ export function MarketingHeader() {
               <Button variant="outline" asChild className="w-full">
                 <Link to="/welcome" onClick={() => setMobileMenuOpen(false)}>
                   {t('nav.login')}
+                </Link>
+              </Button>
+              <Button asChild className="w-full">
+                <Link to="/welcome" onClick={() => setMobileMenuOpen(false)}>
+                  {t('nav.startFreeTrial')}
                 </Link>
               </Button>
             </div>
