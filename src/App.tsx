@@ -27,7 +27,7 @@ import FeaslyConsolidate from "./pages/FeaslyConsolidate";
 import FeaslyInsights from "./pages/FeaslyInsights";
 import FeaslyAlerts from "./pages/FeaslyAlerts";
 import NotFound from "./pages/NotFound";
-import MarketingWrapper from "./pages/MarketingWrapper";
+import { ComingSoon } from "@/components/marketing/ComingSoon";
 import FeaturesPage from "./pages/FeaturesPage";
 import PricingPage from "./pages/PricingPage";
 import UseCasesPage from "./pages/UseCasesPage";
@@ -54,7 +54,7 @@ const AppRoutes = () => {
     return (
       <PageTransition routeKey={location.pathname}>
         <Routes>
-          <Route path="/" element={<MarketingWrapper />} />
+          <Route path="/" element={<ComingSoon />} />
           <Route path="/features" element={<FeaturesPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/use-cases" element={<UseCasesPage />} />
