@@ -14,6 +14,6 @@ describe("useFeaslyCalc", () => {
         retentionReleaseLag: 0
       }], 6)
     );
-    expect(result.current.slice(1,4)).toEqual([-400000,-400000,-400000]);
+    expect(result.current.cash.slice(1,4)).toEqual([-400000,-400000,-400000]);
   });
 });
