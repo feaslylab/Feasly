@@ -44,6 +44,8 @@ const AppRoutes = () => {
   const { user, loading } = useAuth();
   const location = useLocation();
   
+  console.log('AppRoutes render - user:', user, 'loading:', loading, 'pathname:', window.location.pathname);
+  
   // Check if we're on the marketing site
   const isMarketingRoute = window.location.pathname === '/';
   
@@ -82,6 +84,7 @@ const AppRoutes = () => {
 
   // If user is authenticated and on welcome page, redirect to dashboard
   if (user && window.location.pathname === '/welcome') {
+    console.log('User authenticated on welcome page, redirecting to dashboard');
     return <Navigate to="/dashboard" replace />;
   }
 
