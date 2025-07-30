@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useFeaslyCalc } from "../hooks/useFeaslyCalc";
 import { useConstructionStore } from "../hooks/useConstructionStore";
+import { SaleLine } from "../../packages/feasly-engine/src";
 
 export default function CalcDemo() {
   const [qty, setQty] = useState(12_000_000);
+  const [revenueLines, setRevenueLines] = useState<SaleLine[]>([]);
   const { items: storedItems, loading, saveItem, saveKPIs } = useConstructionStore();
   
   // Use stored items if available, otherwise use demo item
@@ -16,7 +18,7 @@ export default function CalcDemo() {
     retentionReleaseLag: 2
   }];
   
-  const { cash: row, kpi, interestRow } = useFeaslyCalc(items, 36);
+  const { cash: row, kpi, interestRow } = useFeaslyCalc(items, 36, 0.10, revenueLines);
 
   // Save KPIs whenever they change
   useEffect(() => {
@@ -44,6 +46,18 @@ export default function CalcDemo() {
     }
   };
 
+  // Add demo revenue line
+  const addRevenue = () => {
+    const newRevenueLine: SaleLine = {
+      units: 80,
+      pricePerUnit: 1_600_000,
+      startPeriod: 24,
+      endPeriod: 36,
+      escalation: 0.04
+    };
+    setRevenueLines(prev => [...prev, newRevenueLine]);
+  };
+
   if (loading) {
     return <div className="p-6">Loading construction data...</div>;
   }
@@ -60,6 +74,20 @@ export default function CalcDemo() {
           className="border ml-2 px-2"
         />
       </label>
+
+      <button 
+        onClick={addRevenue}
+        className="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+      >
+        Add Revenue (80 units @ 1.6M AED, P24-36)
+      </button>
+
+      {revenueLines.length > 0 && (
+        <p className="text-sm text-gray-600 mb-2">
+          Revenue lines: {revenueLines.length} (Total: {revenueLines.reduce((sum, line) => 
+            sum + line.units * line.pricePerUnit, 0).toLocaleString()} AED)
+        </p>
+      )}
 
       <table className="border mt-4">
         <thead><tr>

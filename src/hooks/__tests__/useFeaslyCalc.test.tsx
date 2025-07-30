@@ -16,4 +16,23 @@ describe("useFeaslyCalc", () => {
     );
     expect(result.current.cash.slice(1,4)).toEqual([-406430,-406430,-406430]); // construction + interest
   });
+
+  it("adds revenue lines as positive cash flow", () => {
+    const { result } = renderHook(() =>
+      useFeaslyCalc([], 40, 0.10, [{
+        units: 10,
+        pricePerUnit: 100_000,
+        startPeriod: 24,
+        endPeriod: 26,
+        escalation: 0
+      }])
+    );
+    // Revenue should appear as positive in periods 24-26
+    expect(result.current.cash[24]).toBeGreaterThan(0);
+    expect(result.current.cash[25]).toBeGreaterThan(0);
+    expect(result.current.cash[26]).toBeGreaterThan(0);
+    // Total revenue should equal units * pricePerUnit
+    const totalRevenue = result.current.cash.reduce((sum, val) => sum + Math.max(0, val), 0);
+    expect(totalRevenue).toBeCloseTo(1_000_000, -3); // 10 * 100k with interest offset
+  });
 });
