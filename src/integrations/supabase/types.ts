@@ -80,6 +80,7 @@ export type Database = {
           project_id: string
           retention_percent: number
           retention_release_lag: number
+          scenario_id: string | null
           start_period: number
           user_id: string
         }
@@ -92,6 +93,7 @@ export type Database = {
           project_id: string
           retention_percent?: number
           retention_release_lag?: number
+          scenario_id?: string | null
           start_period: number
           user_id: string
         }
@@ -104,6 +106,7 @@ export type Database = {
           project_id?: string
           retention_percent?: number
           retention_release_lag?: number
+          scenario_id?: string | null
           start_period?: number
           user_id?: string
         }
@@ -1205,6 +1208,93 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      revenue_rental: {
+        Row: {
+          adr: number
+          annual_escalation: number
+          created_at: string
+          end_period: number
+          id: string
+          occupancy_rate: number
+          project_id: string
+          rooms: number
+          scenario_id: string | null
+          start_period: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          adr?: number
+          annual_escalation?: number
+          created_at?: string
+          end_period?: number
+          id?: string
+          occupancy_rate?: number
+          project_id: string
+          rooms?: number
+          scenario_id?: string | null
+          start_period?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          adr?: number
+          annual_escalation?: number
+          created_at?: string
+          end_period?: number
+          id?: string
+          occupancy_rate?: number
+          project_id?: string
+          rooms?: number
+          scenario_id?: string | null
+          start_period?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      revenue_sale: {
+        Row: {
+          created_at: string
+          end_period: number
+          escalation: number
+          id: string
+          price_per_unit: number
+          project_id: string
+          scenario_id: string | null
+          start_period: number
+          units: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_period?: number
+          escalation?: number
+          id?: string
+          price_per_unit?: number
+          project_id: string
+          scenario_id?: string | null
+          start_period?: number
+          units?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          end_period?: number
+          escalation?: number
+          id?: string
+          price_per_unit?: number
+          project_id?: string
+          scenario_id?: string | null
+          start_period?: number
+          units?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       scenario_overrides: {
         Row: {
