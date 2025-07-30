@@ -677,7 +677,7 @@ export default function OptimizedDashboard() {
                       </div>
                     </div>
                     <Button variant="outline" size="sm" asChild>
-                      <NavLink to={`/project/${project.id}`}>
+                      <NavLink to={`/projects/${project.id}`}>
                         View Details
                       </NavLink>
                     </Button>
