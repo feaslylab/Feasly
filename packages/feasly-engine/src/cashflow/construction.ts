@@ -35,8 +35,10 @@ export function buildConstructionRow(
     // 3. release retained at lagged period after endPeriod
     const releasePeriod = item.endPeriod + item.retentionReleaseLag;
     if (releasePeriod >= row.length) {
-      row.length = releasePeriod + 1;      // auto-extend
-      row.fill(0, row.length - (releasePeriod + 1));
+      const newLength = releasePeriod + 1;
+      while (row.length < newLength) {
+        row.push(0);
+      }
     }
     const totalRetained = +retained.reduce((a,b)=>a+b,0).toFixed(2);
     row[releasePeriod] += totalRetained;
