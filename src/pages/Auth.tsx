@@ -13,6 +13,7 @@ interface AuthPageProps {
 }
 
 export const AuthPage = ({ onSuccess }: AuthPageProps) => {
+  console.log('AuthPage component mounted');
   const [isLoginMode, setIsLoginMode] = useState(true);
 
   const toggleMode = () => {
