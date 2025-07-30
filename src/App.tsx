@@ -47,6 +47,15 @@ const AppRoutes = () => {
   
   console.log('AppRoutes render - user:', user, 'loading:', loading, 'pathname:', window.location.pathname);
   
+  // Add error handling for authentication failures
+  if (loading) {
+    console.log('Auth loading state');
+  } else if (user) {
+    console.log('User authenticated:', user.email);
+  } else {
+    console.log('No user authenticated');
+  }
+  
   // Check if we're on the marketing site
   const isMarketingRoute = window.location.pathname === '/';
   
