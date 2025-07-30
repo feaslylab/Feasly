@@ -51,12 +51,11 @@ const AppRoutes = () => {
   const isMarketingRoute = window.location.pathname === '/';
   
   // If we're on the marketing site path, show marketing content
-  if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison') || window.location.pathname.startsWith('/calc-demo')) {
+  if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison')) {
     return (
       <PageTransition routeKey={location.pathname}>
         <Routes>
           <Route path="/" element={<MarketingWrapper />} />
-          <Route path="/calc-demo" element={<CalcDemo />} />
           <Route path="/features" element={<FeaturesPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/use-cases" element={<UseCasesPage />} />
@@ -67,6 +66,8 @@ const AppRoutes = () => {
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/comparison" element={<FeatureComparison />} />
           <Route path="/welcome" element={<AuthPage onSuccess={() => { console.log('Login success, navigating to dashboard'); }} />} />
+          {/* Development-only route for legacy calc-demo */}
+          {import.meta.env.DEV && <Route path="/calc-demo" element={<CalcDemo />} />}
         </Routes>
       </PageTransition>
     );
