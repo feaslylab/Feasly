@@ -152,18 +152,18 @@ const App = () => (
   <ThemeProvider>
     <LanguageProvider>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <OrganizationProvider>
-            <TooltipProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <AuthProvider>
+            <OrganizationProvider>
               <PerformanceMonitor />
-              <Toaster />
-              <Sonner />
               <BrowserRouter>
                 <AppRoutes />
               </BrowserRouter>
-            </TooltipProvider>
-          </OrganizationProvider>
-        </AuthProvider>
+            </OrganizationProvider>
+          </AuthProvider>
+        </TooltipProvider>
       </QueryClientProvider>
     </LanguageProvider>
   </ThemeProvider>
