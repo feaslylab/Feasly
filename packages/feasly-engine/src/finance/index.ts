@@ -1,1 +1,1 @@
-export function interestEffective() { /* TODO */ }
+export * from "./interest";
