@@ -19,6 +19,7 @@ interface LoginFormProps {
 }
 
 export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
+  console.log('LoginForm component mounted');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -315,6 +316,7 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
 
           <Button
             type="submit"
+            onClick={() => console.log('Login button clicked')}
             className={cn(
               "w-full h-12 bg-gradient-to-r from-primary to-primary-dark",
               "hover:from-primary-glow hover:to-primary",
