@@ -1,1 +1,1 @@
-export function buildCashflow() { /* TODO */ }
+export * from "./evenSpread";
