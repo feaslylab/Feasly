@@ -37,6 +37,7 @@ import PressPage from "./pages/PressPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import FeatureComparison from "./pages/FeatureComparison";
+import CalcDemo from "./pages/CalcDemo";
 
 const queryClient = new QueryClient();
 
@@ -55,6 +56,7 @@ const AppRoutes = () => {
       <PageTransition routeKey={location.pathname}>
         <Routes>
           <Route path="/" element={<ComingSoon />} />
+          <Route path="/calc-demo" element={<CalcDemo />} />
           <Route path="/features" element={<FeaturesPage />} />
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/use-cases" element={<UseCasesPage />} />

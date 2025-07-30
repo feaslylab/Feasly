@@ -25,6 +25,3 @@ export function periodicFactor(
 ): number {
   return Math.pow(1 + annualRate, months / 12);
 }
-
-// re-export from this file
-export { nominalToEffective, effectiveToNominal, periodicFactor };

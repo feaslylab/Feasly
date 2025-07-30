@@ -44,4 +44,3 @@ export function buildConstructionRow(
   return row;
 }
 
-export { buildConstructionRow };
