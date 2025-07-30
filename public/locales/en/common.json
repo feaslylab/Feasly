@@ -49,6 +49,27 @@
     "theme": "Theme",
     "language": "Language"
   },
+  "dashboard": {
+    "overview": "Overview of your real estate development portfolio",
+    "totalProjects": "Total Projects",
+    "activeProjects": "active projects",
+    "totalAssets": "Total Assets", 
+    "developmentProperties": "Development properties",
+    "portfolioValue": "Portfolio Value",
+    "totalConstructionCost": "Total construction cost",
+    "annualRevenue": "Annual Revenue",
+    "projectedYearlyIncome": "Projected yearly income",
+    "avgIRR": "Avg IRR",
+    "averageReturnRate": "Average return rate",
+    "kpiComparison": "KPI Comparison",
+    "kpiComparisonDesc": "Compare key performance indicators across different scenarios",
+    "baseCase": "Base Case",
+    "conservativeEstimates": "Conservative estimates", 
+    "optimistic": "Optimistic",
+    "bestCaseScenario": "Best case scenario",
+    "pessimistic": "Pessimistic",
+    "worstCaseScenario": "Worst case scenario"
+  },
   "feasly": {
     "model": {
       "title": "Feasly Model"

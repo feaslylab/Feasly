@@ -50,6 +50,27 @@
     "language": "اللغة"
   },
   "territoryWarning": "يتم توفير فيزلي™ من قبل شركة فيزلي (مركز دبي المالي العالمي) المحدودة للعملاء في دول مجلس التعاون الخليجي والأسواق الدولية المختارة. الخدمات غير متاحة للمقيمين الأستراليين.",
+  "dashboard": {
+    "overview": "نظرة عامة على محفظة التطوير العقاري الخاصة بك",
+    "totalProjects": "إجمالي المشاريع",
+    "activeProjects": "مشاريع نشطة",
+    "totalAssets": "إجمالي الأصول",
+    "developmentProperties": "العقارات التطويرية",
+    "portfolioValue": "قيمة المحفظة",
+    "totalConstructionCost": "إجمالي تكلفة البناء",
+    "annualRevenue": "الإيرادات السنوية",
+    "projectedYearlyIncome": "الدخل السنوي المتوقع",
+    "avgIRR": "متوسط معدل العائد الداخلي",
+    "averageReturnRate": "متوسط معدل العائد",
+    "kpiComparison": "مقارنة مؤشرات الأداء الرئيسية",
+    "kpiComparisonDesc": "مقارنة مؤشرات الأداء الرئيسية عبر سيناريوهات مختلفة",
+    "baseCase": "الحالة الأساسية",
+    "conservativeEstimates": "تقديرات محافظة",
+    "optimistic": "متفائل",
+    "bestCaseScenario": "أفضل سيناريو",
+    "pessimistic": "متشائم",
+    "worstCaseScenario": "أسوأ سيناريو"
+  },
   "feasly": {
     "model": {
       "title": "نموذج فيزلي"

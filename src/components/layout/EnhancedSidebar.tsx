@@ -16,15 +16,15 @@ import { useEffect } from "react";
 import { TM } from "@/components/ui/trademark";
 
 const navigation = [
-  { nameKey: "dashboard", href: "/dashboard", icon: BarChart3 },
-  { nameKey: "projects", href: "/projects", icon: FolderOpen },
-  { nameKey: "model", href: "/feasly-model", icon: Building },
-  { nameKey: "flow", href: "/feasly-flow", icon: BarChart3 },
-  { nameKey: "finance", href: "/feasly-finance", icon: DollarSign },
-  { nameKey: "consolidate", href: "/feasly-consolidate", icon: FolderOpen },
-  { nameKey: "insights", href: "/feasly-insights", icon: TrendingUp },
-  { nameKey: "alerts", href: "/feasly-alerts", icon: AlertTriangle },
-  { nameKey: "settings", href: "/settings", icon: Settings },
+  { nameKey: "nav.dashboard", href: "/dashboard", icon: BarChart3 },
+  { nameKey: "nav.projects", href: "/projects", icon: FolderOpen },
+  { nameKey: "nav.model", href: "/feasly-model", icon: Building },
+  { nameKey: "nav.flow", href: "/feasly-flow", icon: BarChart3 },
+  { nameKey: "nav.finance", href: "/feasly-finance", icon: DollarSign },
+  { nameKey: "nav.consolidate", href: "/feasly-consolidate", icon: FolderOpen },
+  { nameKey: "nav.insights", href: "/feasly-insights", icon: TrendingUp },
+  { nameKey: "nav.alerts", href: "/feasly-alerts", icon: AlertTriangle },
+  { nameKey: "nav.settings", href: "/settings", icon: Settings },
 ];
 
 // Helper function to get module title based on current route
@@ -206,7 +206,7 @@ export const EnhancedSidebar = () => {
                     isRTL && (!isCollapsed || isMobile) && "flex-row-reverse"
                   )
                 }
-                title={isCollapsed && !isMobile ? t(`nav.${item.nameKey}`) : undefined}
+                title={isCollapsed && !isMobile ? t(item.nameKey) : undefined}
                 onClick={() => {
                   // Close sidebar on mobile after navigation
                   if (isMobile && !isCollapsed) {
@@ -218,7 +218,7 @@ export const EnhancedSidebar = () => {
                   <item.icon className="w-5 h-5 flex-shrink-0" />
                 </TouchTarget>
                 {(!isCollapsed || isMobile) && (
-                  <span className="truncate">{t(`nav.${item.nameKey}`)}</span>
+                  <span className="truncate">{t(item.nameKey)}</span>
                 )}
               </NavLink>
             ))}

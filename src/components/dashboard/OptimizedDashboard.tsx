@@ -110,11 +110,12 @@ const StatsCard = ({ title, value, description, icon: Icon, variant = "default" 
 );
 
 // Memoized KPI Section Component
-const KPISection = ({ kpiData, formatPercentage, formatYears, formatCurrencyShort }: {
+const KPISection = ({ kpiData, formatPercentage, formatYears, formatCurrencyShort, t }: {
   kpiData: KPIData;
   formatPercentage: (value: number) => string;
   formatYears: (value: number) => string;
   formatCurrencyShort: (amount: number) => string;
+  t: any;
 }) => {
   const hasData = useMemo(() => 
     kpiData.baseCase.totalRevenue > 0 || 
@@ -127,9 +128,9 @@ const KPISection = ({ kpiData, formatPercentage, formatYears, formatCurrencyShor
   return (
     <Card className="border-border shadow-soft">
       <CardHeader>
-        <CardTitle className="text-foreground">KPI Comparison</CardTitle>
+        <CardTitle className="text-foreground">{t('dashboard.kpiComparison', 'KPI Comparison')}</CardTitle>
         <CardDescription>
-          Compare key performance indicators across different scenarios
+          {t('dashboard.kpiComparisonDesc', 'Compare key performance indicators across different scenarios')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -137,8 +138,8 @@ const KPISection = ({ kpiData, formatPercentage, formatYears, formatCurrencyShor
           {/* Base Case */}
           <div className="space-y-4">
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-foreground">Base Case</h3>
-              <p className="text-sm text-muted-foreground">Conservative estimates</p>
+              <h3 className="text-lg font-semibold text-foreground">{t('dashboard.baseCase', 'Base Case')}</h3>
+              <p className="text-sm text-muted-foreground">{t('dashboard.conservativeEstimates', 'Conservative estimates')}</p>
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-accent/50 rounded-lg">
@@ -171,8 +172,8 @@ const KPISection = ({ kpiData, formatPercentage, formatYears, formatCurrencyShor
           {/* Optimistic */}
           <div className="space-y-4">
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-success">Optimistic</h3>
-              <p className="text-sm text-muted-foreground">Best case scenario</p>
+              <h3 className="text-lg font-semibold text-success">{t('dashboard.optimistic', 'Optimistic')}</h3>
+              <p className="text-sm text-muted-foreground">{t('dashboard.bestCaseScenario', 'Best case scenario')}</p>
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-success/10 rounded-lg border border-success/20">
@@ -205,8 +206,8 @@ const KPISection = ({ kpiData, formatPercentage, formatYears, formatCurrencyShor
           {/* Pessimistic */}
           <div className="space-y-4">
             <div className="text-center">
-              <h3 className="text-lg font-semibold text-destructive">Pessimistic</h3>
-              <p className="text-sm text-muted-foreground">Worst case scenario</p>
+              <h3 className="text-lg font-semibold text-destructive">{t('dashboard.pessimistic', 'Pessimistic')}</h3>
+              <p className="text-sm text-muted-foreground">{t('dashboard.worstCaseScenario', 'Worst case scenario')}</p>
             </div>
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-destructive/10 rounded-lg border border-destructive/20">
@@ -455,9 +456,9 @@ export default function OptimizedDashboard() {
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+            <h1 className="text-3xl font-bold text-foreground">{t('nav.dashboard')}</h1>
             <p className="text-muted-foreground">
-              Overview of your real estate development portfolio
+              {t('dashboard.overview', 'Overview of your real estate development portfolio')}
             </p>
           </div>
 
@@ -560,23 +561,23 @@ export default function OptimizedDashboard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           <StatsCard
-            title="Total Projects"
+            title={t('dashboard.totalProjects', 'Total Projects')}
             value={stats.totalProjects}
-            description="Active development projects"
+            description={t('dashboard.activeProjects', `${recentProjects.length} active projects`)}
             icon={FolderOpen}
           />
           
           <StatsCard
-            title="Total Assets"
+            title={t('dashboard.totalAssets', 'Total Assets')}
             value={stats.totalAssets}
-            description="Across all projects"
+            description={t('dashboard.developmentProperties', 'Development properties')}
             icon={Building}
           />
           
           <StatsCard
-            title="Portfolio Value"
+            title={t('dashboard.portfolioValue', 'Portfolio Value')}
             value={formatCurrencyShort(stats.totalValue)}
-            description="Total construction cost"
+            description={t('dashboard.totalConstructionCost', 'Total construction cost')}
             icon={DollarSign}
           />
           
@@ -605,6 +606,7 @@ export default function OptimizedDashboard() {
           formatPercentage={formatPercentage}
           formatYears={formatYears}
           formatCurrencyShort={formatCurrencyShort}
+          t={t}
         />
 
         {/* Portfolio Alerts Summary */}
