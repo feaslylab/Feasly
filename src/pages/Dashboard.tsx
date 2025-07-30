@@ -14,6 +14,7 @@ import {
   rentalLineToDB
 } from "../hooks/useTableStores";
 import { SaleLine, RentalLine, LoanFacility } from "../../packages/feasly-engine/src";
+import UploadEmdf from "@/components/UploadEmdf";
 
 export default function Dashboard() {
   const projectId = 'demo-project';
@@ -150,6 +151,8 @@ export default function Dashboard() {
           >
             + New scenario
           </button>
+          
+          <UploadEmdf onImportComplete={() => window.location.reload()} />
         </div>
         
         {current && (
