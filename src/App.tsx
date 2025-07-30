@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/components/auth/AuthProvider";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
@@ -11,7 +11,7 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { PageTransition } from "@/components/ui/page-transition";
 import { PerformanceMonitor } from "@/components/ui/performance-monitor";
 
-import { AuthPage } from "@/pages/Auth";
+import AuthPageWrapper from "@/components/auth/AuthPageWrapper";
 import { AppLayout } from "@/components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
@@ -19,7 +19,7 @@ import NewProject from "./pages/NewProject";
 import ProjectDetails from "./pages/ProjectDetails";
 import ProjectView from "./pages/ProjectView";
 import ProjectPublic from "./pages/ProjectPublic";
-import DemoProject from "./pages/DemoProject";
+
 import FeaslyModel from "./pages/FeaslyModel";
 import FeaslyFlow from "./pages/FeaslyFlow";
 import FeaslyFinance from "./pages/FeaslyFinance";
@@ -32,7 +32,7 @@ import FeaturesPage from "./pages/FeaturesPage";
 import PricingPage from "./pages/PricingPage";
 import UseCasesPage from "./pages/UseCasesPage";
 import DocsPage from "./pages/DocsPage";
-import DemoPage from "./pages/DemoPage";
+
 import PressPage from "./pages/PressPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
@@ -69,12 +69,12 @@ const AppRoutes = () => {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/use-cases" element={<UseCasesPage />} />
             <Route path="/docs" element={<DocsPage />} />
-            <Route path="/demo" element={<DemoPage />} />
+            
             <Route path="/press" element={<PressPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/comparison" element={<FeatureComparison />} />
-          <Route path="/welcome" element={<AuthPage onSuccess={() => { console.log('Login success, navigating to dashboard'); }} />} />
+          <Route path="/welcome" element={<AuthPageWrapper />} />
           {/* Development-only route for legacy calc-demo */}
           {import.meta.env.DEV && <Route path="/calc-demo" element={<CalcDemo />} />}
         </Routes>
@@ -147,7 +147,7 @@ const AppRoutes = () => {
         } />
       </Route>
       <Route path="/alerts" element={<Navigate to="/feasly-alerts" replace />} />
-      <Route path="/demo" element={<DemoProject />} />
+      
       <Route path="/projects/:id/public" element={<ProjectPublic />} />
       <Route path="/settings" element={<AppLayout />}>
         <Route index element={<div className="p-6">Settings page coming soon...</div>} />

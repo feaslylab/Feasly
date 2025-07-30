@@ -24,14 +24,8 @@ export default function SimpleMarketingHome() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild>
                 <Link to="/welcome">
-                  Get Started Free
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              
-              <Button variant="outline" size="lg" asChild>
-                <Link to="/welcome">
                   Login
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
@@ -94,7 +88,7 @@ export default function SimpleMarketingHome() {
             </p>
             <Button size="lg" asChild>
               <Link to="/welcome">
-                Start Your Free Trial
+                Login to Access Platform
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
