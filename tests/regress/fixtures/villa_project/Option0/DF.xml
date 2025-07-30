@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Option>
+  <Sales>
+    <Sale>
+      <Units>10</Units>
+      <PricePerUnit>1500000</PricePerUnit>
+      <StartMonth>12</StartMonth>
+      <EndMonth>24</EndMonth>
+      <Escalation>0.03</Escalation>
+    </Sale>
+  </Sales>
+</Option>
