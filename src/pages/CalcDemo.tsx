@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useFeaslyCalc } from "../hooks/useFeaslyCalc";
 import { useConstructionStore } from "../hooks/useConstructionStore";
-import { SaleLine, RentalLine } from "../../packages/feasly-engine/src";
+import { SaleLine, RentalLine, LoanFacility } from "../../packages/feasly-engine/src";
 
 export default function CalcDemo() {
   const [qty, setQty] = useState(12_000_000);
   const [revenueLines, setRevenueLines] = useState<SaleLine[]>([]);
   const [rentalLines, setRentalLines] = useState<RentalLine[]>([]);
+  const [useLoan, setUseLoan] = useState(false);
   const { items: storedItems, loading, saveItem, saveKPIs } = useConstructionStore();
   
   // Use stored items if available, otherwise use demo item
@@ -19,7 +20,17 @@ export default function CalcDemo() {
     retentionReleaseLag: 2
   }];
   
-  const { cash: row, kpi, interestRow } = useFeaslyCalc(items, 60, 0.10, revenueLines, rentalLines);
+  // Define loan facility
+  const loanFacility: LoanFacility | undefined = useLoan ? {
+    limit: 40_000_000,
+    ltcPercent: 0.70,
+    annualRate: 0.08,
+    startPeriod: 6,
+    maturityPeriod: 60,
+    interestOnly: true
+  } : undefined;
+  
+  const { cash: row, kpi, interestRow, loanRows } = useFeaslyCalc(items, 60, 0.10, revenueLines, rentalLines, loanFacility);
 
   // Save KPIs whenever they change
   useEffect(() => {
@@ -103,6 +114,16 @@ export default function CalcDemo() {
         Add Rental (150 rooms, ADR 800, 68% occ, P48-60)
       </button>
 
+      <label className="flex items-center mb-4">
+        <input
+          type="checkbox"
+          checked={useLoan}
+          onChange={e => setUseLoan(e.target.checked)}
+          className="mr-2"
+        />
+        Use loan 70% LTC @8% rate, bullet repay P60
+      </label>
+
       {revenueLines.length > 0 && (
         <p className="text-sm text-gray-600 mb-1">
           Sale revenue lines: {revenueLines.length} (Total: {revenueLines.reduce((sum, line) => 
@@ -116,6 +137,13 @@ export default function CalcDemo() {
             rentalLines.reduce((sum, line) => 
               sum + line.adr * line.occupancyRate * line.rooms * 30.4167, 0)
           ).toLocaleString()} AED)
+        </p>
+      )}
+
+      {useLoan && loanRows && (
+        <p className="text-sm text-gray-600 mb-2">
+          Peak Balance: {Math.max(...loanRows.balance).toLocaleString()} AED | 
+          Total Interest: {loanRows.interest.reduce((sum, val) => sum + val, 0).toLocaleString()} AED
         </p>
       )}
 

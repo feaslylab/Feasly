@@ -51,4 +51,27 @@ describe("useFeaslyCalc", () => {
     expect(result.current.cash[48]).toBeGreaterThan(0);
     expect(result.current.cash[48]).toBeCloseTo(10 * 100 * 0.8 * 30.4167, 1); // rooms * adr * occ * days
   });
+
+  it("adds loan draw as positive cash flow when loan enabled", () => {
+    const { result } = renderHook(() =>
+      useFeaslyCalc([{
+        baseCost: 1_000_000,
+        startPeriod: 0,
+        endPeriod: 0,
+        escalationRate: 0,
+        retentionPercent: 0,
+        retentionReleaseLag: 0
+      }], 10, 0.10, [], [], {
+        limit: 10_000_000,
+        ltcPercent: 0.70,
+        annualRate: 0.08,
+        startPeriod: 0,
+        maturityPeriod: 9,
+        interestOnly: true
+      })
+    );
+    // Loan draw should make cash flow positive in period 0
+    expect(result.current.cash[0]).toBeGreaterThan(0);
+    expect(result.current.loanRows?.draw[0]).toBeCloseTo(700_000, 0); // 70% of 1M cost
+  });
 });
