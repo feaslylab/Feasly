@@ -5,6 +5,11 @@ import type { Database } from './types';
 const SUPABASE_URL = "https://bptmvznotgunewboppnl.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwdG12em5vdGd1bmV3Ym9wcG5sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwNTQ2NjUsImV4cCI6MjA2ODYzMDY2NX0.03cnSluvLKScJ7XuD4NDJvzHzN4VPH31ODHgdsDY1rE";
 
+// Validate credentials
+if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
+  console.error('❌ Supabase credentials are missing - auth is disabled.');
+}
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
