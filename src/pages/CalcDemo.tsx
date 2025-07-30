@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFeaslyCalc } from "../hooks/useFeaslyCalc";
+import { useConstructionStore } from "../hooks/useConstructionStore";
 
 export default function CalcDemo() {
   const [qty, setQty] = useState(12_000_000);
-  const items = [{
+  const { items: storedItems, loading, saveItem, saveKPIs } = useConstructionStore();
+  
+  // Use stored items if available, otherwise use demo item
+  const items = storedItems.length > 0 ? storedItems : [{
     baseCost: qty,
     startPeriod: 6,
     endPeriod: 24,
@@ -11,7 +15,34 @@ export default function CalcDemo() {
     retentionPercent: 0.05,
     retentionReleaseLag: 2
   }];
+  
   const { cash: row, kpi, interestRow } = useFeaslyCalc(items, 36);
+
+  // Save KPIs whenever they change
+  useEffect(() => {
+    if (!loading) {
+      saveKPIs(kpi);
+    }
+  }, [kpi, saveKPIs, loading]);
+
+  // Save new item when qty changes
+  const handleQtyChange = async (newQty: number) => {
+    setQty(newQty);
+    if (storedItems.length === 0) { // Only save if no stored items yet
+      await saveItem({
+        baseCost: newQty,
+        startPeriod: 6,
+        endPeriod: 24,
+        escalationRate: 0.05,
+        retentionPercent: 0.05,
+        retentionReleaseLag: 2
+      });
+    }
+  };
+
+  if (loading) {
+    return <div className="p-6">Loading construction data...</div>;
+  }
 
   return (
     <div className="p-6">
@@ -21,7 +52,7 @@ export default function CalcDemo() {
         Base cost (AED):
         <input
           type="number" value={qty}
-          onChange={e=>setQty(+e.target.value)}
+          onChange={e=>handleQtyChange(+e.target.value)}
           className="border ml-2 px-2"
         />
       </label>

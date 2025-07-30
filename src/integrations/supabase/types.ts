@@ -70,6 +70,45 @@ export type Database = {
           },
         ]
       }
+      construction_item: {
+        Row: {
+          base_cost: number
+          created_at: string | null
+          end_period: number
+          escalation_rate: number
+          id: string
+          project_id: string
+          retention_percent: number
+          retention_release_lag: number
+          start_period: number
+          user_id: string
+        }
+        Insert: {
+          base_cost: number
+          created_at?: string | null
+          end_period: number
+          escalation_rate?: number
+          id?: string
+          project_id: string
+          retention_percent?: number
+          retention_release_lag?: number
+          start_period: number
+          user_id: string
+        }
+        Update: {
+          base_cost?: number
+          created_at?: string | null
+          end_period?: number
+          escalation_rate?: number
+          id?: string
+          project_id?: string
+          retention_percent?: number
+          retention_release_lag?: number
+          start_period?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       escrow_releases: {
         Row: {
           construction_progress_percent: number | null
@@ -588,6 +627,36 @@ export type Database = {
           simulation_data?: Json | null
           simulation_name?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      kpi_snapshot: {
+        Row: {
+          created_at: string | null
+          id: string
+          irr: number | null
+          npv: number
+          profit: number
+          project_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          irr?: number | null
+          npv: number
+          profit: number
+          project_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          irr?: number | null
+          npv?: number
+          profit?: number
+          project_id?: string
+          user_id?: string
         }
         Relationships: []
       }
