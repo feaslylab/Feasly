@@ -74,7 +74,7 @@ export function useScenarioStore(projectId: string | null) {
       project_id: projectId,
       user_id: user.id,
       name,
-      scenario_type: 'base',  // Add the required scenario_type field
+      is_base: false,        // New scenarios are not base scenarios
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };

@@ -15,9 +15,7 @@ interface Scenario {
   user_id: string;
   name: string;
   description?: string;
-  scenario_type: string;
-  input_data?: any;
-  is_active: boolean;
+  is_base: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -28,26 +26,20 @@ interface ScenarioSelectorProps {
   onScenarioChange: (scenarioId: string) => void;
 }
 
-const getScenarioIcon = (type: string) => {
-  switch (type) {
-    case 'Optimistic':
-      return <TrendingUp className="w-4 h-4 text-green-600" />;
-    case 'Pessimistic':
-      return <TrendingDown className="w-4 h-4 text-red-600" />;
-    default:
-      return <Minus className="w-4 h-4 text-blue-600" />;
+const getScenarioIcon = (isBase: boolean) => {
+  if (isBase) {
+    return <Minus className="w-4 h-4 text-blue-600" />;
+  } else {
+    return <Copy className="w-4 h-4 text-gray-600" />;
   }
 };
 
-const getScenarioBadgeVariant = (type: string) => {
-  switch (type) {
-    case 'Optimistic':
-      return 'default';
-    case 'Pessimistic':
-      return 'destructive';
-    default:
-      return 'secondary';
-  }
+const getScenarioBadgeVariant = (isBase: boolean) => {
+  return isBase ? 'default' : 'secondary';
+};
+
+const getScenarioTypeLabel = (isBase: boolean) => {
+  return isBase ? 'Base' : 'Custom';
 };
 
 export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChange }: ScenarioSelectorProps) => {
@@ -70,7 +62,7 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
         .from("scenarios")
         .select("*")
         .eq("project_id", projectId)
-        .order("scenario_type", { ascending: true }); // Base first
+        .order("is_base", { ascending: false }); // Base scenarios first
 
       if (error) throw error;
       return data as Scenario[];
@@ -103,7 +95,7 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
           project_id: projectId,
           user_id: user.id,
           name: newScenarioName.trim(),
-          scenario_type: originalScenario.scenario_type || 'base',
+          is_base: false, // Duplicated scenarios are not base scenarios
         })
         .select()
         .single();
@@ -199,10 +191,10 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
             <SelectValue placeholder="Select scenario">
               {selectedScenario && (
                 <div className="flex items-center space-x-2">
-                {getScenarioIcon(selectedScenario.scenario_type)}
+                {getScenarioIcon(selectedScenario.is_base)}
                 <span>{selectedScenario.name}</span>
-                <Badge variant={getScenarioBadgeVariant(selectedScenario.scenario_type)} className="ml-auto">
-                  {selectedScenario.scenario_type}
+                <Badge variant={getScenarioBadgeVariant(selectedScenario.is_base)} className="ml-auto">
+                  {getScenarioTypeLabel(selectedScenario.is_base)}
                 </Badge>
               </div>
               )}
@@ -212,10 +204,10 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
            {scenarios.map((scenario) => (
              <SelectItem key={scenario.id} value={scenario.id}>
                <div className="flex items-center space-x-2 w-full">
-                 {getScenarioIcon(scenario.scenario_type)}
+                 {getScenarioIcon(scenario.is_base)}
                  <span className="flex-1">{scenario.name}</span>
-                 <Badge variant={getScenarioBadgeVariant(scenario.scenario_type)}>
-                   {scenario.scenario_type}
+                 <Badge variant={getScenarioBadgeVariant(scenario.is_base)}>
+                   {getScenarioTypeLabel(scenario.is_base)}
                  </Badge>
                </div>
              </SelectItem>
