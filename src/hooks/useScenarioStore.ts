@@ -26,20 +26,8 @@ export function useScenarioStore(projectId: string | null) {
   const [current, setCurrent] = useState<Scenario | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Return early if no projectId
-  if (!projectId) {
-    return { 
-      scenarios: [], 
-      current: null, 
-      loading: false,
-      setCurrent: () => {}, 
-      create: async () => null,
-      reload: () => {}
-    };
-  }
-
   const loadScenarios = useCallback(async () => {
-    if (!user) return;
+    if (!user || !projectId) return;
     
     setLoading(true);
     try {
@@ -109,6 +97,18 @@ export function useScenarioStore(projectId: string | null) {
     return row; // <— caller can await + use .id
     // 'create' only needs project & user
   }, [projectId, user?.id]);
+
+  // Return early if no projectId, but after all hooks are defined
+  if (!projectId) {
+    return { 
+      scenarios: [], 
+      current: null, 
+      loading: false,
+      setCurrent: () => {}, 
+      create: async () => null,
+      reload: () => {}
+    };
+  }
 
   const cloneScenarioItems = async (oldScenarioId: string, newScenarioId: string) => {
     if (!user) return;
