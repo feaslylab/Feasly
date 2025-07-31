@@ -2,21 +2,27 @@ describe('Model ScrollSpy Functionality', () => {
   beforeEach(() => {
     cy.visit('/feasly-model');
     cy.viewport(1200, 800); // Desktop view
+    
+    // Wait for magnetic navigation animations to settle
+    cy.wait(300);
   });
 
   it('should highlight correct section while scrolling slowly', () => {
-    // Wait for initial load
+    // Wait for initial load and magnetic nav to initialize
     cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
     
     // Initially, project-metadata should be active
     cy.get('[data-section="project-metadata"]')
       .should('have.class', 'bg-primary/10');
 
-    // Scroll to timeline section
+    // Scroll slowly to timeline section (magnetic nav should stay visible)
     cy.get('#timeline').scrollIntoView({ duration: 2000 });
     
-    // Wait for scroll spy to update
-    cy.wait(500);
+    // Wait for scroll spy and magnetic animations to update
+    cy.wait(800);
+    
+    // Navigation should still be visible during slow scroll
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
     
     // Timeline should now be active
     cy.get('[data-section="timeline"]')
@@ -28,11 +34,18 @@ describe('Model ScrollSpy Functionality', () => {
   });
 
   it('should highlight correct section while scrolling fast', () => {
-    // Fast scroll to financial inputs
+    // Fast scroll to financial inputs (magnetic nav may auto-hide)
     cy.get('#financial-inputs').scrollIntoView({ duration: 100 });
     
-    // Wait for intersection observer
-    cy.wait(300);
+    // Wait for intersection observer and magnetic behavior to settle
+    cy.wait(500);
+    
+    // Scroll up slightly to trigger magnetic nav reveal
+    cy.scrollTo(0, window.scrollY - 10);
+    cy.wait(200);
+    
+    // Navigation should be visible after scroll up
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
     
     // Financial inputs should be active
     cy.get('[data-section="financial-inputs"]')
@@ -63,39 +76,47 @@ describe('Model ScrollSpy Functionality', () => {
       .should('not.have.class', 'bg-primary/10');
   });
 
-  it('should keep side navigation visible during long scroll', () => {
-    // Scroll to the very bottom of the page
-    cy.scrollTo('bottom', { duration: 1000 });
+  it('should handle magnetic auto-hide/show behavior during scroll', () => {
+    // Fast scroll down to trigger auto-hide
+    cy.scrollTo(0, 800, { duration: 100 });
+    cy.wait(300);
     
-    // Wait for scroll to complete
-    cy.wait(500);
+    // Navigation may be hidden due to fast downward scroll
+    // But should reappear when scrolling up
+    cy.scrollTo(0, 700, { duration: 100 }); // Scroll up
+    cy.wait(200);
     
-    // Side navigation should still be visible
-    cy.get('[data-testid="desktop-sidenav"]')
-      .should('be.visible')
-      .and('be.positioned'); // Should be on screen
+    // Navigation should be visible after upward scroll
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
     
-    // Should be in the viewport
+    // Should maintain sticky positioning with magnetic offset
     cy.get('[data-testid="desktop-sidenav"]').then(($nav) => {
       const rect = $nav[0].getBoundingClientRect();
-      expect(rect.top).to.be.at.least(0);
+      // Should account for header (64px) + magnetic offset
+      expect(rect.top).to.be.within(60, 120);
       expect(rect.left).to.be.at.least(0);
     });
   });
 
   it('should scroll to correct section with proper offset when nav item clicked', () => {
+    // Ensure navigation is visible first
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
+    
     // Click on a section in navigation
     cy.get('[data-section="site-metrics"]').click();
     
-    // Wait for scroll animation
-    cy.wait(1000);
+    // Wait for scroll animation and magnetic adjustments
+    cy.wait(1200);
     
-    // Section should be visible with proper offset
+    // Section should be visible with proper offset accounting for magnetic behavior
     cy.get('#site-metrics').then(($section) => {
       const rect = $section[0].getBoundingClientRect();
-      // Should be near top with some offset for header
-      expect(rect.top).to.be.within(10, 100);
+      // Should account for header (64px) + magnetic offset + some buffer
+      expect(rect.top).to.be.within(50, 140);
     });
+    
+    // Navigation should remain visible after programmatic scroll
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
     
     // Section should be active in navigation
     cy.get('[data-section="site-metrics"]')
@@ -103,16 +124,22 @@ describe('Model ScrollSpy Functionality', () => {
   });
 
   it('should handle rapid section clicking without issues', () => {
+    // Ensure navigation is visible for clicking
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
+    
     // Rapidly click different sections
     const sections = ['timeline', 'site-metrics', 'financial-inputs', 'scenarios'];
     
     sections.forEach((sectionId, index) => {
       cy.get(`[data-section="${sectionId}"]`).click();
-      cy.wait(200); // Small delay between clicks
+      cy.wait(300); // Longer delay to account for magnetic animations
     });
     
-    // Wait for final scroll to complete
-    cy.wait(1000);
+    // Wait for final scroll and magnetic behavior to settle
+    cy.wait(1500);
+    
+    // Navigation should still be visible after rapid clicking
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
     
     // Last clicked section should be active
     cy.get('[data-section="scenarios"]')
@@ -151,7 +178,7 @@ describe('Model ScrollSpy Functionality', () => {
       .should('have.class', 'bg-primary/10');
   });
 
-  it('should work correctly after 3000px scroll test', () => {
+  it('should work correctly after long scroll with magnetic behavior', () => {
     // Create long scroll by expanding multiple sections
     ['project-metadata', 'timeline', 'site-metrics', 'financial-inputs'].forEach(sectionId => {
       cy.get(`#${sectionId}`).within(() => {
@@ -161,18 +188,51 @@ describe('Model ScrollSpy Functionality', () => {
     });
     
     // Scroll down significantly (simulating 3000px+ scroll)
-    cy.scrollTo(0, 3000);
+    cy.scrollTo(0, 3000, { duration: 500 });
     cy.wait(500);
     
-    // Navigation should still be visible and functional
+    // Fast scroll may have hidden navigation, scroll up to reveal
+    cy.scrollTo(0, 2950, { duration: 100 });
+    cy.wait(300);
+    
+    // Navigation should be visible after upward scroll
     cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
     
-    // Click navigation should still work
+    // Click navigation should still work with proper magnetic offset
     cy.get('[data-section="scenarios"]').click();
-    cy.wait(1000);
+    cy.wait(1200);
     
-    // Should navigate correctly
+    // Should navigate correctly with magnetic positioning
     cy.get('[data-section="scenarios"]')
       .should('have.class', 'bg-primary/10');
+      
+    // Verify navigation maintains proper sticky position
+    cy.get('[data-testid="desktop-sidenav"]').then(($nav) => {
+      const rect = $nav[0].getBoundingClientRect();
+      expect(rect.top).to.be.within(60, 120); // Account for magnetic offset
+    });
+  });
+
+  it('should handle magnetic zone behavior near top of page', () => {
+    // Scroll to top to test magnetic zone
+    cy.scrollTo('top');
+    cy.wait(300);
+    
+    // Navigation should be visible at top
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
+    
+    // Scroll slightly within magnetic zone (< 120px)
+    cy.scrollTo(0, 50);
+    cy.wait(200);
+    
+    // Should maintain visibility in magnetic zone
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
+    
+    // Scroll beyond magnetic zone
+    cy.scrollTo(0, 150);
+    cy.wait(300);
+    
+    // Should still be visible for normal scroll
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
   });
 });
