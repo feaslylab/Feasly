@@ -1485,6 +1485,42 @@ export type Database = {
           },
         ]
       }
+      scenario_reports: {
+        Row: {
+          created_by: string
+          expires_at: string
+          file_size: number | null
+          generated_at: string
+          id: string
+          project_id: string
+          report_url: string | null
+          scenario_id: string
+          status: string
+        }
+        Insert: {
+          created_by: string
+          expires_at?: string
+          file_size?: number | null
+          generated_at?: string
+          id?: string
+          project_id: string
+          report_url?: string | null
+          scenario_id: string
+          status?: string
+        }
+        Update: {
+          created_by?: string
+          expires_at?: string
+          file_size?: number | null
+          generated_at?: string
+          id?: string
+          project_id?: string
+          report_url?: string | null
+          scenario_id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       scenario_results: {
         Row: {
           created_at: string
@@ -1607,6 +1643,10 @@ export type Database = {
     }
     Functions: {
       cleanup_expired_invitations: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      cleanup_expired_reports: {
         Args: Record<PropertyKey, never>
         Returns: number
       }
