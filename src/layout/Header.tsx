@@ -56,27 +56,14 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b shadow-sm">
       <div className="flex items-center justify-between h-14 pl-20 lg:pl-20 pr-6">
-        {/* Left side - Logo and utility controls */}
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 flex items-center justify-center flex-shrink-0">
-            <img 
-              src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
-              alt="Feasly Logo" 
-              className="w-6 h-6 object-contain"
-            />
-          </div>
-          <span className="text-lg font-semibold text-foreground">Feasly</span>
-          <div className="flex items-center gap-1 ml-2">
-            <ThemeToggle />
-            <LanguageSwitcher />
-          </div>
-        </div>
+        {/* Left side - Empty for balance */}
+        <div className="flex-1"></div>
 
         {/* Centered selectors */}
         <div className="flex items-center gap-4">
           {/* ─ Project selector ───────────────────────────────── */}
           <Menu as="div" className="relative">
-            <Menu.Button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+            <Menu.Button className="inline-flex items-center justify-center rounded-md text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
               {projects.find(p=>p.id===projectId)?.name ?? "Select project"}
             </Menu.Button>
         <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-left divide-y divide-gray-100 rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[100]">
@@ -102,7 +89,7 @@ export default function Header() {
           {/* ─ Scenario selector ─────────────────────────────── */}
           <Menu as="div" className="relative">
             <Menu.Button
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-muted/50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+              className="inline-flex items-center justify-center rounded-md text-base font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-muted/50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
               disabled={!projectId}
             >
               <span>{scenarios.find(s=>s.id===scenarioId)?.name ?? "Select scenario"}</span>
@@ -181,8 +168,24 @@ export default function Header() {
           </Menu>
         </div>
 
-         {/* Global Actions Bar */}
-         <GlobalActions onAlertsClick={() => setAlertDrawerOpen(true)} />
+        {/* Right side - Logo, Feasly text, and utility controls */}
+        <div className="flex items-center gap-3 flex-1 justify-end">
+          <div className="flex items-center gap-3">
+            <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
+              <img 
+                src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
+                alt="Feasly Logo" 
+                className="w-7 h-7 object-contain"
+              />
+            </div>
+            <span className="text-xl font-bold text-foreground">Feasly</span>
+          </div>
+          <div className="flex items-center gap-1 ml-4">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
+          <GlobalActions onAlertsClick={() => setAlertDrawerOpen(true)} />
+        </div>
        </div>
 
       <AlertDrawer 

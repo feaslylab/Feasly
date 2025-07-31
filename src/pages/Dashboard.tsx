@@ -525,37 +525,41 @@ export default function Dashboard() {
 
                 {/* Right: Action buttons - Mobile optimized */}
                 <div className="xl:flex-shrink-0 w-full xl:w-auto">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3 sm:gap-4 xl:gap-4">
-                    <Link to="/projects/new" className="xl:order-1">
-                      <Button size="lg" className="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 h-auto bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300 hover:scale-[1.02] group">
-                        <div className="flex items-center gap-2 sm:gap-3">
-                          <Plus className="h-5 w-5 sm:h-6 sm:w-6 group-hover:rotate-90 transition-transform duration-300" />
-                          <div className="text-left">
-                            <div className="font-semibold text-sm sm:text-base lg:text-lg">New Project</div>
+                  <div className="flex flex-col sm:flex-row xl:flex-col gap-3 sm:gap-4 xl:gap-4">
+                    <Link to="/projects/new" className="xl:order-1 flex-1">
+                      <Button size="lg" className="w-full h-16 px-6 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300 hover:scale-[1.02] group">
+                        <div className="flex items-center justify-center gap-3 w-full">
+                          <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300 flex-shrink-0" />
+                          <div className="text-center">
+                            <div className="font-semibold text-base lg:text-lg">New Project</div>
                             <div className="text-xs text-primary-foreground/80 hidden sm:block">Start modeling</div>
                           </div>
                         </div>
                       </Button>
                     </Link>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setActivityVisible(!activityVisible)}
-                      className="xl:order-2 w-full px-4 sm:px-6 py-3 h-auto border-border/50 backdrop-blur-sm hover:bg-primary/5 transition-all duration-300"
-                    >
-                      <Activity className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                      <div className="text-left">
-                        <div className="font-medium text-sm sm:text-base">Activity Feed</div>
-                        <div className="text-xs text-muted-foreground hidden sm:block">Live updates</div>
-                      </div>
-                    </Button>
-                    
-                    <Button variant="outline" className="xl:order-3 w-full px-4 sm:px-6 py-3 h-auto border-border/50 backdrop-blur-sm hover:bg-accent/50 transition-all duration-300">
-                      <Calendar className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                      <div className="text-left">
-                        <div className="font-medium text-sm sm:text-base">This Month</div>
-                        <div className="text-xs text-muted-foreground hidden sm:block">{new Date().toLocaleDateString('en', { month: 'long' })}</div>
-                      </div>
-                    </Button>
+                     <Button 
+                       variant="outline" 
+                       onClick={() => setActivityVisible(!activityVisible)}
+                       className="xl:order-2 flex-1 h-16 px-6 border-border/50 backdrop-blur-sm hover:bg-primary/5 transition-all duration-300 hover:scale-[1.02]"
+                     >
+                       <div className="flex items-center justify-center gap-3 w-full">
+                         <Activity className="h-6 w-6 flex-shrink-0" />
+                         <div className="text-center">
+                           <div className="font-medium text-base">Activity Feed</div>
+                           <div className="text-xs text-muted-foreground hidden sm:block">Live updates</div>
+                         </div>
+                       </div>
+                     </Button>
+                     
+                     <Button variant="outline" className="xl:order-3 flex-1 h-16 px-6 border-border/50 backdrop-blur-sm hover:bg-accent/50 transition-all duration-300 hover:scale-[1.02]">
+                       <div className="flex items-center justify-center gap-3 w-full">
+                         <Calendar className="h-6 w-6 flex-shrink-0" />
+                         <div className="text-center">
+                           <div className="font-medium text-base">This Month</div>
+                           <div className="text-xs text-muted-foreground hidden sm:block">{new Date().toLocaleDateString('en', { month: 'long' })}</div>
+                         </div>
+                       </div>
+                     </Button>
                   </div>
                 </div>
               </div>
