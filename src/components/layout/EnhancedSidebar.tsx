@@ -300,9 +300,9 @@ export const EnhancedSidebar = () => {
           )}
         </div>
 
-          {/* Enhanced Quick Action - Fixed positioning */}
+          {/* Enhanced Quick Action - Fixed positioning with proper top spacing */}
           {(!isCollapsed || isMobile) && (
-            <div className="px-4 py-3 flex-shrink-0 space-y-2">
+            <div className="px-4 py-4 mt-4 flex-shrink-0 space-y-2"> {/* Added mt-4 for top spacing */}
               <Button 
                 asChild
                 className={cn(
@@ -330,9 +330,9 @@ export const EnhancedSidebar = () => {
             </div>
           )}
 
-          {/* Recent Items Section */}
+          {/* Recent Items Section with proper spacing */}
           {(!isCollapsed || isMobile) && recentItems.length > 0 && (
-            <div className="px-4 pb-2">
+            <div className="px-4 pb-4 mt-3"> {/* Added mt-3 for spacing */}
               <div className="flex items-center justify-between mb-2">
                 <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Recent</h4>
                 <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
@@ -357,9 +357,9 @@ export const EnhancedSidebar = () => {
             </div>
           )}
 
-        {/* Enhanced Navigation */}
+        {/* Enhanced Navigation with proper top spacing */}
         <nav className={cn(
-          "flex-1 py-2 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-border",
+          "flex-1 py-4 mt-2 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-border",
           isCollapsed && !isMobile ? "px-2" : "px-4"
         )}>
           <div className="space-y-1">
