@@ -9,13 +9,15 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { TrendingUp, TrendingDown, Minus, Copy } from "lucide-react";
-
 interface Scenario {
   id: string;
   project_id: string;
+  user_id: string;
   name: string;
-  type: 'Base Case' | 'Optimistic' | 'Pessimistic';
-  is_base: boolean;
+  description?: string;
+  scenario_type: string;
+  input_data?: any;
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -54,6 +56,13 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
   const [isDuplicating, setIsDuplicating] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  
+  // Get current user
+  const getCurrentUser = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    return user;
+  };
+  
   const { data: scenarios, isLoading } = useQuery({
     queryKey: ["scenarios", projectId],
     queryFn: async () => {
@@ -61,7 +70,7 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
         .from("scenarios")
         .select("*")
         .eq("project_id", projectId)
-        .order("type", { ascending: true }); // Base Case first
+        .order("scenario_type", { ascending: true }); // Base first
 
       if (error) throw error;
       return data as Scenario[];
@@ -85,13 +94,16 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
       if (scenarioError) throw scenarioError;
 
       // Create new scenario
+      const user = await getCurrentUser();
+      if (!user) throw new Error("User not authenticated");
+      
       const { data: newScenario, error: createError } = await supabase
         .from("scenarios")
         .insert({
           project_id: projectId,
+          user_id: user.id,
           name: newScenarioName.trim(),
-          type: originalScenario.type,
-          is_base: false, // Duplicates are never base scenarios
+          scenario_type: originalScenario.scenario_type || 'base',
         })
         .select()
         .single();
@@ -187,27 +199,27 @@ export const ScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChan
             <SelectValue placeholder="Select scenario">
               {selectedScenario && (
                 <div className="flex items-center space-x-2">
-                {getScenarioIcon(selectedScenario.type)}
+                {getScenarioIcon(selectedScenario.scenario_type)}
                 <span>{selectedScenario.name}</span>
-                <Badge variant={getScenarioBadgeVariant(selectedScenario.type)} className="ml-auto">
-                  {selectedScenario.type}
+                <Badge variant={getScenarioBadgeVariant(selectedScenario.scenario_type)} className="ml-auto">
+                  {selectedScenario.scenario_type}
                 </Badge>
               </div>
               )}
             </SelectValue>
           </SelectTrigger>
           <SelectContent className="bg-background border shadow-md z-50 max-h-60 overflow-y-auto">
-          {scenarios.map((scenario) => (
-            <SelectItem key={scenario.id} value={scenario.id}>
-              <div className="flex items-center space-x-2 w-full">
-                {getScenarioIcon(scenario.type)}
-                <span className="flex-1">{scenario.name}</span>
-                <Badge variant={getScenarioBadgeVariant(scenario.type)}>
-                  {scenario.type}
-                </Badge>
-              </div>
-            </SelectItem>
-          ))}
+           {scenarios.map((scenario) => (
+             <SelectItem key={scenario.id} value={scenario.id}>
+               <div className="flex items-center space-x-2 w-full">
+                 {getScenarioIcon(scenario.scenario_type)}
+                 <span className="flex-1">{scenario.name}</span>
+                 <Badge variant={getScenarioBadgeVariant(scenario.scenario_type)}>
+                   {scenario.scenario_type}
+                 </Badge>
+               </div>
+             </SelectItem>
+           ))}
           </SelectContent>
         </Select>
       </div>
