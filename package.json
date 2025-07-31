@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.7",
     "@hookform/resolvers": "^3.9.0",
     "@huggingface/transformers": "^3.7.0",
     "@radix-ui/react-accordion": "^1.2.0",
@@ -89,7 +90,8 @@
     "workbox-window": "^7.3.0",
     "xlsx": "^0.18.5",
     "xml2js": "^0.6.2",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

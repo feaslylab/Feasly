@@ -17,11 +17,23 @@ type ScenarioInsert = {
   user_id: string;
 };
 
-export function useScenarioStore(projectId: string) {
+export function useScenarioStore(projectId: string | null) {
   const { user } = useAuth();
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [current, setCurrent] = useState<Scenario | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Return early if no projectId
+  if (!projectId) {
+    return { 
+      scenarios: [], 
+      current: null, 
+      loading: false,
+      setCurrent: () => {}, 
+      create: async () => null,
+      reload: () => {}
+    };
+  }
 
   const loadScenarios = useCallback(async () => {
     if (!user) return;

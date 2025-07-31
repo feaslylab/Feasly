@@ -8,6 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { useSelectionStore } from "@/state/selectionStore";
+import { useScenarioStore } from "@/hooks/useScenarioStore";
+import { 
+  useConstructionStoreScenario, 
+  useSaleStore, 
+  useRentalStore
+} from "@/hooks/useTableStores";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -55,6 +62,15 @@ export default function Dashboard() {
   const { t } = useTranslation(['common']);
   const { user } = useAuth();
   const { toast } = useToast();
+  const { projectId, scenarioId } = useSelectionStore();
+  
+  // Scenario management
+  const { scenarios, current } = useScenarioStore(projectId);
+  
+  // Scenario-aware stores
+  const { items: constructionItems, loading: constructionLoading } = useConstructionStoreScenario(projectId, scenarioId);
+  const { items: saleItems, loading: saleLoading } = useSaleStore(projectId, scenarioId);
+  const { items: rentalItems, loading: rentalLoading } = useRentalStore(projectId, scenarioId);
   
   const [projects, setProjects] = useState<Project[]>([]);
   const [kpis, setKpis] = useState<KPISnapshot[]>([]);
@@ -167,7 +183,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen bg-background">
+      <div className="flex flex-col min-h-screen bg-background pt-14">
         <div className="flex-1 space-y-6 p-6">
           <div className="space-y-2">
             <Skeleton className="h-8 w-64" />
@@ -192,7 +208,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-screen bg-background pt-14">
       <div className="flex-1 space-y-6 p-6">
         {/* Header */}
         <div className="flex items-center justify-between">
