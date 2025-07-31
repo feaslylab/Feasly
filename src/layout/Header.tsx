@@ -63,7 +63,7 @@ export default function Header() {
               <img 
                 src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
                 alt="Feasly Logo" 
-                className="w-full h-full object-contain filter brightness-0 invert"
+                className="w-full h-full object-contain"
               />
             </div>
             <div className="flex flex-col">

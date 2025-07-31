@@ -121,8 +121,8 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
   return (
     <>
       <div className="relative">
-        {/* Save indicator in top-right corner */}
-        <div className="fixed top-4 right-4 z-50">
+        {/* Save indicator - positioned to avoid overlapping with header */}
+        <div className="fixed top-20 right-4 z-40">
           <SaveIndicator state={autosave.state} />
         </div>
 

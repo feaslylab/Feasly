@@ -219,12 +219,11 @@ export const EnhancedSidebar = () => {
             {(!isCollapsed || isMobile) && (
               <>
                 {/* Enhanced Feasly Logo */}
-                <div className="w-8 h-8 flex items-center justify-center flex-shrink-0 relative z-10">
-                  <div className="absolute inset-0 bg-primary/20 rounded-lg blur animate-pulse" />
+                <div className="w-8 h-8 flex items-center justify-center flex-shrink-0 relative">
                   <img 
                     src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
                     alt="Feasly Logo" 
-                    className="w-8 h-8 object-contain relative z-10"
+                    className="w-8 h-8 object-contain"
                   />
                 </div>
                 
