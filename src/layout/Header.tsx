@@ -65,7 +65,10 @@ export default function Header() {
               className="w-7 h-7 object-contain"
             />
           </div>
-          <span className="text-4xl font-bold text-foreground">Feasly</span>
+          <span className="text-4xl font-bold" style={{ color: 'hsl(160, 80%, 20%)' }}>
+            Feasly
+            <sup className="text-xs ml-1 opacity-70">™</sup>
+          </span>
           <div className="flex items-center gap-1 ml-2">
             <ThemeToggle />
             <LanguageSwitcher />

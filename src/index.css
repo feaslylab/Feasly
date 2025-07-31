@@ -11,8 +11,8 @@
 
 @layer base {
   :root {
-    /* Brand Colors - Matching Feasly Logo Gradient */
-    --primary: 160 65% 35%;           /* Base green from logo center */
+    /* Brand Colors - Matching Feasly Logo Gradient (Darker) */
+    --primary: 160 70% 30%;           /* Darker base green from logo center */
     
     /* Base Colors */
     --background: 220 18% 98%;
@@ -25,11 +25,11 @@
     --popover: 0 0% 100%;
     --popover-foreground: 213 31% 13%;
 
-    /* Card and Components - Logo Gradient Colors */
+    /* Card and Components - Logo Gradient Colors (Darker) */
     --primary-foreground: 0 0% 100%;
-    --primary-light: 160 55% 50%;     /* Top of logo - lighter vibrant green */
-    --primary-dark: 160 75% 25%;      /* Bottom of logo - darker forest green */
-    --primary-glow: 160 60% 65%;      /* Mid-tone for glow effects */
+    --primary-light: 160 60% 42%;     /* Darker version of top logo green */
+    --primary-dark: 160 80% 20%;      /* Much darker forest green from bottom */
+    --primary-glow: 160 65% 55%;      /* Darker mid-tone for glow effects */
 
     /* Financial Green Accents */
     --success: 142 71% 45%;
@@ -56,7 +56,7 @@
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 160 65% 35%;
+    --ring: 160 70% 30%;
 
     --radius: 0.75rem;
 
@@ -78,14 +78,14 @@
     /* Financial Chart Colors */
     --chart-revenue: 142 71% 45%;
     --chart-cost: 0 84% 60%;
-    --chart-profit: 160 65% 35%;
+    --chart-profit: 160 70% 30%;
     --chart-baseline: 213 19% 65%;
 
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
 
-    --sidebar-primary: 160 65% 35%;
+    --sidebar-primary: 160 70% 30%;
 
     --sidebar-primary-foreground: 0 0% 98%;
 
@@ -95,7 +95,7 @@
 
     --sidebar-border: 220 13% 91%;
 
-    --sidebar-ring: 160 65% 35%;
+    --sidebar-ring: 160 70% 30%;
   }
 
   .dark {
@@ -110,12 +110,12 @@
     --popover: 222 47% 13%;        /* Higher contrast for dropdowns */
     --popover-foreground: 210 40% 98%;
 
-    /* Enhanced primary for better visibility - Matching Logo Gradient */
-    --primary: 160 60% 45%;        /* Brighter version of logo center green for dark mode */
+    /* Enhanced primary for better visibility - Matching Logo Gradient (Darker) */
+    --primary: 160 65% 40%;        /* Darker version for dark mode */
     --primary-foreground: 222 84% 4.9%;
-    --primary-light: 160 50% 55%;  /* Accessible version of logo top green */
-    --primary-dark: 160 70% 30%;   /* Dark mode version of logo bottom green */
-    --primary-glow: 160 55% 60%;   /* Accessible green glow */
+    --primary-light: 160 55% 48%;  /* Darker accessible version */
+    --primary-dark: 160 75% 25%;   /* Darker deep green */
+    --primary-glow: 160 60% 50%;   /* Darker accessible green glow */
 
     /* Enhanced financial colors for dark mode */
     --success: 142 71% 55%;        /* Brighter green for visibility */
@@ -140,17 +140,17 @@
 
     --border: 217 32% 23%;         /* More visible borders */
     --input: 217 32% 23%;
-    --ring: 160 60% 45%;
+    --ring: 160 65% 40%;
     
     /* Enhanced sidebar colors for glass effect */
     --sidebar-background: 222 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 160 60% 45%;
+    --sidebar-primary: 160 65% 40%;
     --sidebar-primary-foreground: 222 84% 4.9%;
     --sidebar-accent: 222 47% 13%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217 32% 23%;
-    --sidebar-ring: 160 60% 45%;
+    --sidebar-ring: 160 65% 40%;
 
     /* Dark mode specific gradients - Matching Logo Direction */
     --gradient-primary: linear-gradient(180deg, hsl(var(--primary-dark)) 0%, hsl(var(--primary)) 50%, hsl(var(--primary-light)) 100%);
@@ -170,7 +170,7 @@
     /* Dark mode chart colors with better contrast */
     --chart-revenue: 142 71% 55%;
     --chart-cost: 0 84% 65%;
-    --chart-profit: 160 60% 45%;
+    --chart-profit: 160 65% 40%;
     --chart-baseline: 215 16% 75%;
   }
 }
