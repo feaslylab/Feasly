@@ -13,11 +13,11 @@ function exportCsv(rows: CashPoint[]) {
   URL.revokeObjectURL(url);
 }
 
-export default function CashChart() {
-  const data = useCashSeries();
+export default function CashChart({ data }: { data?: number[] }) {
+  const rows = data ? toRows(data) : useCashSeries();  // fallback for tests
 
   // hide when nothing to show
-  if (!data.length || data.every(p => p.net === 0)) return null;
+  if (!rows.length || rows.every(p => p.net === 0)) return null;
 
   return (
     <div className="mt-8 rounded-lg bg-card p-4 shadow">
@@ -27,13 +27,13 @@ export default function CashChart() {
         variant="ghost"
         size="sm"
         className="ml-auto mb-2"
-        onClick={() => exportCsv(data)}
+        onClick={() => exportCsv(rows)}
       >
         Export CSV
       </Button>
 
-      <ResponsiveContainer key={data.length} width="100%" height={310}>
-        <AreaChart data={data} stackOffset="sign">
+      <ResponsiveContainer key={rows.length} width="100%" height={310}>
+        <AreaChart data={rows} stackOffset="sign">
           <XAxis dataKey="period" hide />
           <YAxis
             tickFormatter={v => v.toLocaleString()}
@@ -51,4 +51,13 @@ export default function CashChart() {
       </ResponsiveContainer>
     </div>
   );
+}
+
+function toRows(cash: number[]) {
+  return cash.map((v, i) => ({
+    period : `P${i}`,
+    inflow : v > 0 ?  v : 0,
+    outflow: v < 0 ? -v : 0,
+    net    : v,
+  }));
 }

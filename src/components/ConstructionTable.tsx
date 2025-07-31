@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Pencil } from 'lucide-react';
-import { useRentalStore } from '@/hooks/useTableStores';
+import { useConstructionStoreScenario } from '@/hooks/useTableStores';
 import { useSelectionStore } from '@/state/selectionStore';
 import { Button } from '@/components/ui/button';
 import { Input }  from '@/components/ui/input';
 
-export default function RentalTable() {
+export default function ConstructionTable() {
   const { projectId, scenarioId } = useSelectionStore();
-  const { items, save, reload }   = useRentalStore(projectId!, scenarioId);
+  const { items, save, reload }   = useConstructionStoreScenario(projectId!, scenarioId);
   const [editing, setEditing]     = useState<string|null>(null);
   const [draft  , setDraft  ]     = useState<Record<string,string>>({});
 
@@ -15,16 +15,16 @@ export default function RentalTable() {
 
   return (
     <div className="rounded-xl border p-4 dark:bg-muted/40">
-      <h3 className="mb-2 font-semibold">Rental Lines</h3>
+      <h3 className="mb-2 font-semibold">Construction Lines</h3>
       <table className="w-full text-sm">
         <thead><tr className="text-muted-foreground">
-          <th className="text-left">Rooms</th>
-          <th>ADR</th><th>Occ %</th><th>Start</th><th>End</th><th>Esc %</th>
+          <th className="text-left">Base Cost</th>
+          <th>Start</th><th>End</th><th>Esc %</th>
         </tr></thead>
         <tbody>
           {items.map(row=>(
             <tr key={row.id} className="border-t">
-              {['rooms','adr','occupancy_rate','start_period','end_period','annual_escalation']
+              {['base_cost','start_period','end_period','escalation_rate']
                .map(col=>(
                 <td key={col} className="py-1">
                   {editing===row.id
@@ -33,7 +33,7 @@ export default function RentalTable() {
                         onChange={e=>setDraft(d=>({...d,[col]:e.target.value}))}
                         className="h-7"
                       />
-                    : <>{['occupancy_rate','annual_escalation'].includes(col)
+                    : <>{col==='escalation_rate'
                           ? (Number(row[col])*100).toFixed(1)+' %'
                           : row[col as keyof typeof row].toLocaleString()}</>}
                 </td>
@@ -59,11 +59,9 @@ export default function RentalTable() {
 
 /* util */ function transform(d:Record<string,string>) {
   const o:Record<string,any> = {};
-  if ('rooms' in d)             o.rooms             = +d.rooms;
-  if ('adr' in d)               o.adr               = +d.adr;
-  if ('occupancy_rate' in d)    o.occupancy_rate    = +d.occupancy_rate/100;
-  if ('start_period' in d)      o.start_period      = +d.start_period;
-  if ('end_period' in d)        o.end_period        = +d.end_period;
-  if ('annual_escalation' in d) o.annual_escalation = +d.annual_escalation/100;
+  if ('base_cost' in d)       o.base_cost        = +d.base_cost;
+  if ('start_period' in d)    o.start_period     = +d.start_period;
+  if ('end_period' in d)      o.end_period       = +d.end_period;
+  if ('escalation_rate' in d) o.escalation_rate  = +d.escalation_rate/100;
   return o;
 }

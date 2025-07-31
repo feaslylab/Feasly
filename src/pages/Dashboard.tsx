@@ -17,9 +17,10 @@ import {
 } from "@/hooks/useTableStores";
 import KpiGrid from "@/components/KpiGrid";
 import CashChart from "@/components/CashChart";
-import CostTable from "@/components/CostTable";
-import SaleTable from "@/components/SaleTable";
-import RentalTable from "@/components/RentalTable";
+import { useLiveRecalc }     from '@/hooks/useLiveRecalc';
+import ConstructionTable     from '@/components/ConstructionTable';
+import SaleTable             from '@/components/SaleTable';
+import RentalTable           from '@/components/RentalTable';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -68,6 +69,7 @@ export default function Dashboard() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { projectId, scenarioId } = useSelectionStore();
+  const { cash, kpi } = useLiveRecalc();   // ← replaces previous hook usage
   
   // Scenario management
   const { scenarios, current } = useScenarioStore(projectId);
@@ -304,22 +306,16 @@ export default function Dashboard() {
         <section className="mb-8">
           <h2 className="mb-2 text-lg font-semibold">Key Metrics</h2>
           <KpiGrid/>
-          <CashChart />
-        </section>
-
-        {/* Inputs - Only show when project/scenario selected */}
-        {projectId && scenarioId && (
-          <>
-            <h2 className="text-lg font-semibold mt-8 mb-2">Construction Costs</h2>
-            <CostTable />
-
-            <h2 className="text-lg font-semibold mt-8 mb-2">Sale Revenue</h2>
+          
+          <div className="grid gap-6 lg:grid-cols-3">
+            <ConstructionTable />
             <SaleTable />
-
-            <h2 className="text-lg font-semibold mt-8 mb-2">Rental Revenue</h2>
             <RentalTable />
-          </>
-        )}
+          </div>
+
+          {/* Cash-flow chart uses live cash */}
+          <CashChart data={cash}/>
+        </section>
 
         {/* Main Content Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -36,5 +36,10 @@ export function useKpiStore(projectId:string|null, scenarioId:string|null) {
       });
   },[projectId,scenarioId]);
 
-  return { kpi, loading };
+  const saveKPIs = async (kpiData: any) => {
+    // Implementation for saving KPI data can be added here
+    console.log('Saving KPI data:', kpiData);
+  };
+
+  return { kpi, loading, saveKPIs };
 }
