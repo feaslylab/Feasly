@@ -14,6 +14,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from "recharts";
 import { DollarSign, PieChart as PieChartIcon, CreditCard, TrendingUp, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { chartHelpers } from "@/theme/chartPalette";
+import { useTheme } from "next-themes";
 
 // Form schema
 const financeSchema = z.object({

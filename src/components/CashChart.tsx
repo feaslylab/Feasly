@@ -4,6 +4,8 @@ import {
 import { useCashSeries, CashPoint } from "@/hooks/useCashSeries";
 import { Button } from "@/components/ui/button";
 import { csvFormat } from 'd3-dsv';
+import { chartHelpers } from "@/theme/chartPalette";
+import { useTheme } from "next-themes";
 
 function exportCsv(rows: CashPoint[]) {
   const blob = new Blob([csvFormat(rows)], { type: 'text/csv' });
@@ -15,6 +17,10 @@ function exportCsv(rows: CashPoint[]) {
 
 export default function CashChart({ data }: { data?: number[] }) {
   const rows = data ? toRows(data) : useCashSeries();  // fallback for tests
+  const { theme } = useTheme();
+  
+  // Get theme-aware colors from our chart palette
+  const colors = chartHelpers.getCashFlowColors(theme === 'dark' ? 'dark' : 'light');
 
   // hide when nothing to show
   if (!rows.length || rows.every(p => p.net === 0)) return null;
@@ -44,9 +50,9 @@ export default function CashChart({ data }: { data?: number[] }) {
             labelFormatter={p => `Period ${p}`}
           />
           <Legend verticalAlign="top" height={24} />
-          <Area type="monotone" dataKey="inflow" stackId="1" fillOpacity={0.55} fill="hsl(var(--success))" stroke="none" name="Inflow"/>
-          <Area type="monotone" dataKey="outflow" stackId="1" fillOpacity={0.55} fill="hsl(var(--destructive))" stroke="none" name="Outflow"/>
-          <Area type="monotone" dataKey="net" stackId="1" fillOpacity={0.55} fill="hsl(var(--primary))" stroke="none" name="Net"/>
+          <Area type="monotone" dataKey="inflow" stackId="1" fillOpacity={0.55} fill={colors.inflow} stroke="none" name="Inflow"/>
+          <Area type="monotone" dataKey="outflow" stackId="1" fillOpacity={0.55} fill={colors.outflow} stroke="none" name="Outflow"/>
+          <Area type="monotone" dataKey="net" stackId="1" fillOpacity={0.55} fill={colors.net} stroke="none" name="Net"/>
         </AreaChart>
       </ResponsiveContainer>
     </div>

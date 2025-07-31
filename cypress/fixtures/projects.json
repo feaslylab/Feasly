@@ -1,0 +1,11 @@
+[
+  {
+    "id": "project-1",
+    "name": "Test Project",
+    "status": "active",
+    "created_at": "2024-01-01T00:00:00Z",
+    "user_id": "test-user",
+    "description": "Test project for CRUD flow",
+    "currency_code": "AED"
+  }
+]
