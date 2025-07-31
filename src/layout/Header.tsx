@@ -54,7 +54,7 @@ export default function Header() {
   if (!import.meta.env.PROD) console.log('Header render - projectId:', projectId, 'scenarioId:', scenarioId);
 
   return (
-    <header className="sticky top-0 z-30 bg-background/70 backdrop-blur border-b">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b shadow-sm">
       <div className="flex items-center justify-between h-14 pl-20 lg:pl-20 pr-6">
         {/* Left side - Logo and utility controls */}
         <div className="flex items-center gap-3">
