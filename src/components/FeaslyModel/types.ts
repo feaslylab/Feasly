@@ -1,6 +1,18 @@
 import { z } from "zod";
+import { 
+  constructionItemSchema, 
+  softCostItemSchema, 
+  marketingCostItemSchema, 
+  contingencyItemSchema, 
+  revenueItemSchema,
+  type ConstructionItem,
+  type SoftCostItem,
+  type MarketingCostItem,
+  type ContingencyItem,
+  type RevenueItem
+} from './grids/types';
 
-// Form schema for the Feasly Model with enhanced validation - Sprint 12 Update
+// Enhanced form schema for the Feasly Model v2 with unlimited arrays
 export const feaslyModelSchema = z.object({
   // Project Metadata
   project_name: z.string().min(1, "Project name is required").max(100, "Project name too long"),
@@ -31,7 +43,7 @@ export const feaslyModelSchema = z.object({
   plot_number: z.string().optional(),
   buildable_ratio: z.number().min(0, "Buildable ratio must be positive").max(100, "Buildable ratio cannot exceed 100%").optional(),
   
-  // System Settings (Sprint 12)
+  // System Settings
   unit_system: z.enum(['sqm', 'sqft', 'units']).default('sqm'),
   use_segmented_revenue: z.boolean().default(false),
   enable_escalation: z.boolean().default(false),
@@ -49,7 +61,7 @@ export const feaslyModelSchema = z.object({
   escrow_required: z.boolean().default(false),
   escrow_percent: z.number().min(0, "Escrow percentage must be positive").max(100, "Escrow percentage cannot exceed 100%").optional(),
   
-  // Segmented GFA Fields (Sprint 12)
+  // Segmented GFA Fields
   gfa_residential: z.number().min(0, "Residential GFA must be positive").optional(),
   gfa_retail: z.number().min(0, "Retail GFA must be positive").optional(),
   gfa_office: z.number().min(0, "Office GFA must be positive").optional(),
@@ -57,12 +69,12 @@ export const feaslyModelSchema = z.object({
   sale_price_retail: z.number().min(0, "Retail price must be positive").optional(),
   sale_price_office: z.number().min(0, "Office price must be positive").optional(),
   
-  // Escalation (Sprint 12)
+  // Escalation
   construction_escalation_percent: z.number().min(0, "Escalation rate must be positive").max(50, "Escalation rate too high").optional(),
   escalation_start_month: z.number().min(0, "Start month must be positive").optional(),
   escalation_duration_months: z.number().min(1, "Duration must be at least 1 month").optional(),
   
-  // Compliance fields (Sprint 13)
+  // Compliance fields
   release_trigger_type: z.string().optional(),
   release_threshold: z.number().optional(),
   release_rule_details: z.string().optional(),
@@ -88,21 +100,14 @@ export const feaslyModelSchema = z.object({
   target_roi: z.number().min(0, "ROI must be positive").max(1000, "ROI target too high").optional(),
   revenue_phasing_enabled: z.boolean().default(false),
 
-  // Enhanced Grid Data (Sprint 14)
-  construction_items: z.array(z.object({
-    id: z.string(),
-    description: z.string().min(1, "Description required"),
-    base_cost: z.number().min(0, "Base cost must be positive"),
-    start_month: z.number().int().min(0, "Start month must be positive"),
-    end_month: z.number().int().min(0, "End month must be positive"),
-    escalation_percent: z.number().min(0, "Escalation must be positive").max(50, "Escalation too high"),
-    retention_percent: z.number().min(0, "Retention must be positive").max(100, "Retention cannot exceed 100%"),
-    retention_release_lag: z.number().int().min(0, "Release lag must be positive")
-  }).refine((data) => data.end_month >= data.start_month, {
-    message: "End month must be after start month",
-    path: ["end_month"]
-  })).optional().default([]),
+  // Enhanced unlimited arrays for v2
+  construction_items: z.array(constructionItemSchema).default([]),
+  soft_cost_items: z.array(softCostItemSchema).default([]),
+  marketing_cost_items: z.array(marketingCostItemSchema).default([]),
+  contingency_items: z.array(contingencyItemSchema).default([]),
+  revenue_segments: z.array(revenueItemSchema).default([]),
 
+  // Legacy arrays (backward compatibility)
   sale_lines: z.array(z.object({
     id: z.string(),
     product_type: z.string().min(1, "Product type required"),
@@ -130,7 +135,7 @@ export const feaslyModelSchema = z.object({
     path: ["end_month"]
   })).optional().default([]),
 }).refine((data) => {
-  // Cross-field validation: construction start should be after project start
+  // Cross-field validation
   if (data.start_date && data.construction_start_date) {
     return data.construction_start_date >= data.start_date;
   }
@@ -151,6 +156,15 @@ export const feaslyModelSchema = z.object({
 });
 
 export type FeaslyModelFormData = z.infer<typeof feaslyModelSchema>;
+
+// Export the line item types
+export type { 
+  ConstructionItem, 
+  SoftCostItem, 
+  MarketingCostItem, 
+  ContingencyItem, 
+  RevenueItem 
+};
 
 // Phase data structure
 export interface Phase {
