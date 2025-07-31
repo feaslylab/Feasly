@@ -198,35 +198,43 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-2">
-                      {/* Validation Badge */}
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                      {/* Validation Badge - Compact version */}
                       {validation && (
-                        <Badge 
-                          variant={
-                            validation.badge.variant === 'success' ? 'default' :
-                            validation.badge.variant === 'warning' ? 'secondary' :
-                            validation.badge.variant === 'error' ? 'destructive' :
-                            'outline'
-                          }
-                          className={cn(
-                            "text-xs px-1.5 py-0.5 h-5 min-w-[20px] flex items-center justify-center",
-                            validation.badge.variant === 'success' && "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100",
-                            validation.badge.variant === 'warning' && "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100",
-                            validation.badge.variant === 'empty' && "bg-muted text-muted-foreground"
+                        <>
+                          {validation.badge.variant === 'empty' ? (
+                            <div 
+                              className="w-2 h-2 rounded-full bg-muted-foreground/30"
+                              title="No items added yet"
+                            />
+                          ) : (
+                            <Badge 
+                              variant={
+                                validation.badge.variant === 'success' ? 'default' :
+                                validation.badge.variant === 'warning' ? 'secondary' :
+                                validation.badge.variant === 'error' ? 'destructive' :
+                                'outline'
+                              }
+                              className={cn(
+                                "text-xs px-1.5 py-0.5 h-5 min-w-[20px] flex items-center justify-center",
+                                validation.badge.variant === 'success' && "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100",
+                                validation.badge.variant === 'warning' && "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100"
+                              )}
+                              title={
+                                validation.badge.variant === 'success' ? 
+                                  `${validation.validItems} valid items` :
+                                validation.badge.variant === 'error' ? 
+                                  `${validation.errorCount} error${validation.errorCount > 1 ? 's' : ''} found` :
+                                validation.badge.variant === 'warning' ? 
+                                  `${validation.warningCount} warning${validation.warningCount > 1 ? 's' : ''} found` :
+                                  'No items added yet'
+                              }
+                            >
+                              <span className="mr-1">{validation.badge.icon}</span>
+                              <span className="text-xs">{validation.badge.text}</span>
+                            </Badge>
                           )}
-                          title={
-                            validation.badge.variant === 'success' ? 
-                              `${validation.validItems} valid items` :
-                            validation.badge.variant === 'error' ? 
-                              `${validation.errorCount} error${validation.errorCount > 1 ? 's' : ''} found` :
-                            validation.badge.variant === 'warning' ? 
-                              `${validation.warningCount} warning${validation.warningCount > 1 ? 's' : ''} found` :
-                              'No items added yet'
-                          }
-                        >
-                          <span className="mr-1">{validation.badge.icon}</span>
-                          <span className="text-xs">{validation.badge.text}</span>
-                        </Badge>
+                        </>
                       )}
                       
                       {/* Status Icon */}
