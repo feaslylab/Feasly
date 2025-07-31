@@ -18,7 +18,7 @@ export function SaveIndicator({ state, className }: SaveIndicatorProps) {
           icon: <Clock className="h-3 w-3 animate-spin" />,
           label: 'Saving...',
           variant: 'secondary' as const,
-          className: 'text-blue-600 bg-blue-50 border-blue-200'
+          className: 'text-primary bg-primary/10 border-primary/20'
         };
       
       case 'saved':
@@ -50,7 +50,7 @@ export function SaveIndicator({ state, className }: SaveIndicatorProps) {
           icon: <Wifi className="h-3 w-3" />,
           label: state.isDirty ? 'Unsaved' : 'Up to date',
           variant: 'outline' as const,
-          className: state.isDirty ? 'text-yellow-600 bg-yellow-50 border-yellow-200' : ''
+          className: state.isDirty ? 'text-warning bg-warning/10 border-warning/20' : 'text-muted-foreground bg-muted/50 border-border'
         };
     }
   };
@@ -84,7 +84,7 @@ export function SaveIndicator({ state, className }: SaveIndicatorProps) {
         <Badge
           variant={config.variant}
           className={cn(
-            'flex items-center gap-1 transition-colors cursor-help',
+            'flex items-center gap-2 px-3 py-1.5 rounded-full shadow-sm backdrop-blur-sm border transition-all duration-200 cursor-help',
             config.className,
             className
           )}
@@ -93,7 +93,7 @@ export function SaveIndicator({ state, className }: SaveIndicatorProps) {
           data-testid="save-indicator"
         >
           {config.icon}
-          <span className="text-xs">{config.label}</span>
+          <span className="text-xs font-medium">{config.label}</span>
         </Badge>
       </TooltipTrigger>
       <TooltipContent>
