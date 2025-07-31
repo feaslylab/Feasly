@@ -49,7 +49,7 @@ export class FeaslyModelAPI {
     }
 
     if (!response.ok) {
-      throw new Error(`Draft save failed: ${response.statusText}`);
+      throw new Error(`Draft save failed: ${response.status} ${response.statusText}`);
     }
 
     const result = await response.json();
@@ -80,7 +80,7 @@ export class FeaslyModelAPI {
     }
 
     if (!response.ok) {
-      throw new Error(`Commit failed: ${response.statusText}`);
+      throw new Error(`Commit failed: ${response.status} ${response.statusText}`);
     }
 
     const result = await response.json();
