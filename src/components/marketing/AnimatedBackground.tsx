@@ -8,7 +8,7 @@ export function AnimatedBackground() {
     x: Math.random() * 100,
     y: Math.random() * 100,
     delay: Math.random() * 4,
-    duration: 8 + Math.random() * 6, // 8-14 seconds for very slow movement
+    duration: 5.5 + Math.random() * 4, // 5.5-9.5 seconds (50% faster)
   }));
 
   return (
@@ -34,7 +34,7 @@ export function AnimatedBackground() {
       {shapes.map((shape) => (
         <motion.div
           key={shape.id}
-          className="absolute rounded-full bg-gradient-to-r from-primary/15 to-accent/15 blur-sm"
+          className="absolute rounded-full bg-gradient-to-r from-primary/40 to-accent/40 blur-sm"
           style={{
             width: shape.size,
             height: shape.size,
@@ -45,7 +45,7 @@ export function AnimatedBackground() {
             y: [0, -15, 0, 15, 0], // Gentle floating motion
             x: [0, 10, -5, 8, 0], // Slow drift
             scale: [1, 1.02, 0.98, 1.01, 1], // Very subtle breathing
-            opacity: [0.3, 0.5, 0.4, 0.6, 0.3], // Gentle pulsing
+            opacity: [0.6, 0.8, 0.7, 0.9, 0.6], // Much more solid (60% increase)
           }}
           transition={{
             duration: shape.duration,
@@ -60,7 +60,7 @@ export function AnimatedBackground() {
       {Array.from({ length: 4 }, (_, i) => (
         <motion.div
           key={`orb-${i}`}
-          className="absolute rounded-full bg-gradient-to-r from-accent/10 to-primary/10 blur-md"
+          className="absolute rounded-full bg-gradient-to-r from-accent/30 to-primary/30 blur-md"
           style={{
             width: 80 + Math.random() * 40,
             height: 80 + Math.random() * 40,
@@ -71,10 +71,10 @@ export function AnimatedBackground() {
             y: [0, -20, 10, -15, 0],
             x: [0, 15, -10, 12, 0],
             scale: [1, 1.05, 0.95, 1.02, 1],
-            opacity: [0.2, 0.4, 0.3, 0.5, 0.2],
+            opacity: [0.4, 0.7, 0.5, 0.8, 0.4], // More solid orbs
           }}
           transition={{
-            duration: 10 + Math.random() * 8,
+            duration: 6.5 + Math.random() * 5, // 6.5-11.5 seconds (50% faster)
             repeat: Infinity,
             delay: Math.random() * 3,
             ease: "easeInOut"
