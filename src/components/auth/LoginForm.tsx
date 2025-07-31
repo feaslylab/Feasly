@@ -19,7 +19,7 @@ interface LoginFormProps {
 }
 
 export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
-  console.log('LoginForm component mounted');
+  if (!import.meta.env.PROD) console.log('LoginForm component mounted');
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -106,27 +106,27 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Login form submitted');
+    if (!import.meta.env.PROD) console.log('Login form submitted');
     setIsLoading(true);
 
     try {
-      console.log('Attempting login with email:', email);
+      if (!import.meta.env.PROD) console.log('Attempting login with email:', email);
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      console.log('Login response - error:', error);
+      if (!import.meta.env.PROD) console.log('Login response - error:', error);
 
       if (error) {
-        console.log('Login failed with error:', error.message);
+        if (!import.meta.env.PROD) console.log('Login failed with error:', error.message);
         toast({
           title: "Login Failed",
           description: error.message,
           variant: "destructive",
         });
       } else {
-        console.log('Login successful, calling onSuccess');
+        if (!import.meta.env.PROD) console.log('Login successful, calling onSuccess');
         toast({
           title: "Welcome back!",
           description: "You have successfully logged in.",
@@ -137,14 +137,14 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
         }, 100);
       }
     } catch (error) {
-      console.log('Login caught error:', error);
+      if (!import.meta.env.PROD) console.log('Login caught error:', error);
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {
-      console.log('Login process completed, setting loading to false');
+      if (!import.meta.env.PROD) console.log('Login process completed, setting loading to false');
       setIsLoading(false);
     }
   };
@@ -319,7 +319,7 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
 
           <Button
             type="submit"
-            onClick={() => console.log('Login button clicked')}
+            onClick={() => { if (!import.meta.env.PROD) console.log('Login button clicked'); }}
             className={cn(
               "w-full h-12 bg-gradient-to-r from-primary to-primary-dark",
               "hover:from-primary-glow hover:to-primary",

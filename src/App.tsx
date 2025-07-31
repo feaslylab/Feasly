@@ -45,7 +45,7 @@ const AppRoutes = () => {
   const { user, loading } = useAuth();
   const location = useLocation();
   
-  console.log('AppRoutes render - user:', user, 'loading:', loading, 'pathname:', window.location.pathname);
+  if (!import.meta.env.PROD) console.log('AppRoutes render - user:', user, 'loading:', loading, 'pathname:', window.location.pathname);
   
   // Check if we're on the marketing site
   const isMarketingRoute = window.location.pathname === '/';
@@ -55,7 +55,7 @@ const AppRoutes = () => {
     
     // If user is authenticated and on welcome page, redirect to dashboard
     if (user && window.location.pathname === '/welcome') {
-      console.log('User authenticated on welcome page, redirecting to dashboard');
+      if (!import.meta.env.PROD) console.log('User authenticated on welcome page, redirecting to dashboard');
       return <Navigate to="/dashboard" replace />;
     }
     
@@ -72,7 +72,7 @@ const AppRoutes = () => {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/comparison" element={<FeatureComparison />} />
-          <Route path="/welcome" element={<AuthPage onSuccess={() => { console.log('Login success, will be redirected by auth logic'); }} />} />
+          <Route path="/welcome" element={<AuthPage onSuccess={() => { if (!import.meta.env.PROD) console.log('Login success, will be redirected by auth logic'); }} />} />
           {/* Development-only route for legacy calc-demo */}
           {import.meta.env.DEV && <Route path="/calc-demo" element={<CalcDemo />} />}
         </Routes>

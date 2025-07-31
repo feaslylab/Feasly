@@ -196,7 +196,7 @@ const ProjectPublic = () => {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <Card className="shadow-sm">
+        <Card className="shadow-elevation-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Assets</CardTitle>
             <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -209,7 +209,7 @@ const ProjectPublic = () => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="shadow-elevation-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Project Timeline</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
@@ -341,7 +341,7 @@ const ProjectPublic = () => {
                   {/* Mobile Cards - hidden on desktop */}
                   <div className="md:hidden space-y-4">
                     {assets.map((asset) => (
-                      <Card key={asset.id} className="shadow-sm">
+                      <Card key={asset.id} className="shadow-elevation-2">
                         <CardContent className="p-4">
                           <div className="flex items-start justify-between mb-3">
                             <div>

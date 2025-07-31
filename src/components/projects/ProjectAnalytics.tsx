@@ -223,7 +223,7 @@ export const ProjectAnalytics = ({ projectId, assets, projectCurrency = "AED" }:
       {/* KPI Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {scenarioMetrics.map((metrics, index) => (
-          <Card key={index} className="relative overflow-hidden shadow-sm">
+          <Card key={index} className="relative overflow-hidden shadow-elevation-2">
             <div 
               className="absolute top-0 left-0 w-full h-1"
               style={{ backgroundColor: COLORS[metrics.type as keyof typeof COLORS] }}

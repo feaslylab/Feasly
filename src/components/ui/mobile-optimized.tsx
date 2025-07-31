@@ -130,7 +130,7 @@ export const MobileCard: React.FC<{
   return (
     <div 
       className={cn(
-        "rounded-lg border bg-card text-card-foreground shadow-sm",
+        "rounded-lg border bg-card text-card-foreground shadow-elevation-2",
         interactive && "cursor-pointer hover:shadow-md transition-shadow duration-200 active:scale-[0.98] touch-none",
         className
       )}

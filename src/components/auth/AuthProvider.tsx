@@ -28,7 +28,7 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  console.log('AuthProvider component mounting');
+  if (!import.meta.env.PROD) console.log('AuthProvider component mounting');
   const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state change:', event, 'session:', session, 'user:', session?.user);
+      if (!import.meta.env.PROD) console.log('Auth state change:', event, 'session:', session, 'user:', session?.user);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);

@@ -175,7 +175,7 @@ export default function FeaslyModel() {
 
                 {/* Advanced Analysis - Always Visible */}
                 <div className="space-y-4 sm:space-y-6">
-                  <h2 className="text-lg sm:text-xl font-semibold">📊 Advanced Analysis</h2>
+                  <h2 className="feasly-title">📊 Advanced Analysis</h2>
                   
                   {/* Timeline Summary Panel */}
                   <TimelineSummaryPanel milestones={milestones} />
@@ -198,7 +198,7 @@ export default function FeaslyModel() {
 
                 {/* Vendor & Delivery Risk - Always Visible */}
                 <div className="space-y-4 sm:space-y-6">
-                  <h2 className="text-lg sm:text-xl font-semibold">👥 Vendor & Delivery Risk</h2>
+                  <h2 className="feasly-title">👥 Vendor & Delivery Risk</h2>
                   
                   {/* Vendor Risk Summary */}
                   <VendorRiskSummary projectId={projectId} />
@@ -212,7 +212,7 @@ export default function FeaslyModel() {
 
                 {/* Results & Insights - Always Visible */}
                 <div className="space-y-4 sm:space-y-6">
-                  <h2 className="text-lg sm:text-xl font-semibold">🎯 Results & Insights</h2>
+                  <h2 className="feasly-title">🎯 Results & Insights</h2>
                   
                   {/* KPI Results */}
                   <KPIResults />

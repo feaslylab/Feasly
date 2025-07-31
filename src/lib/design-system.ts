@@ -50,9 +50,9 @@ export const designTokens = {
 export const componentClasses = {
   // Card variants
   card: {
-    base: "rounded-lg border bg-card text-card-foreground shadow-sm",
+    base: "rounded-lg border bg-card text-card-foreground shadow-elevation-2",
     elevated: "rounded-lg border bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow",
-    interactive: "rounded-lg border bg-card text-card-foreground shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer",
+    interactive: "rounded-lg border bg-card text-card-foreground shadow-elevation-2 hover:shadow-md transition-all duration-200 cursor-pointer",
   },
   
   // Button variants with consistent sizing

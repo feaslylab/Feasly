@@ -10,10 +10,10 @@ export function PresenceDots({ className = '' }: PresenceDotsProps) {
   const { projectId } = useSelectionStore()
   const { presenceUsers } = usePresence(projectId || '')
 
-  console.log('PresenceDots render - projectId:', projectId, 'presenceUsers:', presenceUsers)
+  if (!import.meta.env.PROD) console.log('PresenceDots render - projectId:', projectId, 'presenceUsers:', presenceUsers)
 
   if (!projectId) {
-    console.log('PresenceDots: No projectId, not rendering')
+    if (!import.meta.env.PROD) console.log('PresenceDots: No projectId, not rendering')
     return null
   }
 
