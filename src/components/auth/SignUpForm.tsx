@@ -104,20 +104,20 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
           />
         </div>
         <div>
-          <CardTitle className="text-2xl font-semibold">{t('auth.createAccount')}</CardTitle>
+          <CardTitle className="text-2xl font-semibold">{t('createAccount')}</CardTitle>
           <CardDescription className="text-muted-foreground mt-2">
-            {t('auth.getStarted')}
+            {t('getStarted')}
           </CardDescription>
         </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSignUp} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="fullName" className={cn(isRTL && "text-right")}>{t('auth.fullName')}</Label>
+            <Label htmlFor="fullName" className={cn(isRTL && "text-right")}>{t('fullName')}</Label>
             <Input
               id="fullName"
               type="text"
-              placeholder={t('auth.enterFullName')}
+              placeholder={t('enterFullName')}
               value={formData.fullName}
               onChange={(e) => handleInputChange("fullName", e.target.value)}
               required
@@ -127,11 +127,11 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className={cn(isRTL && "text-right")}>{t('auth.email')}</Label>
+            <Label htmlFor="email" className={cn(isRTL && "text-right")}>{t('email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder={t('auth.enterEmail')}
+              placeholder={t('enterEmail')}
               value={formData.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
               required
@@ -141,12 +141,12 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="password" className={cn(isRTL && "text-right")}>{t('auth.password')}</Label>
+            <Label htmlFor="password" className={cn(isRTL && "text-right")}>{t('password')}</Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                placeholder={t('auth.createPassword')}
+                placeholder={t('createPassword')}
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
                 required
@@ -173,12 +173,12 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className={cn(isRTL && "text-right")}>{t('auth.confirmPassword')}</Label>
+            <Label htmlFor="confirmPassword" className={cn(isRTL && "text-right")}>{t('confirmPassword')}</Label>
             <div className="relative">
               <Input
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
-                placeholder={t('auth.confirmYourPassword')}
+                placeholder={t('confirmYourPassword')}
                 value={formData.confirmPassword}
                 onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                 required
@@ -209,20 +209,20 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
             className="w-full h-11 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
             disabled={isLoading}
           >
-            {isLoading ? t('common.loading') : t('auth.signup')}
+            {isLoading ? t('common.loading') : t('signup')}
           </Button>
         </form>
 
         <div className="mt-6">
           <Separator className="my-4" />
           <p className={cn("text-center text-sm text-muted-foreground", isRTL && "text-right")}>
-            {t('auth.alreadyHaveAccount')}{" "}
+            {t('alreadyHaveAccount')}{" "}
             <Button
               variant="link"
               className="p-0 h-auto font-medium text-primary hover:text-primary-dark"
               onClick={onToggleMode}
             >
-              {t('auth.signInHere')}
+              {t('signInHere')}
             </Button>
           </p>
         </div>

@@ -352,7 +352,7 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-3 text-muted-foreground/60 font-medium tracking-wider">
-                  {t('or', 'OR')}
+                  {t('or')}
                 </span>
               </div>
             </div>
