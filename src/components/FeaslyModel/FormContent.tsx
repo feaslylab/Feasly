@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, Save } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Save, CheckCircle, XCircle, AlertTriangle, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModelSideNav, defaultModelSections, ModelSection } from '../model/ModelSideNav';
 import { SectionPanel } from '../model/SectionPanel';
@@ -33,6 +33,7 @@ import { AiInsightPanel } from './AiInsightPanel';
 import { ComplianceStatusPanel } from './ComplianceStatusPanel';
 import { CommentingPanel } from './CommentingPanel';
 import { RightSideValidationPanel } from './RightSideValidationPanel';
+import { FloatingActionMenu } from '@/components/ui/floating-action-menu';
 
 interface FormContentProps {
   projectId: string;
@@ -201,64 +202,88 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
 
       {/* Main Content with left margin to account for fixed sidebar */}
       <div className="flex-1 overflow-hidden">
-        {/* Sticky Header */}
-        <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        {/* Enhanced Sticky Header */}
+        <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm">
           <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold">Feasibility Model</h1>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-1 bg-gradient-to-b from-primary to-primary-dark rounded-full"></div>
+                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+                  Feasibility Model
+                </h1>
               </div>
               
-               {/* Mini KPIs with Validation Status */}
-               <div className="hidden md:flex items-center gap-3">
-                 <Badge variant="outline" className="flex items-center gap-1">
-                   NPV: AED 2.3M
-                 </Badge>
-                 <Badge variant="outline" className="flex items-center gap-1">
-                   IRR: 18.2%
-                 </Badge>
+               {/* Enhanced Mini KPIs with better spacing and styling */}
+               <div className="hidden lg:flex items-center gap-4 bg-gradient-to-r from-primary/5 to-transparent rounded-xl px-4 py-2">
+                 <div className="flex items-center gap-3">
+                   <Badge variant="outline" className="flex items-center gap-2 bg-card shadow-sm border-border/50">
+                     <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                     NPV: <span className="font-semibold text-emerald-600">AED 2.3M</span>
+                   </Badge>
+                   <Badge variant="outline" className="flex items-center gap-2 bg-card shadow-sm border-border/50">
+                     <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                     IRR: <span className="font-semibold text-blue-600">18.2%</span>
+                   </Badge>
+                 </div>
                  
-                 {/* Overall Validation Status */}
+                 {/* Overall Validation Status with enhanced styling */}
                  <Badge 
                    variant={validationCounts.overall.isValid ? 'default' : 'secondary'}
                    className={cn(
-                     "flex items-center gap-1",
+                     "flex items-center gap-2 shadow-sm border-border/50 transition-all duration-200",
                      validationCounts.overall.isValid 
-                       ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100" 
+                       ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-100 dark:border-emerald-800" 
                        : validationCounts.overall.totalErrors > 0
-                       ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100"
-                       : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100"
+                       ? "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/50 dark:text-red-100 dark:border-red-800"
+                       : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/50 dark:text-amber-100 dark:border-amber-800"
                    )}
                  >
-                   {validationCounts.overall.isValid ? '✅' : 
-                    validationCounts.overall.totalErrors > 0 ? '❌' : '⚠️'}
-                   {validationCounts.overall.completedSections}/{validationCounts.overall.totalSections} Ready
+                   {validationCounts.overall.isValid ? (
+                     <CheckCircle className="h-3 w-3" />
+                   ) : validationCounts.overall.totalErrors > 0 ? (
+                     <XCircle className="h-3 w-3" />
+                   ) : (
+                     <AlertTriangle className="h-3 w-3" />
+                   )}
+                   {validationCounts.overall.completedSections}/{validationCounts.overall.totalSections} Sections Ready
                  </Badge>
                </div>
             </div>
 
             <div className="flex items-center gap-4">
-              {/* Wizard Toggle */}
-              <div className="flex items-center gap-2">
-                <Label htmlFor="wizard-mode" className="text-sm">
-                  Wizard
+              {/* Enhanced Wizard Toggle with better styling */}
+              <div className="flex items-center gap-3 bg-card rounded-lg px-3 py-2 shadow-sm border border-border/50">
+                <Label htmlFor="wizard-mode" className="text-sm font-medium cursor-pointer">
+                  Guided Mode
                 </Label>
                 <Switch
                   id="wizard-mode"
                   checked={isWizardMode}
                   onCheckedChange={setIsWizardMode}
                   data-testid="wizard-toggle"
+                  className="data-[state=checked]:bg-primary"
                 />
               </div>
 
-              {/* Save Status */}
+              {/* Enhanced Save Status */}
               {lastSaved && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Save className="h-3 w-3" />
-                  <span>Saved • {lastSaved}</span>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-card rounded-lg px-3 py-2 shadow-sm border border-border/50">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                  <span className="font-medium">Auto-saved</span>
+                  <span className="text-xs opacity-70">• {lastSaved}</span>
                 </div>
               )}
             </div>
+          </div>
+          
+          {/* Progress indicator */}
+          <div className="h-1 w-full bg-muted/30">
+            <div 
+              className="h-full bg-gradient-to-r from-primary to-primary-light transition-all duration-500"
+              style={{ 
+                width: `${(validationCounts.overall.completedSections / validationCounts.overall.totalSections) * 100}%` 
+              }}
+            />
           </div>
         </div>
 
@@ -437,60 +462,94 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               <CommentingPanel projectId={projectId} />
             </SectionPanel>
 
-            {/* Wizard Navigation */}
+            {/* Enhanced Wizard Navigation */}
             {isWizardMode && (
-              <div className="flex items-center justify-between pt-6 border-t">
+              <div className="flex items-center justify-between pt-6 border-t bg-gradient-to-r from-primary/5 to-transparent rounded-xl p-6 mt-8">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleWizardPrevious}
                   disabled={wizard.isFirstStep}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-200"
                 >
                   <ChevronLeft className="h-4 w-4" />
-                  Previous
+                  Previous Step
                 </Button>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">
+                <div className="flex items-center gap-4">
+                  <div className="text-sm text-muted-foreground font-medium">
                     Step {wizard.currentStep + 1} of {wizard.totalSteps}
-                  </span>
+                  </div>
+                  <div className="flex gap-1">
+                    {Array.from({ length: wizard.totalSteps }, (_, i) => (
+                      <div
+                        key={i}
+                        className={cn(
+                          "h-2 w-8 rounded-full transition-all duration-300",
+                          i <= wizard.currentStep 
+                            ? "bg-primary" 
+                            : "bg-muted"
+                        )}
+                      />
+                    ))}
+                  </div>
                 </div>
 
                 <Button
                   type="button"
                   onClick={handleWizardNext}
                   disabled={!wizard.canProceedToNext || wizard.isLastStep}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 shadow-sm hover:shadow-md transition-all duration-200"
                 >
-                  Next
+                  {wizard.isLastStep ? 'Complete' : 'Next Step'}
                   <ChevronRight className="h-4 w-4" />
                 </Button>
               </div>
             )}
 
-            {/* Action Buttons */}
+            {/* Enhanced Action Buttons */}
             {!isWizardMode && (
-              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-6 border-t">
+              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 pt-8 border-t bg-gradient-to-r from-muted/20 to-transparent rounded-xl p-6 mt-8">
                 <Button 
                   type="button" 
                   variant="outline" 
                   onClick={onSaveDraft}
-                  className="min-h-[44px]"
+                  className="min-h-[44px] shadow-sm hover:shadow-md transition-all duration-200 bg-card"
                 >
+                  <Save className="h-4 w-4 mr-2" />
                   Save Draft
                 </Button>
                 <Button 
                   type="submit"
-                  className="min-h-[44px]"
+                  className="min-h-[44px] shadow-md hover:shadow-lg transition-all duration-200 bg-gradient-to-r from-primary to-primary-dark"
                 >
-                  Generate Model
+                  <BarChart3 className="h-4 w-4 mr-2" />
+                  Generate Financial Model
                 </Button>
               </div>
             )}
           </form>
         </div>
       </div>
+
+      {/* Enhanced Mobile Floating Action Menu */}
+      {isMobile && (
+        <FloatingActionMenu
+          onSave={onSaveDraft}
+          onExport={() => handleSubmit(onFormSubmit)()}
+          onComment={() => {
+            // Scroll to comments section
+            const commentsSection = document.getElementById('comments');
+            if (commentsSection) {
+              commentsSection.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+          onSettings={() => {
+            // You can implement settings modal here
+            console.log('Settings clicked');
+          }}
+        />
+      )}
     </div>
   );
 }
