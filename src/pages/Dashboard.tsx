@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
@@ -163,19 +163,6 @@ export default function Dashboard() {
     }
   };
 
-  const formatCurrency = (amount: number, currency = 'AED') => {
-    return new Intl.NumberFormat('en-US', { 
-      style: 'currency', 
-      currency: currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0 
-    }).format(amount);
-  };
-
-  const formatPercentage = (value: number | null) => {
-    if (value === null) return 'N/A';
-    return `${(value * 100).toFixed(1)}%`;
-  };
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
@@ -305,53 +292,118 @@ export default function Dashboard() {
     return acc;
   }, {} as Record<string, Alert[]>);
 
-  // Calculate portfolio metrics
-  const totalProjects = projects.length;
-  const activeProjects = projects.filter(p => p.status === 'active').length;
-  const pinnedProjects = projects.filter(p => p.is_pinned).length;
-  
-  const latestKpis = kpis.slice(0, 3);
-  const totalPortfolioValue = kpis.reduce((sum, kpi) => sum + kpi.npv, 0);
-  const averageIRR = kpis.length > 0 
-    ? kpis.filter(k => k.irr !== null).reduce((sum, kpi) => sum + (kpi.irr || 0), 0) / kpis.filter(k => k.irr !== null).length 
-    : 0;
+  // Memoized calculations for performance
+  const portfolioMetrics = useMemo(() => {
+    const totalProjects = projects.length;
+    const activeProjects = projects.filter(p => p.status === 'active').length;
+    const pinnedProjects = projects.filter(p => p.is_pinned).length;
+    const totalPortfolioValue = kpis.reduce((sum, kpi) => sum + kpi.npv, 0);
+    const averageIRR = kpis.length > 0 
+      ? kpis.filter(k => k.irr !== null).reduce((sum, kpi) => sum + (kpi.irr || 0), 0) / kpis.filter(k => k.irr !== null).length 
+      : 0;
+    
+    return {
+      totalProjects,
+      activeProjects,
+      pinnedProjects,
+      totalPortfolioValue,
+      averageIRR
+    };
+  }, [projects, kpis]);
+
+  const { totalProjects, activeProjects, pinnedProjects, totalPortfolioValue, averageIRR } = portfolioMetrics;
+  const latestKpis = useMemo(() => kpis.slice(0, 3), [kpis]);
+
+  // Memoized format functions for performance
+  const formatCurrency = useCallback((amount: number, currency = 'AED') => {
+    return new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: currency,
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0 
+    }).format(amount);
+  }, []);
+
+  const formatPercentage = useCallback((value: number | null) => {
+    if (value === null) return 'N/A';
+    return `${(value * 100).toFixed(1)}%`;
+  }, []);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-14">
-        <div className="flex-1 space-y-8 p-6">
-          <div className="space-y-3">
-            <Skeleton className="h-10 w-80 bg-gradient-to-r from-muted to-muted/50" />
-            <Skeleton className="h-6 w-96 bg-gradient-to-r from-muted to-muted/50" />
+        <PageContainer className="py-8">
+          {/* Enhanced skeleton for hero section */}
+          <div className="mb-8 sm:mb-12">
+            <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-card/50 via-card/50 to-primary/5 border border-border/50 shadow-xl">
+              <div className="relative p-4 sm:p-6 lg:p-8 xl:p-12">
+                <div className="flex flex-col gap-6 sm:gap-8 xl:flex-row xl:items-center xl:justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
+                      <Skeleton className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-full bg-gradient-to-r from-muted/50 to-muted/80 animate-pulse" />
+                      <div className="space-y-2 flex-1">
+                        <Skeleton className="h-8 sm:h-10 lg:h-12 w-3/4 bg-gradient-to-r from-muted/50 to-muted/80 animate-pulse" />
+                        <Skeleton className="h-6 sm:h-7 w-1/2 bg-gradient-to-r from-muted/30 to-muted/60 animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="space-y-3 sm:space-y-4">
+                      <Skeleton className="h-4 sm:h-5 w-full max-w-2xl bg-gradient-to-r from-muted/30 to-muted/60 animate-pulse" />
+                      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                        <Skeleton className="h-12 sm:h-14 w-full sm:w-64 rounded-lg sm:rounded-xl bg-gradient-to-r from-primary/20 to-primary/40 animate-pulse" />
+                        <Skeleton className="h-12 sm:h-14 w-full sm:w-48 rounded-lg sm:rounded-xl bg-gradient-to-r from-emerald-500/20 to-emerald-500/40 animate-pulse" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="xl:flex-shrink-0 w-full xl:w-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3 sm:gap-4">
+                      <Skeleton className="h-16 sm:h-20 w-full rounded-lg bg-gradient-to-r from-primary/30 to-primary/50 animate-pulse" />
+                      <Skeleton className="h-16 sm:h-20 w-full rounded-lg bg-gradient-to-r from-muted/40 to-muted/60 animate-pulse" />
+                      <Skeleton className="h-16 sm:h-20 w-full rounded-lg bg-gradient-to-r from-muted/40 to-muted/60 animate-pulse" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+
+          {/* Enhanced skeleton for metrics cards */}
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 mb-8 sm:mb-10">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i} className="border-0 shadow-lg bg-gradient-to-br from-card to-primary/5">
-                <CardHeader className="space-y-0 pb-3">
-                  <Skeleton className="h-5 w-32 bg-gradient-to-r from-muted to-muted/50" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-8 w-24 mb-3 bg-gradient-to-r from-muted to-muted/50" />
-                  <Skeleton className="h-4 w-40 bg-gradient-to-r from-muted to-muted/50" />
-                </CardContent>
-              </Card>
+              <div key={i} className="relative overflow-hidden border-0 rounded-xl bg-gradient-to-br from-card/50 to-primary/5 shadow-lg">
+                <div className="p-4 sm:p-6">
+                  <div className="flex items-center justify-between mb-3">
+                    <Skeleton className="h-4 w-24 bg-gradient-to-r from-muted/40 to-muted/60 animate-pulse" />
+                    <Skeleton className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-gradient-to-r from-primary/20 to-primary/40 animate-pulse" />
+                  </div>
+                  <Skeleton className="h-8 sm:h-10 w-20 mb-2 bg-gradient-to-r from-muted/50 to-muted/80 animate-pulse" />
+                  <Skeleton className="h-3 w-32 bg-gradient-to-r from-muted/30 to-muted/50 animate-pulse" />
+                  <div className="mt-3">
+                    <Skeleton className="h-2 w-full rounded-full bg-gradient-to-r from-muted/20 to-muted/40 animate-pulse" />
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-          <div className="grid gap-6 lg:grid-cols-3">
+
+          {/* Enhanced skeleton for content sections */}
+          <div className="grid gap-6 lg:grid-cols-3 mb-10">
             {Array.from({ length: 3 }).map((_, i) => (
-              <Card key={i} className="border-0 shadow-lg bg-gradient-to-br from-card to-primary/5">
-                <CardHeader>
-                  <Skeleton className="h-6 w-40 bg-gradient-to-r from-muted to-muted/50" />
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {Array.from({ length: 3 }).map((_, j) => (
-                    <Skeleton key={j} className="h-12 w-full bg-gradient-to-r from-muted to-muted/50" />
-                  ))}
-                </CardContent>
-              </Card>
+              <div key={i} className="border-0 rounded-xl shadow-lg bg-gradient-to-br from-card/50 via-card/50 to-primary/5">
+                <div className="p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Skeleton className="h-8 w-8 rounded-lg bg-gradient-to-r from-primary/20 to-primary/40 animate-pulse" />
+                    <Skeleton className="h-6 w-24 bg-gradient-to-r from-muted/40 to-muted/60 animate-pulse" />
+                  </div>
+                  <div className="space-y-4">
+                    {Array.from({ length: 3 }).map((_, j) => (
+                      <Skeleton key={j} className="h-12 w-full rounded-lg bg-gradient-to-r from-muted/30 to-muted/50 animate-pulse" />
+                    ))}
+                  </div>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
+        </PageContainer>
       </div>
     );
   }
@@ -359,28 +411,28 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-14">
       <PageContainer className="py-8">
-        {/* Premium Welcome Hero Section */}
-        <div className="mb-12">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-card via-card to-primary/5 border border-border/50 shadow-xl">
+        {/* Premium Welcome Hero Section - Responsive Optimized */}
+        <div className="mb-8 sm:mb-12">
+          <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-card via-card to-primary/5 border border-border/50 shadow-xl">
             {/* Background decoration */}
             <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/5 opacity-50" />
-            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-48 translate-x-48" />
+            <div className="absolute top-0 right-0 w-48 h-48 sm:w-96 sm:h-96 bg-primary/5 rounded-full blur-3xl -translate-y-24 translate-x-24 sm:-translate-y-48 sm:translate-x-48" />
             
-            <div className="relative p-8 lg:p-12">
-              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+            <div className="relative p-4 sm:p-6 lg:p-8 xl:p-12">
+              <div className="flex flex-col gap-6 sm:gap-8 xl:flex-row xl:items-center xl:justify-between">
                 {/* Left: Enhanced greeting section */}
                 <div className="flex-1">
-                  <div className="flex items-center gap-4 mb-6">
+                  <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
                     {(() => {
                       const timeGreeting = getTimeBasedGreeting();
                       return (
-                        <div className="flex items-center gap-3">
-                          <div className="text-4xl">{timeGreeting.icon}</div>
-                          <div>
-                            <h1 className={`text-4xl lg:text-5xl font-bold bg-gradient-to-r ${timeGreeting.class} bg-clip-text text-transparent leading-tight`}>
+                        <div className="flex items-start gap-2 sm:gap-3">
+                          <div className="text-2xl sm:text-3xl lg:text-4xl mt-1">{timeGreeting.icon}</div>
+                          <div className="min-w-0 flex-1">
+                            <h1 className={`text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r ${timeGreeting.class} bg-clip-text text-transparent leading-tight`}>
                               {timeGreeting.greeting}
                             </h1>
-                            <p className="text-xl lg:text-2xl font-semibold text-foreground mt-1">
+                            <p className="text-lg sm:text-xl lg:text-2xl font-semibold text-foreground mt-1 truncate">
                               {user?.email?.split('@')[0] || 'there'}
                             </p>
                           </div>
@@ -389,32 +441,32 @@ export default function Dashboard() {
                     })()}
                   </div>
                   
-                  <div className="space-y-4">
-                    <p className="text-lg text-muted-foreground max-w-2xl">
+                  <div className="space-y-3 sm:space-y-4">
+                    <p className="text-sm sm:text-base lg:text-lg text-muted-foreground max-w-2xl">
                       Welcome back to your portfolio dashboard. Here's your real-time financial overview and project insights.
                     </p>
                     
-                    {/* Enhanced health score section */}
-                    <div className="flex flex-wrap items-center gap-4">
+                    {/* Enhanced health score section - Mobile optimized */}
+                    <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 sm:gap-4">
                       {(() => {
                         const health = calculateHealthScore();
                         return (
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger>
-                                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-card/60 border border-border/30 hover:border-primary/30 transition-all duration-300">
-                                  <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-card/60 border border-border/30 hover:border-primary/30 transition-all duration-300">
+                                  <div className="flex items-center gap-2 sm:gap-3">
                                     <div className="relative">
-                                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
-                                        <Target className="h-6 w-6 text-primary" />
+                                      <div className="w-8 h-8 sm:w-10 lg:w-12 sm:h-10 lg:h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                                        <Target className="h-4 w-4 sm:h-5 lg:h-6 sm:w-5 lg:w-6 text-primary" />
                                       </div>
-                                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
-                                        <div className="w-2 h-2 bg-white rounded-full" />
+                                      <div className="absolute -top-0.5 -right-0.5 w-3 h-3 sm:w-4 sm:h-4 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full" />
                                       </div>
                                     </div>
                                     <div>
-                                      <p className="text-sm font-medium text-muted-foreground">Portfolio Health</p>
-                                      <p className={`text-lg font-bold ${health.color}`}>
+                                      <p className="text-xs sm:text-sm font-medium text-muted-foreground">Portfolio Health</p>
+                                      <p className={`text-sm sm:text-base lg:text-lg font-bold ${health.color}`}>
                                         {health.score}/100 · {health.status}
                                       </p>
                                     </div>
@@ -435,11 +487,11 @@ export default function Dashboard() {
                         );
                       })()}
                       
-                      {/* Quick stats */}
-                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                        <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
+                      {/* Quick stats - Mobile optimized */}
+                      <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-emerald-500 rounded-full animate-pulse" />
                         <div>
-                          <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
+                          <p className="text-xs sm:text-sm font-medium text-emerald-700 dark:text-emerald-400">
                             {activeProjects} Active Projects
                           </p>
                           <p className="text-xs text-emerald-600 dark:text-emerald-500">
@@ -451,38 +503,37 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                {/* Right: Action buttons and controls */}
-                <div className="lg:flex-shrink-0">
-                  <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setActivityVisible(!activityVisible)}
-                      className="lg:order-2 px-6 py-3 h-auto border-border/50 backdrop-blur-sm hover:bg-primary/5 transition-all duration-300"
-                    >
-                      <Activity className="mr-2 h-5 w-5" />
-                      <div className="text-left">
-                        <div className="font-medium">Activity Feed</div>
-                        <div className="text-xs text-muted-foreground">Live updates</div>
-                      </div>
-                    </Button>
-                    
-                    <Link to="/projects/new" className="lg:order-1">
-                      <Button size="lg" className="w-full lg:w-auto px-8 py-4 h-auto bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group">
-                        <div className="flex items-center gap-3">
-                          <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" />
+                {/* Right: Action buttons - Mobile optimized */}
+                <div className="xl:flex-shrink-0 w-full xl:w-auto">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3 sm:gap-4 xl:gap-4">
+                    <Link to="/projects/new" className="xl:order-1">
+                      <Button size="lg" className="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 h-auto bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group">
+                        <div className="flex items-center gap-2 sm:gap-3">
+                          <Plus className="h-5 w-5 sm:h-6 sm:w-6 group-hover:rotate-90 transition-transform duration-300" />
                           <div className="text-left">
-                            <div className="font-semibold text-lg">New Project</div>
-                            <div className="text-xs text-primary-foreground/80">Start modeling</div>
+                            <div className="font-semibold text-sm sm:text-base lg:text-lg">New Project</div>
+                            <div className="text-xs text-primary-foreground/80 hidden sm:block">Start modeling</div>
                           </div>
                         </div>
                       </Button>
                     </Link>
-                    
-                    <Button variant="outline" className="lg:order-3 px-6 py-3 h-auto border-border/50 backdrop-blur-sm hover:bg-accent/50 transition-all duration-300">
-                      <Calendar className="mr-2 h-5 w-5" />
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setActivityVisible(!activityVisible)}
+                      className="xl:order-2 w-full px-4 sm:px-6 py-3 h-auto border-border/50 backdrop-blur-sm hover:bg-primary/5 transition-all duration-300"
+                    >
+                      <Activity className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
                       <div className="text-left">
-                        <div className="font-medium">This Month</div>
-                        <div className="text-xs text-muted-foreground">{new Date().toLocaleDateString('en', { month: 'long' })}</div>
+                        <div className="font-medium text-sm sm:text-base">Activity Feed</div>
+                        <div className="text-xs text-muted-foreground hidden sm:block">Live updates</div>
+                      </div>
+                    </Button>
+                    
+                    <Button variant="outline" className="xl:order-3 w-full px-4 sm:px-6 py-3 h-auto border-border/50 backdrop-blur-sm hover:bg-accent/50 transition-all duration-300">
+                      <Calendar className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                      <div className="text-left">
+                        <div className="font-medium text-sm sm:text-base">This Month</div>
+                        <div className="text-xs text-muted-foreground hidden sm:block">{new Date().toLocaleDateString('en', { month: 'long' })}</div>
                       </div>
                     </Button>
                   </div>
@@ -528,17 +579,17 @@ export default function Dashboard() {
           </Card>
         )}
 
-        {/* Enhanced Premium Key Metrics Cards */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10">
+        {/* Enhanced Premium Key Metrics Cards - Responsive Grid */}
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 mb-8 sm:mb-10">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
-                    <CardTitle className="text-sm font-medium text-foreground/80">Total Projects</CardTitle>
-                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300 group-hover:scale-110">
-                      <Building2 className="h-5 w-5 text-primary" />
+                  <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-3">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-foreground/80">Total Projects</CardTitle>
+                    <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300 group-hover:scale-110">
+                      <Building2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                     </div>
                   </CardHeader>
                   <CardContent className="relative">

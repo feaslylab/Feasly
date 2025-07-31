@@ -98,46 +98,78 @@
   }
 
   .dark {
-    /* Three clear elevation steps with ≥4 L* between each */
-    --background: 222 40% 6%;
-    --surface: 222 32% 10%;
-    --foreground: 210 38% 96%;
+    /* WCAG AA compliant dark mode with proper contrast ratios */
+    --background: 222 84% 4.9%;    /* Darker base for better contrast */
+    --surface: 222 32% 8%;         /* Clear elevation step */
+    --foreground: 210 40% 98%;     /* High contrast text */
 
-    --card: 222 28% 15%;
-    --card-foreground: 210 38% 96%;
+    --card: 222 47% 11%;           /* Better glassmorphism base */
+    --card-foreground: 210 40% 98%;
 
-    --popover: 222 28% 15%;
-    --popover-foreground: 210 38% 96%;
+    --popover: 222 47% 13%;        /* Higher contrast for dropdowns */
+    --popover-foreground: 210 40% 98%;
 
-    /* Adjusted primary: +2° hue, +10% lightness for better contrast */
-    --primary: 219 90% 60%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Enhanced primary for better visibility */
+    --primary: 217 91% 65%;        /* Brighter for accessibility */
+    --primary-foreground: 222 84% 4.9%;
+    --primary-light: 217 100% 85%; /* Accessible light variant */
+    --primary-dark: 217 85% 25%;   /* Deep variant for depth */
+    --primary-glow: 217 100% 80%;  /* Accessible glow */
 
-    --secondary: 222 28% 15%;
-    --secondary-foreground: 210 38% 96%;
+    /* Enhanced financial colors for dark mode */
+    --success: 142 71% 55%;        /* Brighter green for visibility */
+    --success-foreground: 222 84% 4.9%;
+    --success-light: 142 71% 85%;
 
-    --muted: 222 28% 15%;
-    --muted-foreground: 210 14% 70%;
+    --warning: 38 92% 60%;         /* Brighter orange */
+    --warning-foreground: 222 84% 4.9%;
+    --warning-light: 38 92% 85%;
 
-    --accent: 222 28% 15%;
-    --accent-foreground: 210 38% 96%;
+    --secondary: 222 47% 11%;
+    --secondary-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --muted: 222 47% 13%;          /* Better contrast for muted content */
+    --muted-foreground: 215 16% 75%; /* WCAG AA compliant muted text */
 
-    --border: 220 13% 28%;
-    --input: 220 13% 28%;
-    --ring: 219 90% 60%;
+    --accent: 222 47% 13%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 65%;      /* Brighter for visibility */
+    --destructive-foreground: 222 84% 4.9%;
+
+    --border: 217 32% 23%;         /* More visible borders */
+    --input: 217 32% 23%;
+    --ring: 217 91% 65%;
     
-    /* Enhanced sidebar colors */
-    --sidebar-background: 222 40% 6%;
-    --sidebar-foreground: 210 38% 96%;
-    --sidebar-primary: 219 90% 60%;
-    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 222 28% 15%;
-    --sidebar-accent-foreground: 210 38% 96%;
-    --sidebar-border: 220 13% 28%;
-    --sidebar-ring: 219 90% 60%;
+    /* Enhanced sidebar colors for glass effect */
+    --sidebar-background: 222 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217 91% 65%;
+    --sidebar-primary-foreground: 222 84% 4.9%;
+    --sidebar-accent: 222 47% 13%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 32% 23%;
+    --sidebar-ring: 217 91% 65%;
+
+    /* Dark mode specific gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-dark)));
+    --gradient-primary-glow: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+    --gradient-success: linear-gradient(135deg, hsl(var(--success)), hsl(142 71% 35%));
+    --gradient-subtle: linear-gradient(180deg, hsl(var(--background)), hsl(222 47% 8%));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary) / 0.15), hsl(var(--primary-light) / 0.08));
+
+    /* Enhanced shadows for dark mode */
+    --shadow-soft: 0 2px 8px hsl(0 0% 0% / 0.3);
+    --shadow-medium: 0 8px 25px hsl(0 0% 0% / 0.4);
+    --shadow-strong: 0 20px 40px hsl(0 0% 0% / 0.5);
+    --shadow-glow: 0 0 30px hsl(var(--primary) / 0.4);
+    --shadow-elegant: 0 10px 30px -10px hsl(0 0% 0% / 0.4);
+
+    /* Dark mode chart colors with better contrast */
+    --chart-revenue: 142 71% 55%;
+    --chart-cost: 0 84% 65%;
+    --chart-profit: 217 91% 75%;
+    --chart-baseline: 215 16% 75%;
   }
 }
 
