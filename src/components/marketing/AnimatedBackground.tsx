@@ -1,25 +1,14 @@
 
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
 
 export function AnimatedBackground() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
-
-  const shapes = Array.from({ length: 6 }, (_, i) => ({
+  const shapes = Array.from({ length: 8 }, (_, i) => ({
     id: i,
-    size: Math.random() * 40 + 15, // Reduced max size from 80 to 55
+    size: Math.random() * 60 + 20,
     x: Math.random() * 100,
     y: Math.random() * 100,
-    delay: Math.random() * 2,
+    delay: Math.random() * 4,
+    duration: 8 + Math.random() * 6, // 8-14 seconds for very slow movement
   }));
 
   return (
@@ -35,17 +24,17 @@ export function AnimatedBackground() {
           ]
         }}
         transition={{
-          duration: 8,
+          duration: 12,
           repeat: Infinity,
           repeatType: "reverse"
         }}
       />
 
-      {/* Floating geometric shapes */}
+      {/* Floating geometric shapes - like floating in water */}
       {shapes.map((shape) => (
         <motion.div
           key={shape.id}
-          className="absolute rounded-full bg-gradient-to-r from-primary/20 to-accent/20 blur-sm"
+          className="absolute rounded-full bg-gradient-to-r from-primary/15 to-accent/15 blur-sm"
           style={{
             width: shape.size,
             height: shape.size,
@@ -53,13 +42,13 @@ export function AnimatedBackground() {
             top: `${shape.y}%`,
           }}
           animate={{
-            y: [0, -20, 0], // Reduced movement from -30 to -20
-            x: [0, 10, 0], // Reduced movement from 15 to 10
-            scale: [1, 1.05, 1], // Reduced scale from 1.1 to 1.05
-            opacity: [0.3, 0.6, 0.3], // Reduced opacity range
+            y: [0, -15, 0, 15, 0], // Gentle floating motion
+            x: [0, 10, -5, 8, 0], // Slow drift
+            scale: [1, 1.02, 0.98, 1.01, 1], // Very subtle breathing
+            opacity: [0.3, 0.5, 0.4, 0.6, 0.3], // Gentle pulsing
           }}
           transition={{
-            duration: 3 + shape.delay, // Slower animation
+            duration: shape.duration,
             repeat: Infinity,
             delay: shape.delay,
             ease: "easeInOut"
@@ -67,19 +56,31 @@ export function AnimatedBackground() {
         />
       ))}
 
-      {/* Mouse-following glow - made smaller and more subtle */}
-      <motion.div
-        className="absolute w-64 h-64 rounded-full bg-gradient-to-r from-primary/5 to-accent/5 blur-3xl"
-        animate={{
-          x: (mousePosition.x - 128) * 0.4, // Reduced movement by 60%
-          y: (mousePosition.y - 128) * 0.4, // Reduced movement by 60%
-        }}
-        transition={{
-          type: "spring",
-          damping: 60, // Increased damping for much slower movement
-          stiffness: 50, // Much lower stiffness for gentler motion
-        }}
-      />
+      {/* Additional floating orbs for atmosphere */}
+      {Array.from({ length: 4 }, (_, i) => (
+        <motion.div
+          key={`orb-${i}`}
+          className="absolute rounded-full bg-gradient-to-r from-accent/10 to-primary/10 blur-md"
+          style={{
+            width: 80 + Math.random() * 40,
+            height: 80 + Math.random() * 40,
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+          }}
+          animate={{
+            y: [0, -20, 10, -15, 0],
+            x: [0, 15, -10, 12, 0],
+            scale: [1, 1.05, 0.95, 1.02, 1],
+            opacity: [0.2, 0.4, 0.3, 0.5, 0.2],
+          }}
+          transition={{
+            duration: 10 + Math.random() * 8,
+            repeat: Infinity,
+            delay: Math.random() * 3,
+            ease: "easeInOut"
+          }}
+        />
+      ))}
 
       {/* Grid pattern */}
       <div className="absolute inset-0 opacity-[0.02]">
