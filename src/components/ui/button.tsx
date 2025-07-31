@@ -9,8 +9,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-primary via-primary-light to-primary text-primary-foreground shadow-lg hover:shadow-xl hover:shadow-primary/25 hover:from-primary-dark hover:via-primary hover:to-primary-light transition-all duration-300",
-        premium: "bg-gradient-to-r from-primary to-primary-dark text-primary-foreground shadow-lg hover:shadow-xl hover:shadow-primary/30 hover:from-primary-dark hover:to-primary transform hover:scale-105 transition-all duration-300 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-r before:from-transparent before:via-white/10 before:to-transparent before:translate-x-[-100%] hover:before:translate-x-[100%] before:transition-transform before:duration-700",
+        default: "bg-gradient-to-b from-primary-dark via-primary to-primary-light text-primary-foreground shadow-lg hover:shadow-xl hover:shadow-primary/25 hover:from-primary-dark hover:via-primary-light hover:to-primary transition-all duration-300",
+        premium: "bg-gradient-to-b from-primary-dark to-primary-light text-primary-foreground shadow-lg hover:shadow-xl hover:shadow-primary/30 hover:from-primary-dark hover:to-primary transform hover:scale-105 transition-all duration-300 relative overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-transparent before:via-white/10 before:to-transparent before:translate-y-[-100%] hover:before:translate-y-[100%] before:transition-transform before:duration-700",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-md hover:shadow-lg",
         outline:
