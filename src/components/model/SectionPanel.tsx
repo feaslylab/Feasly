@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ChevronRight, CheckCircle, AlertTriangle, XCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ChevronDown, ChevronRight, CheckCircle, AlertTriangle, XCircle, ArrowLeft, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export type SectionStatus = 'valid' | 'warning' | 'error' | 'empty';
@@ -19,6 +20,10 @@ interface SectionPanelProps {
   lazyLoad?: boolean;
   rowCount?: number; // For grid components
   icon?: React.ComponentType<any>; // Add icon prop
+  onNext?: () => void; // Navigation to next section
+  onPrevious?: () => void; // Navigation to previous section
+  hasNext?: boolean; // Whether there's a next section
+  hasPrevious?: boolean; // Whether there's a previous section
 }
 
 const statusConfig = {
@@ -54,7 +59,11 @@ export function SectionPanel({
   className,
   lazyLoad = false,
   rowCount,
-  icon: IconComponent
+  icon: IconComponent,
+  onNext,
+  onPrevious,
+  hasNext = false,
+  hasPrevious = false
 }: SectionPanelProps) {
   const statusInfo = statusConfig[status];
   const StatusIcon = statusInfo.icon;
@@ -220,8 +229,52 @@ export function SectionPanel({
                     ease: "easeOut"
                   }}
                 >
-                  {/* Lazy load content if specified and panel is open */}
-                  {lazyLoad ? (isOpen ? children : null) : children}
+                  {/* Main content */}
+                  <div className="space-y-4">
+                    {/* Lazy load content if specified and panel is open */}
+                    {lazyLoad ? (isOpen ? children : null) : children}
+                    
+                    {/* Mini navigation buttons */}
+                    {isOpen && (hasPrevious || hasNext) && (
+                      <div className="flex justify-between items-center pt-4 border-t border-border/50">
+                        <div className="flex gap-2">
+                          {hasPrevious && (
+                            <Button 
+                              type="button"
+                              variant="outline" 
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onPrevious?.();
+                              }}
+                              className="h-8 px-3 text-xs"
+                            >
+                              <ArrowLeft className="h-3 w-3 mr-1" />
+                              Back
+                            </Button>
+                          )}
+                        </div>
+                        
+                        <div className="flex gap-2">
+                          {hasNext && (
+                            <Button 
+                              type="button"
+                              variant="outline" 
+                              size="sm"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onNext?.();
+                              }}
+                              className="h-8 px-3 text-xs"
+                            >
+                              Next
+                              <ArrowRight className="h-3 w-3 ml-1" />
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </motion.div>
               </CardContent>
             </motion.div>

@@ -218,6 +218,37 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
     }
   }, [sections, validationCounts, setOpenSections]);
 
+  // Section navigation handlers
+  const getSectionIndex = (sectionId: string) => sectionIds.indexOf(sectionId);
+  
+  const handleSectionNext = (currentSectionId: string) => {
+    const currentIndex = getSectionIndex(currentSectionId);
+    const nextIndex = currentIndex + 1;
+    if (nextIndex < sectionIds.length) {
+      const nextSectionId = sectionIds[nextIndex];
+      handleSectionClick(nextSectionId);
+    }
+  };
+
+  const handleSectionPrevious = (currentSectionId: string) => {
+    const currentIndex = getSectionIndex(currentSectionId);
+    const prevIndex = currentIndex - 1;
+    if (prevIndex >= 0) {
+      const prevSectionId = sectionIds[prevIndex];
+      handleSectionClick(prevSectionId);
+    }
+  };
+
+  const hasSectionNext = (sectionId: string) => {
+    const currentIndex = getSectionIndex(sectionId);
+    return currentIndex < sectionIds.length - 1;
+  };
+
+  const hasSectionPrevious = (sectionId: string) => {
+    const currentIndex = getSectionIndex(sectionId);
+    return currentIndex > 0;
+  };
+
   // Submit handler
   const onFormSubmit = async (data: FeaslyModelFormData) => {
     try {
@@ -325,6 +356,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'project-metadata')?.status || 'empty'}
               isOpen={openSections.has('project-metadata')}
               onToggle={(open) => handleSectionToggle('project-metadata', open)}
+              onNext={() => handleSectionNext('project-metadata')}
+              onPrevious={() => handleSectionPrevious('project-metadata')}
+              hasNext={hasSectionNext('project-metadata')}
+              hasPrevious={hasSectionPrevious('project-metadata')}
             >
               <ProjectMetadata />
             </SectionPanel>
@@ -337,6 +372,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'timeline')?.status || 'empty'}
               isOpen={openSections.has('timeline')}
               onToggle={(open) => handleSectionToggle('timeline', open)}
+              onNext={() => handleSectionNext('timeline')}
+              onPrevious={() => handleSectionPrevious('timeline')}
+              hasNext={hasSectionNext('timeline')}
+              hasPrevious={hasSectionPrevious('timeline')}
             >
               <TimelineSection />
             </SectionPanel>
@@ -349,6 +388,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'site-metrics')?.status || 'empty'}
               isOpen={openSections.has('site-metrics')}
               onToggle={(open) => handleSectionToggle('site-metrics', open)}
+              onNext={() => handleSectionNext('site-metrics')}
+              onPrevious={() => handleSectionPrevious('site-metrics')}
+              hasNext={hasSectionNext('site-metrics')}
+              hasPrevious={hasSectionPrevious('site-metrics')}
             >
               <SiteMetrics />
             </SectionPanel>
@@ -361,6 +404,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'financial-inputs')?.status || 'empty'}
               isOpen={openSections.has('financial-inputs')}
               onToggle={(open) => handleSectionToggle('financial-inputs', open)}
+              onNext={() => handleSectionNext('financial-inputs')}
+              onPrevious={() => handleSectionPrevious('financial-inputs')}
+              hasNext={hasSectionNext('financial-inputs')}
+              hasPrevious={hasSectionPrevious('financial-inputs')}
               lazyLoad
             >
               <FinancialInputsV2 projectId={projectId} />
@@ -374,6 +421,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'construction-development')?.status || 'empty'}
               isOpen={openSections.has('construction-development')}
               onToggle={(open) => handleSectionToggle('construction-development', open)}
+              onNext={() => handleSectionNext('construction-development')}
+              onPrevious={() => handleSectionPrevious('construction-development')}
+              hasNext={hasSectionNext('construction-development')}
+              hasPrevious={hasSectionPrevious('construction-development')}
             >
               <ConstructionCostGrid />
             </SectionPanel>
@@ -386,6 +437,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'soft-costs')?.status || 'empty'}
               isOpen={openSections.has('soft-costs')}
               onToggle={(open) => handleSectionToggle('soft-costs', open)}
+              onNext={() => handleSectionNext('soft-costs')}
+              onPrevious={() => handleSectionPrevious('soft-costs')}
+              hasNext={hasSectionNext('soft-costs')}
+              hasPrevious={hasSectionPrevious('soft-costs')}
             >
               <SoftCostGrid />
             </SectionPanel>
@@ -398,6 +453,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'marketing-costs')?.status || 'empty'}
               isOpen={openSections.has('marketing-costs')}
               onToggle={(open) => handleSectionToggle('marketing-costs', open)}
+              onNext={() => handleSectionNext('marketing-costs')}
+              onPrevious={() => handleSectionPrevious('marketing-costs')}
+              hasNext={hasSectionNext('marketing-costs')}
+              hasPrevious={hasSectionPrevious('marketing-costs')}
             >
               <MarketingCostGrid />
             </SectionPanel>
@@ -410,6 +469,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'contingencies')?.status || 'empty'}
               isOpen={openSections.has('contingencies')}
               onToggle={(open) => handleSectionToggle('contingencies', open)}
+              onNext={() => handleSectionNext('contingencies')}
+              onPrevious={() => handleSectionPrevious('contingencies')}
+              hasNext={hasSectionNext('contingencies')}
+              hasPrevious={hasSectionPrevious('contingencies')}
             >
               <ContingencyGrid />
             </SectionPanel>
@@ -422,6 +485,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'revenue-segments')?.status || 'empty'}
               isOpen={openSections.has('revenue-segments')}
               onToggle={(open) => handleSectionToggle('revenue-segments', open)}
+              onNext={() => handleSectionNext('revenue-segments')}
+              onPrevious={() => handleSectionPrevious('revenue-segments')}
+              hasNext={hasSectionNext('revenue-segments')}
+              hasPrevious={hasSectionPrevious('revenue-segments')}
             >
               <SaleLinesGrid />
             </SectionPanel>
@@ -434,6 +501,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'rental-segments')?.status || 'empty'}
               isOpen={openSections.has('rental-segments')}
               onToggle={(open) => handleSectionToggle('rental-segments', open)}
+              onNext={() => handleSectionNext('rental-segments')}
+              onPrevious={() => handleSectionPrevious('rental-segments')}
+              hasNext={hasSectionNext('rental-segments')}
+              hasPrevious={hasSectionPrevious('rental-segments')}
             >
               <RentalLinesGrid />
             </SectionPanel>
@@ -446,6 +517,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'scenarios')?.status || 'empty'}
               isOpen={openSections.has('scenarios')}
               onToggle={(open) => handleSectionToggle('scenarios', open)}
+              onNext={() => handleSectionNext('scenarios')}
+              onPrevious={() => handleSectionPrevious('scenarios')}
+              hasNext={hasSectionNext('scenarios')}
+              hasPrevious={hasSectionPrevious('scenarios')}
             >
               <ScenariosSection />
             </SectionPanel>
@@ -458,6 +533,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'results-insights')?.status || 'empty'}
               isOpen={openSections.has('results-insights')}
               onToggle={(open) => handleSectionToggle('results-insights', open)}
+              onNext={() => handleSectionNext('results-insights')}
+              onPrevious={() => handleSectionPrevious('results-insights')}
+              hasNext={hasSectionNext('results-insights')}
+              hasPrevious={hasSectionPrevious('results-insights')}
               lazyLoad
             >
               <KPIResults />
@@ -471,6 +550,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'export-ai')?.status || 'empty'}
               isOpen={openSections.has('export-ai')}
               onToggle={(open) => handleSectionToggle('export-ai', open)}
+              onNext={() => handleSectionNext('export-ai')}
+              onPrevious={() => handleSectionPrevious('export-ai')}
+              hasNext={hasSectionNext('export-ai')}
+              hasPrevious={hasSectionPrevious('export-ai')}
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <ExportPanel />
@@ -486,6 +569,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'compliance')?.status || 'empty'}
               isOpen={openSections.has('compliance')}
               onToggle={(open) => handleSectionToggle('compliance', open)}
+              onNext={() => handleSectionNext('compliance')}
+              onPrevious={() => handleSectionPrevious('compliance')}
+              hasNext={hasSectionNext('compliance')}
+              hasPrevious={hasSectionPrevious('compliance')}
             >
               <ComplianceStatusPanel projectId={projectId} />
             </SectionPanel>
@@ -498,6 +585,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               status={sections.find(s => s.id === 'comments')?.status || 'empty'}
               isOpen={openSections.has('comments')}
               onToggle={(open) => handleSectionToggle('comments', open)}
+              onNext={() => handleSectionNext('comments')}
+              onPrevious={() => handleSectionPrevious('comments')}
+              hasNext={hasSectionNext('comments')}
+              hasPrevious={hasSectionPrevious('comments')}
             >
               <CommentingPanel projectId={projectId} />
             </SectionPanel>
