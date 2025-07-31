@@ -17,6 +17,9 @@ import {
 } from "@/hooks/useTableStores";
 import KpiGrid from "@/components/KpiGrid";
 import CashChart from "@/components/CashChart";
+import CostTable from "@/components/CostTable";
+import SaleTable from "@/components/SaleTable";
+import RentalTable from "@/components/RentalTable";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -401,6 +404,16 @@ export default function Dashboard() {
           <KpiGrid/>
           <CashChart />
         </section>
+
+        {/* Inputs -------------------------------------------------- */}
+        <h2 className="text-lg font-semibold mt-8 mb-2">Construction Costs</h2>
+        <CostTable />
+
+        <h2 className="text-lg font-semibold mt-8 mb-2">Sale Revenue</h2>
+        <SaleTable />
+
+        <h2 className="text-lg font-semibold mt-8 mb-2">Rental Revenue</h2>
+        <RentalTable />
 
         {/* KPI Performance */}
         {latestKpis.length > 0 && (

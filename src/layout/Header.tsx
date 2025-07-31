@@ -11,8 +11,8 @@ export default function Header() {
   const { scenarios, create, setCurrent } = useScenarioStore(projectId);
 
   return (
-    <header className="sticky top-0 z-30 flex items-center bg-background/80
-                       backdrop-blur px-6 h-14 border-b">
+    <header className="sticky top-0 z-30 bg-background/70 backdrop-blur border-b">
+      <div className="flex items-center px-6 h-14">
       <span className="font-bold text-lg mr-6">Feasly</span>
 
       {/* ─ Project selector ───────────────────────────────── */}
@@ -86,6 +86,7 @@ export default function Header() {
       </Menu>
 
       <div className="ml-auto text-sm opacity-75">{user?.email}</div>
+      </div>
     </header>
   );
 }

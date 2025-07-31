@@ -59,10 +59,17 @@ export function makeTableStore<T extends Record<string, any>>(tableName: string)
       }
     };
 
-    useEffect(() => {
-      load();
-    }, [load]);
+  const update = useCallback(async (id: string, patch: Partial<T>) => {
+    if (!user || !projectId || !scenarioId) return;
+    
+    await supabase.from(tableName as any).update(patch).eq('id', id);
+    setItems(arr => arr.map(r => 'id' in r && r.id === id ? {...r, ...patch} : r));
+  }, [user, projectId, scenarioId, tableName]);
 
-    return { items, save, loading, reload: load };
-  };
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  return { items, save, loading, reload: load, update };
+};
 }
