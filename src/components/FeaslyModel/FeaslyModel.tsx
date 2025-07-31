@@ -40,7 +40,10 @@ import ScenarioPlayback from "./ScenarioPlayback";
 import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
 import { useExportData } from "@/hooks/useExportData";
 import { ComplianceStatusPanel } from "./ComplianceStatusPanel";
-import { FeaslyModelV2, isV2Enabled } from "./FeaslyModelV2";
+import { FeaslyModelV2 } from "./FeaslyModelV2";
+
+// Enable v2 by default
+const isV2Enabled = true;
 
 export default function FeaslyModel() {
   const { isRTL } = useLanguage();
