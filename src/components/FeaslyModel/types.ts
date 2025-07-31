@@ -87,6 +87,48 @@ export const feaslyModelSchema = z.object({
   target_irr: z.number().min(0, "IRR must be positive").max(100, "IRR target too high").optional(),
   target_roi: z.number().min(0, "ROI must be positive").max(1000, "ROI target too high").optional(),
   revenue_phasing_enabled: z.boolean().default(false),
+
+  // Enhanced Grid Data (Sprint 14)
+  construction_items: z.array(z.object({
+    id: z.string(),
+    description: z.string().min(1, "Description required"),
+    base_cost: z.number().min(0, "Base cost must be positive"),
+    start_month: z.number().int().min(0, "Start month must be positive"),
+    end_month: z.number().int().min(0, "End month must be positive"),
+    escalation_percent: z.number().min(0, "Escalation must be positive").max(50, "Escalation too high"),
+    retention_percent: z.number().min(0, "Retention must be positive").max(100, "Retention cannot exceed 100%"),
+    retention_release_lag: z.number().int().min(0, "Release lag must be positive")
+  }).refine((data) => data.end_month >= data.start_month, {
+    message: "End month must be after start month",
+    path: ["end_month"]
+  })).optional().default([]),
+
+  sale_lines: z.array(z.object({
+    id: z.string(),
+    product_type: z.string().min(1, "Product type required"),
+    units: z.number().int().min(1, "Units must be at least 1"),
+    price_per_unit: z.number().min(0, "Price must be positive"),
+    start_month: z.number().int().min(0, "Start month must be positive"),
+    end_month: z.number().int().min(0, "End month must be positive"),
+    annual_escalation_percent: z.number().min(0, "Escalation must be positive").max(50, "Escalation too high")
+  }).refine((data) => data.end_month >= data.start_month, {
+    message: "End month must be after start month",
+    path: ["end_month"]
+  })).optional().default([]),
+
+  rental_lines: z.array(z.object({
+    id: z.string(),
+    room_type: z.string().min(1, "Room type required"),
+    rooms: z.number().int().min(1, "Rooms must be at least 1"),
+    adr: z.number().min(0, "ADR must be positive"),
+    occupancy_rate: z.number().min(0, "Occupancy rate must be positive").max(100, "Occupancy rate cannot exceed 100%"),
+    start_month: z.number().int().min(0, "Start month must be positive"),
+    end_month: z.number().int().min(0, "End month must be positive"),
+    annual_escalation_percent: z.number().min(0, "Escalation must be positive").max(50, "Escalation too high")
+  }).refine((data) => data.end_month >= data.start_month, {
+    message: "End month must be after start month",
+    path: ["end_month"]
+  })).optional().default([]),
 }).refine((data) => {
   // Cross-field validation: construction start should be after project start
   if (data.start_date && data.construction_start_date) {

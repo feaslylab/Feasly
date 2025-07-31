@@ -11,7 +11,11 @@ import { cn } from '@/lib/utils';
 import { ModelSideNav, defaultModelSections, ModelSection } from '../model/ModelSideNav';
 import { SectionPanel } from '../model/SectionPanel';
 import { useSectionStatus, useWizardValidation } from '@/hooks/useSectionValidation';
+import { useGridCalculations } from '@/hooks/useGridCalculations';
 import { feaslyModelSchema, type FeaslyModelFormData } from './types';
+import { ConstructionCostGrid } from './ConstructionCostGrid';
+import { SaleLinesGrid } from './SaleLinesGrid';
+import { RentalLinesGrid } from './RentalLinesGrid';
 import { useToast } from '@/hooks/use-toast';
 
 // Import existing components

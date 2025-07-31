@@ -53,6 +53,51 @@ const mockValidateSection = (sectionId: string, formData?: any): SectionValidati
         requiredFields: ['total_construction_cost', 'land_cost'],
         missingFields: []
       };
+
+    case 'construction-development':
+      const constructionItems = formData?.construction_items || [];
+      const hasConstructionItems = constructionItems.length > 0;
+      const hasConstructionWarnings = constructionItems.some((item: any) => 
+        item.escalation_percent > 10
+      );
+      return {
+        isValid: hasConstructionItems,
+        hasWarnings: hasConstructionWarnings,
+        hasErrors: false,
+        completionRatio: hasConstructionItems ? 0.8 : 0.0,
+        requiredFields: ['construction_items'],
+        missingFields: hasConstructionItems ? [] : ['construction_items']
+      };
+
+    case 'revenue-segments':
+      const saleLines = formData?.sale_lines || [];
+      const hasSaleLines = saleLines.length > 0;
+      const hasSaleWarnings = saleLines.some((line: any) => 
+        line.annual_escalation_percent > 10
+      );
+      return {
+        isValid: hasSaleLines,
+        hasWarnings: hasSaleWarnings,
+        hasErrors: false,
+        completionRatio: hasSaleLines ? 0.8 : 0.0,
+        requiredFields: ['sale_lines'],
+        missingFields: hasSaleLines ? [] : ['sale_lines']
+      };
+
+    case 'rental-segments':
+      const rentalLines = formData?.rental_lines || [];
+      const hasRentalLines = rentalLines.length > 0;
+      const hasRentalWarnings = rentalLines.some((line: any) => 
+        line.occupancy_rate < 70 || line.annual_escalation_percent > 10
+      );
+      return {
+        isValid: hasRentalLines,
+        hasWarnings: hasRentalWarnings,
+        hasErrors: false,
+        completionRatio: hasRentalLines ? 0.8 : 0.0,
+        requiredFields: ['rental_lines'],
+        missingFields: hasRentalLines ? [] : ['rental_lines']
+      };
     
     default:
       return {

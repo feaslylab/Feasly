@@ -16,6 +16,7 @@ interface SectionPanelProps {
   status?: SectionStatus;
   className?: string;
   lazyLoad?: boolean;
+  rowCount?: number; // For grid components
 }
 
 const statusConfig = {
@@ -49,7 +50,8 @@ export function SectionPanel({
   onToggle,
   status = 'empty',
   className,
-  lazyLoad = false
+  lazyLoad = false,
+  rowCount
 }: SectionPanelProps) {
   const statusInfo = statusConfig[status];
   const StatusIcon = statusInfo.icon;
@@ -113,18 +115,25 @@ export function SectionPanel({
                 </div>
               </CardTitle>
               
-              <Badge 
-                variant="outline"
-                className={cn(
-                  'flex items-center gap-1.5 transition-colors',
-                  statusInfo.className
+              <div className="flex items-center gap-2">
+                {rowCount !== undefined && (
+                  <Badge variant="secondary" className="text-xs">
+                    {rowCount} {rowCount === 1 ? 'item' : 'items'}
+                  </Badge>
                 )}
-              >
-                <StatusIcon className="h-3 w-3" />
-                <span className="text-xs font-medium">
-                  {statusInfo.label}
-                </span>
-              </Badge>
+                <Badge 
+                  variant="outline"
+                  className={cn(
+                    'flex items-center gap-1.5 transition-colors',
+                    statusInfo.className
+                  )}
+                >
+                  <StatusIcon className="h-3 w-3" />
+                  <span className="text-xs font-medium">
+                    {statusInfo.label}
+                  </span>
+                </Badge>
+              </div>
             </div>
           </CardHeader>
         </CollapsibleTrigger>
