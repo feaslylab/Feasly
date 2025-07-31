@@ -60,7 +60,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
             <img 
-              src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
+              src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
               alt="Feasly Logo" 
               className="w-7 h-7 object-contain"
             />

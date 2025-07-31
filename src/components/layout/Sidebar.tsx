@@ -65,7 +65,7 @@ export const Sidebar = () => {
           <div className="flex items-center justify-center h-14 border-b border-border">
             <div className="w-6 h-6">
               <img 
-                src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
+                src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
                 alt="Feasly Logo" 
                 className="w-6 h-6 object-contain"
               />
