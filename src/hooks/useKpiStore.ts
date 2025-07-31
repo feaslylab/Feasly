@@ -37,8 +37,23 @@ export function useKpiStore(projectId:string|null, scenarioId:string|null) {
   },[projectId,scenarioId]);
 
   const saveKPIs = async (kpiData: any) => {
-    // Implementation for saving KPI data can be added here
-    console.log('Saving KPI data:', kpiData);
+    try {
+      const { error } = await supabase
+        .from('kpi_snapshot')
+        .upsert(kpiData, {
+          onConflict: 'project_id,scenario_id,user_id'
+        });
+
+      if (error) {
+        console.error('Error saving KPI data:', error);
+        throw error;
+      }
+
+      console.log('KPI data saved successfully');
+    } catch (error) {
+      console.error('Failed to save KPI data:', error);
+      throw error;
+    }
   };
 
   return { kpi, loading, saveKPIs };

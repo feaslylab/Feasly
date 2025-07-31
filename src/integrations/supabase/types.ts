@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_pref: {
+        Row: {
+          irr_threshold: number | null
+          npv_threshold: number | null
+          user_id: string
+        }
+        Insert: {
+          irr_threshold?: number | null
+          npv_threshold?: number | null
+          user_id: string
+        }
+        Update: {
+          irr_threshold?: number | null
+          npv_threshold?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       assets: {
         Row: {
           annual_revenue_aed: number | null
@@ -108,6 +126,33 @@ export type Database = {
           retention_release_lag?: number
           scenario_id?: string | null
           start_period?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      email_queue: {
+        Row: {
+          body: string
+          created_at: string | null
+          id: string
+          sent: boolean | null
+          subject: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          id?: string
+          sent?: boolean | null
+          subject: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          id?: string
+          sent?: boolean | null
+          subject?: string
           user_id?: string
         }
         Relationships: []

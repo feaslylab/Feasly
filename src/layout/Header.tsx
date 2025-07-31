@@ -1,14 +1,45 @@
+import { useState } from "react";
 import { Menu } from "@headlessui/react";
+import { Bell, Download } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useProjectStore } from "@/hooks/useProjectStore";
 import { useScenarioStore } from "@/hooks/useScenarioStore";
 import { useSelectionStore } from "@/state/selectionStore";
+import { useAlerts } from "@/hooks/useAlerts";
+import { Button } from "@/components/ui/button";
+import AlertDrawer from "@/components/dashboard/AlertDrawer";
+import { exportModel } from "@/api/exportModel";
 
 export default function Header() {
   const { user } = useAuth();
   const { projects } = useProjectStore();
   const { projectId, setProject, scenarioId, setScenario } = useSelectionStore();
   const { scenarios, create, setCurrent } = useScenarioStore(projectId);
+  const { unreadCount } = useAlerts();
+  const [alertDrawerOpen, setAlertDrawerOpen] = useState(false);
+
+  const handleExportZip = async () => {
+    if (!projectId || !scenarioId) {
+      alert('Please select a project and scenario first');
+      return;
+    }
+
+    try {
+      const zipBlob = await exportModel(projectId, scenarioId);
+      
+      const url = window.URL.createObjectURL(zipBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `model-${projectId}-${scenarioId}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Export failed. Please try again.');
+    }
+  };
 
   return (
     <header className="sticky top-0 z-30 bg-background/70 backdrop-blur border-b">
@@ -85,8 +116,44 @@ export default function Header() {
         </Menu.Items>
       </Menu>
 
-      <div className="ml-auto text-sm opacity-75">{user?.email}</div>
+      <div className="ml-auto flex items-center gap-3">
+        {/* Export ZIP button */}
+        <Button
+          onClick={handleExportZip}
+          variant="outline"
+          size="sm"
+          disabled={!projectId || !scenarioId}
+          className="flex items-center gap-2"
+        >
+          <Download className="h-4 w-4" />
+          Export ZIP
+        </Button>
+
+        {/* Alerts bell */}
+        <div className="relative">
+          <Button
+            onClick={() => setAlertDrawerOpen(true)}
+            variant="ghost"
+            size="sm"
+            className="relative p-2"
+          >
+            <Bell className="h-4 w-4" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-destructive text-destructive-foreground rounded-full flex items-center justify-center">
+                {unreadCount > 9 ? '9+' : unreadCount}
+              </span>
+            )}
+          </Button>
+        </div>
+
+        <div className="text-sm opacity-75">{user?.email}</div>
       </div>
+      </div>
+
+      <AlertDrawer 
+        isOpen={alertDrawerOpen} 
+        onClose={() => setAlertDrawerOpen(false)} 
+      />
     </header>
   );
 }
