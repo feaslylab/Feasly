@@ -31,6 +31,7 @@ import { AiInsightPanel } from './AiInsightPanel';
 import { FeaslyValidationPanel } from './FeaslyValidationPanel';
 import { ComplianceStatusPanel } from './ComplianceStatusPanel';
 import { CommentingPanel } from './CommentingPanel';
+import { RightSideValidationPanel } from './RightSideValidationPanel';
 
 // Check if v2 feature flag is enabled
 const isV2Enabled = import.meta.env.VITE_MODEL_V2 === 'true';
@@ -200,8 +201,10 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
         />
       )}
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-hidden">
+      {/* Main Content Area with Right Panel */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Central Content */}
+        <div className="flex-1 overflow-hidden">
         {/* Sticky Header */}
         <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="flex items-center justify-between p-4">
@@ -259,17 +262,6 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
               onToggle={(open) => handleSectionToggle('project-metadata', open)}
             >
               <ProjectMetadata />
-            </SectionPanel>
-
-            {/* Validation Panel */}
-            <SectionPanel
-              id="validation"
-              title="Validation Status"
-              status={sections.find(s => s.id === 'validation')?.status || 'empty'}
-              isOpen={openSections.has('validation')}
-              onToggle={(open) => handleSectionToggle('validation', open)}
-            >
-              <FeaslyValidationPanel />
             </SectionPanel>
 
             {/* Timeline */}
@@ -453,8 +445,14 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
           </FormProvider>
         </div>
       </div>
+
+      {/* Right Side Validation Panel */}
+      {!isMobile && (
+        <RightSideValidationPanel />
+      )}
     </div>
-  );
+  </div>
+);
 }
 
 export { FeaslyModelV2, isV2Enabled };
