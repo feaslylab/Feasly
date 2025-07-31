@@ -151,7 +151,7 @@ export default function DocsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
                 {/* Getting Started */}
-                <div className="bg-background rounded-xl border border-border p-6 hover:shadow-lg transition-shadow">
+                <div className="bg-background rounded-xl border border-border p-6 hover:shadow-elevation-2 transition-shadow">
                   <div className="bg-primary/10 p-3 rounded-full w-fit mb-4">
                     <Zap className="h-6 w-6 text-primary" />
                   </div>

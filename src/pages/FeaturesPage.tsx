@@ -176,7 +176,7 @@ export default function FeaturesPage() {
                     <ScrollProgressiveReveal direction="right" delay={0.2} className="flex-1">
                       <div className="relative">
                         <InteractiveBlob size={150} />
-                        <SpotlightCard className="bg-card rounded-xl border border-border shadow-lg overflow-hidden relative z-10">
+                        <SpotlightCard className="bg-card rounded-xl border border-border shadow-elevation-2 overflow-hidden relative z-10">
                           <div className="aspect-[4/3] w-full bg-gradient-to-br from-background to-muted flex items-center justify-center">
                             <div className="text-center space-y-2">
                               <feature.icon className={`h-12 w-12 ${feature.iconColor} mx-auto`} />
