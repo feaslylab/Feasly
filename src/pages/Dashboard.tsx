@@ -185,16 +185,16 @@ export default function Dashboard() {
     }
   };
 
-  // Enhanced time-based greeting
+  // Enhanced time-based greeting with consistent green theme
   const getTimeBasedGreeting = () => {
     const hour = new Date().getHours();
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
-    if (hour < 6) return { greeting: 'Good night', icon: '🌙', class: 'from-primary-dark to-primary' };
-    if (hour < 12) return { greeting: 'Good morning', icon: '☀️', class: 'from-warning to-warning-light' };
-    if (hour < 17) return { greeting: 'Good afternoon', icon: '🌤️', class: 'from-primary to-primary-light' };
-    if (hour < 21) return { greeting: 'Good evening', icon: '🌅', class: 'from-primary-glow to-primary' };
-    return { greeting: 'Good night', icon: '🌙', class: 'from-primary-dark to-primary' };
+    if (hour < 6) return { greeting: 'Good night', icon: '🌙', class: 'from-primary-dark to-primary', textClass: 'text-primary' };
+    if (hour < 12) return { greeting: 'Good morning', icon: '☀️', class: 'from-primary to-primary-light', textClass: 'text-primary' };
+    if (hour < 17) return { greeting: 'Good afternoon', icon: '🌤️', class: 'from-primary to-primary-light', textClass: 'text-primary' };
+    if (hour < 21) return { greeting: 'Good evening', icon: '🌅', class: 'from-primary-glow to-primary', textClass: 'text-primary' };
+    return { greeting: 'Good night', icon: '🌙', class: 'from-primary-dark to-primary', textClass: 'text-primary' };
   };
 
   // Portfolio health score calculation
@@ -413,10 +413,10 @@ export default function Dashboard() {
       <PageContainer className="py-8">
         {/* Premium Welcome Hero Section - Responsive Optimized */}
         <div className="mb-8 sm:mb-12">
-          <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-card via-card to-primary/5 border border-border/50 shadow-xl">
-            {/* Background decoration */}
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/5 opacity-50" />
-            <div className="absolute top-0 right-0 w-48 h-48 sm:w-96 sm:h-96 bg-primary/5 rounded-full blur-3xl -translate-y-24 translate-x-24 sm:-translate-y-48 sm:translate-x-48" />
+          <div className="relative overflow-hidden rounded-xl sm:rounded-2xl bg-gradient-to-br from-primary/8 via-primary/5 to-primary/12 border border-primary/20 shadow-xl">
+            {/* Enhanced background decoration with more green */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/15 via-primary/8 to-primary/10 opacity-60" />
+            <div className="absolute top-0 right-0 w-48 h-48 sm:w-96 sm:h-96 bg-primary/10 rounded-full blur-3xl -translate-y-24 translate-x-24 sm:-translate-y-48 sm:translate-x-48" />
             
             <div className="relative p-4 sm:p-6 lg:p-8 xl:p-12">
               <div className="flex flex-col gap-6 sm:gap-8 xl:flex-row xl:items-center xl:justify-between">
@@ -443,7 +443,7 @@ export default function Dashboard() {
                           <div className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl flex-shrink-0 animate-fade-in">{timeGreeting.icon}</div>
                           <div className="min-w-0 flex-1">
                             <div className="space-y-2">
-                              <h1 className={`text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r ${timeGreeting.class} bg-clip-text text-transparent leading-tight animate-fade-in`}>
+                              <h1 className={`text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold ${timeGreeting.textClass} leading-tight animate-fade-in`}>
                                 {timeGreeting.greeting}
                               </h1>
                               <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-foreground animate-fade-in">
@@ -474,7 +474,7 @@ export default function Dashboard() {
                           <TooltipProvider>
                             <Tooltip>
                               <TooltipTrigger>
-                                <div className="flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-card/60 border border-border/30 hover:border-primary/30 transition-all duration-300">
+                                <div className="flex items-center gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-primary/10 border border-primary/30 hover:border-primary/50 transition-all duration-300 hover:bg-primary/15">
                                   <div className="flex items-center gap-2 sm:gap-3">
                                     <div className="relative">
                                       <div className="w-8 h-8 sm:w-10 lg:w-12 sm:h-10 lg:h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
@@ -658,12 +658,12 @@ export default function Dashboard() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/12 via-primary/6 to-primary/8 shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/25 via-transparent to-primary/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
                     <CardTitle className="text-sm font-medium text-foreground/80">Portfolio NPV</CardTitle>
-                    <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center group-hover:bg-success/20 transition-colors duration-300 group-hover:scale-110">
-                      <DollarSign className="h-5 w-5 text-success" />
+                    <div className="h-10 w-10 rounded-full bg-primary/15 flex items-center justify-center group-hover:bg-primary/25 transition-colors duration-300 group-hover:scale-110">
+                      <DollarSign className="h-5 w-5 text-primary" />
                     </div>
                   </CardHeader>
                   <CardContent className="relative">
@@ -674,8 +674,8 @@ export default function Dashboard() {
                       From {kpis.length} calculated projects
                     </p>
                     <div className="mt-3 flex items-center space-x-1">
-                       <TrendingUp className="h-4 w-4 text-success animate-pulse" />
-                       <span className="text-sm text-success font-medium">+12.5%</span>
+                       <TrendingUp className="h-4 w-4 text-primary animate-pulse" />
+                       <span className="text-sm text-primary font-medium">+12.5%</span>
                       <span className="text-xs text-muted-foreground">vs last month</span>
                     </div>
                   </CardContent>
