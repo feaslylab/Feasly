@@ -32,7 +32,7 @@ export default function CashChart() {
         Export CSV
       </Button>
 
-      <ResponsiveContainer key={data.length} width="100%" height={240}>
+      <ResponsiveContainer key={data.length} width="100%" height={310}>
         <AreaChart data={data} stackOffset="sign">
           <XAxis dataKey="period" hide />
           <YAxis
@@ -43,10 +43,10 @@ export default function CashChart() {
             formatter={(v: number) => v.toLocaleString()}
             labelFormatter={p => `Period ${p}`}
           />
-          <Legend />
-          <Area type="monotone" dataKey="inflow" stackId="1" fillOpacity={0.55} fill="hsl(var(--success))" name="Inflow"/>
-          <Area type="monotone" dataKey="outflow" stackId="1" fillOpacity={0.55} fill="hsl(var(--destructive))" name="Outflow"/>
-          <Area type="monotone" dataKey="net" stackId="1" fillOpacity={0.55} fill="hsl(var(--primary))" name="Net"/>
+          <Legend verticalAlign="top" height={24} />
+          <Area type="monotone" dataKey="inflow" stackId="1" fillOpacity={0.55} fill="hsl(var(--success))" stroke="none" name="Inflow"/>
+          <Area type="monotone" dataKey="outflow" stackId="1" fillOpacity={0.55} fill="hsl(var(--destructive))" stroke="none" name="Outflow"/>
+          <Area type="monotone" dataKey="net" stackId="1" fillOpacity={0.55} fill="hsl(var(--primary))" stroke="none" name="Net"/>
         </AreaChart>
       </ResponsiveContainer>
     </div>

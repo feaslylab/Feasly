@@ -4,8 +4,8 @@ import { vi, describe, it, expect } from 'vitest';
 
 vi.mock('@/hooks/useCashSeries', () => ({
   useCashSeries: () => ([
-    { period: 'P0', inflow: 1, outflow: 0, net: 1 },
-    { period: 'P1', inflow: 0, outflow: 1, net: -1 },
+    { period:'P0', inflow:1, outflow:0, net:1 },
+    { period:'P1', inflow:0, outflow:1, net:-1 },
   ])
 }));
 
