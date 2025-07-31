@@ -59,9 +59,10 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
     scrollDirection 
   } = useMagneticScroll({
     threshold: 80,
-    hideDelay: 200,
+    hideDelay: 1000, // Much longer delay before hiding
     showDelay: 100,
-    magneticZone: MAG_OFFSET
+    magneticZone: MAG_OFFSET,
+    aggressiveHide: false // Keep navigation visible for form interaction
   });
 
   const { getStickyContainerStyles, checkStickyParent } = useStickyNavigation({
