@@ -61,6 +61,9 @@ const AppRoutes = () => {
   // Check if we're on the marketing site
   const isMarketingRoute = window.location.pathname === '/';
   
+  // Check if we're on auth/welcome page - don't show Header on these pages
+  const isAuthRoute = window.location.pathname === '/welcome';
+  
   // If we're on the marketing site path, show marketing content
   if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison') || window.location.pathname === '/welcome') {
     
@@ -159,7 +162,7 @@ const App = () => (
       <QueryClientProvider client={queryClient}>
         <OrganizationProvider>
           <TooltipProvider>
-            <Header />
+            <ConditionalHeader />
             <Toaster />
             <Sonner />
             <PerformanceMonitor />
@@ -170,5 +173,15 @@ const App = () => (
     </LanguageProvider>
   </ThemeProvider>
 );
+
+const ConditionalHeader = () => {
+  const location = useLocation();
+  const isAuthRoute = location.pathname === '/welcome';
+  
+  // Don't show Header on auth pages
+  if (isAuthRoute) return null;
+  
+  return <Header />;
+};
 
 export default App;

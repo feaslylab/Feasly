@@ -41,11 +41,11 @@ export const AuthPage = ({ onSuccess }: AuthPageProps) => {
       >
         <Link to="/" className="flex items-center group">
           <motion.span 
-            className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent transition-transform duration-200"
+            className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent transition-transform duration-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Feasly
+            F
           </motion.span>
         </Link>
       </motion.div>
