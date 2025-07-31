@@ -12,15 +12,19 @@ import { exportModel } from "@/api/exportModel";
 import { CommentButton } from "@/components/collaboration/CommentButton";
 import { PresenceDots } from "@/components/collaboration/PresenceDots";
 import NewScenarioDialog from '@/components/modals/NewScenarioDialog';
+import ScenarioRenameDialog from '@/components/modals/ScenarioRenameDialog';
 
 export default function Header() {
   const { user } = useAuth();
   const { projects } = useProjectStore();
   const { projectId, setProject, scenarioId, setScenario } = useSelectionStore();
-  const { scenarios, create, setCurrent, reload } = useScenarioStore(projectId);
+  const { scenarios, create, rename, remove, setCurrent, reload } = useScenarioStore(projectId);
   const { unreadCount } = useAlerts();
   const [alertDrawerOpen, setAlertDrawerOpen] = useState(false);
   const [newScenarioOpen, setNewScenarioOpen] = useState(false);
+  const [renameScenarioOpen, setRenameScenarioOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+  const [selectedScenarioForAction, setSelectedScenarioForAction] = useState<string | null>(null);
 
   const handleExportZip = async () => {
     if (!projectId || !scenarioId) {
@@ -109,6 +113,44 @@ export default function Header() {
                 )}
               </Menu.Item>
             ))}
+            
+            {scenarioId && (
+              <>
+                <div className="border-t border-gray-200 my-1"></div>
+                <Menu.Item>
+                  {({ active }) => (
+                    <button 
+                      className={`${
+                        active ? 'bg-violet-500 text-white' : 'text-gray-900'
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      onClick={() => {
+                        setSelectedScenarioForAction(scenarioId);
+                        setRenameScenarioOpen(true);
+                      }}
+                    >
+                      Rename scenario…
+                    </button>
+                  )}
+                </Menu.Item>
+                <Menu.Item>
+                  {({ active }) => (
+                    <button 
+                      className={`${
+                        active ? 'bg-red-500 text-white' : 'text-red-600'
+                      } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                      onClick={() => {
+                        setSelectedScenarioForAction(scenarioId);
+                        setDeleteConfirmOpen(true);
+                      }}
+                    >
+                      Delete…
+                    </button>
+                  )}
+                </Menu.Item>
+                <div className="border-t border-gray-200 my-1"></div>
+              </>
+            )}
+            
             <Menu.Item>
               {({ active }) => (
                 <button 
@@ -192,6 +234,66 @@ export default function Header() {
           return false;                      // failure → dialog stays open
         }}
       />
+
+      <ScenarioRenameDialog
+        open={renameScenarioOpen}
+        onClose={() => {
+          setRenameScenarioOpen(false);
+          setSelectedScenarioForAction(null);
+        }}
+        currentName={scenarios.find(s => s.id === selectedScenarioForAction)?.name || ''}
+        onRename={async (name) => {
+          if (!selectedScenarioForAction) return false;
+          const success = await rename(selectedScenarioForAction, name);
+          if (success) {
+            reload();
+            return true;
+          }
+          return false;
+        }}
+      />
+
+      {/* Delete confirmation dialog */}
+      {deleteConfirmOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-background rounded-lg p-6 max-w-sm mx-4 shadow-lg">
+            <h3 className="text-lg font-semibold mb-2">Delete Scenario</h3>
+            <p className="text-muted-foreground mb-4">
+              Are you sure you want to delete "{scenarios.find(s => s.id === selectedScenarioForAction)?.name}"? 
+              This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setDeleteConfirmOpen(false);
+                  setSelectedScenarioForAction(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={async () => {
+                  if (!selectedScenarioForAction) return;
+                  const success = await remove(selectedScenarioForAction);
+                  if (success) {
+                    setDeleteConfirmOpen(false);
+                    setSelectedScenarioForAction(null);
+                    reload();
+                    // If we deleted the current scenario, clear selection
+                    if (selectedScenarioForAction === scenarioId) {
+                      setScenario('');
+                    }
+                  }
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

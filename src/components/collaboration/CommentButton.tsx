@@ -9,6 +9,7 @@ interface CommentButtonProps {
   className?: string
   variant?: 'default' | 'ghost' | 'outline'
   size?: 'sm' | 'default' | 'lg'
+  compact?: boolean  // New compact prop for chip style
 }
 
 export function CommentButton({ 
@@ -16,11 +17,34 @@ export function CommentButton({
   targetLabel, 
   className = '',
   variant = 'ghost',
-  size = 'sm'
+  size = 'sm',
+  compact = false
 }: CommentButtonProps) {
   if (!targetId) return null;
   
   const [commentsOpen, setCommentsOpen] = useState(false)
+
+  if (compact) {
+    // Render as a compact chip
+    return (
+      <>
+        <button
+          onClick={() => setCommentsOpen(true)}
+          className={`inline-flex items-center gap-1 px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors ${className}`}
+          title="Add comment"
+        >
+          💬 Add comment
+        </button>
+
+        <CommentsBar
+          isOpen={commentsOpen}
+          onClose={() => setCommentsOpen(false)}
+          targetId={targetId}
+          targetLabel={targetLabel}
+        />
+      </>
+    )
+  }
 
   return (
     <>

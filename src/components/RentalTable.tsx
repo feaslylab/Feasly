@@ -61,6 +61,15 @@ export default function RentalTable() {
                       onClick={()=>setEditing(row.id)}>
                       <Pencil size={14}/>
                     </Button>}
+                {/* Show comment chip for empty rows */}
+                {(!row.rooms || row.rooms === 0) && !editing && (
+                  <CommentButton
+                    targetId={`rental_item:${row.id}`}
+                    targetLabel={`Rental Item ${row.id.slice(0, 8)}`}
+                    compact={true}
+                    className="ml-2"
+                  />
+                )}
               </td>
             </tr>
           ))}

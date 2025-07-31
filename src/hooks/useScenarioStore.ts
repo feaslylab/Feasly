@@ -108,6 +108,60 @@ export function useScenarioStore(projectId: string | null) {
     return null;
   }, [projectId ?? '', user?.id ?? '']);
 
+  const rename = useCallback(async (id: string, name: string): Promise<boolean> => {
+    if (!projectId || !user) return false;
+
+    const { error } = await supabase
+      .from('scenarios')
+      .update({ name, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      toast({
+        title: 'Error renaming scenario',
+        description: import.meta.env.MODE === 'development'
+          ? error.details || error.message
+          : 'Could not rename scenario – please try again.',
+        variant: 'destructive',
+      });
+      return false;
+    }
+
+    setScenarios(prev => prev.map(s => s.id === id ? { ...s, name } : s));
+    return true;
+  }, [projectId ?? '', user?.id ?? '']);
+
+  const remove = useCallback(async (id: string): Promise<boolean> => {
+    if (!projectId || !user) return false;
+
+    const { error } = await supabase
+      .from('scenarios')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id);
+
+    if (error) {
+      toast({
+        title: 'Error deleting scenario',
+        description: import.meta.env.MODE === 'development'
+          ? error.details || error.message
+          : 'Could not delete scenario – please try again.',
+        variant: 'destructive',
+      });
+      return false;
+    }
+
+    setScenarios(prev => {
+      const updated = prev.filter(s => s.id !== id);
+      if (current?.id === id) {
+        setCurrent(updated[0] ?? null);
+      }
+      return updated;
+    });
+    return true;
+  }, [projectId ?? '', user?.id ?? '']);
+
   // ALL hooks must be called before any early returns
   useEffect(() => {
     loadScenarios();
@@ -206,6 +260,8 @@ export function useScenarioStore(projectId: string | null) {
     current,
     setCurrent,
     create,
+    rename,
+    remove,
     loading,
     reload,
   };
