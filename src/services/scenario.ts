@@ -31,8 +31,11 @@ export interface ScenarioResult {
   cashflow: number[];
   kpis: {
     npv: number;
-    irr: number;
+    projectIRR: number | null;
     profit: number;
+    equityMultiple: number;
+    paybackMonths: number | null;
+    peakFunding: number;
     totalRevenue: number;
     totalCosts: number;
   };

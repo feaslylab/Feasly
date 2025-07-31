@@ -117,7 +117,7 @@ export default function CashFlowPage() {
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">
-                    {(result.kpis.irr * 100).toFixed(1)}%
+                    {(result.kpis.projectIRR * 100).toFixed(1)}%
                   </div>
                   <div className="text-sm text-muted-foreground">Internal Rate of Return</div>
                 </div>

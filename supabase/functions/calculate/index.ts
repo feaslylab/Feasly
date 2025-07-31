@@ -64,17 +64,47 @@ function runScenario(scenario: any) {
     }
   });
   
-  // Calculate KPIs
+  // Calculate KPIs with enhanced metrics
   const totalCashflow = cashflow.reduce((sum, val) => sum + val, 0);
   const npv = cashflow.reduce((acc, cf, i) => acc + cf / Math.pow(1.1, i / 12), 0);
-  const irr = totalCashflow > 0 ? 0.15 : -0.05; // Simplified IRR calculation
+  const projectIRR = totalCashflow > 0 ? 0.15 : -0.05; // Simplified IRR calculation
+  
+  // Enhanced KPI calculations
+  const totalInflow = cashflow.filter(cf => cf > 0).reduce((sum, cf) => sum + cf, 0);
+  const totalOutflow = Math.abs(cashflow.filter(cf => cf < 0).reduce((sum, cf) => sum + cf, 0));
+  const equityMultiple = totalOutflow > 0 ? totalInflow / totalOutflow : 0;
+  
+  // Payback period calculation
+  let cumulativeCF = 0;
+  let paybackMonths = null;
+  for (let i = 0; i < cashflow.length; i++) {
+    cumulativeCF += cashflow[i];
+    if (cumulativeCF > 0 && paybackMonths === null) {
+      paybackMonths = i;
+      break;
+    }
+  }
+  
+  // Peak funding requirement
+  let cumulativeForPeak = 0;
+  let peakFunding = 0;
+  for (const cf of cashflow) {
+    cumulativeForPeak += cf;
+    if (cumulativeForPeak < peakFunding) {
+      peakFunding = cumulativeForPeak;
+    }
+  }
+  peakFunding = Math.abs(peakFunding);
   
   return {
     cashflow,
     kpis: {
       npv,
-      irr,
+      projectIRR,
       profit: totalCashflow,
+      equityMultiple,
+      paybackMonths,
+      peakFunding,
       totalRevenue: cashflow.filter(v => v > 0).reduce((sum, val) => sum + val, 0),
       totalCosts: Math.abs(cashflow.filter(v => v < 0).reduce((sum, val) => sum + val, 0))
     },
