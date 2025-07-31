@@ -12,6 +12,7 @@ import { ModelSideNav, defaultModelSections, ModelSection } from '../model/Model
 import { SectionPanel } from '../model/SectionPanel';
 import { useSectionStatus, useWizardValidation } from '@/hooks/useSectionValidation';
 import { useGridCalculations } from '@/hooks/useGridCalculations';
+import { useScrollSpy } from '@/hooks/useScrollSpy';
 import { feaslyModelSchema, type FeaslyModelFormData } from './types';
 import { ConstructionCostGrid } from './ConstructionCostGrid';
 import { SaleLinesGrid } from './SaleLinesGrid';
@@ -58,7 +59,6 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
   });
 
   // State management
-  const [activeSection, setActiveSection] = useState<string>('project-metadata');
   const [openSections, setOpenSections] = useState<Set<string>>(new Set(['project-metadata']));
   const [isWizardMode, setIsWizardMode] = useState(false);
   const [lastSaved, setLastSaved] = useState<string>('');
@@ -77,45 +77,32 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
   const sectionIds = sections.map(s => s.id);
   const wizard = useWizardValidation(sectionIds, formData);
 
-  // Intersection Observer for scroll spy
-  useEffect(() => {
-    if (isWizardMode || isMobile) return;
+  // Enhanced scroll spy with proper collision detection
+  const { activeSection, scrollToSection, setSectionCollapsed } = useScrollSpy(
+    sectionIds,
+    {
+      enabled: !isWizardMode && !isMobile,
+      offsetTop: 64, // Header height
+      rootMargin: '-20% 0px -20% 0px',
+      threshold: 0.3
+    }
+  );
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-            setActiveSection(entry.target.id);
-          }
-        });
-      },
-      { threshold: 0.5, rootMargin: '-20% 0px -20% 0px' }
-    );
-
-    sections.forEach((section) => {
-      const element = document.getElementById(section.id);
-      if (element) observer.observe(element);
-    });
-
-    return () => observer.disconnect();
-  }, [sections, isWizardMode, isMobile]);
-
-  // Handle section navigation
+  // Handle section navigation with proper scrolling
   const handleSectionClick = useCallback((sectionId: string) => {
-    setActiveSection(sectionId);
-    
     if (isWizardMode) {
       const stepIndex = sectionIds.indexOf(sectionId);
       wizard.goToStep(stepIndex);
       setOpenSections(new Set([sectionId]));
     } else {
       setOpenSections(prev => new Set([...prev, sectionId]));
+      scrollToSection(sectionId, 'smooth');
     }
-  }, [isWizardMode, sectionIds, wizard]);
+  }, [isWizardMode, sectionIds, wizard, scrollToSection]);
 
-  // Handle section panel toggle
+  // Handle section panel toggle with scroll spy integration
   const handleSectionToggle = useCallback((sectionId: string, isOpen: boolean) => {
-    if (isWizardMode) return; // Wizard mode controls this
+    if (isWizardMode) return;
 
     setOpenSections(prev => {
       const newSet = new Set(prev);
@@ -126,7 +113,18 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
       }
       return newSet;
     });
-  }, [isWizardMode]);
+
+    // Update scroll spy collapsed state
+    setSectionCollapsed(sectionId, !isOpen);
+  }, [isWizardMode, setSectionCollapsed]);
+
+  // Sync collapsed state when sections change
+  useEffect(() => {
+    sectionIds.forEach(id => {
+      const isOpen = openSections.has(id);
+      setSectionCollapsed(id, !isOpen);
+    });
+  }, [openSections, sectionIds, setSectionCollapsed]);
 
   // Auto-save functionality
   useEffect(() => {
@@ -156,7 +154,7 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
       wizard.nextStep();
       const nextSectionId = sectionIds[wizard.currentStep + 1];
       if (nextSectionId) {
-        setActiveSection(nextSectionId);
+        scrollToSection(nextSectionId);
         setOpenSections(new Set([nextSectionId]));
       }
     }
@@ -166,7 +164,7 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
     wizard.previousStep();
     const prevSectionId = sectionIds[wizard.currentStep - 1];
     if (prevSectionId) {
-      setActiveSection(prevSectionId);
+      scrollToSection(prevSectionId);
       setOpenSections(new Set([prevSectionId]));
     }
   };
@@ -189,7 +187,6 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
           activeSection={activeSection}
           onSectionClick={handleSectionClick}
           isMobile={false}
-          className="sticky top-0"
         />
       )}
 
@@ -307,6 +304,39 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
               lazyLoad
             >
               <FinancialInputsV2 projectId={projectId} />
+            </SectionPanel>
+
+            {/* Construction & Development */}
+            <SectionPanel
+              id="construction-development"
+              title="Construction & Development"
+              status={sections.find(s => s.id === 'construction-development')?.status || 'empty'}
+              isOpen={openSections.has('construction-development')}
+              onToggle={(open) => handleSectionToggle('construction-development', open)}
+            >
+              <ConstructionCostGrid />
+            </SectionPanel>
+
+            {/* Revenue Segments */}
+            <SectionPanel
+              id="revenue-segments"
+              title="Revenue Segments"
+              status={sections.find(s => s.id === 'revenue-segments')?.status || 'empty'}
+              isOpen={openSections.has('revenue-segments')}
+              onToggle={(open) => handleSectionToggle('revenue-segments', open)}
+            >
+              <SaleLinesGrid />
+            </SectionPanel>
+
+            {/* Rental Segments */}
+            <SectionPanel
+              id="rental-segments"
+              title="Rental Segments"
+              status={sections.find(s => s.id === 'rental-segments')?.status || 'empty'}
+              isOpen={openSections.has('rental-segments')}
+              onToggle={(open) => handleSectionToggle('rental-segments', open)}
+            >
+              <RentalLinesGrid />
             </SectionPanel>
 
             {/* Scenarios */}

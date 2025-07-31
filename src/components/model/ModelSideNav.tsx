@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { useStickyNavigation } from '@/hooks/useStickyNavigation';
 import { 
   Menu, 
   Building2, 
@@ -43,8 +44,21 @@ interface ModelMobileNavProps extends ModelSideNavProps {
   isMobile: boolean;
 }
 
-// Desktop sidebar navigation
+// Desktop sidebar navigation with improved sticky behavior
 function DesktopSideNav({ sections, activeSection, onSectionClick, className }: ModelSideNavProps) {
+  const navRef = useRef<HTMLDivElement>(null);
+  const { getStickyContainerStyles, checkStickyParent } = useStickyNavigation({
+    topOffset: 64, // Account for global header
+    maxHeight: 'calc(100vh - 4rem)'
+  });
+
+  // Check for sticky parent issues on mount
+  useEffect(() => {
+    if (navRef.current) {
+      checkStickyParent(navRef.current);
+    }
+  }, [checkStickyParent]);
+
   const getStatusIcon = (status: SectionStatus) => {
     switch (status) {
       case 'valid':
@@ -58,53 +72,69 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
     }
   };
 
+  const handleSectionClick = (sectionId: string) => {
+    // Call the parent handler which should handle smooth scrolling
+    onSectionClick(sectionId);
+  };
+
+  const stickyStyles = getStickyContainerStyles();
+
   return (
-    <div className={cn('w-64 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60', className)} data-testid="desktop-sidenav">
-      <div className="sticky top-0 h-screen">
-        <div className="p-4 border-b">
-          <h2 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-            Model Sections
-          </h2>
-        </div>
-        
-        <ScrollArea className="h-full px-3 py-4">
-          <div className="space-y-1">
-            {sections.map((section) => {
-              const Icon = section.icon;
-              const isActive = activeSection === section.id;
-              
-              return (
-                <Button
-                  key={section.id}
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    'w-full justify-start gap-3 h-auto py-3 px-3',
-                    'hover:bg-muted/80 transition-colors',
-                    isActive && 'bg-primary/10 text-primary hover:bg-primary/15'
-                  )}
-                  data-testid="section-nav-item"
-                  data-section={section.id}
-                >
-                  <Icon className="h-4 w-4 flex-shrink-0" />
-                  <span className="flex-1 text-left text-sm truncate">
-                    {section.title}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    {section.required && (
-                      <Badge variant="outline" className="h-4 px-1 text-xs">
-                        REQ
-                      </Badge>
-                    )}
-                    {getStatusIcon(section.status)}
-                  </div>
-                </Button>
-              );
-            })}
-          </div>
-        </ScrollArea>
+    <aside 
+      ref={navRef}
+      className={cn('w-64 border-r bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60', className)} 
+      style={stickyStyles}
+      data-testid="desktop-sidenav"
+    >
+      <div className="p-4 border-b">
+        <h2 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
+          Model Sections
+        </h2>
       </div>
-    </div>
+      
+      <ScrollArea className="h-full px-3 py-4">
+        <div className="space-y-1">
+          {sections.map((section) => {
+            const Icon = section.icon;
+            const isActive = activeSection === section.id;
+            
+            return (
+              <Button
+                key={section.id}
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  'w-full justify-start gap-3 h-auto py-3 px-3',
+                  'hover:bg-muted/80 transition-colors relative',
+                  isActive && [
+                    'bg-primary/10 text-primary hover:bg-primary/15',
+                    'before:absolute before:left-0 before:top-0 before:bottom-0',
+                    'before:w-0.5 before:bg-primary before:rounded-r'
+                  ]
+                )}
+                onClick={() => handleSectionClick(section.id)}
+                data-testid="section-nav-item"
+                data-section={section.id}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <Icon className="h-4 w-4 flex-shrink-0" />
+                <span className="flex-1 text-left text-sm truncate">
+                  {section.title}
+                </span>
+                <div className="flex items-center gap-2">
+                  {section.required && (
+                    <Badge variant="outline" className="h-4 px-1 text-xs">
+                      REQ
+                    </Badge>
+                  )}
+                  {getStatusIcon(section.status)}
+                </div>
+              </Button>
+            );
+          })}
+        </div>
+      </ScrollArea>
+    </aside>
   );
 }
 
@@ -254,6 +284,26 @@ export const defaultModelSections: ModelSection[] = [
     icon: DollarSign,
     status: 'empty',
     required: true
+  },
+  {
+    id: 'construction-development',
+    title: 'Construction & Development',
+    icon: Building2,
+    status: 'empty',
+    required: true
+  },
+  {
+    id: 'revenue-segments',
+    title: 'Revenue Segments',
+    icon: TrendingUp,
+    status: 'empty',
+    required: true
+  },
+  {
+    id: 'rental-segments',
+    title: 'Rental Segments',
+    icon: Building2,
+    status: 'empty'
   },
   {
     id: 'scenarios',

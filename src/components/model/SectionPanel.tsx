@@ -59,14 +59,18 @@ export function SectionPanel({
   const handleToggle = () => {
     onToggle?.(!isOpen);
     
-    // Scroll to section when opening
+    // Scroll to section when opening with proper offset for header
     if (!isOpen) {
       setTimeout(() => {
         const element = document.getElementById(id);
         if (element) {
-          element.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'start' 
+          const elementRect = element.getBoundingClientRect();
+          const absoluteElementTop = elementRect.top + window.pageYOffset;
+          const targetPosition = absoluteElementTop - 16; // 16px offset for header
+          
+          window.scrollTo({
+            top: Math.max(0, targetPosition),
+            behavior: 'smooth'
           });
         }
       }, 100);
@@ -76,6 +80,7 @@ export function SectionPanel({
   return (
     <Card 
       id={id}
+      data-collapsed={!isOpen ? 'true' : undefined}
       className={cn(
         'transition-all duration-200',
         isOpen && 'ring-2 ring-primary/20',
