@@ -15,6 +15,9 @@ import { useGridCalculations } from '@/hooks/useGridCalculations';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
 import { feaslyModelSchema, type FeaslyModelFormData } from './types';
 import { ConstructionCostGrid } from './ConstructionCostGrid';
+import { SoftCostGrid } from './SoftCostGrid';
+import { MarketingCostGrid } from './MarketingCostGrid';
+import { ContingencyGrid } from './ContingencyGrid';
 import { SaleLinesGrid } from './SaleLinesGrid';
 import { RentalLinesGrid } from './RentalLinesGrid';
 import { useToast } from '@/hooks/use-toast';
@@ -307,6 +310,39 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
               onToggle={(open) => handleSectionToggle('construction-development', open)}
             >
               <ConstructionCostGrid />
+            </SectionPanel>
+
+            {/* Soft Costs */}
+            <SectionPanel
+              id="soft-costs"
+              title="Soft Costs"
+              status={sections.find(s => s.id === 'soft-costs')?.status || 'empty'}
+              isOpen={openSections.has('soft-costs')}
+              onToggle={(open) => handleSectionToggle('soft-costs', open)}
+            >
+              <SoftCostGrid />
+            </SectionPanel>
+
+            {/* Marketing Costs */}
+            <SectionPanel
+              id="marketing-costs"
+              title="Marketing Costs"
+              status={sections.find(s => s.id === 'marketing-costs')?.status || 'empty'}
+              isOpen={openSections.has('marketing-costs')}
+              onToggle={(open) => handleSectionToggle('marketing-costs', open)}
+            >
+              <MarketingCostGrid />
+            </SectionPanel>
+
+            {/* Contingencies */}
+            <SectionPanel
+              id="contingencies"
+              title="Contingencies"
+              status={sections.find(s => s.id === 'contingencies')?.status || 'empty'}
+              isOpen={openSections.has('contingencies')}
+              onToggle={(open) => handleSectionToggle('contingencies', open)}
+            >
+              <ContingencyGrid />
             </SectionPanel>
 
             {/* Revenue Segments */}

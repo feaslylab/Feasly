@@ -33,8 +33,33 @@ const transformToEngineFormat = (formData: FeaslyModelFormData) => {
     annualEscalation: line.annual_escalation_percent / 100
   }));
 
+  const softCostItems = (formData.soft_cost_items || []).map(item => ({
+    baseCost: item.amount,
+    startPeriod: item.start_month,
+    endPeriod: item.end_month,
+    escalationRate: item.escalation_percent / 100,
+    category: item.category
+  }));
+
+  const marketingCostItems = (formData.marketing_cost_items || []).map(item => ({
+    baseCost: item.amount,
+    startPeriod: item.start_month,
+    endPeriod: item.end_month,
+    escalationRate: item.escalation_percent / 100,
+    campaignType: item.campaign_type
+  }));
+
+  const contingencyItems = (formData.contingency_items || []).map(item => ({
+    percentageOfCosts: item.percentage_of_costs / 100,
+    appliesTo: item.applies_to,
+    triggerConditions: item.trigger_conditions
+  }));
+
   return {
     constructionItems,
+    softCostItems,
+    marketingCostItems,
+    contingencyItems,
     saleLines,
     rentalLines,
     horizon: 60 // Default 5 year horizon
@@ -48,6 +73,9 @@ export function useGridCalculations(projectId: string | null, scenarioId: string
   // Watch all grid fields
   const watchedData = watch([
     'construction_items',
+    'soft_cost_items',
+    'marketing_cost_items', 
+    'contingency_items',
     'sale_lines', 
     'rental_lines'
   ]);
@@ -55,8 +83,11 @@ export function useGridCalculations(projectId: string | null, scenarioId: string
   // Create a stable data object for debouncing
   const gridData = {
     construction_items: watchedData[0] || [],
-    sale_lines: watchedData[1] || [],
-    rental_lines: watchedData[2] || []
+    soft_cost_items: watchedData[1] || [],
+    marketing_cost_items: watchedData[2] || [],
+    contingency_items: watchedData[3] || [],
+    sale_lines: watchedData[4] || [],
+    rental_lines: watchedData[5] || []
   };
 
   // Debounce the grid data changes
@@ -68,6 +99,9 @@ export function useGridCalculations(projectId: string | null, scenarioId: string
     
     const hasData = 
       debouncedGridData.construction_items?.length > 0 ||
+      debouncedGridData.soft_cost_items?.length > 0 ||
+      debouncedGridData.marketing_cost_items?.length > 0 ||
+      debouncedGridData.contingency_items?.length > 0 ||
       debouncedGridData.sale_lines?.length > 0 ||
       debouncedGridData.rental_lines?.length > 0;
 
@@ -94,6 +128,9 @@ export function useGridCalculations(projectId: string | null, scenarioId: string
   // Get row counts for badges
   const getRowCounts = useCallback(() => ({
     constructionItems: gridData.construction_items?.length || 0,
+    softCostItems: gridData.soft_cost_items?.length || 0,
+    marketingCostItems: gridData.marketing_cost_items?.length || 0,
+    contingencyItems: gridData.contingency_items?.length || 0,
     saleLines: gridData.sale_lines?.length || 0,
     rentalLines: gridData.rental_lines?.length || 0
   }), [gridData]);
@@ -104,6 +141,9 @@ export function useGridCalculations(projectId: string | null, scenarioId: string
     error,
     getRowCounts,
     hasData: getRowCounts().constructionItems > 0 || 
+             getRowCounts().softCostItems > 0 ||
+             getRowCounts().marketingCostItems > 0 ||
+             getRowCounts().contingencyItems > 0 ||
              getRowCounts().saleLines > 0 || 
              getRowCounts().rentalLines > 0
   };

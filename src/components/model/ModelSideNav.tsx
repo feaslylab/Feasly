@@ -409,6 +409,24 @@ export const defaultModelSections: ModelSection[] = [
     required: true
   },
   {
+    id: 'soft-costs',
+    title: 'Soft Costs',
+    icon: FileText,
+    status: 'empty'
+  },
+  {
+    id: 'marketing-costs',
+    title: 'Marketing Costs',
+    icon: TrendingUp,
+    status: 'empty'
+  },
+  {
+    id: 'contingencies',
+    title: 'Contingencies',
+    icon: Settings,
+    status: 'empty'
+  },
+  {
     id: 'revenue-segments',
     title: 'Revenue Segments',
     icon: TrendingUp,
