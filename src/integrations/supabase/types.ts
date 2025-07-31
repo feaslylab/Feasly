@@ -641,6 +641,7 @@ export type Database = {
           npv: number
           profit: number
           project_id: string
+          scenario_id: string | null
           user_id: string
         }
         Insert: {
@@ -650,6 +651,7 @@ export type Database = {
           npv: number
           profit: number
           project_id: string
+          scenario_id?: string | null
           user_id: string
         }
         Update: {
@@ -659,6 +661,7 @@ export type Database = {
           npv?: number
           profit?: number
           project_id?: string
+          scenario_id?: string | null
           user_id?: string
         }
         Relationships: []

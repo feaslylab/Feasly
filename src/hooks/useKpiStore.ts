@@ -16,19 +16,21 @@ export function useKpiStore(projectId:string|null, scenarioId:string|null) {
   const [loading,setLoad]  = useState(false);
 
   useEffect(()=>{
-    if(!projectId) { setKpi(null); return; }
+    if(!projectId || !scenarioId) { setKpi(null); return; }
     setLoad(true);
     supabase.from("kpi_snapshot")
       .select("*")
       .eq("project_id", projectId)
+      .eq("scenario_id", scenarioId)
       .order("created_at",{ascending:false})
       .limit(1)
+      .single()
       .then(({data,error})=>{
         if(error) {
           console.error(error);
           setKpi(null);
         } else {
-          setKpi(data && data.length > 0 ? data[0] : null);
+          setKpi(data);
         }
         setLoad(false);
       });
