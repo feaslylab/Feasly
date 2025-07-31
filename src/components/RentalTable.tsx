@@ -4,6 +4,8 @@ import { useRentalStore } from '@/hooks/useTableStores';
 import { useSelectionStore } from '@/state/selectionStore';
 import { Button } from '@/components/ui/button';
 import { Input }  from '@/components/ui/input';
+import { PresenceDots } from '@/components/collaboration/PresenceDots';
+import { CommentButton } from '@/components/collaboration/CommentButton';
 
 export default function RentalTable() {
   const { projectId, scenarioId } = useSelectionStore();
@@ -15,7 +17,18 @@ export default function RentalTable() {
 
   return (
     <div className="rounded-xl border p-4 dark:bg-muted/40">
-      <h3 className="mb-2 font-semibold">Rental Lines</h3>
+      <div className="flex items-center gap-2 mb-2">
+        <span className="font-semibold">Rental Lines</span>
+        {projectId && (
+          <>
+            <PresenceDots className="ml-1" />
+            <CommentButton
+              targetId={`rental_table:${scenarioId}`}
+              targetLabel="Rental Revenue"
+            />
+          </>
+        )}
+      </div>
       <table className="w-full text-sm">
         <thead><tr className="text-muted-foreground">
           <th className="text-left">Rooms</th>

@@ -103,4 +103,16 @@ describe('useNewComments', () => {
     
     expect(supabase.channel).toHaveBeenCalledWith('comments:construction_item:456')
   })
+
+  it('should handle sale table comments', () => {
+    renderHook(() => useNewComments('sale_table:abc'))
+    
+    expect(supabase.channel).toHaveBeenCalledWith('comments:sale_table:abc')
+  })
+
+  it('should handle rental table comments', () => {
+    renderHook(() => useNewComments('rental_table:abc'))
+    
+    expect(supabase.channel).toHaveBeenCalledWith('comments:rental_table:abc')
+  })
 })

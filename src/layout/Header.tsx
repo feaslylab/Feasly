@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import AlertDrawer from "@/components/dashboard/AlertDrawer";
 import { exportModel } from "@/api/exportModel";
 import { NewScenarioModal } from "@/components/scenarios/NewScenarioModal";
+import { CommentButton } from "@/components/collaboration/CommentButton";
 
 export default function Header() {
   const { user } = useAuth();
@@ -130,6 +131,15 @@ export default function Header() {
 
         {/* Right side actions */}
         <div className="flex items-center gap-3">
+        {/* Project comments button */}
+        {projectId && (
+          <CommentButton
+            className="mr-2"
+            targetId={`project:${projectId}`}
+            targetLabel="Project"
+          />
+        )}
+        
         {/* Export ZIP button */}
         <Button
           onClick={handleExportZip}
