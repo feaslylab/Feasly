@@ -8,8 +8,9 @@ import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 interface Scenario {
   id: string;
   project_id: string;
+  user_id: string;
   name: string;
-  type: 'Base Case' | 'Optimistic' | 'Pessimistic';
+  description?: string;
   is_base: boolean;
   created_at: string;
   updated_at: string;
@@ -21,26 +22,20 @@ interface ReadOnlyScenarioSelectorProps {
   onScenarioChange: (scenarioId: string) => void;
 }
 
-const getScenarioIcon = (type: string) => {
-  switch (type) {
-    case 'Optimistic':
-      return <TrendingUp className="w-4 h-4 text-green-600" />;
-    case 'Pessimistic':
-      return <TrendingDown className="w-4 h-4 text-red-600" />;
-    default:
-      return <Minus className="w-4 h-4 text-blue-600" />;
+const getScenarioIcon = (isBase: boolean) => {
+  if (isBase) {
+    return <Minus className="w-4 h-4 text-blue-600" />;
+  } else {
+    return <TrendingUp className="w-4 h-4 text-gray-600" />;
   }
 };
 
-const getScenarioBadgeVariant = (type: string) => {
-  switch (type) {
-    case 'Optimistic':
-      return 'default';
-    case 'Pessimistic':
-      return 'destructive';
-    default:
-      return 'secondary';
-  }
+const getScenarioBadgeVariant = (isBase: boolean) => {
+  return isBase ? 'default' : 'secondary';
+};
+
+const getScenarioTypeLabel = (isBase: boolean) => {
+  return isBase ? 'Base' : 'Custom';
 };
 
 export const ReadOnlyScenarioSelector = ({ projectId, selectedScenarioId, onScenarioChange }: ReadOnlyScenarioSelectorProps) => {
@@ -51,7 +46,7 @@ export const ReadOnlyScenarioSelector = ({ projectId, selectedScenarioId, onScen
         .from("scenarios")
         .select("*")
         .eq("project_id", projectId)
-        .order("type", { ascending: true }); // Base Case first
+        .order("is_base", { ascending: false }); // Base scenarios first
 
       if (error) throw error;
       return data as Scenario[];
@@ -88,10 +83,10 @@ export const ReadOnlyScenarioSelector = ({ projectId, selectedScenarioId, onScen
             <SelectValue placeholder="Select scenario">
               {selectedScenario && (
                 <div className="flex items-center space-x-2">
-                {getScenarioIcon(selectedScenario.type)}
+                {getScenarioIcon(selectedScenario.is_base)}
                 <span>{selectedScenario.name}</span>
-                <Badge variant={getScenarioBadgeVariant(selectedScenario.type)} className="ml-auto">
-                  {selectedScenario.type}
+                <Badge variant={getScenarioBadgeVariant(selectedScenario.is_base)} className="ml-auto">
+                  {getScenarioTypeLabel(selectedScenario.is_base)}
                 </Badge>
               </div>
               )}
@@ -101,10 +96,10 @@ export const ReadOnlyScenarioSelector = ({ projectId, selectedScenarioId, onScen
           {scenarios.map((scenario) => (
             <SelectItem key={scenario.id} value={scenario.id}>
               <div className="flex items-center space-x-2 w-full">
-                {getScenarioIcon(scenario.type)}
+                {getScenarioIcon(scenario.is_base)}
                 <span className="flex-1">{scenario.name}</span>
-                <Badge variant={getScenarioBadgeVariant(scenario.type)}>
-                  {scenario.type}
+                <Badge variant={getScenarioBadgeVariant(scenario.is_base)}>
+                  {getScenarioTypeLabel(scenario.is_base)}
                 </Badge>
               </div>
             </SelectItem>
