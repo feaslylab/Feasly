@@ -1457,6 +1457,7 @@ export type Database = {
           is_base: boolean | null
           name: string
           project_id: string | null
+          updated_at: string
           user_id: string
         }
         Insert: {
@@ -1466,6 +1467,7 @@ export type Database = {
           is_base?: boolean | null
           name: string
           project_id?: string | null
+          updated_at?: string
           user_id: string
         }
         Update: {
@@ -1475,6 +1477,7 @@ export type Database = {
           is_base?: boolean | null
           name?: string
           project_id?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: [
