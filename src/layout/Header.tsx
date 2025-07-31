@@ -44,11 +44,14 @@ export default function Header() {
   };
 
   const handleCreateScenario = async (name: string) => {
+    console.log('Creating scenario:', name);
     const scenario = await create(name);
     if (scenario) {
+      console.log('Scenario created:', scenario);
       setScenario(scenario.id);
-      // Force reload scenarios to see the new one
-      setTimeout(() => window.location.reload(), 100);
+      setCurrent(scenario);
+    } else {
+      console.error('Failed to create scenario');
     }
   };
 
