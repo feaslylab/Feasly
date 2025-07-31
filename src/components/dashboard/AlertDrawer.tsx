@@ -1,9 +1,10 @@
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { X, AlertTriangle, CheckCircle, Clock } from 'lucide-react'
+import { X, AlertTriangle, CheckCircle, Clock, Settings } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useAlerts } from '@/hooks/useAlerts'
+import { AlertSettingsDialog } from './AlertSettingsDialog'
 
 interface AlertDrawerProps {
   isOpen: boolean
@@ -12,6 +13,7 @@ interface AlertDrawerProps {
 
 export default function AlertDrawer({ isOpen, onClose }: AlertDrawerProps) {
   const { alerts, loading, markAllAsRead } = useAlerts()
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -82,13 +84,23 @@ export default function AlertDrawer({ isOpen, onClose }: AlertDrawerProps) {
                       </div>
                     </div>
 
-                    <div className="px-4 pb-4 sm:px-6">
+                    <div className="px-4 pb-4 sm:px-6 space-y-2">
+                      <Button
+                        onClick={() => setSettingsOpen(true)}
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                      >
+                        <Settings className="h-4 w-4 mr-2" />
+                        Alert Settings
+                      </Button>
+                      
                       {alerts.filter(a => !a.resolved).length > 0 && (
                         <Button
                           onClick={markAllAsRead}
                           variant="outline"
                           size="sm"
-                          className="w-full mb-4"
+                          className="w-full"
                         >
                           Mark all as read
                         </Button>
@@ -150,6 +162,11 @@ export default function AlertDrawer({ isOpen, onClose }: AlertDrawerProps) {
           </div>
         </div>
       </Dialog>
+      
+      <AlertSettingsDialog
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      />
     </Transition.Root>
   )
 }

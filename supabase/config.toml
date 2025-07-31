@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.alert_kpi]
 schedule = "*/10 * * * *"
+
+[functions.send_email_worker]
+schedule = "*/1 * * * *"
