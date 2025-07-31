@@ -219,13 +219,11 @@ export const EnhancedSidebar = () => {
             {(!isCollapsed || isMobile) && (
               <>
                 {/* Enhanced Feasly Logo */}
-                <div className="w-8 h-8 flex items-center justify-center flex-shrink-0 relative">
-                  <img 
-                    src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
-                    alt="Feasly Logo" 
-                    className="w-8 h-8 object-contain"
-                  />
-                </div>
+                <img 
+                  src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
+                  alt="Feasly Logo" 
+                  className="w-12 h-12 object-contain flex-shrink-0"
+                />
                 
                 {/* Enhanced Brand and Module Title */}
                 <div className={cn("flex-1 min-w-0 relative z-10", isRTL && "text-right")}>
