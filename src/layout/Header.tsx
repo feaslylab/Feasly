@@ -47,6 +47,8 @@ export default function Header() {
     const scenario = await create(name);
     if (scenario) {
       setScenario(scenario.id);
+      // Force reload scenarios to see the new one
+      setTimeout(() => window.location.reload(), 100);
     }
   };
 
