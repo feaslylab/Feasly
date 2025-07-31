@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, Layers, Save } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModelSideNav, defaultModelSections, ModelSection } from '../model/ModelSideNav';
+import { MagneticStickyNav } from '../model/MagneticStickyNav';
 import { SectionPanel } from '../model/SectionPanel';
 import { useSectionStatus, useWizardValidation } from '@/hooks/useSectionValidation';
 import { useGridCalculations } from '@/hooks/useGridCalculations';
@@ -248,6 +249,13 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
             </div>
           </div>
         </div>
+
+        {/* Magnetic Sticky Navigation - Always visible */}
+        <MagneticStickyNav
+          sections={sections}
+          activeSection={activeSection}
+          onSectionClick={handleSectionClick}
+        />
 
         {/* Form Content */}
         <div className="p-6">
