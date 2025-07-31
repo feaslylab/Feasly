@@ -15,6 +15,7 @@ import {
   useSaleStore, 
   useRentalStore
 } from "@/hooks/useTableStores";
+import KpiGrid from "@/components/KpiGrid";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -392,6 +393,12 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Key Metrics */}
+        <section className="mb-8">
+          <h2 className="mb-2 text-lg font-semibold">Key Metrics</h2>
+          <KpiGrid/>
+        </section>
 
         {/* KPI Performance */}
         {latestKpis.length > 0 && (
