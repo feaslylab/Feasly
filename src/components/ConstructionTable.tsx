@@ -4,6 +4,8 @@ import { useConstructionStoreScenario } from '@/hooks/useTableStores';
 import { useSelectionStore } from '@/state/selectionStore';
 import { Button } from '@/components/ui/button';
 import { Input }  from '@/components/ui/input';
+import { PresenceDots } from '@/components/collaboration/PresenceDots';
+import { CommentButton } from '@/components/collaboration/CommentButton';
 
 export default function ConstructionTable() {
   const { projectId, scenarioId } = useSelectionStore();
@@ -15,11 +17,14 @@ export default function ConstructionTable() {
 
   return (
     <div className="rounded-xl border p-4 dark:bg-muted/40">
-      <h3 className="mb-2 font-semibold">Construction Lines</h3>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="font-semibold">Construction Lines</h3>
+        <PresenceDots />
+      </div>
       <table className="w-full text-sm">
         <thead><tr className="text-muted-foreground">
           <th className="text-left">Base Cost</th>
-          <th>Start</th><th>End</th><th>Esc %</th>
+          <th>Start</th><th>End</th><th>Esc %</th><th></th>
         </tr></thead>
         <tbody>
           {items.map(row=>(
@@ -38,16 +43,24 @@ export default function ConstructionTable() {
                           : row[col as keyof typeof row].toLocaleString()}</>}
                 </td>
               ))}
-              <td>
-                {editing===row.id
-                  ? <Button size="sm" onClick={async()=>{
-                      await save({ ...row, ...transform(draft) });
-                      setEditing(null); setDraft({}); reload();
-                    }}>Save</Button>
-                  : <Button variant="ghost" size="icon"
-                      onClick={()=>setEditing(row.id)}>
-                      <Pencil size={14}/>
-                    </Button>}
+               <td>
+                <div className="flex items-center gap-1">
+                  {editing===row.id
+                    ? <Button size="sm" onClick={async()=>{
+                        await save({ ...row, ...transform(draft) });
+                        setEditing(null); setDraft({}); reload();
+                      }}>Save</Button>
+                    : <>
+                        <Button variant="ghost" size="icon"
+                          onClick={()=>setEditing(row.id)}>
+                          <Pencil size={14}/>
+                        </Button>
+                        <CommentButton 
+                          targetId={`construction_item:${row.id}`}
+                          targetLabel={`Construction Item ${row.id.slice(0, 8)}`}
+                        />
+                      </>}
+                </div>
               </td>
             </tr>
           ))}

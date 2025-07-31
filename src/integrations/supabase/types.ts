@@ -88,6 +88,39 @@ export type Database = {
           },
         ]
       }
+      comment: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          project_id: string
+          scenario_id: string | null
+          target: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          project_id: string
+          scenario_id?: string | null
+          target?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          project_id?: string
+          scenario_id?: string | null
+          target?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       construction_item: {
         Row: {
           base_cost: number
