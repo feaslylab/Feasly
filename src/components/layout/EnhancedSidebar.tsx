@@ -17,7 +17,6 @@ import { TouchTarget } from "@/components/ui/mobile-optimized";
 import { componentClasses } from "@/lib/design-system";
 import { useEffect, useState, useRef } from "react";
 import { TM } from "@/components/ui/trademark";
-import { FeaslyLogoSVG } from "@/components/ui/feasly-logo";
 
 const navigation = [
   { nameKey: "nav.dashboard", href: "/dashboard", icon: BarChart3, badge: null, shortcut: "⌘D" },
@@ -220,9 +219,11 @@ export const EnhancedSidebar = () => {
             {(!isCollapsed || isMobile) && (
               <>
                 {/* Enhanced Feasly Logo */}
-                <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
-                  <FeaslyLogoSVG size={32} variant="default" />
-                </div>
+                <img 
+                  src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
+                  alt="Feasly Logo" 
+                  className="w-12 h-12 object-contain flex-shrink-0"
+                />
                 
                 {/* Enhanced Brand and Module Title */}
                 <div className={cn("flex-1 min-w-0 relative z-10", isRTL && "text-right")}>
