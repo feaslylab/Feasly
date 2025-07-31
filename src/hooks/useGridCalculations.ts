@@ -8,12 +8,12 @@ import { FeaslyModelFormData } from '@/components/FeaslyModel/types';
 // Transform grid data to engine format
 const transformToEngineFormat = (formData: FeaslyModelFormData) => {
   const constructionItems = (formData.construction_items || []).map(item => ({
-    baseCost: item.base_cost,
+    baseCost: item.amount,
     startPeriod: item.start_month,
     endPeriod: item.end_month,
     escalationRate: item.escalation_percent / 100,
-    retentionPercent: item.retention_percent / 100,
-    retentionReleaseLag: item.retention_release_lag
+    retentionPercent: (item.retention_percent || 0) / 100,
+    retentionReleaseLag: item.retention_release_lag || 0
   }));
 
   const saleLines = (formData.sale_lines || []).map(line => ({

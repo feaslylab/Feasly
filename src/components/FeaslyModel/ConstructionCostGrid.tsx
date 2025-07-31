@@ -11,7 +11,7 @@ import { FeaslyModelFormData } from './types';
 interface ConstructionItem {
   id: string;
   description: string;
-  base_cost: number;
+  amount: number;
   start_month: number;
   end_month: number;
   escalation_percent: number;
@@ -35,7 +35,7 @@ export function ConstructionCostGrid({ className }: ConstructionCostGridProps) {
   const createNewItem = (): ConstructionItem => ({
     id: crypto.randomUUID(),
     description: "New Construction Item",
-    base_cost: 0,
+    amount: 0,
     start_month: 0,
     end_month: 12,
     escalation_percent: 0,
@@ -87,7 +87,7 @@ export function ConstructionCostGrid({ className }: ConstructionCostGridProps) {
   };
 
   const hasErrors = errors.construction_items && Array.isArray(errors.construction_items);
-  const totalCost = fields.reduce((sum, field) => sum + (field.base_cost || 0), 0);
+  const totalCost = fields.reduce((sum, field) => sum + (field.amount || 0), 0);
 
   return (
     <div className={cn("space-y-4", className)}>
@@ -113,7 +113,7 @@ export function ConstructionCostGrid({ className }: ConstructionCostGridProps) {
         <div className="bg-muted/50 border-b grid grid-cols-12 gap-2 p-3 text-xs font-medium text-muted-foreground">
           <div className="col-span-1"></div> {/* Drag handle */}
           <div className="col-span-3">Description</div>
-          <div className="col-span-2">Base Cost</div>
+          <div className="col-span-2">Amount</div>
           <div className="col-span-1">Start Mo</div>
           <div className="col-span-1">End Mo</div>
           <div className="col-span-1">Esc %</div>
@@ -174,15 +174,15 @@ export function ConstructionCostGrid({ className }: ConstructionCostGridProps) {
                     />
                   </div>
 
-                  {/* Base Cost */}
+                   {/* Amount */}
                   <div className="col-span-2">
                     <Input
                       type="number"
-                      defaultValue={field.base_cost}
+                      defaultValue={field.amount}
                       placeholder="0"
                       className={cn(
                         "h-8 text-xs",
-                        fieldErrors?.base_cost && "border-destructive"
+                        fieldErrors?.amount && "border-destructive"
                       )}
                       min="0"
                       step="1000"

@@ -19,6 +19,8 @@ export const constructionItemSchema = z.object({
   escalation_percent: z.number().min(0).max(100, "Escalation must be 0-100%"),
   phase: z.string().optional(),
   contractor: z.string().optional(),
+  retention_percent: z.number().min(0).max(100, "Retention must be 0-100%").optional(),
+  retention_release_lag: z.number().min(0, "Release lag must be positive").optional(),
 }).refine(data => data.end_month >= data.start_month, {
   message: "End month must be after start month",
   path: ["end_month"]
