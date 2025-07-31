@@ -40,17 +40,11 @@ export function ProjectMetadata() {
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center space-x-2">
-          <Building2 className="h-5 w-5 text-primary" />
-          <CardTitle>{t('project_metadata')}</CardTitle>
-        </div>
-        <CardDescription>
-          {t('project_metadata_desc')}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <div className="space-y-6">
+      {/* Basic project information and location details */}
+      <div className="text-sm text-muted-foreground mb-4">
+        Basic project information and location details
+      </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
@@ -218,7 +212,6 @@ export function ProjectMetadata() {
             </FormItem>
           )}
         />
-      </CardContent>
-    </Card>
+    </div>
   );
 }
