@@ -261,19 +261,19 @@
 
   /* Card Variants */
   .feasly-card {
-    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md dark:shadow-elevation transition-shadow duration-200;
+    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md dark:shadow-elevation-2 transition-shadow duration-200;
   }
 
   .feasly-card-elevated {
-    @apply bg-card border border-border rounded-lg shadow-md hover:shadow-lg dark:shadow-elevation transition-shadow duration-200;
+    @apply bg-card border border-border rounded-lg shadow-md hover:shadow-lg dark:shadow-elevation-3 transition-shadow duration-200;
   }
 
   .feasly-card-interactive {
-    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md dark:shadow-elevation hover:border-primary/20 transition-all duration-200 cursor-pointer;
+    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md dark:shadow-elevation-2 hover:border-primary/20 transition-all duration-200 cursor-pointer;
   }
 
   .feasly-surface {
-    @apply bg-surface border border-border rounded-lg shadow-sm dark:shadow-elevation;
+    @apply bg-surface border border-border rounded-lg shadow-sm dark:shadow-elevation-1;
   }
 
   .feasly-chart-card {
