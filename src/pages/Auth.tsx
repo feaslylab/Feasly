@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { LoginForm } from "@/components/auth/LoginForm";
@@ -16,12 +16,19 @@ export const AuthPage = ({ onSuccess }: AuthPageProps) => {
   console.log('AuthPage component mounted');
   const [isLoginMode, setIsLoginMode] = useState(true);
 
+  // Ensure theme is properly loaded
+  useEffect(() => {
+    document.documentElement.style.setProperty('--primary', '160 70% 30%');
+    document.documentElement.style.setProperty('--primary-light', '160 60% 42%');
+    document.documentElement.style.setProperty('--primary-dark', '160 80% 20%');
+  }, []);
+
   const toggleMode = () => {
     setIsLoginMode(!isLoginMode);
   };
 
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-primary-light via-background to-accent flex items-center justify-center p-4 relative">
+    <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-primary/10 via-background to-primary-light/5 flex items-center justify-center p-4 relative">
       {/* Animated Background */}
       <AnimatedBackground />
       
@@ -34,7 +41,7 @@ export const AuthPage = ({ onSuccess }: AuthPageProps) => {
       >
         <Link to="/" className="flex items-center group">
           <motion.span 
-            className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent transition-transform duration-200"
+            className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent transition-transform duration-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -45,7 +52,7 @@ export const AuthPage = ({ onSuccess }: AuthPageProps) => {
 
       {/* Language and Theme switchers in top-right corner */}
       <motion.div 
-        className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2 sm:gap-3 z-20 bg-white/10 backdrop-blur-sm rounded-lg p-2 border border-white/20"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 flex items-center gap-2 sm:gap-3 z-20 bg-card/10 backdrop-blur-sm rounded-lg p-2 border border-primary/20"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, delay: 0.3 }}
