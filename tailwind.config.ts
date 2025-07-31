@@ -16,8 +16,17 @@ export default {
 			padding: '2rem',
 			screens: {
 				xl: '1280px',
-				'2xl': '1400px'
+				'2xl': '1440px'
 			}
+		},
+		fontSize: {
+			'h1': ['28px', { lineHeight: '34px', fontWeight: '700' }],
+			'h2': ['20px', { lineHeight: '28px', fontWeight: '600' }],
+			'section-title': ['20px', { lineHeight: '28px', fontWeight: '600' }],
+			'card-title': ['16px', { lineHeight: '24px', fontWeight: '600' }],
+			'card-label': ['14px', { lineHeight: '20px', fontWeight: '600', textTransform: 'uppercase', letterSpacing: '0.05em' }],
+			'body': ['14px', { lineHeight: '20px', fontWeight: '400' }],
+			'body-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }],
 		},
 		extend: {
 			colors: {
@@ -68,10 +77,10 @@ export default {
 					foreground: 'hsl(var(--card-foreground))'
 				},
 				chart: {
-					revenue: 'hsl(var(--chart-revenue))',
-					cost: 'hsl(var(--chart-cost))',
-					profit: 'hsl(var(--chart-profit))',
-					baseline: 'hsl(var(--chart-baseline))'
+					revenue: '#0D5CF2',      // Blue - colorblind safe
+					cost: '#FF9C07',         // Orange - colorblind safe
+					profit: '#A259FF',       // Purple - colorblind safe
+					baseline: 'hsl(var(--muted-foreground))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
@@ -90,7 +99,11 @@ export default {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			boxShadow: {
-				'elevation': '0 2px 4px rgba(0,0,0,.6), 0 4px 16px rgba(0,0,0,.45)',
+				'elevation-1': '0 1px 2px rgba(0,0,0,0.05)',
+				'elevation-2': '0 2px 4px rgba(0,0,0,0.1)',
+				'elevation-3': '0 4px 8px rgba(0,0,0,0.12)',
+				'elevation-4': '0 8px 16px rgba(0,0,0,0.15)',
+				'elevation-modal': '0 20px 40px rgba(0,0,0,0.25)',
 			},
 			keyframes: {
 				'accordion-down': {

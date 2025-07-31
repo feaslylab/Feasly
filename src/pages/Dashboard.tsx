@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageContainer, PageHeader } from "@/components/ui/page-layout";
 import { useToast } from "@/hooks/use-toast";
 import { useSelectionStore } from "@/state/selectionStore";
 import { useScenarioStore } from "@/hooks/useScenarioStore";
@@ -218,17 +219,13 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background pt-14">
-      <div className="flex-1 space-y-6 p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {t('common.dashboard', 'Dashboard')}
-            </h1>
-            <p className="text-muted-foreground">
-              Welcome back! Here's your portfolio overview and recent activity.
-            </p>
-          </div>
+      <PageContainer className="py-8">
+        <PageHeader 
+          title="Dashboard"
+          description="Welcome back! Here's your portfolio overview and recent activity."
+        />
+        
+        <div className="flex items-center justify-end mb-6">
           <div className="flex items-center space-x-2">
             <Link to="/projects/new">
               <Button>
@@ -243,59 +240,59 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Key Metrics Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
+        {/* Key Metrics Cards with accent on first card */}
+        <div className="dashboard-cards grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+          <Card className="border-l-4 border-primary/80 shadow-elevation-2">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+              <CardTitle className="text-card-label">Total Projects</CardTitle>
               <Building2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalProjects}</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-body-sm text-muted-foreground">
                 {activeProjects} active • {pinnedProjects} pinned
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="shadow-elevation-2">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Portfolio NPV</CardTitle>
+              <CardTitle className="text-card-label">Portfolio NPV</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {formatCurrency(totalPortfolioValue)}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-body-sm text-muted-foreground">
                 From {kpis.length} calculated projects
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="shadow-elevation-2">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Average IRR</CardTitle>
+              <CardTitle className="text-card-label">Average IRR</CardTitle>
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
                 {formatPercentage(averageIRR)}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-body-sm text-muted-foreground">
                 Portfolio weighted average
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="shadow-elevation-2">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Alerts</CardTitle>
+              <CardTitle className="text-card-label">Active Alerts</CardTitle>
               <AlertCircle className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{alerts.length}</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-body-sm text-muted-foreground">
                 Requiring attention
               </p>
             </CardContent>
@@ -453,9 +450,9 @@ export default function Dashboard() {
                 ))}
               </div>
             </CardContent>
-          </Card>
-        )}
-      </div>
-    </div>
-  );
-}
+           </Card>
+         )}
+       </PageContainer>
+     </div>
+   );
+ }

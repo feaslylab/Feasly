@@ -2,6 +2,7 @@
 @import './components/ui/feasly-design-system.css';
 @import './components/ui/mobile-animations.css';
 @import './components/ui/visual-fixes.css';
+@import './components/ui/mobile-responsive.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

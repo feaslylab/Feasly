@@ -51,7 +51,7 @@ export default function Header() {
     <header className="sticky top-0 z-30 bg-background/70 backdrop-blur border-b">
       <div className="flex items-center justify-between px-6 h-14">
         <div className="flex items-center gap-3">
-          <span className="font-bold text-lg">Feasly</span>
+          <span className="font-bold text-lg">Feasly 🏗️</span>
           {projectId && <PresenceDots />}
         </div>
 
@@ -85,11 +85,14 @@ export default function Header() {
           {/* ─ Scenario selector ─────────────────────────────── */}
           <Menu as="div" className="relative">
             <Menu.Button
-          className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
-          disabled={!projectId}
-        >
-          {scenarios.find(s=>s.id===scenarioId)?.name ?? "Select scenario"}
-        </Menu.Button>
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-muted/50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
+              disabled={!projectId}
+            >
+              <span>{scenarios.find(s=>s.id===scenarioId)?.name ?? "Select scenario"}</span>
+              <svg className="ml-2 h-3 w-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </Menu.Button>
         <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
           <div className="px-1 py-1">
             {scenarios.map(s=>(
@@ -123,50 +126,52 @@ export default function Header() {
           </Menu>
         </div>
 
-        {/* Right side actions */}
-        <div className="flex items-center gap-3">
-        {/* Project comments button */}
-        {projectId && (
-          <CommentButton
-            targetId={`project:${projectId}`}
-            targetLabel="Project"
-            variant="outline"
-            size="sm"
-          />
-        )}
-        
-        {/* Export ZIP button */}
-        <Button
-          onClick={handleExportZip}
-          variant="outline"
-          size="sm"
-          disabled={!projectId || !scenarioId}
-          className="flex items-center gap-2"
-        >
-          <Download className="h-4 w-4" />
-          Export ZIP
-        </Button>
+         {/* User utility bar */}
+         <div className="flex items-center divide-x divide-border">
+           <div className="flex items-center gap-2 pr-3">
+             {/* Project comments button */}
+             {projectId && (
+               <CommentButton
+                 targetId={`project:${projectId}`}
+                 targetLabel="Project"
+                 variant="ghost"
+                 size="sm"
+               />
+             )}
+             
+             {/* Export ZIP button */}
+             <Button
+               onClick={handleExportZip}
+               variant="ghost"
+               size="sm"
+               disabled={!projectId || !scenarioId}
+               className="flex items-center gap-2"
+             >
+               <Download className="h-4 w-4" />
+               <span className="hidden sm:inline">Export</span>
+             </Button>
 
-        {/* Alerts bell */}
-        <div className="relative">
-          <Button
-            onClick={() => setAlertDrawerOpen(true)}
-            variant="ghost"
-            size="sm"
-            className="relative p-2"
-          >
-            <Bell className="h-4 w-4" />
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-destructive text-destructive-foreground rounded-full flex items-center justify-center">
-                {unreadCount > 9 ? '9+' : unreadCount}
-              </span>
-            )}
-          </Button>
-        </div>
-
-        <div className="text-sm opacity-75">{user?.email}</div>
-      </div>
-      </div>
+             {/* Alerts bell */}
+             <div className="relative">
+               <Button
+                 onClick={() => setAlertDrawerOpen(true)}
+                 variant="ghost"
+                 size="sm"
+                 className="relative p-2"
+               >
+                 <Bell className="h-4 w-4" />
+                 {unreadCount > 0 && (
+                   <span className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-destructive text-destructive-foreground rounded-full flex items-center justify-center">
+                     {unreadCount > 9 ? '9+' : unreadCount}
+                   </span>
+                 )}
+               </Button>
+             </div>
+           </div>
+           
+           <div className="pl-3 text-sm text-muted-foreground">{user?.email}</div>
+         </div>
+       </div>
 
       <AlertDrawer 
         isOpen={alertDrawerOpen} 
