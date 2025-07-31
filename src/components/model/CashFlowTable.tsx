@@ -34,8 +34,8 @@ export function CashFlowTable({ cashflow, isLoading }: CashFlowTableProps) {
   };
 
   const getRowClassName = (value: number) => {
-    if (value > 0) return 'text-emerald-600';
-    if (value < 0) return 'text-red-600';
+    if (value > 0) return 'text-success';
+    if (value < 0) return 'text-destructive';
     return 'text-muted-foreground';
   };
 
@@ -56,20 +56,20 @@ export function CashFlowTable({ cashflow, isLoading }: CashFlowTableProps) {
   }
 
   return (
-    <div className="border rounded-md">
+    <div className="border rounded-md" aria-describedby="cashflow-table-description">
       <div className="sticky top-0 z-10 bg-background border-b">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-24">Month</TableHead>
-              <TableHead className="text-right">Monthly Flow</TableHead>
-              <TableHead className="text-right">Cumulative</TableHead>
+              <TableHead className="w-24" scope="col">Month</TableHead>
+              <TableHead className="text-right" scope="col">Monthly Flow</TableHead>
+              <TableHead className="text-right" scope="col">Cumulative</TableHead>
             </TableRow>
           </TableHeader>
         </Table>
       </div>
       
-      <ScrollArea className="h-80" ref={parentRef}>
+      <ScrollArea className="h-80" ref={parentRef} tabIndex={0}>
         <div
           style={{
             height: `${rowVirtualizer.getTotalSize()}px`,
