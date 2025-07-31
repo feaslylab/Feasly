@@ -439,17 +439,17 @@ export default function Dashboard() {
                       });
                       
                       return (
-                        <div className="flex items-start gap-3 sm:gap-4">
-                          <div className="text-3xl sm:text-4xl lg:text-5xl flex-shrink-0">{timeGreeting.icon}</div>
+                        <div className="flex items-start gap-4 sm:gap-6">
+                          <div className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl flex-shrink-0 animate-fade-in">{timeGreeting.icon}</div>
                           <div className="min-w-0 flex-1">
-                            <div className="space-y-1">
-                              <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r ${timeGreeting.class} bg-clip-text text-transparent leading-tight`}>
+                            <div className="space-y-2">
+                              <h1 className={`text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r ${timeGreeting.class} bg-clip-text text-transparent leading-tight animate-fade-in`}>
                                 {timeGreeting.greeting}
                               </h1>
-                              <p className="text-xl sm:text-2xl lg:text-3xl font-semibold text-foreground">
+                              <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-foreground animate-fade-in">
                                 {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'admin'}
                               </p>
-                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-muted-foreground">
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-base sm:text-lg text-muted-foreground animate-fade-in">
                                 <span className="font-medium">{dateStr}</span>
                                 <span className="hidden sm:inline">•</span>
                                 <span className="font-medium">{timeStr}</span>
