@@ -22,9 +22,6 @@ export const AuthPage = ({ onSuccess }: AuthPageProps) => {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-primary-light via-background to-accent flex items-center justify-center p-4 relative">
-      <div style={{ position: 'absolute', top: '10px', left: '10px', zIndex: 1000, backgroundColor: 'red', color: 'white', padding: '4px' }}>
-        Auth Debug: Rendering
-      </div>
       {/* Animated Background */}
       <AnimatedBackground />
       

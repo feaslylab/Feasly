@@ -51,6 +51,13 @@ const AppRoutes = () => {
   
   // If we're on the marketing site path, show marketing content
   if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison') || window.location.pathname === '/welcome') {
+    
+    // If user is authenticated and on welcome page, redirect to dashboard
+    if (user && window.location.pathname === '/welcome') {
+      console.log('User authenticated on welcome page, redirecting to dashboard');
+      return <Navigate to="/dashboard" replace />;
+    }
+    
     return (
       <PageTransition routeKey={location.pathname}>
         <Routes>
@@ -64,7 +71,7 @@ const AppRoutes = () => {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/comparison" element={<FeatureComparison />} />
-          <Route path="/welcome" element={<AuthPage onSuccess={() => { console.log('Login success, navigating to dashboard'); window.location.href = '/dashboard'; }} />} />
+          <Route path="/welcome" element={<AuthPage onSuccess={() => { console.log('Login success, will be redirected by auth logic'); }} />} />
           {/* Development-only route for legacy calc-demo */}
           {import.meta.env.DEV && <Route path="/calc-demo" element={<CalcDemo />} />}
         </Routes>
@@ -82,12 +89,6 @@ const AppRoutes = () => {
 
   if (!user) {
     return <Navigate to="/welcome" replace />;
-  }
-
-  // If user is authenticated and on welcome page, redirect to dashboard
-  if (user && window.location.pathname === '/welcome') {
-    console.log('User authenticated on welcome page, redirecting to dashboard');
-    return <Navigate to="/dashboard" replace />;
   }
 
   return (

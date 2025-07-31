@@ -131,7 +131,10 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
           title: "Welcome back!",
           description: "You have successfully logged in.",
         });
-        onSuccess();
+        // Small delay to ensure auth state is updated
+        setTimeout(() => {
+          onSuccess();
+        }, 100);
       }
     } catch (error) {
       console.log('Login caught error:', error);
