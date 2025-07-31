@@ -56,6 +56,8 @@ export default function Header() {
     }
   };
 
+  console.log('Header render - projectId:', projectId, 'scenarioId:', scenarioId);
+
   return (
     <header className="sticky top-0 z-30 bg-background/70 backdrop-blur border-b">
       <div className="flex items-center justify-between px-6 h-14">
@@ -134,9 +136,10 @@ export default function Header() {
         {/* Project comments button */}
         {projectId && (
           <CommentButton
-            className="mr-2"
             targetId={`project:${projectId}`}
             targetLabel="Project"
+            variant="outline"
+            size="sm"
           />
         )}
         
