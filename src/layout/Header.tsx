@@ -55,7 +55,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-30 bg-background/70 backdrop-blur border-b">
-      <div className="flex items-center justify-between px-6 h-14">
+      <div className="flex items-center justify-between px-6 h-14 sidebar-auto-space">
         {/* Left side - Logo and utility controls */}
         <div className="flex items-center gap-3">
           <div className="w-6 h-6 flex items-center justify-center flex-shrink-0">
