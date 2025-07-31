@@ -1449,6 +1449,33 @@ export type Database = {
           },
         ]
       }
+      scenario_results: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          result: Json
+          scenario_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          result: Json
+          scenario_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          result?: Json
+          scenario_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       scenarios: {
         Row: {
           created_at: string | null

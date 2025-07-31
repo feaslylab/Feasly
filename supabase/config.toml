@@ -18,6 +18,9 @@ enable_confirmations = false
 [functions.import_emdf]
 verify_jwt = false
 
+[functions.calculate]
+verify_jwt = true
+
 [functions.alert_kpi]
 schedule = "*/10 * * * *"
 
