@@ -50,7 +50,7 @@ const AppRoutes = () => {
   const isMarketingRoute = window.location.pathname === '/';
   
   // If we're on the marketing site path, show marketing content
-  if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison')) {
+  if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison') || window.location.pathname === '/welcome') {
     return (
       <PageTransition routeKey={location.pathname}>
         <Routes>
