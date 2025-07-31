@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useState, useEffect } from 'react';
 import { feaslyModelSchema, type FeaslyModelFormData } from './types';
 import { FormContent } from './FormContent';
-import { useAutosaveSync, ConflictError } from '@/hooks/useAutosaveSync';
+import { useSupabaseAutosave, ConflictError } from '@/hooks/useSupabaseAutosave';
 import { AutosaveContext } from '@/contexts/AutosaveContext';
 import { SaveIndicator } from './SaveIndicator';
 import { ConflictModal } from './ConflictModal';
@@ -32,7 +32,7 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
   });
 
   // Autosave integration
-  const autosave = useAutosaveSync(projectId);
+  const autosave = useSupabaseAutosave(projectId);
   const [conflict, setConflict] = useState<ConflictError | null>(null);
 
   // Watch form changes and autosave

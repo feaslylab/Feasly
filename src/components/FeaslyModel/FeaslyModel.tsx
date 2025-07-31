@@ -117,7 +117,8 @@ export default function FeaslyModel() {
   };
 
   // Feature flag check - render v2 if enabled
-  if (isV2Enabled) {
+  // Enable V2 for production use with real Supabase autosave
+  if (true) {
     return (
       <FeaslyModelV2
         projectId={projectId}

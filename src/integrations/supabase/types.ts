@@ -999,6 +999,36 @@ export type Database = {
         }
         Relationships: []
       }
+      project_drafts: {
+        Row: {
+          created_at: string
+          draft_data: Json
+          etag: string
+          id: string
+          project_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          draft_data: Json
+          etag?: string
+          id?: string
+          project_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          draft_data?: Json
+          etag?: string
+          id?: string
+          project_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       project_input_templates: {
         Row: {
           created_at: string
