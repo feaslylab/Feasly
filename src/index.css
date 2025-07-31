@@ -282,7 +282,7 @@
 
   /* Typography */
   .feasly-title {
-    @apply text-lg font-bold text-foreground;
+    @apply text-card-title font-bold text-foreground;
   }
 
   .feasly-subtitle {
@@ -294,7 +294,7 @@
   }
 
   .feasly-section-title {
-    @apply text-xl font-bold text-foreground mb-2;
+    @apply text-section-title font-bold text-foreground mb-2;
   }
 
   .feasly-section-description {
@@ -358,7 +358,7 @@
   
   /* Responsive text sizes */
   .feasly-text-responsive {
-    @apply text-sm sm:text-base lg:text-lg;
+    @apply text-sm sm:text-base;
   }
   
   /* Mobile scrolling improvements */
