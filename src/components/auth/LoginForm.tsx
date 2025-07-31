@@ -155,8 +155,8 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
-      <Card className="w-full max-w-md shadow-elegant border-0 bg-background/95 backdrop-blur-sm relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary-light/5 pointer-events-none" />
+      <Card className="w-full max-w-md shadow-elegant border-0 bg-primary/5 backdrop-blur-sm relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 to-primary-light/6 pointer-events-none" />
         
         <div className="absolute -top-24 -right-24 w-48 h-48 rounded-full bg-gradient-to-br from-primary-glow/20 to-transparent blur-3xl" />
         <div className="absolute -bottom-24 -left-24 w-48 h-48 rounded-full bg-gradient-to-tr from-primary-glow/10 to-transparent blur-3xl" />
@@ -168,9 +168,11 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
             animate={{ scale: 1, rotate: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <span className="text-6xl font-bold bg-gradient-to-br from-primary to-primary-dark bg-clip-text text-transparent">
-              F
-            </span>
+            <img 
+              src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
+              alt="Feasly Logo" 
+              className="w-20 h-20 object-contain"
+            />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}

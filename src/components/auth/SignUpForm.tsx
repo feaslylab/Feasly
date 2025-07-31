@@ -94,13 +94,13 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
   };
 
   return (
-    <Card className="w-full max-w-md shadow-medium">
+    <Card className="w-full max-w-md shadow-elegant border-0 bg-primary/5 backdrop-blur-sm relative overflow-hidden">
       <CardHeader className={cn("text-center space-y-4", isRTL && "text-right")}>
-        <div className="mx-auto w-12 h-12 bg-gradient-to-br from-primary to-primary-dark rounded-xl flex items-center justify-center">
+        <div className="mx-auto flex items-center justify-center">
           <img 
             src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
             alt="Feasly Logo" 
-            className="w-8 h-8 object-contain"
+            className="w-16 h-16 object-contain"
           />
         </div>
         <div>
