@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { useForm } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
@@ -247,7 +247,8 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
 
         {/* Form Content */}
         <div className="p-6">
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <FormProvider {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             {/* Project Metadata */}
             <SectionPanel
               id="project-metadata"
@@ -414,7 +415,8 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
                 </Button>
               </div>
             )}
-          </form>
+            </form>
+          </FormProvider>
         </div>
       </div>
     </div>
