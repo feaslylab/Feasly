@@ -51,19 +51,21 @@ interface ModelMobileNavProps extends ModelSideNavProps {
 function DesktopSideNav({ sections, activeSection, onSectionClick, className }: ModelSideNavProps) {
   const navRef = useRef<HTMLDivElement>(null);
   
-  // Enhanced magnetic scroll behavior
+  // Enhanced magnetic scroll behavior - keep visible but add magnetic effects
   const { 
-    isVisible, 
     isSticky, 
     magneticOffset, 
     scrollDirection 
   } = useMagneticScroll({
     threshold: 80,
-    hideDelay: 1000, // Much longer delay before hiding
+    hideDelay: 1000, // Not used since we're always visible
     showDelay: 100,
     magneticZone: MAG_OFFSET,
-    aggressiveHide: false // Keep navigation visible for form interaction
+    aggressiveHide: false // Never hide the navigation
   });
+
+  // Always keep visible - navigation should follow user down the page
+  const isVisible = true;
 
   const { getStickyContainerStyles, checkStickyParent } = useStickyNavigation({
     topOffset: 64 + magneticOffset, // Account for global header + magnetic offset
@@ -97,45 +99,32 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
   const stickyStyles = getStickyContainerStyles();
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.aside 
-          ref={navRef}
-          data-testid="desktop-sidenav"
-          data-is-sticky={isSticky}
-          initial={{ 
-            x: -280, 
-            opacity: 0 
-          }}
-          animate={{ 
-            x: 0, 
-            opacity: 1,
-            y: magneticOffset * 0.5, // Subtle magnetic movement
-            scale: isSticky ? 0.98 : 1,
-            backdropFilter: isSticky ? 'blur(12px)' : 'blur(8px)'
-          }}
-          exit={{ 
-            x: -280, 
-            opacity: 0,
-            transition: { duration: 0.3 }
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 300,
-            damping: 30,
-            mass: 0.8
-          }}
-          className={cn(
-            'w-64 border-r transition-all duration-300',
-            isSticky ? [
-              'bg-background/90 backdrop-blur-md shadow-lg',
-              'border-primary/20'
-            ] : [
-              'bg-background/95 backdrop-blur',
-              'supports-[backdrop-filter]:bg-background/60'
-            ],
-            className
-          )} 
+    <motion.aside 
+      ref={navRef}
+      data-testid="desktop-sidenav"
+      data-is-sticky={isSticky}
+      animate={{ 
+        y: magneticOffset * 0.5, // Subtle magnetic movement
+        scale: isSticky ? 0.98 : 1,
+        backdropFilter: isSticky ? 'blur(12px)' : 'blur(8px)'
+      }}
+      transition={{
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+        mass: 0.8
+      }}
+      className={cn(
+        'w-64 border-r transition-all duration-300',
+        isSticky ? [
+          'bg-background/90 backdrop-blur-md shadow-lg',
+          'border-primary/20'
+        ] : [
+          'bg-background/95 backdrop-blur',
+          'supports-[backdrop-filter]:bg-background/60'
+        ],
+        className
+      )}
           style={{
             ...stickyStyles,
             willChange: 'transform, opacity'
@@ -264,10 +253,8 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
             </motion.div>
           </ScrollArea>
         </motion.aside>
-      )}
-    </AnimatePresence>
-  );
-}
+      );
+    }
 
 // Mobile tab bar + FAB navigation
 function MobileNav({ sections, activeSection, onSectionClick }: ModelSideNavProps) {
