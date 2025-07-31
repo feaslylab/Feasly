@@ -15,6 +15,7 @@ import ScenarioRenameDialog from '@/components/modals/ScenarioRenameDialog';
 import GlobalActions from "@/components/layout/GlobalActions";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { FeaslyLogoSVG } from "@/components/ui/feasly-logo";
 
 export default function Header() {
   const { user } = useAuth();
@@ -59,11 +60,9 @@ export default function Header() {
         {/* Professional Logo and Brand */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
-            <img 
-              src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
-              alt="Feasly Logo" 
-              className="w-12 h-12 object-contain flex-shrink-0"
-            />
+            <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
+              <FeaslyLogoSVG size={32} variant="default" />
+            </div>
             <div className="flex flex-col">
               <span className="text-xl font-bold text-foreground tracking-tight">
                 Feasly

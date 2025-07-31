@@ -98,6 +98,8 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
 
   const handleSectionClick = (sectionId: string) => {
     onSectionClick(sectionId);
+    // Update URL hash for deep-linking
+    window.history.pushState(null, '', `#${sectionId}`);
   };
 
   const stickyStyles = getStickyContainerStyles();

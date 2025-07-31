@@ -116,6 +116,11 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
 
     // Update scroll spy collapsed state
     setSectionCollapsed(sectionId, !isOpen);
+    
+    // Update URL hash for deep-linking
+    if (isOpen) {
+      window.history.pushState(null, '', `#${sectionId}`);
+    }
   }, [isWizardMode, setSectionCollapsed]);
 
   // Sync collapsed state when sections change
@@ -125,6 +130,26 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
       setSectionCollapsed(id, !isOpen);
     });
   }, [openSections, sectionIds, setSectionCollapsed]);
+
+  // URL hash handling for deep-linking
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1); // Remove #
+      if (hash && sectionIds.includes(hash)) {
+        setOpenSections(prev => new Set([...prev, hash]));
+        setTimeout(() => {
+          scrollToSection(hash, 'smooth');
+        }, 100);
+      }
+    };
+
+    // Handle initial hash on load
+    handleHashChange();
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [sectionIds, scrollToSection]);
 
   // Auto-save functionality
   useEffect(() => {
@@ -169,6 +194,33 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
     }
   };
 
+  // Auto-focus next invalid field function
+  const handleValidationClick = useCallback(() => {
+    // Find first section with errors
+    const firstErrorSection = sections.find(section => {
+      const gridValidation = validationCounts.grids[section.id];
+      return gridValidation && gridValidation.errorCount > 0;
+    });
+    
+    if (firstErrorSection) {
+      // Open the section and scroll to it
+      setOpenSections(prev => new Set([...prev, firstErrorSection.id]));
+      scrollToSection(firstErrorSection.id, 'smooth');
+      
+      // Try to focus first invalid input after a short delay
+      setTimeout(() => {
+        const sectionElement = document.getElementById(firstErrorSection.id);
+        if (sectionElement) {
+          const firstInvalidInput = sectionElement.querySelector('input:invalid, select:invalid, textarea:invalid') as HTMLElement;
+          if (firstInvalidInput) {
+            firstInvalidInput.focus();
+            firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      }, 500);
+    }
+  }, [sections, validationCounts, scrollToSection, setOpenSections]);
+
   // Submit handler
   const onFormSubmit = async (data: FeaslyModelFormData) => {
     try {
@@ -202,8 +254,8 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
 
       {/* Main Content with left margin to account for fixed sidebar */}
       <div className="flex-1 overflow-hidden">
-        {/* Enhanced Sticky Header */}
-        <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm">
+        {/* Enhanced Sticky Header with Save Indicator */}
+        <div className="sticky top-16 z-30 border-b bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-3">
@@ -230,13 +282,15 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
                  <Badge 
                    variant={validationCounts.overall.isValid ? 'default' : 'secondary'}
                    className={cn(
-                     "flex items-center gap-2 shadow-sm border-border/50 transition-all duration-200",
+                     "flex items-center gap-2 shadow-sm border-border/50 transition-all duration-200 cursor-pointer hover:scale-105",
                      validationCounts.overall.isValid 
                        ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-100 dark:border-emerald-800" 
                        : validationCounts.overall.totalErrors > 0
                        ? "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/50 dark:text-red-100 dark:border-red-800"
                        : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/50 dark:text-amber-100 dark:border-amber-800"
                    )}
+                   onClick={handleValidationClick}
+                   title="Click to jump to first error"
                  >
                    {validationCounts.overall.isValid ? (
                      <CheckCircle className="h-3 w-3" />
@@ -251,6 +305,15 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             </div>
 
             <div className="flex items-center gap-4">
+              {/* Sticky Save Status within header */}
+              {lastSaved && (
+                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-card rounded-lg px-3 py-2 shadow-sm border border-border/50">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                  <span className="font-medium">Auto-saved</span>
+                  <span className="text-xs opacity-70">• {lastSaved}</span>
+                </div>
+              )}
+
               {/* Enhanced Wizard Toggle with better styling */}
               <div className="flex items-center gap-3 bg-card rounded-lg px-3 py-2 shadow-sm border border-border/50">
                 <Label htmlFor="wizard-mode" className="text-sm font-medium cursor-pointer">
@@ -264,15 +327,6 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
                   className="data-[state=checked]:bg-primary"
                 />
               </div>
-
-              {/* Enhanced Save Status */}
-              {lastSaved && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-card rounded-lg px-3 py-2 shadow-sm border border-border/50">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                  <span className="font-medium">Auto-saved</span>
-                  <span className="text-xs opacity-70">• {lastSaved}</span>
-                </div>
-              )}
             </div>
           </div>
           

@@ -121,11 +121,6 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
   return (
     <>
       <div className="relative">
-        {/* Save indicator - positioned to avoid overlapping with header */}
-        <div className="fixed top-20 right-4 z-40">
-          <SaveIndicator state={autosave.state} />
-        </div>
-
         <AutosaveContext.Provider value={autosaveContextValue}>
           <FormProvider {...form}>
             <FormContent 
