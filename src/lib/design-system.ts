@@ -101,7 +101,7 @@ export const componentClasses = {
     h1: "text-3xl sm:text-4xl font-bold tracking-tight text-foreground",
     h2: "text-2xl sm:text-3xl font-semibold tracking-tight text-foreground", 
     h3: "text-xl sm:text-2xl font-semibold text-foreground",
-    h4: "text-lg sm:text-xl font-semibold text-foreground",
+    h4: "feasly-title",
     body: "text-base text-foreground leading-relaxed",
     bodySmall: "text-sm text-muted-foreground",
     caption: "text-xs text-muted-foreground uppercase tracking-wide",

@@ -60,7 +60,7 @@ const EmptyState = ({ onCreateProject }: { onCreateProject: () => void }) => (
     <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
       <FolderOpen className="w-8 h-8 text-primary" />
     </div>
-    <h3 className="text-xl font-semibold text-foreground mb-2">No projects yet</h3>
+    <h3 className="feasly-title mb-2">No projects yet</h3>
     <p className="text-muted-foreground mb-6 max-w-md">
       Get started by creating your first real estate development project. 
       You can add properties, run financial models, and track progress.

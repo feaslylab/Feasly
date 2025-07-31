@@ -63,12 +63,12 @@ const formatYears = (years: number) => {
 };
 
 const COLORS = {
-  'Base Case': '#3b82f6',
-  'Optimistic': '#10b981', 
-  'Pessimistic': '#ef4444'
+  'Base Case': '#0D5CF2',
+  'Optimistic': '#FF9C07', 
+  'Pessimistic': '#A259FF'
 };
 
-const PIE_COLORS = ['#3b82f6', '#10b981'];
+const PIE_COLORS = ['#0D5CF2', '#FF9C07'];
 
 export const ProjectAnalytics = ({ projectId, assets, projectCurrency = "AED" }: ProjectAnalyticsProps) => {
   // Fetch exchange rates

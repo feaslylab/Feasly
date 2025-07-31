@@ -43,7 +43,7 @@ export function usePresence(projectId: string) {
     presenceChannel
       .on('presence', { event: 'sync' }, () => {
         const state = presenceChannel.presenceState()
-        console.log('Presence sync:', state)
+        if (!import.meta.env.PROD) console.log('Presence sync:', state)
         
         const users: PresenceUser[] = []
         Object.entries(state).forEach(([userId, presences]: [string, any[]]) => {
@@ -63,10 +63,10 @@ export function usePresence(projectId: string) {
         setPresenceUsers(users)
       })
       .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        console.log('User joined:', key, newPresences)
+        if (!import.meta.env.PROD) console.log('User joined:', key, newPresences)
       })
       .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-        console.log('User left:', key, leftPresences)
+        if (!import.meta.env.PROD) console.log('User left:', key, leftPresences)
       })
       .subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {

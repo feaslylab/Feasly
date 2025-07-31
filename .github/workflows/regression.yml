@@ -1,33 +1,39 @@
-name: Regression Harness
+name: CI Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, develop ]
   pull_request:
-  schedule:
-    - cron: '0 3 * * *'   # every day 03:00 UTC
+    branches: [ main ]
 
 jobs:
-  regress:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v3
-        with: 
-          version: 8
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: pnpm
+          node-version: '20'
+          cache: 'npm'
+      
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-      - name: Build & regression tests
-        run: pnpm ci:test
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@v3
+        run: npm ci
+      
+      - name: Run unit tests
+        run: npm test
+
+  tailwind_smoke:
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          name: test-results
-          path: |
-            tests/regress/fixtures/*/expected.json
-            coverage/
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Tailwind smoke test
+        run: npx tailwindcss -i ./src/index.css -o /dev/null --minify

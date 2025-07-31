@@ -2,7 +2,6 @@
 @import './components/ui/feasly-design-system.css';
 @import './components/ui/mobile-animations.css';
 @import './components/ui/visual-fixes.css';
-@import './components/ui/mobile-responsive.css';
 
 @tailwind base;
 @tailwind components;
@@ -261,7 +260,7 @@
 
   /* Card Variants */
   .feasly-card {
-    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md dark:shadow-elevation-2 transition-shadow duration-200;
+    @apply bg-card border border-border rounded-lg shadow-elevation-2 hover:shadow-md dark:shadow-elevation-2 transition-shadow duration-200;
   }
 
   .feasly-card-elevated {
@@ -269,15 +268,15 @@
   }
 
   .feasly-card-interactive {
-    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md dark:shadow-elevation-2 hover:border-primary/20 transition-all duration-200 cursor-pointer;
+    @apply bg-card border border-border rounded-lg shadow-elevation-2 hover:shadow-md dark:shadow-elevation-2 hover:border-primary/20 transition-all duration-200 cursor-pointer;
   }
 
   .feasly-surface {
-    @apply bg-surface border border-border rounded-lg shadow-sm dark:shadow-elevation-1;
+    @apply bg-surface border border-border rounded-lg shadow-elevation-2 dark:shadow-elevation-1;
   }
 
   .feasly-chart-card {
-    @apply bg-card border border-border rounded-lg shadow-sm p-6;
+    @apply bg-card border border-border rounded-lg shadow-elevation-2 p-6;
   }
 
   /* Typography */
@@ -320,12 +319,12 @@
   }
 
   .feasly-button-secondary {
-    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border shadow-sm hover:shadow-md transition-all duration-200;
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border shadow-elevation-2 hover:shadow-md transition-all duration-200;
   }
 
   /* Tables */
   .feasly-table-wrapper {
-    @apply overflow-hidden rounded-lg border border-border shadow-sm;
+    @apply overflow-hidden rounded-lg border border-border shadow-elevation-2;
   }
 
   .feasly-table {
@@ -334,7 +333,7 @@
 
   /* Charts */
   .feasly-chart-container {
-    @apply bg-card p-6 rounded-lg border border-border shadow-sm;
+    @apply bg-card p-6 rounded-lg border border-border shadow-elevation-2;
   }
 
   /* Mobile Responsive */
@@ -353,7 +352,7 @@
   
   /* Mobile-optimized cards */
   .feasly-card-mobile {
-    @apply bg-card border border-border rounded-lg shadow-sm p-3 sm:p-4 hover:shadow-md transition-shadow duration-200;
+    @apply bg-card border border-border rounded-lg shadow-elevation-2 p-3 sm:p-4 hover:shadow-md transition-shadow duration-200;
   }
   
   /* Responsive text sizes */
