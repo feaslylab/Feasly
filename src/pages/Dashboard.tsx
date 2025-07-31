@@ -425,16 +425,36 @@ export default function Dashboard() {
                   <div className="flex items-start gap-3 sm:gap-4 mb-4 sm:mb-6">
                     {(() => {
                       const timeGreeting = getTimeBasedGreeting();
+                      const now = new Date();
+                      const dateStr = now.toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      });
+                      const timeStr = now.toLocaleTimeString('en-US', { 
+                        hour: '2-digit', 
+                        minute: '2-digit',
+                        hour12: true 
+                      });
+                      
                       return (
-                        <div className="flex items-start gap-2 sm:gap-3">
-                          <div className="text-2xl sm:text-3xl lg:text-4xl mt-1">{timeGreeting.icon}</div>
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          <div className="text-3xl sm:text-4xl lg:text-5xl flex-shrink-0">{timeGreeting.icon}</div>
                           <div className="min-w-0 flex-1">
-                            <h1 className={`text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold bg-gradient-to-r ${timeGreeting.class} bg-clip-text text-transparent leading-tight`}>
-                              {timeGreeting.greeting}
-                            </h1>
-                            <p className="text-lg sm:text-xl lg:text-2xl font-semibold text-foreground mt-1 truncate">
-                              {user?.email?.split('@')[0] || 'there'}
-                            </p>
+                            <div className="space-y-1">
+                              <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r ${timeGreeting.class} bg-clip-text text-transparent leading-tight`}>
+                                {timeGreeting.greeting}
+                              </h1>
+                              <p className="text-xl sm:text-2xl lg:text-3xl font-semibold text-foreground">
+                                {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'admin'}
+                              </p>
+                              <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-sm text-muted-foreground">
+                                <span className="font-medium">{dateStr}</span>
+                                <span className="hidden sm:inline">•</span>
+                                <span className="font-medium">{timeStr}</span>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       );
