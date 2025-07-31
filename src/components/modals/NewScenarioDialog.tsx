@@ -8,7 +8,7 @@ export default function NewScenarioDialog({
 }: {
   open: boolean;
   onClose: () => void;
-  onCreate: (name: string) => Promise<void>;
+  onCreate: (name: string) => Promise<boolean>;
 }) {
   const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
@@ -16,19 +16,29 @@ export default function NewScenarioDialog({
   /* ① focus should land on the input when dialog opens */
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSave = async () => {
-    if (!name.trim() || saving) return;
+  const handleSave = async (): Promise<boolean> => {
+    const trimmed = name.trim();
+    if (!trimmed) {
+      inputRef.current?.focus();
+      return false;
+    }
     setSaving(true);
-    await onCreate(name.trim());
+    const ok = await onCreate(trimmed);   // ❶ now expects boolean
     setSaving(false);
+    if (!ok) return false;                // keep dialog open on failure
     setName('');
+    return true;                          // success
   };
 
   /* ② press Enter should submit, Esc should cancel */
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      handleSave().then(onClose);
+      handleSave().then((success) => {
+        if (success) {
+          onClose();
+        }
+      });
     }
   };
 
@@ -66,7 +76,15 @@ export default function NewScenarioDialog({
           <Dialog.Panel
             /* prevent accidental close when clicking **inside** panel */
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-sm rounded-2xl bg-card p-6 shadow-xl ring-1 ring-black/10"
+            className="
+              w-full max-w-sm
+              rounded-2xl
+              bg-background
+              backdrop-blur-lg
+              p-6
+              shadow-lg shadow-black/30
+              ring-1 ring-border
+            "
           >
             <Dialog.Title className="text-lg font-medium">
               New scenario
@@ -98,8 +116,10 @@ export default function NewScenarioDialog({
                 type="button"
                 disabled={!name.trim() || saving}
                 onClick={async () => {
-                  await handleSave();
-                  onClose();
+                  const success = await handleSave();
+                  if (success) {
+                    onClose();
+                  }
                 }}
                 className="px-4 py-2 text-sm font-medium text-white bg-primary border border-transparent rounded-md hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >

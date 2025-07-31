@@ -182,7 +182,9 @@ export default function Header() {
             setScenario(s.id);               // selectionStore
             setCurrent(s);                   // local store
             reload();                        // refresh items
+            return true;                     // success
           }
+          return false;                      // failure → dialog stays open
         }}
       />
     </header>
