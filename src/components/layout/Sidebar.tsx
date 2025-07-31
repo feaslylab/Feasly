@@ -60,7 +60,7 @@ export const Sidebar = () => {
     <>
       {/* Mini Sidebar - Always visible when auto-hidden */}
       {isAutoHidden && !shouldShowSidebar && !isMobile && (
-        <div className="fixed left-0 top-0 z-40 h-full w-16 bg-card border-r border-border flex flex-col">
+        <div className="fixed left-0 top-0 z-20 h-full w-16 bg-card border-r border-border flex flex-col">
           {/* Mini Header */}
           <div className="flex items-center justify-center h-14 border-b border-border">
             <div className="w-6 h-6">
@@ -98,7 +98,7 @@ export const Sidebar = () => {
 
       {/* Main Sidebar */}
       <div className={cn(
-        "fixed left-0 top-0 z-50 h-full bg-card border-r border-border transition-all duration-300 ease-in-out",
+        "fixed left-0 top-0 z-40 h-full bg-card border-r border-border transition-all duration-300 ease-in-out",
         "flex flex-col justify-between",
         shouldShowSidebar ? "translate-x-0" : "-translate-x-full",
         isCollapsed ? "w-16" : "w-64"
