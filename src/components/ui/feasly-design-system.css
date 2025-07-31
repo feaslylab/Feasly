@@ -1,76 +1,78 @@
 /* Feasly Design System - Enhanced Design Tokens */
 
-/* Add design system classes for consistency */
-.feasly-section {
-  @apply space-y-6 p-6 border border-border rounded-lg bg-card;
-}
+@layer components {
+  /* Add design system classes for consistency */
+  .feasly-section {
+    @apply space-y-6 p-6 border border-border rounded-lg bg-card;
+  }
 
-.feasly-card {
-  @apply bg-card border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow;
-}
+  .feasly-card {
+    @apply bg-card border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow;
+  }
 
-.feasly-title {
-  @apply text-xl font-semibold text-foreground;
-}
+  .feasly-title {
+    @apply text-xl font-semibold text-foreground;
+  }
 
-.feasly-description {
-  @apply text-sm text-muted-foreground;
-}
+  .feasly-description {
+    @apply text-sm text-muted-foreground;
+  }
 
-.feasly-grid {
-  @apply grid gap-6;
-}
+  .feasly-grid {
+    @apply grid gap-6;
+  }
 
-.feasly-grid-2 {
-  @apply grid grid-cols-1 md:grid-cols-2 gap-6;
-}
+  .feasly-grid-2 {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
 
-.feasly-grid-3 {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
-}
+  .feasly-grid-3 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
 
-.feasly-grid-4 {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
-}
+  .feasly-grid-4 {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6;
+  }
 
-.feasly-spacing {
-  @apply space-y-6;
-}
+  .feasly-spacing {
+    @apply space-y-6;
+  }
 
-.feasly-padding {
-  @apply p-6;
-}
+  .feasly-padding {
+    @apply p-6;
+  }
 
-.feasly-padding-x {
-  @apply px-6;
-}
+  .feasly-padding-x {
+    @apply px-6;
+  }
 
-.feasly-margin {
-  @apply m-6;
-}
+  .feasly-margin {
+    @apply m-6;
+  }
 
-/* Responsive breakpoints for mobile optimization */
-.feasly-mobile-stack {
-  @apply flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-6;
-}
+  /* Responsive breakpoints for mobile optimization */
+  .feasly-mobile-stack {
+    @apply flex flex-col space-y-4 lg:flex-row lg:space-y-0 lg:space-x-6;
+  }
 
-.feasly-mobile-grid {
-  @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
-}
+  .feasly-mobile-grid {
+    @apply grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3;
+  }
 
-/* Status and warning colors */
-.feasly-status-success {
-  @apply bg-green-50 text-green-800 border-green-200;
-}
+  /* Status and warning colors */
+  .feasly-status-success {
+    @apply bg-green-50 text-green-800 border-green-200;
+  }
 
-.feasly-status-warning {
-  @apply bg-yellow-50 text-yellow-800 border-yellow-200;
-}
+  .feasly-status-warning {
+    @apply bg-yellow-50 text-yellow-800 border-yellow-200;
+  }
 
-.feasly-status-error {
-  @apply bg-red-50 text-red-800 border-red-200;
-}
+  .feasly-status-error {
+    @apply bg-red-50 text-red-800 border-red-200;
+  }
 
-.feasly-status-info {
-  @apply bg-blue-50 text-blue-800 border-blue-200;
+  .feasly-status-info {
+    @apply bg-blue-50 text-blue-800 border-blue-200;
+  }
 }
