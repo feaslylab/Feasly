@@ -514,7 +514,7 @@ export default function Dashboard() {
                            <p className="text-xs sm:text-sm font-medium text-success-foreground">
                              {activeProjects} Active Projects
                            </p>
-                           <p className="text-xs text-success">
+                           <p className="text-xs text-foreground font-medium">
                              {formatCurrency(totalPortfolioValue)} Total Value
                            </p>
                         </div>
