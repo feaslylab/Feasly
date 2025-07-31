@@ -71,13 +71,13 @@ export function AnimatedBackground() {
       <motion.div
         className="absolute w-64 h-64 rounded-full bg-gradient-to-r from-primary/5 to-accent/5 blur-3xl"
         animate={{
-          x: mousePosition.x - 128, // Adjusted for smaller size
-          y: mousePosition.y - 128,
+          x: (mousePosition.x - 128) * 0.4, // Reduced movement by 60%
+          y: (mousePosition.y - 128) * 0.4, // Reduced movement by 60%
         }}
         transition={{
           type: "spring",
-          damping: 40, // Increased damping for smoother movement
-          stiffness: 150, // Reduced stiffness
+          damping: 60, // Increased damping for much slower movement
+          stiffness: 50, // Much lower stiffness for gentler motion
         }}
       />
 
