@@ -56,8 +56,21 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-b shadow-sm">
       <div className="flex items-center justify-between h-14 pl-20 lg:pl-20 pr-6">
-        {/* Left side - Empty for balance */}
-        <div className="flex-1"></div>
+        {/* Left side - Logo and utility controls */}
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
+            <img 
+              src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
+              alt="Feasly Logo" 
+              className="w-7 h-7 object-contain"
+            />
+          </div>
+          <span className="text-xl font-bold text-foreground">Feasly</span>
+          <div className="flex items-center gap-1 ml-2">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
+        </div>
 
         {/* Centered selectors */}
         <div className="flex items-center gap-4">
@@ -168,24 +181,8 @@ export default function Header() {
           </Menu>
         </div>
 
-        {/* Right side - Logo, Feasly text, and utility controls */}
-        <div className="flex items-center gap-3 flex-1 justify-end">
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 flex items-center justify-center flex-shrink-0">
-              <img 
-                src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
-                alt="Feasly Logo" 
-                className="w-7 h-7 object-contain"
-              />
-            </div>
-            <span className="text-xl font-bold text-foreground">Feasly</span>
-          </div>
-          <div className="flex items-center gap-1 ml-4">
-            <ThemeToggle />
-            <LanguageSwitcher />
-          </div>
-          <GlobalActions onAlertsClick={() => setAlertDrawerOpen(true)} />
-        </div>
+         {/* Right side - Global Actions */}
+         <GlobalActions onAlertsClick={() => setAlertDrawerOpen(true)} />
        </div>
 
       <AlertDrawer 
