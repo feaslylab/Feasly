@@ -68,8 +68,8 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
   const isVisible = true;
 
   const { getStickyContainerStyles, checkStickyParent } = useStickyNavigation({
-    topOffset: 64 + magneticOffset, // Account for global header + magnetic offset
-    maxHeight: 'calc(100vh - 4rem)'
+    topOffset: 0, // No offset needed since we're using fixed positioning
+    maxHeight: '100vh'
   });
 
   // Check for sticky parent issues on mount

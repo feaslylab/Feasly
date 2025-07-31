@@ -180,15 +180,17 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
   };
 
   return (
-    <div className="flex min-h-screen w-full">
-      {/* Desktop Sidebar */}
+    <div className="min-h-screen w-full">
+      {/* Desktop Sidebar - Fixed positioning for true sticky behavior */}
       {!isMobile && (
-        <ModelSideNav
-          sections={sections}
-          activeSection={activeSection}
-          onSectionClick={handleSectionClick}
-          isMobile={false}
-        />
+        <div className="fixed left-0 top-0 h-full z-40">
+          <ModelSideNav
+            sections={sections}
+            activeSection={activeSection}
+            onSectionClick={handleSectionClick}
+            isMobile={false}
+          />
+        </div>
       )}
 
       {/* Mobile Navigation */}
@@ -201,8 +203,8 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
         />
       )}
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-hidden">
+      {/* Main Content with left margin to account for fixed sidebar */}
+      <div className={cn("min-h-screen", !isMobile && "ml-64")}>
         {/* Sticky Header */}
         <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="flex items-center justify-between p-4">

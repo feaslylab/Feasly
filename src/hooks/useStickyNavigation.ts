@@ -100,14 +100,15 @@ export function useStickyNavigation(options: StickyNavigationOptions = {}) {
 
   // Get sticky container styles
   const getStickyContainerStyles = useCallback(() => {
-    // Always use sticky positioning for the navigation
+    // Use fixed positioning for reliable sticky behavior
     const baseStyles = {
-      position: 'sticky' as const,
+      position: 'fixed' as const,
       top: `${topOffset}px`,
-      alignSelf: 'flex-start',
-      maxHeight,
+      left: '0',
+      height: maxHeight,
       overflowY: 'auto' as const,
       overflowX: 'hidden' as const,
+      width: '256px', // 16rem = 256px
     };
 
     // Add enhanced styles when in sticky state
@@ -121,7 +122,7 @@ export function useStickyNavigation(options: StickyNavigationOptions = {}) {
       };
     }
 
-    // Even when not in enhanced sticky state, still use position sticky
+    // Base fixed positioning styles
     return {
       ...baseStyles,
       backgroundColor: 'hsl(var(--background) / 0.98)',
