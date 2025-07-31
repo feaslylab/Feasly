@@ -1,247 +1,337 @@
-import { useState, useEffect } from "react";
-import { useFeaslyCalc } from "../hooks/useFeaslyCalc";
-import { useConstructionStore } from "../hooks/useConstructionStore";
-import { useScenarioStore } from "../hooks/useScenarioStore";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  useConstructionStoreScenario, 
-  useSaleStore, 
-  useRentalStore,
-  constructionItemFromDB,
-  saleLineFromDB,
-  rentalLineFromDB,
-  constructionItemToDB,
-  saleLineToDB,
-  rentalLineToDB
-} from "../hooks/useTableStores";
-import { SaleLine, RentalLine, LoanFacility } from "../../packages/feasly-engine/src";
-import UploadEmdf from "@/components/UploadEmdf";
+  TrendingUp, 
+  Building2, 
+  DollarSign, 
+  Calendar,
+  BarChart3,
+  Activity,
+  Users,
+  AlertCircle,
+  CheckCircle,
+  Clock
+} from "lucide-react";
 
 export default function Dashboard() {
-  const projectId = 'demo-project';
-  const [qty, setQty] = useState(12_000_000);
-  const [useLoan, setUseLoan] = useState(false);
-  
-  // Scenario management
-  const { scenarios, current, setCurrent, create } = useScenarioStore(projectId);
-  
-  // Scenario-aware stores
-  const { items: constructionItems, save: saveConstructionItem, loading: constructionLoading } = useConstructionStoreScenario(projectId, current?.id || null);
-  const { items: saleItems, save: saveSaleItem, loading: saleLoading } = useSaleStore(projectId, current?.id || null);
-  const { items: rentalItems, save: saveRentalItem, loading: rentalLoading } = useRentalStore(projectId, current?.id || null);
-  
-  // Fallback for legacy construction store
-  const { saveKPIs } = useConstructionStore();
-  
-  // Convert database items to engine format
-  const items = constructionItems.length > 0 
-    ? constructionItems.map(constructionItemFromDB)
-    : [{
-        baseCost: qty,
-        startPeriod: 6,
-        endPeriod: 24,
-        escalationRate: 0.05,
-        retentionPercent: 0.05,
-        retentionReleaseLag: 2
-      }];
-  
-  const revenueLines = saleItems.map(saleLineFromDB);
-  const rentalLines = rentalItems.map(rentalLineFromDB);
-  
-  // Define loan facility
-  const loanFacility: LoanFacility | undefined = useLoan ? {
-    limit: 40_000_000,
-    ltcPercent: 0.70,
-    annualRate: 0.08,
-    startPeriod: 6,
-    maturityPeriod: 60,
-    interestOnly: true
-  } : undefined;
-  
-  const { cash: row, kpi, interestRow, loanRows } = useFeaslyCalc(items, 60, 0.10, revenueLines, rentalLines, loanFacility);
+  const { t } = useTranslation(['common', 'feasly.model']);
+  const [activeView, setActiveView] = useState<'overview' | 'analytics' | 'projects'>('overview');
 
-  // Save KPIs whenever they change
-  useEffect(() => {
-    if (!constructionLoading && current) {
-      saveKPIs({
-        npv: kpi.npv,
-        irr: kpi.projectIRR,
-        profit: kpi.profit
-      });
-    }
-  }, [kpi, saveKPIs, constructionLoading, current]);
-
-  // Save new item when qty changes
-  const handleQtyChange = async (newQty: number) => {
-    setQty(newQty);
-    if (constructionItems.length === 0 && current) {
-      await saveConstructionItem(constructionItemToDB({
-        baseCost: newQty,
-        startPeriod: 6,
-        endPeriod: 24,
-        escalationRate: 0.05,
-        retentionPercent: 0.05,
-        retentionReleaseLag: 2
-      }));
-    }
+  // Mock data - replace with real data from your hooks/API
+  const dashboardData = {
+    totalProjects: 12,
+    activeProjects: 8,
+    completedProjects: 4,
+    totalInvestment: 125000000,
+    projectedRevenue: 180000000,
+    averageIRR: 15.3,
+    portfolioValue: 205000000,
+    monthlyGrowth: 8.2
   };
 
-  // Add demo revenue line
-  const addRevenue = async () => {
-    if (!current) return;
-    
-    const newRevenueLine: SaleLine = {
-      units: 80,
-      pricePerUnit: 1_600_000,
-      startPeriod: 24,
-      endPeriod: 36,
-      escalation: 0.04
-    };
-    
-    await saveSaleItem(saleLineToDB(newRevenueLine));
+  const recentProjects = [
+    { id: 1, name: "Marina Heights", status: "active", progress: 75, value: 25000000 },
+    { id: 2, name: "Desert Oasis Resort", status: "planning", progress: 25, value: 45000000 },
+    { id: 3, name: "City Center Plaza", status: "active", progress: 90, value: 35000000 },
+    { id: 4, name: "Beachfront Villas", status: "completed", progress: 100, value: 20000000 }
+  ];
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', { 
+      style: 'currency', 
+      currency: 'AED',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0 
+    }).format(amount);
   };
 
-  // Add demo rental line
-  const addRental = async () => {
-    if (!current) return;
-    
-    const newRentalLine: RentalLine = {
-      rooms: 150,
-      adr: 800,
-      occupancyRate: 0.68,
-      startPeriod: 48,
-      endPeriod: 60,
-      annualEscalation: 0.05
-    };
-    
-    await saveRentalItem(rentalLineToDB(newRentalLine));
+  const formatPercentage = (value: number) => {
+    return `${value.toFixed(1)}%`;
   };
-
-  if (constructionLoading || saleLoading || rentalLoading) {
-    return <div className="p-6">Loading scenario data...</div>;
-  }
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Construction Cash-flow demo</h1>
-
-      {/* Scenario Selector */}
-      <div className="mb-4 p-4 bg-background border rounded-lg">
-        <label className="block mb-2 font-medium">Select Scenario:</label>
-        <div className="flex items-center gap-2">
-          <select
-            value={current?.id || ""}
-            onChange={(e) => {
-              const s = scenarios.find(x => x.id === e.target.value);
-              setCurrent(s || null);
-            }}
-            className="border px-3 py-2 rounded mr-2 bg-background"
-          >
-            <option value="">No scenario selected</option>
-            {scenarios.map(s => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
-          </select>
-          
-          <button
-            onClick={() => {
-              const name = prompt("Scenario name:");
-              if (name) create(name);
-            }}
-            className="bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90"
-          >
-            + New scenario
-          </button>
-          
-          <UploadEmdf onImportComplete={() => window.location.reload()} />
+    <div className="flex flex-col min-h-screen bg-background">
+      <div className="flex-1 space-y-6 p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              {t('common.dashboard', 'Dashboard')}
+            </h1>
+            <p className="text-muted-foreground">
+              Welcome back! Here's an overview of your portfolio performance.
+            </p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Button size="sm">
+              <Calendar className="mr-2 h-4 w-4" />
+              This Month
+            </Button>
+          </div>
         </div>
-        
-        {current && (
-          <p className="text-sm text-muted-foreground mt-2">
-            Current scenario: <strong>{current.name}</strong>
-          </p>
-        )}
+
+        {/* Key Metrics Cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Projects</CardTitle>
+              <Building2 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{dashboardData.totalProjects}</div>
+              <p className="text-xs text-muted-foreground">
+                {dashboardData.activeProjects} active, {dashboardData.completedProjects} completed
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Portfolio Value</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {formatCurrency(dashboardData.portfolioValue)}
+              </div>
+              <div className="flex items-center text-xs text-green-600">
+                <TrendingUp className="mr-1 h-3 w-3" />
+                +{formatPercentage(dashboardData.monthlyGrowth)} from last month
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Average IRR</CardTitle>
+              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {formatPercentage(dashboardData.averageIRR)}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Across all active projects
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Projected Revenue</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {formatCurrency(dashboardData.projectedRevenue)}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Next 12 months
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Content Tabs */}
+        <Tabs value={activeView} onValueChange={(value: any) => setActiveView(value)} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="projects">Projects</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {/* Recent Projects */}
+              <Card className="col-span-2">
+                <CardHeader>
+                  <CardTitle>Recent Projects</CardTitle>
+                  <CardDescription>
+                    Your latest project activities and progress
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {recentProjects.map((project) => (
+                      <div key={project.id} className="flex items-center space-x-4">
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-medium leading-none">
+                              {project.name}
+                            </p>
+                            <Badge 
+                              variant={
+                                project.status === 'completed' ? 'default' :
+                                project.status === 'active' ? 'secondary' : 'outline'
+                              }
+                              className="ml-auto"
+                            >
+                              {project.status}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Progress value={project.progress} className="flex-1" />
+                            <span className="text-xs text-muted-foreground">
+                              {project.progress}%
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Value: {formatCurrency(project.value)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Stats */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <Activity className="mr-2 h-5 w-5" />
+                    Quick Stats
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Active Users</span>
+                      <span className="font-medium">24</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">Pending Reviews</span>
+                      <span className="font-medium">7</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-muted-foreground">This Month's Revenue</span>
+                      <span className="font-medium text-green-600">+12.5%</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Recent Activity</CardTitle>
+                  <CardDescription>Latest updates from your projects</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-start space-x-3">
+                      <CheckCircle className="h-4 w-4 text-green-500 mt-1" />
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">Project Marina Heights updated</p>
+                        <p className="text-xs text-muted-foreground">Construction phase completed - 2 hours ago</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <AlertCircle className="h-4 w-4 text-yellow-500 mt-1" />
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">Budget review required</p>
+                        <p className="text-xs text-muted-foreground">Desert Oasis Resort - 4 hours ago</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <Clock className="h-4 w-4 text-blue-500 mt-1" />
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">New milestone reached</p>
+                        <p className="text-xs text-muted-foreground">City Center Plaza - 1 day ago</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Team Performance</CardTitle>
+                  <CardDescription>Current team metrics and KPIs</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Projects On Track</span>
+                        <span className="text-sm text-muted-foreground">85%</span>
+                      </div>
+                      <Progress value={85} className="h-2" />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Budget Utilization</span>
+                        <span className="text-sm text-muted-foreground">72%</span>
+                      </div>
+                      <Progress value={72} className="h-2" />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium">Quality Score</span>
+                        <span className="text-sm text-muted-foreground">92%</span>
+                      </div>
+                      <Progress value={92} className="h-2" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Analytics Overview</CardTitle>
+                <CardDescription>
+                  Performance analytics and insights for your portfolio
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">Advanced Analytics</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Detailed analytics dashboard will be available here
+                  </p>
+                  <Button>
+                    View Analytics
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="projects" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>All Projects</CardTitle>
+                <CardDescription>
+                  Manage and monitor all your real estate projects
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <Building2 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                  <h3 className="text-lg font-medium mb-2">Projects Overview</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Detailed project management interface would go here
+                  </p>
+                  <Button>
+                    View All Projects
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
-
-      <label className="block mb-2">
-        Base cost (AED):
-        <input
-          type="number" value={qty}
-          onChange={e=>handleQtyChange(+e.target.value)}
-          className="border ml-2 px-2"
-        />
-      </label>
-
-      <button 
-        onClick={addRevenue}
-        disabled={!current}
-        className="bg-blue-500 text-white px-4 py-2 rounded mb-2 mr-2 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Add Revenue (80 units @ 1.6M AED, P24-36)
-      </button>
-
-      <button 
-        onClick={addRental}
-        disabled={!current}
-        className="bg-green-500 text-white px-4 py-2 rounded mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        Add Rental (150 rooms, ADR 800, 68% occ, P48-60)
-      </button>
-
-      <label className="flex items-center mb-4">
-        <input
-          type="checkbox"
-          checked={useLoan}
-          onChange={e => setUseLoan(e.target.checked)}
-          className="mr-2"
-        />
-        Use loan 70% LTC @8% rate, bullet repay P60
-      </label>
-
-      {revenueLines.length > 0 && (
-        <p className="text-sm text-gray-600 mb-1">
-          Sale revenue lines: {revenueLines.length} (Total: {revenueLines.reduce((sum, line) => 
-            sum + line.units * line.pricePerUnit, 0).toLocaleString()} AED)
-        </p>
-      )}
-
-      {rentalLines.length > 0 && (
-        <p className="text-sm text-gray-600 mb-2">
-          Rental revenue lines: {rentalLines.length} (Avg monthly: {Math.round(
-            rentalLines.reduce((sum, line) => 
-              sum + line.adr * line.occupancyRate * line.rooms * 30.4167, 0)
-          ).toLocaleString()} AED)
-        </p>
-      )}
-
-      {useLoan && loanRows && (
-        <p className="text-sm text-gray-600 mb-2">
-          Peak Balance: {Math.max(...loanRows.balance).toLocaleString()} AED | 
-          Total Interest: {loanRows.interest.reduce((sum, val) => sum + val, 0).toLocaleString()} AED
-        </p>
-      )}
-
-      <table className="border mt-4 text-xs">
-        <thead><tr>
-          {row.slice(0,60).map((_,i)=>
-            <th key={i} className="border px-1">P{i}</th>)}
-        </tr></thead>
-        <tbody><tr>
-          {row.slice(0,60).map((v,i)=>
-            <td key={i} className="border px-1 text-right">
-              {v.toLocaleString(undefined,{maximumFractionDigits:0})}
-            </td>)}
-        </tr></tbody>
-      </table>
-
-      <p className="mt-4">
-        <strong>NPV:</strong> {kpi.npv.toLocaleString(undefined,{maximumFractionDigits:0})} &nbsp;
-        <strong>Profit:</strong> {kpi.profit.toLocaleString(undefined,{maximumFractionDigits:0})} &nbsp;
-        <strong>IRR:</strong> {kpi.projectIRR !== null ? (kpi.projectIRR*100).toFixed(2)+' %' : '—'}
-      </p>
-      
-      <p className="mt-2">
-        <strong>Monthly Interest P0:</strong> {(-interestRow[0]).toLocaleString()}
-      </p>
     </div>
   );
 }
