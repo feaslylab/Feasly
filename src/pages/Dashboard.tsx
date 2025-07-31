@@ -1129,9 +1129,8 @@ export default function Dashboard() {
                           <span className="text-sm font-semibold text-foreground">
                             {formatCurrency(kpi.profit)}
                           </span>
-        </div>
-      </div>
-    </div>
+                        </div>
+                      </div>
                       
                       <div className="pt-3 border-t border-border/20">
                         <p className="text-xs text-muted-foreground">
