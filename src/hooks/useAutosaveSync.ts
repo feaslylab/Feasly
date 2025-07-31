@@ -74,8 +74,11 @@ export function useAutosaveSync(modelId: string, options: AutosaveOptions = {}) 
         const [savedDraft, savedEtag, queue] = await Promise.all([
           get(draftKey),
           get(etagKey),
-          get(queueKey) || []
+          get(queueKey)
         ]);
+
+        // Ensure queue is always an array
+        const safeQueue = Array.isArray(queue) ? queue : [];
 
         if (savedEtag) {
           currentEtagRef.current = savedEtag;
@@ -84,12 +87,12 @@ export function useAutosaveSync(modelId: string, options: AutosaveOptions = {}) 
         setState(prev => ({
           ...prev,
           isDirty: !!savedDraft,
-          queuedSaves: queue.length,
-          status: queue.length > 0 ? 'offline' : 'idle'
+          queuedSaves: safeQueue.length,
+          status: safeQueue.length > 0 ? 'offline' : 'idle'
         }));
 
         // Process queued saves if online
-        if (navigator.onLine && queue.length > 0) {
+        if (navigator.onLine && safeQueue.length > 0) {
           processQueue();
         }
       } catch (error) {
@@ -132,12 +135,13 @@ export function useAutosaveSync(modelId: string, options: AutosaveOptions = {}) 
     if (!navigator.onLine) return;
 
     try {
-      const queue: QueuedSave[] = await get(queueKey) || [];
-      if (queue.length === 0) return;
+      const queue: QueuedSave[] = await get(queueKey);
+      const safeQueue = Array.isArray(queue) ? queue : [];
+      if (safeQueue.length === 0) return;
 
       setState(prev => ({ ...prev, status: 'saving' }));
 
-      for (const save of queue) {
+      for (const save of safeQueue) {
         try {
           if (save.type === 'draft') {
             await saveDraftToServer(save.data, save.etag);
@@ -146,7 +150,7 @@ export function useAutosaveSync(modelId: string, options: AutosaveOptions = {}) 
           }
 
           // Remove successful save from queue
-          const updatedQueue = queue.filter(s => s.id !== save.id);
+          const updatedQueue = safeQueue.filter(s => s.id !== save.id);
           await set(queueKey, updatedQueue);
           
           setState(prev => ({
@@ -162,7 +166,7 @@ export function useAutosaveSync(modelId: string, options: AutosaveOptions = {}) 
           
           if (save.retryCount >= opts.maxRetries) {
             // Remove failed save after max retries
-            const updatedQueue = queue.filter(s => s.id !== save.id);
+            const updatedQueue = safeQueue.filter(s => s.id !== save.id);
             await set(queueKey, updatedQueue);
             
             toast({
