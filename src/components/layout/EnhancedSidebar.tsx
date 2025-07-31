@@ -149,10 +149,11 @@ export const EnhancedSidebar = () => {
         ) : (
           isCollapsed ? "w-16" : "w-72" // Wider on desktop too
         ),
-        "lg:relative lg:translate-x-0" // Always visible on desktop
+        "lg:relative lg:translate-x-0", // Always visible on desktop
+        "flex flex-col" // Ensure flexbox layout
       )}>
-        {/* Top Section - Enhanced Header */}
-        <div className="flex-shrink-0 relative">
+        {/* Top Section - Enhanced Header with proper spacing */}
+        <div className="flex-shrink-0 relative pt-2"> {/* Added pt-2 for top spacing */}
           {/* Breadcrumb Context Bar */}
           {!isCollapsed && (
             <div className="px-4 py-2 border-b border-border/30 bg-gradient-to-r from-primary/5 to-transparent">
@@ -299,32 +300,32 @@ export const EnhancedSidebar = () => {
           )}
         </div>
 
-          {/* Enhanced Quick Action */}
+          {/* Enhanced Quick Action - Fixed positioning */}
           {(!isCollapsed || isMobile) && (
-            <div className="p-4 flex-shrink-0 space-y-3">
+            <div className="px-4 py-3 flex-shrink-0 space-y-2">
               <Button 
                 asChild
                 className={cn(
-                  "w-full min-h-[44px] group relative overflow-hidden",
+                  "w-full min-h-[40px] group relative overflow-hidden text-sm",
                   "bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary",
-                  "shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                  "shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
                 )}
               >
                 <NavLink to="/projects">
                   <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <Plus className={cn("w-4 h-4 relative z-10", isRTL ? "ml-2" : "mr-2")} />
-                  <span className="relative z-10">{t('nav.newProject')}</span>
+                  <span className="relative z-10 text-sm">{t('nav.newProject')}</span>
                 </NavLink>
               </Button>
               
-              {/* Command Palette Trigger */}
+              {/* Command Palette Trigger - Smaller */}
               <Button 
                 variant="outline" 
-                className="w-full justify-start bg-card/50 border-border/50 hover:bg-primary/5 transition-all duration-200"
+                className="w-full justify-start bg-card/50 border-border/50 hover:bg-primary/5 transition-all duration-200 min-h-[36px] text-sm"
               >
                 <Command className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
-                <span className="flex-1 text-left">Quick Actions...</span>
-                <Badge variant="secondary" className="text-xs">⌘K</Badge>
+                <span className="flex-1 text-left text-sm">Quick Actions...</span>
+                <Badge variant="secondary" className="text-xs px-1.5 py-0.5">⌘K</Badge>
               </Button>
             </div>
           )}
