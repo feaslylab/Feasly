@@ -21,13 +21,13 @@ import { useFeaslyAlerts, ProjectAlertSummary, AlertSeverity } from '@/hooks/use
 const AlertIcon = ({ severity, className = "h-4 w-4" }: { severity: AlertSeverity; className?: string }) => {
   switch (severity) {
     case 'red':
-      return <AlertTriangle className={`${className} text-red-600`} />;
+      return <AlertTriangle className={`${className} text-destructive`} />;
     case 'yellow':
-      return <AlertCircle className={`${className} text-yellow-600`} />;
+      return <AlertCircle className={`${className} text-warning`} />;
     case 'green':
-      return <CheckCircle className={`${className} text-green-600`} />;
+      return <CheckCircle className={`${className} text-success`} />;
     default:
-      return <AlertCircle className={`${className} text-gray-400`} />;
+      return <AlertCircle className={`${className} text-muted-foreground`} />;
   }
 };
 
@@ -147,9 +147,9 @@ const StatCard = ({ title, value, icon: Icon, trend }: {
         </div>
         <div className="flex items-center gap-2">
           {trend && (
-            trend === 'up' ? <TrendingUp className="h-4 w-4 text-red-600" /> :
-            trend === 'down' ? <TrendingDown className="h-4 w-4 text-green-600" /> :
-            <BarChart3 className="h-4 w-4 text-blue-600" />
+            trend === 'up' ? <TrendingUp className="h-4 w-4 text-destructive" /> :
+            trend === 'down' ? <TrendingDown className="h-4 w-4 text-success" /> :
+            <BarChart3 className="h-4 w-4 text-primary" />
           )}
           <Icon className="h-8 w-8 text-muted-foreground" />
         </div>

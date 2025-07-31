@@ -239,11 +239,11 @@ export default function FeaslyFinance() {
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">{t('equity_percentage')}</span>
-                        <span className="font-medium text-blue-600">{equityPercentage.toFixed(1)}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">{t('debt_percentage')}</span>
-                        <span className="font-medium text-red-600">{debtPercentage.toFixed(1)}%</span>
+                         <span className="font-medium text-primary">{equityPercentage.toFixed(1)}%</span>
+                       </div>
+                       <div className="flex justify-between">
+                         <span className="text-muted-foreground">{t('debt_percentage')}</span>
+                         <span className="font-medium text-destructive">{debtPercentage.toFixed(1)}%</span>
                       </div>
                       <div className="flex justify-between border-t pt-2">
                         <span className="text-muted-foreground">{t('total_capital')}</span>

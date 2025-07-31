@@ -178,10 +178,10 @@ export default function Dashboard() {
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'high': return 'text-red-500';
-      case 'medium': return 'text-yellow-500';
-      case 'low': return 'text-blue-500';
-      default: return 'text-gray-500';
+      case 'high': return 'text-destructive';
+      case 'medium': return 'text-warning';
+      case 'low': return 'text-primary';
+      default: return 'text-muted-foreground';
     }
   };
 
@@ -190,16 +190,16 @@ export default function Dashboard() {
     const hour = new Date().getHours();
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
-    if (hour < 6) return { greeting: 'Good night', icon: '🌙', class: 'from-indigo-500 to-purple-600' };
-    if (hour < 12) return { greeting: 'Good morning', icon: '☀️', class: 'from-amber-500 to-orange-600' };
-    if (hour < 17) return { greeting: 'Good afternoon', icon: '🌤️', class: 'from-blue-500 to-cyan-600' };
-    if (hour < 21) return { greeting: 'Good evening', icon: '🌅', class: 'from-pink-500 to-rose-600' };
-    return { greeting: 'Good night', icon: '🌙', class: 'from-indigo-500 to-purple-600' };
+    if (hour < 6) return { greeting: 'Good night', icon: '🌙', class: 'from-primary-dark to-primary' };
+    if (hour < 12) return { greeting: 'Good morning', icon: '☀️', class: 'from-warning to-warning-light' };
+    if (hour < 17) return { greeting: 'Good afternoon', icon: '🌤️', class: 'from-primary to-primary-light' };
+    if (hour < 21) return { greeting: 'Good evening', icon: '🌅', class: 'from-primary-glow to-primary' };
+    return { greeting: 'Good night', icon: '🌙', class: 'from-primary-dark to-primary' };
   };
 
   // Portfolio health score calculation
   const calculateHealthScore = () => {
-    if (kpis.length === 0) return { score: 0, status: 'No Data', color: 'text-gray-500' };
+    if (kpis.length === 0) return { score: 0, status: 'No Data', color: 'text-muted-foreground' };
     
     const avgNPV = totalPortfolioValue / Math.max(kpis.length, 1);
     const avgIRR = averageIRR;
@@ -218,10 +218,10 @@ export default function Dashboard() {
     else if (alertRatio < 0.3) score += 15;
     else if (alertRatio < 0.5) score += 5;
     
-    if (score >= 80) return { score, status: 'Excellent', color: 'text-emerald-600' };
-    if (score >= 60) return { score, status: 'Good', color: 'text-blue-600' };
-    if (score >= 40) return { score, status: 'Fair', color: 'text-amber-600' };
-    return { score, status: 'Needs Attention', color: 'text-red-600' };
+    if (score >= 80) return { score, status: 'Excellent', color: 'text-success' };
+    if (score >= 60) return { score, status: 'Good', color: 'text-primary' };
+    if (score >= 40) return { score, status: 'Fair', color: 'text-warning' };
+    return { score, status: 'Needs Attention', color: 'text-destructive' };
   };
 
   // Performance indicators for projects
@@ -511,12 +511,12 @@ export default function Dashboard() {
                       <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                         <div className="w-2 h-2 sm:w-3 sm:h-3 bg-emerald-500 rounded-full animate-pulse" />
                         <div>
-                          <p className="text-xs sm:text-sm font-medium text-emerald-700 dark:text-emerald-400">
-                            {activeProjects} Active Projects
-                          </p>
-                          <p className="text-xs text-emerald-600 dark:text-emerald-500">
-                            {formatCurrency(totalPortfolioValue)} Total Value
-                          </p>
+                           <p className="text-xs sm:text-sm font-medium text-success-foreground">
+                             {activeProjects} Active Projects
+                           </p>
+                           <p className="text-xs text-success">
+                             {formatCurrency(totalPortfolioValue)} Total Value
+                           </p>
                         </div>
                       </div>
                     </div>
@@ -626,7 +626,7 @@ export default function Dashboard() {
                         {activeProjects} active
                       </span>
                       <span className="text-muted-foreground">•</span>
-                      <span className="text-amber-600 font-medium">{pinnedProjects} pinned</span>
+                      <span className="text-warning font-medium">{pinnedProjects} pinned</span>
                     </div>
                     <div className="mt-3 h-2 bg-muted rounded-full overflow-hidden">
                       <div 
@@ -659,7 +659,7 @@ export default function Dashboard() {
                   <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
                     <CardTitle className="text-sm font-medium text-foreground/80">Portfolio NPV</CardTitle>
                     <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors duration-300 group-hover:scale-110">
-                      <DollarSign className="h-5 w-5 text-emerald-600" />
+                      <DollarSign className="h-5 w-5 text-success" />
                     </div>
                   </CardHeader>
                   <CardContent className="relative">
@@ -670,8 +670,8 @@ export default function Dashboard() {
                       From {kpis.length} calculated projects
                     </p>
                     <div className="mt-3 flex items-center space-x-1">
-                      <TrendingUp className="h-4 w-4 text-emerald-600 animate-pulse" />
-                      <span className="text-sm text-emerald-600 font-medium">+12.5%</span>
+                       <TrendingUp className="h-4 w-4 text-success animate-pulse" />
+                       <span className="text-sm text-success font-medium">+12.5%</span>
                       <span className="text-xs text-muted-foreground">vs last month</span>
                     </div>
                   </CardContent>
