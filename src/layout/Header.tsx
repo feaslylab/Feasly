@@ -51,8 +51,8 @@ export default function Header() {
         <Menu.Button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
           {projects.find(p=>p.id===projectId)?.name ?? "Select project"}
         </Menu.Button>
-        <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-          <div className="px-1 py-1">
+        <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-left divide-y divide-gray-100 rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[100]">
+          <div className="px-1 py-1 bg-white dark:bg-gray-800">
             {projects.map(p=>(
               <Menu.Item key={p.id}>
                 {({active})=>(
