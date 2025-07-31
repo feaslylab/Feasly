@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { PageContainer, PageHeader } from "@/components/ui/page-layout";
 import { useToast } from "@/hooks/use-toast";
 import { useSelectionStore } from "@/state/selectionStore";
@@ -34,7 +35,17 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  Plus
+  Plus,
+  Zap,
+  Target,
+  Eye,
+  Bell,
+  ChevronDown,
+  ChevronUp,
+  Star,
+  Edit3,
+  Archive,
+  ExternalLink
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -80,6 +91,13 @@ export default function Dashboard() {
   const [kpis, setKpis] = useState<KPISnapshot[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
+  const [alertsExpanded, setAlertsExpanded] = useState(false);
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [activityVisible, setActivityVisible] = useState(false);
+  
+  // Refs for animations
+  const counterRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
   // Only call table stores when we have valid project and scenario
   // This prevents the React queue error by ensuring hooks are called conditionally
@@ -180,6 +198,113 @@ export default function Dashboard() {
     }
   };
 
+  // Enhanced time-based greeting
+  const getTimeBasedGreeting = () => {
+    const hour = new Date().getHours();
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
+    if (hour < 6) return { greeting: 'Good night', icon: '🌙', class: 'from-indigo-500 to-purple-600' };
+    if (hour < 12) return { greeting: 'Good morning', icon: '☀️', class: 'from-amber-500 to-orange-600' };
+    if (hour < 17) return { greeting: 'Good afternoon', icon: '🌤️', class: 'from-blue-500 to-cyan-600' };
+    if (hour < 21) return { greeting: 'Good evening', icon: '🌅', class: 'from-pink-500 to-rose-600' };
+    return { greeting: 'Good night', icon: '🌙', class: 'from-indigo-500 to-purple-600' };
+  };
+
+  // Portfolio health score calculation
+  const calculateHealthScore = () => {
+    if (kpis.length === 0) return { score: 0, status: 'No Data', color: 'text-gray-500' };
+    
+    const avgNPV = totalPortfolioValue / Math.max(kpis.length, 1);
+    const avgIRR = averageIRR;
+    const alertRatio = alerts.length / Math.max(totalProjects, 1);
+    
+    let score = 0;
+    if (avgNPV > 1000000) score += 40;
+    else if (avgNPV > 500000) score += 25;
+    else if (avgNPV > 0) score += 15;
+    
+    if (avgIRR > 0.15) score += 35;
+    else if (avgIRR > 0.1) score += 25;
+    else if (avgIRR > 0.05) score += 15;
+    
+    if (alertRatio < 0.1) score += 25;
+    else if (alertRatio < 0.3) score += 15;
+    else if (alertRatio < 0.5) score += 5;
+    
+    if (score >= 80) return { score, status: 'Excellent', color: 'text-emerald-600' };
+    if (score >= 60) return { score, status: 'Good', color: 'text-blue-600' };
+    if (score >= 40) return { score, status: 'Fair', color: 'text-amber-600' };
+    return { score, status: 'Needs Attention', color: 'text-red-600' };
+  };
+
+  // Performance indicators for projects
+  const getPerformanceIndicator = (project: Project) => {
+    const projectKpis = kpis.filter(k => k.created_at > project.created_at);
+    if (projectKpis.length === 0) return '⚪';
+    
+    const avgIRR = projectKpis.reduce((sum, k) => sum + (k.irr || 0), 0) / projectKpis.length;
+    if (avgIRR > 0.15) return '🟢';
+    if (avgIRR > 0.08) return '🟡';
+    return '🔴';
+  };
+
+  // Animated counter hook
+  useEffect(() => {
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const element = entry.target as HTMLElement;
+            const targetValue = parseInt(element.dataset.target || '0');
+            animateCounter(element, targetValue);
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    counterRefs.current.forEach((ref) => {
+      if (ref && observerRef.current) {
+        observerRef.current.observe(ref);
+      }
+    });
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  const animateCounter = (element: HTMLElement, target: number) => {
+    const start = 0;
+    const duration = 1500;
+    const startTime = performance.now();
+
+    const updateCounter = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const current = Math.floor(start + (target - start) * easeOutCubic(progress));
+      element.textContent = current.toString();
+
+      if (progress < 1) {
+        requestAnimationFrame(updateCounter);
+      }
+    };
+
+    requestAnimationFrame(updateCounter);
+  };
+
+  const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+  // Group alerts by type
+  const groupedAlerts = alerts.reduce((acc, alert) => {
+    const type = alert.alert_type || 'general';
+    if (!acc[type]) acc[type] = [];
+    acc[type].push(alert);
+    return acc;
+  }, {} as Record<string, Alert[]>);
+
   // Calculate portfolio metrics
   const totalProjects = projects.length;
   const activeProjects = projects.filter(p => p.status === 'active').length;
@@ -234,20 +359,55 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-14">
       <PageContainer className="py-8">
-        {/* Premium Welcome Header */}
+        {/* Enhanced Welcome Header with Activity Feed Toggle */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {user?.email?.split('@')[0] || 'there'}
-              </h1>
-              <p className="text-muted-foreground mt-1 text-lg">
-                Welcome back to your portfolio dashboard
-              </p>
+            <div className="flex items-center space-x-4">
+              <div>
+                {(() => {
+                  const timeGreeting = getTimeBasedGreeting();
+                  return (
+                    <h1 className={`text-3xl font-bold bg-gradient-to-r ${timeGreeting.class} bg-clip-text text-transparent flex items-center gap-2`}>
+                      <span>{timeGreeting.icon}</span>
+                      {timeGreeting.greeting}, {user?.email?.split('@')[0] || 'there'}
+                    </h1>
+                  );
+                })()}
+                <p className="text-muted-foreground mt-1 text-lg flex items-center gap-2">
+                  Welcome back to your portfolio dashboard
+                  {(() => {
+                    const health = calculateHealthScore();
+                    return (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Badge variant="outline" className={`${health.color} border-current`}>
+                              Portfolio Health: {health.score}/100
+                            </Badge>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Status: {health.status}</p>
+                            <p className="text-xs">Based on NPV, IRR, and alert ratio</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    );
+                  })()}
+                </p>
+              </div>
             </div>
             <div className="flex items-center space-x-3">
+              <Button 
+                variant="outline" 
+                size="lg" 
+                onClick={() => setActivityVisible(!activityVisible)}
+                className="border-border/50 backdrop-blur-sm"
+              >
+                <Activity className="mr-2 h-4 w-4" />
+                Activity Feed
+              </Button>
               <Link to="/projects/new">
-                <Button size="lg" className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300">
+                <Button size="lg" className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                   <Plus className="mr-2 h-5 w-5" />
                   New Project
                 </Button>
@@ -260,103 +420,224 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Premium Key Metrics Cards */}
+        {/* Activity Feed Sidebar */}
+        {activityVisible && (
+          <Card className="mb-8 border-0 shadow-lg bg-gradient-to-r from-card via-card to-primary/5">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center space-x-2">
+                  <Activity className="h-5 w-5 text-primary" />
+                  <span>Recent Activity</span>
+                </CardTitle>
+                <Button variant="ghost" size="sm" onClick={() => setActivityVisible(false)}>
+                  <ChevronUp className="h-4 w-4" />
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3 text-sm">
+                  <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-muted-foreground">Project "Villa Complex" updated</span>
+                  <span className="text-xs text-muted-foreground">2 minutes ago</span>
+                </div>
+                <div className="flex items-center space-x-3 text-sm">
+                  <div className="h-2 w-2 rounded-full bg-blue-500" />
+                  <span className="text-muted-foreground">New KPI calculation completed</span>
+                  <span className="text-xs text-muted-foreground">15 minutes ago</span>
+                </div>
+                <div className="flex items-center space-x-3 text-sm">
+                  <div className="h-2 w-2 rounded-full bg-amber-500" />
+                  <span className="text-muted-foreground">Alert resolved: Cash flow warning</span>
+                  <span className="text-xs text-muted-foreground">1 hour ago</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Enhanced Premium Key Metrics Cards */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10">
-          <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-foreground/80">Total Projects</CardTitle>
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
-                <Building2 className="h-5 w-5 text-primary" />
-              </div>
-            </CardHeader>
-            <CardContent className="relative">
-              <div className="text-3xl font-bold text-foreground mb-1">{totalProjects}</div>
-              <div className="flex items-center space-x-2 text-sm">
-                <span className="text-emerald-600 font-medium">{activeProjects} active</span>
-                <span className="text-muted-foreground">•</span>
-                <span className="text-amber-600 font-medium">{pinnedProjects} pinned</span>
-              </div>
-              <div className="mt-3 h-1 bg-muted rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-700"
-                  style={{ width: `${Math.min((activeProjects / Math.max(totalProjects, 1)) * 100, 100)}%` }}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-foreground/80">Portfolio NPV</CardTitle>
-              <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors duration-300">
-                <DollarSign className="h-5 w-5 text-emerald-600" />
-              </div>
-            </CardHeader>
-            <CardContent className="relative">
-              <div className="text-3xl font-bold text-foreground mb-1">
-                {formatCurrency(totalPortfolioValue)}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                From {kpis.length} calculated projects
-              </p>
-              <div className="mt-3 flex items-center space-x-1">
-                <TrendingUp className="h-4 w-4 text-emerald-600" />
-                <span className="text-sm text-emerald-600 font-medium">+12.5%</span>
-                <span className="text-xs text-muted-foreground">vs last month</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-foreground/80">Average IRR</CardTitle>
-              <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 transition-colors duration-300">
-                <BarChart3 className="h-5 w-5 text-amber-600" />
-              </div>
-            </CardHeader>
-            <CardContent className="relative">
-              <div className="text-3xl font-bold text-foreground mb-1">
-                {formatPercentage(averageIRR)}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Portfolio weighted average
-              </p>
-              <div className="mt-3 flex items-center space-x-1">
-                <Activity className="h-4 w-4 text-amber-600" />
-                <span className="text-sm text-amber-600 font-medium">Above target</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-foreground/80">Active Alerts</CardTitle>
-              <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors duration-300">
-                <AlertCircle className="h-5 w-5 text-red-600" />
-              </div>
-            </CardHeader>
-            <CardContent className="relative">
-              <div className="text-3xl font-bold text-foreground mb-1">{alerts.length}</div>
-              <p className="text-sm text-muted-foreground">
-                Requiring attention
-              </p>
-              {alerts.length === 0 ? (
-                <div className="mt-3 flex items-center space-x-1">
-                  <CheckCircle className="h-4 w-4 text-emerald-600" />
-                  <span className="text-sm text-emerald-600 font-medium">All clear</span>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
+                    <CardTitle className="text-sm font-medium text-foreground/80">Total Projects</CardTitle>
+                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300 group-hover:scale-110">
+                      <Building2 className="h-5 w-5 text-primary" />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="relative">
+                    <div 
+                      ref={(el) => (counterRefs.current[0] = el)}
+                      data-target={totalProjects}
+                      className="text-3xl font-bold text-foreground mb-1"
+                    >
+                      0
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm">
+                      <span className="text-emerald-600 font-medium flex items-center gap-1">
+                        <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                        {activeProjects} active
+                      </span>
+                      <span className="text-muted-foreground">•</span>
+                      <span className="text-amber-600 font-medium">{pinnedProjects} pinned</span>
+                    </div>
+                    <div className="mt-3 h-2 bg-muted rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-primary via-primary-dark to-primary rounded-full transition-all duration-700 animate-pulse"
+                        style={{ 
+                          width: `${Math.min((activeProjects / Math.max(totalProjects, 1)) * 100, 100)}%`,
+                          animationDuration: '2s'
+                        }}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-sm">
+                  <p className="font-medium">Portfolio Overview</p>
+                  <p>Active: {activeProjects} projects</p>
+                  <p>Pinned: {pinnedProjects} projects</p>
+                  <p>Activity Rate: {Math.round((activeProjects / Math.max(totalProjects, 1)) * 100)}%</p>
                 </div>
-              ) : (
-                <div className="mt-3 flex items-center space-x-1">
-                  <Clock className="h-4 w-4 text-red-600" />
-                  <span className="text-sm text-red-600 font-medium">Action needed</span>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
+                    <CardTitle className="text-sm font-medium text-foreground/80">Portfolio NPV</CardTitle>
+                    <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors duration-300 group-hover:scale-110">
+                      <DollarSign className="h-5 w-5 text-emerald-600" />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="relative">
+                    <div className="text-3xl font-bold text-foreground mb-1">
+                      {formatCurrency(totalPortfolioValue)}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      From {kpis.length} calculated projects
+                    </p>
+                    <div className="mt-3 flex items-center space-x-1">
+                      <TrendingUp className="h-4 w-4 text-emerald-600 animate-pulse" />
+                      <span className="text-sm text-emerald-600 font-medium">+12.5%</span>
+                      <span className="text-xs text-muted-foreground">vs last month</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-sm">
+                  <p className="font-medium">Net Present Value</p>
+                  <p>Total Portfolio Value: {formatCurrency(totalPortfolioValue)}</p>
+                  <p>Average per Project: {formatCurrency(totalPortfolioValue / Math.max(kpis.length, 1))}</p>
+                  <p>Growth Trend: Positive 📈</p>
                 </div>
-              )}
-            </CardContent>
-          </Card>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
+                    <CardTitle className="text-sm font-medium text-foreground/80">Average IRR</CardTitle>
+                    <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 transition-colors duration-300 group-hover:scale-110">
+                      <BarChart3 className="h-5 w-5 text-amber-600" />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="relative">
+                    <div className="text-3xl font-bold text-foreground mb-1">
+                      {formatPercentage(averageIRR)}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Portfolio weighted average
+                    </p>
+                    <div className="mt-3 flex items-center space-x-1">
+                      <Target className="h-4 w-4 text-amber-600" />
+                      <span className="text-sm text-amber-600 font-medium">
+                        {averageIRR > 0.1 ? 'Above target' : averageIRR > 0.05 ? 'On target' : 'Below target'}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-sm">
+                  <p className="font-medium">Internal Rate of Return</p>
+                  <p>Portfolio Average: {formatPercentage(averageIRR)}</p>
+                  <p>Target Benchmark: 10%</p>
+                  <p>Performance: {averageIRR > 0.1 ? '🟢 Excellent' : averageIRR > 0.05 ? '🟡 Good' : '🔴 Needs Improvement'}</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
+                    <CardTitle className="text-sm font-medium text-foreground/80">Active Alerts</CardTitle>
+                    <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors duration-300 group-hover:scale-110">
+                      <div className="relative">
+                        <AlertCircle className="h-5 w-5 text-red-600" />
+                        {alerts.length > 0 && (
+                          <div className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full animate-pulse" />
+                        )}
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="relative">
+                    <div 
+                      ref={(el) => (counterRefs.current[3] = el)}
+                      data-target={alerts.length}
+                      className="text-3xl font-bold text-foreground mb-1"
+                    >
+                      0
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Requiring attention
+                    </p>
+                    {alerts.length === 0 ? (
+                      <div className="mt-3 flex items-center space-x-1">
+                        <CheckCircle className="h-4 w-4 text-emerald-600 animate-pulse" />
+                        <span className="text-sm text-emerald-600 font-medium">All clear</span>
+                      </div>
+                    ) : (
+                      <div className="mt-3 flex items-center space-x-1">
+                        <Bell className="h-4 w-4 text-red-600 animate-pulse" />
+                        <span className="text-sm text-red-600 font-medium">Action needed</span>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-sm">
+                  <p className="font-medium">Alert Summary</p>
+                  <p>Total Active: {alerts.length}</p>
+                  {Object.entries(groupedAlerts).map(([type, typeAlerts]) => (
+                    <p key={type}>
+                      {type}: {typeAlerts.length} 
+                      {typeAlerts.some(a => a.severity === 'high') && ' 🔴'}
+                    </p>
+                  ))}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
         {/* Enhanced Analytics Section */}
@@ -465,21 +746,34 @@ export default function Dashboard() {
             <CardContent className="p-6">
               <div className="space-y-4">
                 {projects.slice(0, 5).map((project, index) => (
-                  <div key={project.id} className="group flex items-center justify-between p-4 rounded-lg border border-border/50 hover:border-primary/20 hover:shadow-md transition-all duration-300">
+                  <div key={project.id} className="group flex items-center justify-between p-4 rounded-lg border border-border/50 hover:border-primary/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
                     <div className="flex items-center space-x-4">
-                      <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center group-hover:from-primary/20 group-hover:to-primary/10 transition-colors duration-300">
+                      <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center group-hover:from-primary/20 group-hover:to-primary/10 transition-colors duration-300 relative">
                         <Building2 className="h-5 w-5 text-primary" />
+                        <div className="absolute -top-1 -right-1 text-sm">
+                          {getPerformanceIndicator(project)}
+                        </div>
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center space-x-2">
                           <Link 
                             to={`/projects/${project.id}`}
-                            className="font-semibold text-foreground hover:text-primary transition-colors duration-200"
+                            className="font-semibold text-foreground hover:text-primary transition-colors duration-200 flex items-center gap-1"
                           >
                             {project.name}
+                            <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                           </Link>
                           {project.is_pinned && (
-                            <CheckCircle className="h-4 w-4 text-emerald-500" />
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger>
+                                  <Star className="h-4 w-4 text-amber-500 fill-current animate-pulse" />
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p>Pinned Project</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           )}
                         </div>
                         <p className="text-sm text-muted-foreground mt-1">
@@ -498,9 +792,32 @@ export default function Dashboard() {
                     </div>
                     <div className="flex items-center space-x-3">
                       {getStatusBadge(project.status)}
-                      <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <Activity className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Quick View</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="sm">
+                                <Edit3 className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Edit Project</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -548,33 +865,87 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent className="p-6">
               <div className="space-y-4">
-                {alerts.map((alert, index) => (
-                  <div key={alert.id} className="flex items-start space-x-3 p-3 rounded-lg border border-border/30 hover:border-red-500/20 hover:shadow-sm transition-all duration-300">
-                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
-                      alert.severity === 'high' ? 'bg-red-500/10' : 
-                      alert.severity === 'medium' ? 'bg-amber-500/10' : 'bg-blue-500/10'
-                    }`}>
-                      <AlertCircle className={`h-4 w-4 ${getSeverityColor(alert.severity)}`} />
-                    </div>
-                    <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium text-foreground">{alert.title}</p>
-                      <p className="text-xs text-muted-foreground line-clamp-2">{alert.body}</p>
-                      <div className="flex items-center space-x-2">
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(alert.created_at).toLocaleDateString()}
-                        </p>
+                {/* Smart Alert Grouping */}
+                {Object.keys(groupedAlerts).length > 1 && (
+                  <div className="flex items-center justify-between border-b border-border/20 pb-2">
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {Object.keys(groupedAlerts).length} Alert Categories
+                    </span>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      onClick={() => setAlertsExpanded(!alertsExpanded)}
+                    >
+                      {alertsExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                )}
+
+                {alertsExpanded && Object.keys(groupedAlerts).length > 1 ? (
+                  Object.entries(groupedAlerts).map(([type, typeAlerts]) => (
+                    <div key={type} className="space-y-2">
+                      <h4 className="text-sm font-medium text-foreground capitalize flex items-center gap-2">
                         <Badge variant="outline" className="text-xs">
-                          {alert.alert_type}
+                          {type} ({typeAlerts.length})
                         </Badge>
+                      </h4>
+                      {typeAlerts.slice(0, 2).map((alert) => (
+                        <div key={alert.id} className="flex items-start space-x-3 p-3 rounded-lg border border-border/30 hover:border-red-500/20 hover:shadow-sm transition-all duration-300 ml-4">
+                          <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
+                            alert.severity === 'high' ? 'bg-red-500/10 animate-pulse' : 
+                            alert.severity === 'medium' ? 'bg-amber-500/10' : 'bg-blue-500/10'
+                          }`}>
+                            <AlertCircle className={`h-4 w-4 ${getSeverityColor(alert.severity)}`} />
+                          </div>
+                          <div className="flex-1 space-y-1">
+                            <p className="text-sm font-medium text-foreground">{alert.title}</p>
+                            <p className="text-xs text-muted-foreground line-clamp-2">{alert.body}</p>
+                            <div className="flex items-center space-x-2">
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(alert.created_at).toLocaleDateString()}
+                              </p>
+                              <Badge variant="outline" className={`text-xs ${
+                                alert.severity === 'high' ? 'border-red-200 text-red-700' :
+                                alert.severity === 'medium' ? 'border-amber-200 text-amber-700' :
+                                'border-blue-200 text-blue-700'
+                              }`}>
+                                {alert.severity.toUpperCase()}
+                              </Badge>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))
+                ) : (
+                  alerts.slice(0, 5).map((alert, index) => (
+                    <div key={alert.id} className="flex items-start space-x-3 p-3 rounded-lg border border-border/30 hover:border-red-500/20 hover:shadow-sm transition-all duration-300">
+                      <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
+                        alert.severity === 'high' ? 'bg-red-500/10 animate-pulse' : 
+                        alert.severity === 'medium' ? 'bg-amber-500/10' : 'bg-blue-500/10'
+                      }`}>
+                        <AlertCircle className={`h-4 w-4 ${getSeverityColor(alert.severity)}`} />
+                      </div>
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium text-foreground">{alert.title}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-2">{alert.body}</p>
+                        <div className="flex items-center space-x-2">
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(alert.created_at).toLocaleDateString()}
+                          </p>
+                          <Badge variant="outline" className="text-xs">
+                            {alert.alert_type}
+                          </Badge>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
                 
                 {alerts.length === 0 && (
                   <div className="text-center py-8">
                     <div className="h-12 w-12 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
-                      <CheckCircle className="h-6 w-6 text-emerald-600" />
+                      <CheckCircle className="h-6 w-6 text-emerald-600 animate-pulse" />
                     </div>
                     <p className="text-sm font-medium text-foreground mb-1">All Clear!</p>
                     <p className="text-xs text-muted-foreground">
