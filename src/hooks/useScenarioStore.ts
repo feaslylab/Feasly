@@ -73,6 +73,10 @@ export function useScenarioStore(projectId: string | null) {
     }
   }, [projectId, user?.id, current?.id]);
 
+  const reload = useCallback(async () => {
+    await loadScenarios();
+  }, [loadScenarios]);
+
   const create = useCallback(async (name: string): Promise<Scenario | null> => {
     if (!projectId || !user) return null;
 
@@ -192,6 +196,6 @@ export function useScenarioStore(projectId: string | null) {
     setCurrent,
     create,
     loading,
-    reload: loadScenarios,
+    reload,
   };
 }
