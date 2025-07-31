@@ -13,7 +13,7 @@ export default function CashChart() {
     <div className="mt-8 rounded-lg bg-card p-4 shadow">
       <h3 className="text-lg font-semibold mb-2">Monthly Cash-Flow</h3>
 
-      <ResponsiveContainer width="100%" height={240}>
+      <ResponsiveContainer key={data.length} width="100%" height={240}>
         <AreaChart data={data} stackOffset="sign">
           <XAxis dataKey="period" hide />
           <YAxis
