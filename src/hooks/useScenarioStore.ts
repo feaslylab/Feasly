@@ -98,17 +98,10 @@ export function useScenarioStore(projectId: string | null) {
     // 'create' only needs project & user
   }, [projectId ?? '', user?.id ?? '']);
 
-  // Return early if no projectId, but after all hooks are defined
-  if (!projectId) {
-    return { 
-      scenarios: [], 
-      current: null, 
-      loading: false,
-      setCurrent: () => {}, 
-      create: async () => null,
-      reload: () => {}
-    };
-  }
+  // ALL hooks must be called before any early returns
+  useEffect(() => {
+    loadScenarios();
+  }, [loadScenarios]);
 
   const cloneScenarioItems = async (oldScenarioId: string, newScenarioId: string) => {
     if (!user) return;
@@ -186,9 +179,17 @@ export function useScenarioStore(projectId: string | null) {
     }
   };
 
-  useEffect(() => {
-    loadScenarios();
-  }, [loadScenarios]);
+  // Early return ONLY after all hooks are called
+  if (!projectId) {
+    return { 
+      scenarios: [], 
+      current: null, 
+      loading: false,
+      setCurrent: () => {}, 
+      create: async () => null,
+      reload: () => {}
+    };
+  }
 
   return {
     scenarios,
