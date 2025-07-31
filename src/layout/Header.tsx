@@ -13,6 +13,8 @@ import { CommentButton } from "@/components/collaboration/CommentButton";
 import NewScenarioDialog from '@/components/modals/NewScenarioDialog';
 import ScenarioRenameDialog from '@/components/modals/ScenarioRenameDialog';
 import GlobalActions from "@/components/layout/GlobalActions";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
 export default function Header() {
   const { user } = useAuth();
@@ -54,8 +56,21 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-30 bg-background/70 backdrop-blur border-b">
       <div className="flex items-center justify-between px-6 h-14">
-        {/* Empty left space for layout balance */}
-        <div className="w-24"></div>
+        {/* Left side - Logo and utility controls */}
+        <div className="flex items-center gap-3">
+          <div className="w-6 h-6 flex items-center justify-center flex-shrink-0">
+            <img 
+              src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
+              alt="Feasly Logo" 
+              className="w-6 h-6 object-contain"
+            />
+          </div>
+          <span className="text-lg font-semibold text-foreground">Feasly</span>
+          <div className="flex items-center gap-1 ml-2">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
+        </div>
 
         {/* Centered selectors */}
         <div className="flex items-center gap-4">

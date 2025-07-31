@@ -1,7 +1,5 @@
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { PresenceDots } from "@/components/collaboration/PresenceDots";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useSelectionStore } from "@/state/selectionStore";
@@ -16,12 +14,6 @@ export default function GlobalActions({ onAlertsClick }: GlobalActionsProps) {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Theme Toggle */}
-      <ThemeToggle />
-      
-      {/* Language Switcher */}
-      <LanguageSwitcher />
-      
       {/* Alerts Bell */}
       <div className="relative">
         <Button
