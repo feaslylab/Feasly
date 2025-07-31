@@ -9,7 +9,6 @@ import { useAlerts } from "@/hooks/useAlerts";
 import { Button } from "@/components/ui/button";
 import AlertDrawer from "@/components/dashboard/AlertDrawer";
 import { exportModel } from "@/api/exportModel";
-import { NewScenarioModal } from "@/components/scenarios/NewScenarioModal";
 import { CommentButton } from "@/components/collaboration/CommentButton";
 import { PresenceDots } from "@/components/collaboration/PresenceDots";
 
@@ -20,7 +19,6 @@ export default function Header() {
   const { scenarios, create, setCurrent } = useScenarioStore(projectId);
   const { unreadCount } = useAlerts();
   const [alertDrawerOpen, setAlertDrawerOpen] = useState(false);
-  const [newScenarioModalOpen, setNewScenarioModalOpen] = useState(false);
 
   const handleExportZip = async () => {
     if (!projectId || !scenarioId) {
@@ -42,18 +40,6 @@ export default function Header() {
     } catch (error) {
       console.error('Export error:', error);
       alert('Export failed. Please try again.');
-    }
-  };
-
-  const handleCreateScenario = async (name: string) => {
-    console.log('Creating scenario:', name);
-    const scenario = await create(name);
-    if (scenario) {
-      console.log('Scenario created:', scenario);
-      setScenario(scenario.id);
-      setCurrent(scenario);
-    } else {
-      console.error('Failed to create scenario');
     }
   };
 
@@ -119,12 +105,24 @@ export default function Header() {
               </Menu.Item>
             ))}
             <Menu.Item>
-              {({active})=>(
+              {({ active, close }) => (
                 <button 
                   className={`${
                     active ? 'bg-violet-500 text-white' : 'text-gray-900'
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  onClick={() => setNewScenarioModalOpen(true)}
+                  onClick={async () => {
+                    const name = prompt('Scenario name:')?.trim();
+                    if (!name) return;
+
+                    const newScenario = await create(name);     // ← await the hook
+                    if (!newScenario) return;
+
+                    // selection store picks it up
+                    setScenario(newScenario.id);
+
+                    // optional: close menu so user sees change
+                    close();            // (headless-ui helper supplied in render prop)
+                  }}
                 >
                   + New scenario
                 </button>
@@ -183,12 +181,6 @@ export default function Header() {
       <AlertDrawer 
         isOpen={alertDrawerOpen} 
         onClose={() => setAlertDrawerOpen(false)} 
-      />
-
-      <NewScenarioModal
-        isOpen={newScenarioModalOpen}
-        onClose={() => setNewScenarioModalOpen(false)}
-        onConfirm={handleCreateScenario}
       />
     </header>
   );

@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { useToast } from '@/hooks/use-toast';
+import { nanoid } from 'nanoid';
 
 type Scenario = {
   id: string;
@@ -19,6 +21,7 @@ type ScenarioInsert = {
 
 export function useScenarioStore(projectId: string | null) {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [current, setCurrent] = useState<Scenario | null>(null);
   const [loading, setLoading] = useState(true);
@@ -71,40 +74,35 @@ export function useScenarioStore(projectId: string | null) {
   }, [projectId, user?.id, current?.id]);
 
   const create = async (name: string): Promise<Scenario | null> => {
-    if (!user) return null;
+    if (!projectId || !user) return null;
 
-    try {
-      const newScenario: ScenarioInsert = {
-        project_id: projectId,
-        name,
-        user_id: user.id,
-      };
+    // 1. build row
+    const row = {
+      id: nanoid(),          // pk
+      project_id: projectId,
+      user_id: user.id,
+      name,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
 
-      const { data, error } = await supabase
-        .from('scenarios' as any)
-        .insert(newScenario)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      if (data) {
-        const newScenarioData = data as unknown as Scenario;
-        setScenarios(prev => [...prev, newScenarioData]);
-        
-        // Clone items from current scenario if one exists
-        if (current) {
-          await cloneScenarioItems(current.id, newScenarioData.id);
-        }
-        
-        setCurrent(newScenarioData);
-        return newScenarioData;
-      }
-    } catch (error) {
-      console.error('Error creating scenario:', error);
+    // 2. insert
+    const { error } = await supabase.from('scenarios' as any).insert(row);
+    if (error) {
+      console.error('scenario insert failed', error);
+      toast({
+        title: 'Error',
+        description: 'Could not create scenario – try again',
+        variant: 'destructive',
+      });
+      return null;
     }
-    
-    return null;
+
+    // 3. update local cache & select it
+    setScenarios(prev => [...prev, row]);
+    setCurrent(row);
+
+    return row; // <— caller can await + use .id
   };
 
   const cloneScenarioItems = async (oldScenarioId: string, newScenarioId: string) => {
