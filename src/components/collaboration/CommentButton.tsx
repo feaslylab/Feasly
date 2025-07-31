@@ -20,8 +20,12 @@ export function CommentButton({
   size = 'sm',
   compact = false
 }: CommentButtonProps) {
-  if (!targetId) return null;
+  if (!targetId) {
+    console.log('CommentButton: targetId is missing');
+    return null;
+  }
   
+  console.log('CommentButton: targetId =', targetId);
   const [commentsOpen, setCommentsOpen] = useState(false)
 
   if (compact) {
@@ -51,7 +55,10 @@ export function CommentButton({
       <Button
         variant={variant}
         size={size}
-        onClick={() => setCommentsOpen(true)}
+        onClick={() => {
+          console.log('CommentButton clicked, opening comments for:', targetId);
+          setCommentsOpen(true);
+        }}
         className={`${className}`}
         title="Open comments"
       >

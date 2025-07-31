@@ -28,8 +28,12 @@ export function useNewComments(targetId?: string) {
   const [loading, setLoading] = useState(false)
 
   const fetchComments = async () => {
-    if (!user || !targetId) return
+    if (!user || !targetId) {
+      console.log('useNewComments: fetchComments aborted', { user: !!user, targetId });
+      return;
+    }
 
+    console.log('useNewComments: fetching comments for targetId:', targetId);
     setLoading(true)
     try {
       let query = supabase
@@ -46,6 +50,8 @@ export function useNewComments(targetId?: string) {
       }
 
       const { data, error } = await query
+      
+      console.log('useNewComments: query result', { data, error, targetId });
 
       if (error) throw error
       setComments(data || [])
