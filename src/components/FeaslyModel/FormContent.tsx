@@ -88,7 +88,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
     }
   );
 
-  // Handle section navigation with proper scrolling
+  // Handle section navigation - simplified without forced scrolling
   const handleSectionClick = useCallback((sectionId: string) => {
     if (isWizardMode) {
       const stepIndex = sectionIds.indexOf(sectionId);
@@ -96,11 +96,17 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
       setOpenSections(new Set([sectionId]));
     } else {
       setOpenSections(prev => new Set([...prev, sectionId]));
-      scrollToSection(sectionId, 'smooth');
+      // Optional gentle scroll to section without forcing
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      }, 100);
     }
-  }, [isWizardMode, sectionIds, wizard, scrollToSection]);
+  }, [isWizardMode, sectionIds, wizard]);
 
-  // Handle section panel toggle with scroll spy integration
+  // Handle section panel toggle - simplified without forced scrolling
   const handleSectionToggle = useCallback((sectionId: string, isOpen: boolean) => {
     if (isWizardMode) return;
 
@@ -114,13 +120,8 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
       return newSet;
     });
 
-    // Update scroll spy collapsed state
+    // Update scroll spy collapsed state without forced scrolling
     setSectionCollapsed(sectionId, !isOpen);
-    
-    // Update URL hash for deep-linking
-    if (isOpen) {
-      window.history.pushState(null, '', `#${sectionId}`);
-    }
   }, [isWizardMode, setSectionCollapsed]);
 
   // Sync collapsed state when sections change
@@ -131,25 +132,26 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
     });
   }, [openSections, sectionIds, setSectionCollapsed]);
 
-  // URL hash handling for deep-linking
+  // Simplified URL hash handling - no forced scrolling
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.slice(1); // Remove #
       if (hash && sectionIds.includes(hash)) {
         setOpenSections(prev => new Set([...prev, hash]));
+        // Optional gentle scroll without forcing
         setTimeout(() => {
-          scrollToSection(hash, 'smooth');
-        }, 100);
+          const element = document.getElementById(hash);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 200);
       }
     };
 
-    // Handle initial hash on load
-    handleHashChange();
-    
-    // Listen for hash changes
+    // Listen for hash changes only
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [sectionIds, scrollToSection]);
+  }, [sectionIds]);
 
   // Auto-save functionality
   useEffect(() => {
@@ -194,7 +196,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
     }
   };
 
-  // Auto-focus next invalid field function
+  // Simplified auto-focus function without aggressive scrolling
   const handleValidationClick = useCallback(() => {
     // Find first section with errors
     const firstErrorSection = sections.find(section => {
@@ -203,23 +205,18 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
     });
     
     if (firstErrorSection) {
-      // Open the section and scroll to it
+      // Open the section
       setOpenSections(prev => new Set([...prev, firstErrorSection.id]));
-      scrollToSection(firstErrorSection.id, 'smooth');
       
-      // Try to focus first invalid input after a short delay
+      // Gentle scroll to section without forcing
       setTimeout(() => {
         const sectionElement = document.getElementById(firstErrorSection.id);
         if (sectionElement) {
-          const firstInvalidInput = sectionElement.querySelector('input:invalid, select:invalid, textarea:invalid') as HTMLElement;
-          if (firstInvalidInput) {
-            firstInvalidInput.focus();
-            firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          }
+          sectionElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-      }, 500);
+      }, 300);
     }
-  }, [sections, validationCounts, scrollToSection, setOpenSections]);
+  }, [sections, validationCounts, setOpenSections]);
 
   // Submit handler
   const onFormSubmit = async (data: FeaslyModelFormData) => {
