@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
+import { TM } from "@/components/ui/trademark";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
@@ -73,8 +74,8 @@ export function MarketingHeader() {
               alt="Feasly Logo" 
               className="w-8 h-8 object-contain mr-2"
             />
-            <span className="text-xl md:text-2xl font-bold" style={{ color: '#1e3a8a' }}>
-              Feasly
+            <span className="text-2xl md:text-3xl font-bold" style={{ color: '#1e3a8a' }}>
+              Feasly<TM />
             </span>
           </Link>
         </div>
