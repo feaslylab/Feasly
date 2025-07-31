@@ -190,11 +190,11 @@ export default function Dashboard() {
     const hour = new Date().getHours();
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     
-    if (hour < 6) return { greeting: 'Good night', icon: '🌙', class: 'from-primary-dark to-primary', textClass: 'text-primary' };
-    if (hour < 12) return { greeting: 'Good morning', icon: '☀️', class: 'from-primary to-primary-light', textClass: 'text-primary' };
-    if (hour < 17) return { greeting: 'Good afternoon', icon: '🌤️', class: 'from-primary to-primary-light', textClass: 'text-primary' };
-    if (hour < 21) return { greeting: 'Good evening', icon: '🌅', class: 'from-primary-glow to-primary', textClass: 'text-primary' };
-    return { greeting: 'Good night', icon: '🌙', class: 'from-primary-dark to-primary', textClass: 'text-primary' };
+    if (hour < 6) return { greeting: 'Good Night', icon: '🌙', class: 'from-primary-dark to-primary', textClass: 'text-primary' };
+    if (hour < 12) return { greeting: 'Good Morning', icon: '☀️', class: 'from-primary to-primary-light', textClass: 'text-primary' };
+    if (hour < 17) return { greeting: 'Good Afternoon', icon: '🌤️', class: 'from-primary to-primary-light', textClass: 'text-primary' };
+    if (hour < 21) return { greeting: 'Good Evening', icon: '🌅', class: 'from-primary-glow to-primary', textClass: 'text-primary' };
+    return { greeting: 'Good Night', icon: '🌙', class: 'from-primary-dark to-primary', textClass: 'text-primary' };
   };
 
   // Function to capitalize first letter of name
