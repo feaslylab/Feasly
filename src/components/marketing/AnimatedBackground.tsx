@@ -42,8 +42,8 @@ export function AnimatedBackground() {
             top: `${shape.y}%`,
           }}
           animate={{
-            y: [0, -15, 0, 15, 0], // Gentle floating motion
-            x: [0, 10, -5, 8, 0], // Slow drift
+            y: [0, -35, 0, 30, 0], // Much more floating motion (increased from -15/15 to -35/30)
+            x: [0, 25, -20, 22, 0], // More dramatic drift (increased from 10/-5/8 to 25/-20/22)
             scale: [1, 1.02, 0.98, 1.01, 1], // Very subtle breathing
             opacity: [0.6, 0.8, 0.7, 0.9, 0.6], // Much more solid (60% increase)
           }}
@@ -68,8 +68,8 @@ export function AnimatedBackground() {
             top: `${Math.random() * 100}%`,
           }}
           animate={{
-            y: [0, -20, 10, -15, 0],
-            x: [0, 15, -10, 12, 0],
+            y: [0, -40, 20, -30, 0], // More dynamic floating (increased from -20/10/-15)
+            x: [0, 30, -25, 28, 0], // More expansive drift (increased from 15/-10/12)
             scale: [1, 1.05, 0.95, 1.02, 1],
             opacity: [0.4, 0.7, 0.5, 0.8, 0.4], // More solid orbs
           }}
