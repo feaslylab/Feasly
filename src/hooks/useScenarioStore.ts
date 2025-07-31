@@ -49,11 +49,19 @@ export function useScenarioStore(projectId: string | null) {
 
       if (error) throw error;
 
-      setScenarios((data as unknown as Scenario[]) || []);
+      const scenarioData = (data as unknown as Scenario[]) || [];
+      setScenarios(scenarioData);
       
-      // Set current to first scenario if none selected
-      if (data && data.length > 0 && !current) {
-        setCurrent(data[0] as unknown as Scenario);
+      // Handle scenario selection logic
+      if (scenarioData.length > 0) {
+        // If current scenario no longer exists, reset to first available
+        const currentExists = current && scenarioData.some(s => s.id === current.id);
+        if (!currentExists) {
+          setCurrent(scenarioData[0]);
+        }
+      } else {
+        // No scenarios available, clear current
+        setCurrent(null);
       }
     } catch (error) {
       console.error('Error loading scenarios:', error);
