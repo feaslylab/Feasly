@@ -11,6 +11,7 @@ import AlertDrawer from "@/components/dashboard/AlertDrawer";
 import { exportModel } from "@/api/exportModel";
 import { NewScenarioModal } from "@/components/scenarios/NewScenarioModal";
 import { CommentButton } from "@/components/collaboration/CommentButton";
+import { PresenceDots } from "@/components/collaboration/PresenceDots";
 
 export default function Header() {
   const { user } = useAuth();
@@ -61,7 +62,10 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-30 bg-background/70 backdrop-blur border-b">
       <div className="flex items-center justify-between px-6 h-14">
-        <span className="font-bold text-lg">Feasly</span>
+        <div className="flex items-center gap-3">
+          <span className="font-bold text-lg">Feasly</span>
+          {projectId && <PresenceDots />}
+        </div>
 
         {/* Centered selectors */}
         <div className="flex items-center gap-4">

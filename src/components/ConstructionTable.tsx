@@ -28,7 +28,7 @@ export default function ConstructionTable() {
         </tr></thead>
         <tbody>
           {items.map(row=>(
-            <tr key={row.id} className="border-t">
+            <tr key={row.id} className={`border-t ${editing === row.id ? 'ring-2 ring-primary/40' : ''}`}>
               {['base_cost','start_period','end_period','escalation_rate']
                .map(col=>(
                 <td key={col} className="py-1">

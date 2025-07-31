@@ -18,6 +18,8 @@ export function CommentButton({
   variant = 'ghost',
   size = 'sm'
 }: CommentButtonProps) {
+  if (!targetId) return null;
+  
   const [commentsOpen, setCommentsOpen] = useState(false)
 
   return (

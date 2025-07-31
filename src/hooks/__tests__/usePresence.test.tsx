@@ -140,4 +140,20 @@ describe('usePresence', () => {
     expect(mockChannel.untrack).toHaveBeenCalled()
     expect(supabase.removeChannel).toHaveBeenCalledWith(mockChannel)
   })
+
+  it('should cleanup channels properly', () => {
+    const mockChannel = {
+      on: vi.fn().mockReturnThis(),
+      subscribe: vi.fn(),
+      track: vi.fn(),
+      untrack: vi.fn(),
+      presenceState: vi.fn().mockReturnValue({})
+    }
+    
+    vi.mocked(supabase.channel).mockReturnValue(mockChannel as any)
+
+    const { unmount } = renderHook(() => usePresence('project-123'))
+    unmount()
+    expect(supabase.removeChannel).toHaveBeenCalled()
+  })
 })

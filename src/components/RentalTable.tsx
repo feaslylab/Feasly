@@ -36,7 +36,7 @@ export default function RentalTable() {
         </tr></thead>
         <tbody>
           {items.map(row=>(
-            <tr key={row.id} className="border-t">
+            <tr key={row.id} className={`border-t ${editing === row.id ? 'ring-2 ring-primary/40' : ''}`}>
               {['rooms','adr','occupancy_rate','start_period','end_period','annual_escalation']
                .map(col=>(
                 <td key={col} className="py-1">
