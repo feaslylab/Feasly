@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useStickyNavigation } from '@/hooks/useStickyNavigation';
 import { useMagneticScroll } from '@/hooks/useMagneticScroll';
+import { MAG_OFFSET } from '@/constants/ui';
 import { 
   Menu, 
   Building2, 
@@ -60,7 +61,7 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
     threshold: 80,
     hideDelay: 200,
     showDelay: 100,
-    magneticZone: 120
+    magneticZone: MAG_OFFSET
   });
 
   const { getStickyContainerStyles, checkStickyParent } = useStickyNavigation({
@@ -99,6 +100,8 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
       {isVisible && (
         <motion.aside 
           ref={navRef}
+          data-testid="desktop-sidenav"
+          data-is-sticky={isSticky}
           initial={{ 
             x: -280, 
             opacity: 0 
@@ -136,7 +139,6 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
             ...stickyStyles,
             willChange: 'transform, opacity'
           }}
-          data-testid="desktop-sidenav"
         >
           {/* Header with magnetic glow effect */}
           <motion.div 

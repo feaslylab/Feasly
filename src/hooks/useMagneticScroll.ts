@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { MAG_OFFSET } from '@/constants/ui';
 
 interface UseMagneticScrollOptions {
   threshold?: number; // Distance from edges to trigger magnetic effect
@@ -11,7 +12,7 @@ export function useMagneticScroll({
   threshold = 100,
   hideDelay = 150,
   showDelay = 50,
-  magneticZone = 200
+  magneticZone = MAG_OFFSET
 }: UseMagneticScrollOptions = {}) {
   const [isVisible, setIsVisible] = useState(true);
   const [isSticky, setIsSticky] = useState(false);

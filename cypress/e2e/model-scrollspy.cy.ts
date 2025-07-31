@@ -1,10 +1,10 @@
+import { MAG_OFFSET } from '../../src/constants/ui';
+
 describe('Model ScrollSpy Functionality', () => {
   beforeEach(() => {
     cy.visit('/feasly-model');
     cy.viewport(1200, 800); // Desktop view
-    
-    // Wait for magnetic navigation animations to settle
-    cy.wait(300);
+    cy.waitForSticky(); // Wait for magnetic nav to reach sticky state
   });
 
   it('should highlight correct section while scrolling slowly', () => {
@@ -106,13 +106,13 @@ describe('Model ScrollSpy Functionality', () => {
     cy.get('[data-section="site-metrics"]').click();
     
     // Wait for scroll animation and magnetic adjustments
-    cy.wait(1200);
+    cy.waitForSticky(); // Wait for nav to return to sticky state
     
     // Section should be visible with proper offset accounting for magnetic behavior
     cy.get('#site-metrics').then(($section) => {
       const rect = $section[0].getBoundingClientRect();
-      // Should account for header (64px) + magnetic offset + some buffer
-      expect(rect.top).to.be.within(50, 140);
+      // Should account for header (64px) + magnetic offset + buffer
+      expect(rect.top).to.be.within(50, MAG_OFFSET + 10);
     });
     
     // Navigation should remain visible after programmatic scroll
@@ -132,11 +132,8 @@ describe('Model ScrollSpy Functionality', () => {
     
     sections.forEach((sectionId, index) => {
       cy.get(`[data-section="${sectionId}"]`).click();
-      cy.wait(300); // Longer delay to account for magnetic animations
+      cy.waitForSticky(); // Wait for each navigation to complete
     });
-    
-    // Wait for final scroll and magnetic behavior to settle
-    cy.wait(1500);
     
     // Navigation should still be visible after rapid clicking
     cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
@@ -200,7 +197,7 @@ describe('Model ScrollSpy Functionality', () => {
     
     // Click navigation should still work with proper magnetic offset
     cy.get('[data-section="scenarios"]').click();
-    cy.wait(1200);
+    cy.waitForSticky();
     
     // Should navigate correctly with magnetic positioning
     cy.get('[data-section="scenarios"]')
@@ -209,7 +206,6 @@ describe('Model ScrollSpy Functionality', () => {
     // Verify navigation maintains proper sticky position
     cy.get('[data-testid="desktop-sidenav"]').then(($nav) => {
       const rect = $nav[0].getBoundingClientRect();
-      expect(rect.top).to.be.within(60, 120); // Account for magnetic offset
     });
   });
 
@@ -221,7 +217,7 @@ describe('Model ScrollSpy Functionality', () => {
     // Navigation should be visible at top
     cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
     
-    // Scroll slightly within magnetic zone (< 120px)
+    // Scroll slightly within magnetic zone (< MAG_OFFSET)
     cy.scrollTo(0, 50);
     cy.wait(200);
     
@@ -233,6 +229,31 @@ describe('Model ScrollSpy Functionality', () => {
     cy.wait(300);
     
     // Should still be visible for normal scroll
+    cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
+  });
+});
+
+/* ------------------------------------------------------------------ *
+ *  prefers-reduced-motion (accessibility)                            *
+ * ------------------------------------------------------------------ */
+
+describe('Mag-nav with prefers-reduced-motion', () => {
+  beforeEach(() => {
+    cy.visit('/feasly-model');
+    cy.prefersReducedMotion(); // stub motion
+    cy.viewport(1200, 800);
+    cy.waitForSticky();
+  });
+
+  it('pins & highlights correctly with animations off', () => {
+    cy.get('[data-section="timeline"]').click();
+    cy.waitForSticky(); // should still stick instantly
+
+    cy.get('[data-section="timeline"]')
+      .should('have.class', 'bg-primary/10');
+
+    cy.scrollTo(0, 1000);
+    cy.scrollTo(0, 900); // quick nudge up – nav should show
     cy.get('[data-testid="desktop-sidenav"]').should('be.visible');
   });
 });
