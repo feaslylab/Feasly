@@ -59,7 +59,7 @@ export function ConflictModal({ isOpen, onClose, conflict, onResolve }: Conflict
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-w-2xl" data-testid="conflict-modal">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-orange-500" />
@@ -91,7 +91,7 @@ export function ConflictModal({ isOpen, onClose, conflict, onResolve }: Conflict
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
                         <Badge variant="outline" className="mb-2">Server Version</Badge>
-                        <div className="text-sm bg-red-50 p-2 rounded border">
+                        <div className="text-sm bg-red-50 p-2 rounded border" data-testid="server-version">
                           {typeof diff.server === 'object' 
                             ? JSON.stringify(diff.server, null, 2)
                             : String(diff.server || 'empty')
@@ -100,7 +100,7 @@ export function ConflictModal({ isOpen, onClose, conflict, onResolve }: Conflict
                       </div>
                       <div>
                         <Badge variant="outline" className="mb-2">Your Version</Badge>
-                        <div className="text-sm bg-blue-50 p-2 rounded border">
+                        <div className="text-sm bg-blue-50 p-2 rounded border" data-testid="local-version">
                           {typeof diff.local === 'object'
                             ? JSON.stringify(diff.local, null, 2)
                             : String(diff.local || 'empty')
@@ -120,6 +120,7 @@ export function ConflictModal({ isOpen, onClose, conflict, onResolve }: Conflict
               variant="outline"
               className="h-auto p-4 flex flex-col items-start space-y-2"
               onClick={() => setResolution('overwrite')}
+              data-testid="overwrite-button"
             >
               <div className="flex items-center gap-2">
                 <div className="font-medium">Overwrite Server</div>
@@ -134,6 +135,7 @@ export function ConflictModal({ isOpen, onClose, conflict, onResolve }: Conflict
               variant="outline"
               className="h-auto p-4 flex flex-col items-start space-y-2"
               onClick={() => setResolution('merge')}
+              data-testid="merge-button"
             >
               <div className="flex items-center gap-2">
                 <div className="font-medium">Smart Merge</div>
@@ -165,6 +167,7 @@ export function ConflictModal({ isOpen, onClose, conflict, onResolve }: Conflict
           <Button 
             variant="outline" 
             onClick={() => handleResolve('cancel')}
+            data-testid="cancel-conflict"
           >
             Cancel
           </Button>
@@ -173,6 +176,8 @@ export function ConflictModal({ isOpen, onClose, conflict, onResolve }: Conflict
             <Button 
               onClick={() => handleResolve(resolution)}
               variant={resolution === 'overwrite' ? 'destructive' : 'default'}
+              data-testid={resolution === 'overwrite' ? 'confirm-overwrite' : 'confirm-merge'}
+              aria-live="polite"
             >
               {resolution === 'overwrite' ? 'Overwrite Server' : 'Merge Changes'}
             </Button>

@@ -1,0 +1,13 @@
+{
+  "project_name": "Test Project",
+  "description": "A test project for autosave functionality",
+  "location": "Riyadh, Saudi Arabia",
+  "currency_code": "SAR",
+  "land_cost": 1000000,
+  "loan_amount": 800000,
+  "interest_rate": 5,
+  "loan_term_years": 25,
+  "phasing_enabled": false,
+  "zakat_applicable": true,
+  "escrow_required": false
+}

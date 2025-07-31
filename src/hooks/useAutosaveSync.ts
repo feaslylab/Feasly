@@ -358,61 +358,14 @@ export function useAutosaveSync(modelId: string, options: AutosaveOptions = {}) 
   };
 }
 
-// API functions (to be implemented in feaslyModel.ts)
+// API functions using the FeaslyModelAPI adapter
 async function saveDraftToServer(data: any, etag?: string): Promise<{ etag: string }> {
-  // TODO: Implement actual API call
-  const response = await fetch(`/api/models/${data.id}/draft`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(etag && { 'If-Match': etag })
-    },
-    body: JSON.stringify(data)
-  });
-
-  if (response.status === 409) {
-    const conflictData = await response.json();
-    const error = new Error('Conflict detected') as ConflictError;
-    error.name = 'ConflictError';
-    error.serverData = conflictData.serverData;
-    error.localData = data;
-    error.etag = conflictData.etag;
-    throw error;
-  }
-
-  if (!response.ok) {
-    throw new Error(`Draft save failed: ${response.statusText}`);
-  }
-
-  const result = await response.json();
-  return { etag: result.etag };
+  const { feaslyModelAPI } = await import('@/api/feaslyModel');
+  return await feaslyModelAPI.patchDraft(data.id || 'default', data, etag);
 }
 
 async function commitToServer(data: any, etag?: string): Promise<{ etag: string }> {
-  // TODO: Implement actual API call
-  const response = await fetch(`/api/models/${data.id}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(etag && { 'If-Match': etag })
-    },
-    body: JSON.stringify(data)
-  });
-
-  if (response.status === 409) {
-    const conflictData = await response.json();
-    const error = new Error('Conflict detected') as ConflictError;
-    error.name = 'ConflictError';
-    error.serverData = conflictData.serverData;
-    error.localData = data;
-    error.etag = conflictData.etag;
-    throw error;
-  }
-
-  if (!response.ok) {
-    throw new Error(`Commit failed: ${response.statusText}`);
-  }
-
-  const result = await response.json();
+  const { feaslyModelAPI } = await import('@/api/feaslyModel');
+  const result = await feaslyModelAPI.commit(data.id || 'default', data, etag);
   return { etag: result.etag };
 }

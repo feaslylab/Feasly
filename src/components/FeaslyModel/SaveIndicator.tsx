@@ -89,6 +89,8 @@ export function SaveIndicator({ state, className }: SaveIndicatorProps) {
             className
           )}
           aria-live="polite"
+          aria-label={`Save status: ${config.label}`}
+          data-testid="save-indicator"
         >
           {config.icon}
           <span className="text-xs">{config.label}</span>
