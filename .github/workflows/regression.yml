@@ -35,5 +35,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
       
+      - name: Build for performance check
+        run: npm run build
+      
+      - name: Bundle size check
+        run: node scripts/bundle-check.js
+      
+      - name: Accessibility check
+        run: node scripts/a11y-check.js
+      
       - name: Tailwind smoke test
         run: npx tailwindcss -i ./src/index.css -o /dev/null --minify
