@@ -12,7 +12,7 @@
 @layer base {
   :root {
     /* Brand Colors */
-    --primary: 217 79% 53%;
+    --primary: 142 76% 36%;
     
     /* Base Colors */
     --background: 220 18% 98%;
@@ -27,9 +27,9 @@
 
     /* Card and Components */
     --primary-foreground: 0 0% 100%;
-    --primary-light: 224 100% 88%;    /* Light blue for accents */
-    --primary-dark: 224 85% 38%;      /* Deep blue for depth */
-    --primary-glow: 224 100% 75%;     /* Glowing accent blue */
+    --primary-light: 142 69% 58%;     /* Light green for accents */
+    --primary-dark: 142 84% 25%;      /* Deep green for depth */
+    --primary-glow: 142 76% 75%;      /* Glowing accent green */
 
     /* Financial Green Accents */
     --success: 142 71% 45%;
@@ -56,7 +56,7 @@
 
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 214 76% 19%;
+    --ring: 142 76% 36%;
 
     --radius: 0.75rem;
 
@@ -77,14 +77,14 @@
     /* Financial Chart Colors */
     --chart-revenue: 142 71% 45%;
     --chart-cost: 0 84% 60%;
-    --chart-profit: 214 76% 19%;
+    --chart-profit: 142 76% 36%;
     --chart-baseline: 213 19% 65%;
 
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary: 142 76% 36%;
 
     --sidebar-primary-foreground: 0 0% 98%;
 
@@ -94,7 +94,7 @@
 
     --sidebar-border: 220 13% 91%;
 
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 142 76% 36%;
   }
 
   .dark {
@@ -110,11 +110,11 @@
     --popover-foreground: 210 40% 98%;
 
     /* Enhanced primary for better visibility */
-    --primary: 217 91% 65%;        /* Brighter for accessibility */
+    --primary: 142 69% 58%;        /* Brighter green for accessibility */
     --primary-foreground: 222 84% 4.9%;
-    --primary-light: 217 100% 85%; /* Accessible light variant */
-    --primary-dark: 217 85% 25%;   /* Deep variant for depth */
-    --primary-glow: 217 100% 80%;  /* Accessible glow */
+    --primary-light: 142 76% 75%;  /* Accessible light green variant */
+    --primary-dark: 142 84% 25%;   /* Deep green variant for depth */
+    --primary-glow: 142 76% 75%;   /* Accessible green glow */
 
     /* Enhanced financial colors for dark mode */
     --success: 142 71% 55%;        /* Brighter green for visibility */
@@ -139,17 +139,17 @@
 
     --border: 217 32% 23%;         /* More visible borders */
     --input: 217 32% 23%;
-    --ring: 217 91% 65%;
+    --ring: 142 69% 58%;
     
     /* Enhanced sidebar colors for glass effect */
     --sidebar-background: 222 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217 91% 65%;
+    --sidebar-primary: 142 69% 58%;
     --sidebar-primary-foreground: 222 84% 4.9%;
     --sidebar-accent: 222 47% 13%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217 32% 23%;
-    --sidebar-ring: 217 91% 65%;
+    --sidebar-ring: 142 69% 58%;
 
     /* Dark mode specific gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-dark)));
@@ -168,7 +168,7 @@
     /* Dark mode chart colors with better contrast */
     --chart-revenue: 142 71% 55%;
     --chart-cost: 0 84% 65%;
-    --chart-profit: 217 91% 75%;
+    --chart-profit: 142 69% 58%;
     --chart-baseline: 215 16% 75%;
   }
 }
