@@ -359,63 +359,135 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-14">
       <PageContainer className="py-8">
-        {/* Enhanced Welcome Header with Activity Feed Toggle */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div>
-                {(() => {
-                  const timeGreeting = getTimeBasedGreeting();
-                  return (
-                    <h1 className={`text-3xl font-bold bg-gradient-to-r ${timeGreeting.class} bg-clip-text text-transparent flex items-center gap-2`}>
-                      <span>{timeGreeting.icon}</span>
-                      {timeGreeting.greeting}, {user?.email?.split('@')[0] || 'there'}
-                    </h1>
-                  );
-                })()}
-                <p className="text-muted-foreground mt-1 text-lg flex items-center gap-2">
-                  Welcome back to your portfolio dashboard
-                  {(() => {
-                    const health = calculateHealthScore();
-                    return (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <Badge variant="outline" className={`${health.color} border-current`}>
-                              Portfolio Health: {health.score}/100
-                            </Badge>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Status: {health.status}</p>
-                            <p className="text-xs">Based on NPV, IRR, and alert ratio</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    );
-                  })()}
-                </p>
+        {/* Premium Welcome Hero Section */}
+        <div className="mb-12">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-card via-card to-primary/5 border border-border/50 shadow-xl">
+            {/* Background decoration */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/5 opacity-50" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-48 translate-x-48" />
+            
+            <div className="relative p-8 lg:p-12">
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+                {/* Left: Enhanced greeting section */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-4 mb-6">
+                    {(() => {
+                      const timeGreeting = getTimeBasedGreeting();
+                      return (
+                        <div className="flex items-center gap-3">
+                          <div className="text-4xl">{timeGreeting.icon}</div>
+                          <div>
+                            <h1 className={`text-4xl lg:text-5xl font-bold bg-gradient-to-r ${timeGreeting.class} bg-clip-text text-transparent leading-tight`}>
+                              {timeGreeting.greeting}
+                            </h1>
+                            <p className="text-xl lg:text-2xl font-semibold text-foreground mt-1">
+                              {user?.email?.split('@')[0] || 'there'}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <p className="text-lg text-muted-foreground max-w-2xl">
+                      Welcome back to your portfolio dashboard. Here's your real-time financial overview and project insights.
+                    </p>
+                    
+                    {/* Enhanced health score section */}
+                    <div className="flex flex-wrap items-center gap-4">
+                      {(() => {
+                        const health = calculateHealthScore();
+                        return (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-card/60 border border-border/30 hover:border-primary/30 transition-all duration-300">
+                                  <div className="flex items-center gap-2">
+                                    <div className="relative">
+                                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                                        <Target className="h-6 w-6 text-primary" />
+                                      </div>
+                                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
+                                        <div className="w-2 h-2 bg-white rounded-full" />
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <p className="text-sm font-medium text-muted-foreground">Portfolio Health</p>
+                                      <p className={`text-lg font-bold ${health.color}`}>
+                                        {health.score}/100 · {health.status}
+                                      </p>
+                                    </div>
+                                  </div>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <div className="text-sm">
+                                  <p className="font-medium">Portfolio Health Score</p>
+                                  <p>Based on NPV, IRR, and alert ratio</p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    NPV: {Math.round((totalPortfolioValue / 1000000) * 10) / 10}M • IRR: {formatPercentage(averageIRR)} • Alerts: {alerts.length}
+                                  </p>
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        );
+                      })()}
+                      
+                      {/* Quick stats */}
+                      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                        <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
+                        <div>
+                          <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
+                            {activeProjects} Active Projects
+                          </p>
+                          <p className="text-xs text-emerald-600 dark:text-emerald-500">
+                            {formatCurrency(totalPortfolioValue)} Total Value
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Action buttons and controls */}
+                <div className="lg:flex-shrink-0">
+                  <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setActivityVisible(!activityVisible)}
+                      className="lg:order-2 px-6 py-3 h-auto border-border/50 backdrop-blur-sm hover:bg-primary/5 transition-all duration-300"
+                    >
+                      <Activity className="mr-2 h-5 w-5" />
+                      <div className="text-left">
+                        <div className="font-medium">Activity Feed</div>
+                        <div className="text-xs text-muted-foreground">Live updates</div>
+                      </div>
+                    </Button>
+                    
+                    <Link to="/projects/new" className="lg:order-1">
+                      <Button size="lg" className="w-full lg:w-auto px-8 py-4 h-auto bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group">
+                        <div className="flex items-center gap-3">
+                          <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" />
+                          <div className="text-left">
+                            <div className="font-semibold text-lg">New Project</div>
+                            <div className="text-xs text-primary-foreground/80">Start modeling</div>
+                          </div>
+                        </div>
+                      </Button>
+                    </Link>
+                    
+                    <Button variant="outline" className="lg:order-3 px-6 py-3 h-auto border-border/50 backdrop-blur-sm hover:bg-accent/50 transition-all duration-300">
+                      <Calendar className="mr-2 h-5 w-5" />
+                      <div className="text-left">
+                        <div className="font-medium">This Month</div>
+                        <div className="text-xs text-muted-foreground">{new Date().toLocaleDateString('en', { month: 'long' })}</div>
+                      </div>
+                    </Button>
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Button 
-                variant="outline" 
-                size="lg" 
-                onClick={() => setActivityVisible(!activityVisible)}
-                className="border-border/50 backdrop-blur-sm"
-              >
-                <Activity className="mr-2 h-4 w-4" />
-                Activity Feed
-              </Button>
-              <Link to="/projects/new">
-                <Button size="lg" className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  <Plus className="mr-2 h-5 w-5" />
-                  New Project
-                </Button>
-              </Link>
-              <Button variant="outline" size="lg" className="border-border/50 backdrop-blur-sm">
-                <Calendar className="mr-2 h-4 w-4" />
-                This Month
-              </Button>
             </div>
           </div>
         </div>
