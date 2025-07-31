@@ -73,7 +73,7 @@ export function useScenarioStore(projectId: string | null) {
     }
   }, [projectId, user?.id, current?.id]);
 
-  const create = async (name: string): Promise<Scenario | null> => {
+  const create = useCallback(async (name: string): Promise<Scenario | null> => {
     if (!projectId || !user) return null;
 
     // 1. build row
@@ -103,7 +103,8 @@ export function useScenarioStore(projectId: string | null) {
     setCurrent(row);
 
     return row; // <— caller can await + use .id
-  };
+    // 'create' only needs project & user
+  }, [projectId, user?.id]);
 
   const cloneScenarioItems = async (oldScenarioId: string, newScenarioId: string) => {
     if (!user) return;
