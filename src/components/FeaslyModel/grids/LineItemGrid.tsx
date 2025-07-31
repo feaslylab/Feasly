@@ -22,8 +22,10 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { LineItemBase, GridConfig, GridState, ValidationResult, BulkAction } from './types';
 import { BulkActionsBar } from './BulkActionsBar';
 import { UndoRedoControls } from './UndoRedoControls';
+import { RowHistoryIcon } from './RowHistoryIcon';
 import { CSVImportModal } from '../import/CSVImportModal';
 import { useGridUndoRedo } from '@/hooks/useGridUndoRedo';
+import { useRowHistory } from '@/hooks/useRowHistory';
 
 interface LineItemGridProps<T extends LineItemBase> {
   data: T[];
@@ -367,6 +369,7 @@ export function LineItemGrid<T extends LineItemBase>({
                 )}
               </div>
             ))}
+            <div className="w-8 text-center">History</div>
             <div className="w-20 text-center">Actions</div>
           </div>
         </div>
@@ -455,6 +458,7 @@ interface GridRowProps<T extends LineItemBase> {
   onStateChange: React.Dispatch<React.SetStateAction<GridState<T>>>;
   onValidate?: (item: T) => ValidationResult;
   style?: React.CSSProperties;
+  modelId?: string; // For row history tracking
 }
 
 function GridRow<T extends LineItemBase>({
@@ -464,13 +468,17 @@ function GridRow<T extends LineItemBase>({
   state,
   onStateChange,
   onValidate,
-  style
+  style,
+  modelId = 'default'
 }: GridRowProps<T>) {
   const isSelected = state.selectedIds.has(item.id);
   const isEditing = state.editingId === item.id;
   const validation = onValidate?.(item);
   const hasErrors = validation && !validation.isValid;
   const hasWarnings = validation && Object.keys(validation.warnings).length > 0;
+
+  // Row history tracking
+  const { history, add: addHistory } = useRowHistory(modelId, item.id);
 
   return (
     <Draggable 
@@ -525,6 +533,15 @@ function GridRow<T extends LineItemBase>({
               column={column}
               isEditing={isEditing}
               onEdit={(newValue) => {
+                // Track the change in history
+                addHistory({
+                  type: 'edit',
+                  field: String(column.key),
+                  before: item[column.key],
+                  after: newValue,
+                  user: 'Me', // TODO: currentUser.id
+                });
+                
                 onStateChange(prev => ({
                   ...prev,
                   items: prev.items.map(i => 
@@ -536,6 +553,12 @@ function GridRow<T extends LineItemBase>({
               warning={validation?.warnings[String(column.key)]}
             />
           ))}
+
+          
+          {/* History Icon */}
+          <div className="flex items-center justify-center w-8">
+            <RowHistoryIcon entries={history} />
+          </div>
 
           {/* Actions */}
           <div className="flex items-center gap-1 w-20 justify-center">
