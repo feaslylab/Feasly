@@ -98,7 +98,7 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
       <CardHeader className={cn("text-center space-y-4", isRTL && "text-right")}>
         <div className="mx-auto flex items-center justify-center">
           <img 
-            src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
+            src="/lovable-uploads/0ba4a39f-b379-4fc8-93b3-4f1d8abe3f3a.png" 
             alt="Feasly Logo" 
             className="w-16 h-16 object-contain"
           />
