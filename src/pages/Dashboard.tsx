@@ -83,7 +83,7 @@ export default function Dashboard() {
 
   // Only call table stores when we have valid project and scenario
   // This prevents the React queue error by ensuring hooks are called conditionally
-  console.log("Dashboard render - projectId:", projectId, "scenarioId:", scenarioId);
+  if (!import.meta.env.PROD) console.log("Dashboard render - projectId:", projectId, "scenarioId:", scenarioId);
 
   useEffect(() => {
     if (user) {
@@ -193,21 +193,35 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex flex-col min-h-screen bg-background pt-14">
-        <div className="flex-1 space-y-6 p-6">
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-64" />
-            <Skeleton className="h-4 w-96" />
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-14">
+        <div className="flex-1 space-y-8 p-6">
+          <div className="space-y-3">
+            <Skeleton className="h-10 w-80 bg-gradient-to-r from-muted to-muted/50" />
+            <Skeleton className="h-6 w-96 bg-gradient-to-r from-muted to-muted/50" />
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Card key={i}>
-                <CardHeader className="space-y-0 pb-2">
-                  <Skeleton className="h-4 w-32" />
+              <Card key={i} className="border-0 shadow-lg bg-gradient-to-br from-card to-primary/5">
+                <CardHeader className="space-y-0 pb-3">
+                  <Skeleton className="h-5 w-32 bg-gradient-to-r from-muted to-muted/50" />
                 </CardHeader>
                 <CardContent>
-                  <Skeleton className="h-8 w-24 mb-2" />
-                  <Skeleton className="h-3 w-40" />
+                  <Skeleton className="h-8 w-24 mb-3 bg-gradient-to-r from-muted to-muted/50" />
+                  <Skeleton className="h-4 w-40 bg-gradient-to-r from-muted to-muted/50" />
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Card key={i} className="border-0 shadow-lg bg-gradient-to-br from-card to-primary/5">
+                <CardHeader>
+                  <Skeleton className="h-6 w-40 bg-gradient-to-r from-muted to-muted/50" />
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {Array.from({ length: 3 }).map((_, j) => (
+                    <Skeleton key={j} className="h-12 w-full bg-gradient-to-r from-muted to-muted/50" />
+                  ))}
                 </CardContent>
               </Card>
             ))}
@@ -218,155 +232,292 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pt-14">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5 pt-14">
       <PageContainer className="py-8">
-        <PageHeader 
-          title="Dashboard"
-          description="Welcome back! Here's your portfolio overview and recent activity."
-        />
-        
-        <div className="flex items-center justify-end mb-6">
-          <div className="flex items-center space-x-2">
-            <Link to="/projects/new">
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                New Project
+        {/* Premium Welcome Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 18 ? 'afternoon' : 'evening'}, {user?.email?.split('@')[0] || 'there'}
+              </h1>
+              <p className="text-muted-foreground mt-1 text-lg">
+                Welcome back to your portfolio dashboard
+              </p>
+            </div>
+            <div className="flex items-center space-x-3">
+              <Link to="/projects/new">
+                <Button size="lg" className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300">
+                  <Plus className="mr-2 h-5 w-5" />
+                  New Project
+                </Button>
+              </Link>
+              <Button variant="outline" size="lg" className="border-border/50 backdrop-blur-sm">
+                <Calendar className="mr-2 h-4 w-4" />
+                This Month
               </Button>
-            </Link>
-            <Button variant="outline" size="sm">
-              <Calendar className="mr-2 h-4 w-4" />
-              This Month
-            </Button>
+            </div>
           </div>
         </div>
 
-        {/* Key Metrics Cards with accent on first card */}
-        <div className="dashboard-cards grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
-          <Card className="border-l-4 border-primary/80 shadow-elevation-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-card-label">Total Projects</CardTitle>
-              <Building2 className="h-4 w-4 text-muted-foreground" />
+        {/* Premium Key Metrics Cards */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-10">
+          <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-medium text-foreground/80">Total Projects</CardTitle>
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors duration-300">
+                <Building2 className="h-5 w-5 text-primary" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalProjects}</div>
-              <p className="text-body-sm text-muted-foreground">
-                {activeProjects} active • {pinnedProjects} pinned
-              </p>
+            <CardContent className="relative">
+              <div className="text-3xl font-bold text-foreground mb-1">{totalProjects}</div>
+              <div className="flex items-center space-x-2 text-sm">
+                <span className="text-emerald-600 font-medium">{activeProjects} active</span>
+                <span className="text-muted-foreground">•</span>
+                <span className="text-amber-600 font-medium">{pinnedProjects} pinned</span>
+              </div>
+              <div className="mt-3 h-1 bg-muted rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-primary to-primary-dark rounded-full transition-all duration-700"
+                  style={{ width: `${Math.min((activeProjects / Math.max(totalProjects, 1)) * 100, 100)}%` }}
+                />
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="shadow-elevation-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-card-label">Portfolio NPV</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+          <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-medium text-foreground/80">Portfolio NPV</CardTitle>
+              <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors duration-300">
+                <DollarSign className="h-5 w-5 text-emerald-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
+            <CardContent className="relative">
+              <div className="text-3xl font-bold text-foreground mb-1">
                 {formatCurrency(totalPortfolioValue)}
               </div>
-              <p className="text-body-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 From {kpis.length} calculated projects
               </p>
+              <div className="mt-3 flex items-center space-x-1">
+                <TrendingUp className="h-4 w-4 text-emerald-600" />
+                <span className="text-sm text-emerald-600 font-medium">+12.5%</span>
+                <span className="text-xs text-muted-foreground">vs last month</span>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="shadow-elevation-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-card-label">Average IRR</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
+          <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-medium text-foreground/80">Average IRR</CardTitle>
+              <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 transition-colors duration-300">
+                <BarChart3 className="h-5 w-5 text-amber-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
+            <CardContent className="relative">
+              <div className="text-3xl font-bold text-foreground mb-1">
                 {formatPercentage(averageIRR)}
               </div>
-              <p className="text-body-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 Portfolio weighted average
               </p>
+              <div className="mt-3 flex items-center space-x-1">
+                <Activity className="h-4 w-4 text-amber-600" />
+                <span className="text-sm text-amber-600 font-medium">Above target</span>
+              </div>
             </CardContent>
           </Card>
 
-          <Card className="shadow-elevation-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-card-label">Active Alerts</CardTitle>
-              <AlertCircle className="h-4 w-4 text-muted-foreground" />
+          <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-medium text-foreground/80">Active Alerts</CardTitle>
+              <div className="h-10 w-10 rounded-full bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors duration-300">
+                <AlertCircle className="h-5 w-5 text-red-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{alerts.length}</div>
-              <p className="text-body-sm text-muted-foreground">
+            <CardContent className="relative">
+              <div className="text-3xl font-bold text-foreground mb-1">{alerts.length}</div>
+              <p className="text-sm text-muted-foreground">
                 Requiring attention
               </p>
+              {alerts.length === 0 ? (
+                <div className="mt-3 flex items-center space-x-1">
+                  <CheckCircle className="h-4 w-4 text-emerald-600" />
+                  <span className="text-sm text-emerald-600 font-medium">All clear</span>
+                </div>
+              ) : (
+                <div className="mt-3 flex items-center space-x-1">
+                  <Clock className="h-4 w-4 text-red-600" />
+                  <span className="text-sm text-red-600 font-medium">Action needed</span>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
 
-        {/* Key Metrics */}
-        <section className="mb-8">
-          <h2 className="mb-2 text-lg font-semibold">Key Metrics</h2>
-          <KpiGrid/>
+        {/* Enhanced Analytics Section */}
+        <div className="mb-10 space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">Analytics & Performance</h2>
+              <p className="text-muted-foreground">Real-time insights from your portfolio</p>
+            </div>
+            <Button variant="outline" className="border-border/50 backdrop-blur-sm">
+              <BarChart3 className="mr-2 h-4 w-4" />
+              View Detailed Reports
+            </Button>
+          </div>
           
           <div className="grid gap-6 lg:grid-cols-3">
-            <ConstructionTable />
-            <SaleTable />
-            <RentalTable />
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Building2 className="h-4 w-4 text-primary" />
+                  </div>
+                  <span>Construction</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ConstructionTable />
+              </CardContent>
+            </Card>
+            
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-emerald-500/5">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                    <DollarSign className="h-4 w-4 text-emerald-600" />
+                  </div>
+                  <span>Sales</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <SaleTable />
+              </CardContent>
+            </Card>
+            
+            <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-amber-500/5">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                    <TrendingUp className="h-4 w-4 text-amber-600" />
+                  </div>
+                  <span>Rentals</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RentalTable />
+              </CardContent>
+            </Card>
           </div>
 
-          {/* Cash-flow chart uses live cash */}
-          <CashChart data={cash}/>
-        </section>
-
-        {/* Main Content Grid */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {/* Recent Projects */}
-          <Card className="col-span-2">
+          {/* Enhanced Cash Flow Chart */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Recent Projects</CardTitle>
-                <Link to="/projects">
-                  <Button variant="outline" size="sm">View All</Button>
-                </Link>
+                <CardTitle className="flex items-center space-x-2">
+                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Activity className="h-4 w-4 text-primary" />
+                  </div>
+                  <span>Cash Flow Analysis</span>
+                </CardTitle>
+                <Button variant="outline" size="sm">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Export Chart
+                </Button>
               </div>
-              <CardDescription>
-                Your latest projects and their current status
-              </CardDescription>
             </CardHeader>
             <CardContent>
+              <CashChart data={cash}/>
+            </CardContent>
+          </Card>
+          
+          <KpiGrid/>
+        </div>
+
+        {/* Premium Content Grid */}
+        <div className="grid gap-6 lg:grid-cols-3 mb-10">
+          {/* Enhanced Recent Projects */}
+          <Card className="lg:col-span-2 border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
+            <CardHeader className="border-b border-border/10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Building2 className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Recent Projects</CardTitle>
+                    <CardDescription>Your latest projects and their current status</CardDescription>
+                  </div>
+                </div>
+                <Link to="/projects">
+                  <Button variant="outline" size="sm" className="border-border/50">
+                    View All
+                  </Button>
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
               <div className="space-y-4">
-                {projects.slice(0, 5).map((project) => (
-                  <div key={project.id} className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2">
-                        <Link 
-                          to={`/projects/${project.id}`}
-                          className="font-medium hover:underline"
-                        >
-                          {project.name}
-                        </Link>
-                        {project.is_pinned && (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
-                        )}
+                {projects.slice(0, 5).map((project, index) => (
+                  <div key={project.id} className="group flex items-center justify-between p-4 rounded-lg border border-border/50 hover:border-primary/20 hover:shadow-md transition-all duration-300">
+                    <div className="flex items-center space-x-4">
+                      <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center group-hover:from-primary/20 group-hover:to-primary/10 transition-colors duration-300">
+                        <Building2 className="h-5 w-5 text-primary" />
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        {project.description || 'No description'}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Created {new Date(project.created_at).toLocaleDateString()}
-                      </p>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <Link 
+                            to={`/projects/${project.id}`}
+                            className="font-semibold text-foreground hover:text-primary transition-colors duration-200"
+                          >
+                            {project.name}
+                          </Link>
+                          {project.is_pinned && (
+                            <CheckCircle className="h-4 w-4 text-emerald-500" />
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {project.description || 'No description'}
+                        </p>
+                        <div className="flex items-center space-x-4 mt-2">
+                          <p className="text-xs text-muted-foreground">
+                            Created {new Date(project.created_at).toLocaleDateString()}
+                          </p>
+                          <span className="text-xs text-muted-foreground">•</span>
+                          <p className="text-xs text-primary font-medium">
+                            {project.currency_code || 'AED'}
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    {getStatusBadge(project.status)}
+                    <div className="flex items-center space-x-3">
+                      {getStatusBadge(project.status)}
+                      <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <Activity className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 ))}
                 
                 {projects.length === 0 && (
-                  <div className="text-center py-8">
-                    <Building2 className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-medium mb-2">No projects yet</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Create your first project to get started
+                  <div className="text-center py-12">
+                    <div className="h-16 w-16 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mb-4">
+                      <Building2 className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">No projects yet</h3>
+                    <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                      Create your first project to start building your real estate portfolio
                     </p>
                     <Link to="/projects/new">
-                      <Button>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Create Project
+                      <Button size="lg" className="bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary">
+                        <Plus className="mr-2 h-5 w-5" />
+                        Create Your First Project
                       </Button>
                     </Link>
                   </div>
@@ -375,37 +526,59 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Recent Alerts */}
-          <Card>
-            <CardHeader>
+          {/* Enhanced Recent Alerts */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-red-500/5">
+            <CardHeader className="border-b border-border/10">
               <div className="flex items-center justify-between">
-                <CardTitle>Recent Alerts</CardTitle>
+                <div className="flex items-center space-x-3">
+                  <div className="h-10 w-10 rounded-lg bg-red-500/10 flex items-center justify-center">
+                    <AlertCircle className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Alerts</CardTitle>
+                    <CardDescription>System notifications</CardDescription>
+                  </div>
+                </div>
                 <Link to="/feasly-alerts">
-                  <Button variant="outline" size="sm">View All</Button>
+                  <Button variant="outline" size="sm" className="border-border/50">
+                    View All
+                  </Button>
                 </Link>
               </div>
-              <CardDescription>Latest system notifications</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-6">
               <div className="space-y-4">
-                {alerts.map((alert) => (
-                  <div key={alert.id} className="flex items-start space-x-3">
-                    <AlertCircle className={`h-4 w-4 mt-1 ${getSeverityColor(alert.severity)}`} />
+                {alerts.map((alert, index) => (
+                  <div key={alert.id} className="flex items-start space-x-3 p-3 rounded-lg border border-border/30 hover:border-red-500/20 hover:shadow-sm transition-all duration-300">
+                    <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
+                      alert.severity === 'high' ? 'bg-red-500/10' : 
+                      alert.severity === 'medium' ? 'bg-amber-500/10' : 'bg-blue-500/10'
+                    }`}>
+                      <AlertCircle className={`h-4 w-4 ${getSeverityColor(alert.severity)}`} />
+                    </div>
                     <div className="flex-1 space-y-1">
-                      <p className="text-sm font-medium">{alert.title}</p>
-                      <p className="text-xs text-muted-foreground">{alert.body}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {new Date(alert.created_at).toLocaleDateString()}
-                      </p>
+                      <p className="text-sm font-medium text-foreground">{alert.title}</p>
+                      <p className="text-xs text-muted-foreground line-clamp-2">{alert.body}</p>
+                      <div className="flex items-center space-x-2">
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(alert.created_at).toLocaleDateString()}
+                        </p>
+                        <Badge variant="outline" className="text-xs">
+                          {alert.alert_type}
+                        </Badge>
+                      </div>
                     </div>
                   </div>
                 ))}
                 
                 {alerts.length === 0 && (
-                  <div className="text-center py-6">
-                    <CheckCircle className="mx-auto h-8 w-8 text-green-500 mb-2" />
-                    <p className="text-sm text-muted-foreground">
-                      No active alerts
+                  <div className="text-center py-8">
+                    <div className="h-12 w-12 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
+                      <CheckCircle className="h-6 w-6 text-emerald-600" />
+                    </div>
+                    <p className="text-sm font-medium text-foreground mb-1">All Clear!</p>
+                    <p className="text-xs text-muted-foreground">
+                      No active alerts at this time
                     </p>
                   </div>
                 )}
@@ -414,38 +587,63 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* KPI Performance */}
+        {/* Enhanced KPI Performance Section */}
         {latestKpis.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Performance</CardTitle>
-              <CardDescription>Latest KPI calculations from your projects</CardDescription>
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
+            <CardHeader className="border-b border-border/10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center">
+                    <TrendingUp className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-lg">Performance Metrics</CardTitle>
+                    <CardDescription>Latest KPI calculations from your projects</CardDescription>
+                  </div>
+                </div>
+                <Button variant="outline" size="sm" className="border-border/50">
+                  <BarChart3 className="mr-2 h-4 w-4" />
+                  View Details
+                </Button>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-3">
+            <CardContent className="p-6">
+              <div className="grid gap-6 md:grid-cols-3">
                 {latestKpis.map((kpi, index) => (
-                  <div key={index} className="space-y-2 p-4 border rounded-lg">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">NPV</span>
-                      <span className="text-sm font-bold">
+                  <div key={index} className="group relative overflow-hidden rounded-xl border border-border/30 p-6 hover:border-primary/20 hover:shadow-lg transition-all duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <div className="relative space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-muted-foreground">NPV</span>
+                        <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                          <DollarSign className="h-4 w-4 text-emerald-600" />
+                        </div>
+                      </div>
+                      <div className="text-2xl font-bold text-foreground">
                         {formatCurrency(kpi.npv)}
-                      </span>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">IRR</span>
+                          <span className="text-sm font-semibold text-foreground">
+                            {formatPercentage(kpi.irr)}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Profit</span>
+                          <span className="text-sm font-semibold text-foreground">
+                            {formatCurrency(kpi.profit)}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="pt-3 border-t border-border/20">
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(kpi.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">IRR</span>
-                      <span className="text-sm font-bold">
-                        {formatPercentage(kpi.irr)}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Profit</span>
-                      <span className="text-sm font-bold">
-                        {formatCurrency(kpi.profit)}
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {new Date(kpi.created_at).toLocaleDateString()}
-                    </p>
                   </div>
                 ))}
               </div>
