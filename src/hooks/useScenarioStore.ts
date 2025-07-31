@@ -68,9 +68,8 @@ export function useScenarioStore(projectId: string | null) {
   const create = useCallback(async (name: string): Promise<Scenario | null> => {
     if (!projectId || !user) return null;
 
-    // 1. build row
+    // 1. build row - let database generate the UUID
     const row = {
-      id: nanoid(),          // pk
       project_id: projectId,
       user_id: user.id,
       name,
