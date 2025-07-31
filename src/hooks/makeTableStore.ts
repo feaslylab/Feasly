@@ -9,7 +9,10 @@ export function makeTableStore<T extends Record<string, any>>(tableName: string)
     const [loading, setLoading] = useState(true);
 
     const load = useCallback(async () => {
-      if (!scenarioId || !user) {
+      console.log(`Loading ${tableName} - projectId:`, projectId, "scenarioId:", scenarioId, "user:", !!user);
+      
+      if (!scenarioId || !user || !projectId) {
+        console.log(`Skipping load for ${tableName} - missing requirements`);
         setItems([]);
         setLoading(false);
         return;
@@ -17,6 +20,7 @@ export function makeTableStore<T extends Record<string, any>>(tableName: string)
       
       setLoading(true);
       try {
+        console.log(`Executing query for ${tableName}`);
         const { data, error } = await supabase
           .from(tableName as any)
           .select("*")
@@ -24,7 +28,12 @@ export function makeTableStore<T extends Record<string, any>>(tableName: string)
           .eq("scenario_id", scenarioId)
           .eq("user_id", user.id);
         
-        if (error) throw error;
+        if (error) {
+          console.error(`Error loading ${tableName}:`, error);
+          throw error;
+        }
+        
+        console.log(`Loaded ${tableName} data:`, data?.length || 0, "items");
         setItems((data as unknown as T[]) || []);
       } catch (error) {
         console.error(`Error loading ${tableName}:`, error);
@@ -32,10 +41,14 @@ export function makeTableStore<T extends Record<string, any>>(tableName: string)
       } finally {
         setLoading(false);
       }
-    }, [projectId, scenarioId, user]);
+    }, [projectId, scenarioId, user, tableName]);
 
     const save = async (row: any) => {
-      if (!user || !scenarioId) return;
+      console.log(`Saving to ${tableName}:`, row);
+      if (!user || !scenarioId || !projectId) {
+        console.error(`Cannot save to ${tableName} - missing requirements`);
+        return;
+      }
       
       try {
         const { data, error } = await supabase
@@ -60,7 +73,11 @@ export function makeTableStore<T extends Record<string, any>>(tableName: string)
     };
 
   const update = useCallback(async (id: string, patch: Partial<T>) => {
-    if (!user || !projectId || !scenarioId) return;
+    console.log(`Updating ${tableName} id:`, id, "patch:", patch);
+    if (!user || !projectId || !scenarioId) {
+      console.error(`Cannot update ${tableName} - missing requirements`);
+      return;
+    }
     
     await supabase.from(tableName as any).update(patch).eq('id', id);
     setItems(arr => arr.map(r => 'id' in r && r.id === id ? {...r, ...patch} : r));

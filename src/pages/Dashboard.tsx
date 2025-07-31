@@ -72,15 +72,15 @@ export default function Dashboard() {
   // Scenario management
   const { scenarios, current } = useScenarioStore(projectId);
   
-  // Scenario-aware stores
-  const { items: constructionItems, loading: constructionLoading } = useConstructionStoreScenario(projectId, scenarioId);
-  const { items: saleItems, loading: saleLoading } = useSaleStore(projectId, scenarioId);
-  const { items: rentalItems, loading: rentalLoading } = useRentalStore(projectId, scenarioId);
-  
+  // Data state
   const [projects, setProjects] = useState<Project[]>([]);
   const [kpis, setKpis] = useState<KPISnapshot[]>([]);
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Only call table stores when we have valid project and scenario
+  // This prevents the React queue error by ensuring hooks are called conditionally
+  console.log("Dashboard render - projectId:", projectId, "scenarioId:", scenarioId);
 
   useEffect(() => {
     if (user) {
@@ -298,7 +298,28 @@ export default function Dashboard() {
           </Card>
         </div>
 
-        {/* Main Content */}
+        {/* Key Metrics */}
+        <section className="mb-8">
+          <h2 className="mb-2 text-lg font-semibold">Key Metrics</h2>
+          <KpiGrid/>
+          <CashChart />
+        </section>
+
+        {/* Inputs - Only show when project/scenario selected */}
+        {projectId && scenarioId && (
+          <>
+            <h2 className="text-lg font-semibold mt-8 mb-2">Construction Costs</h2>
+            <CostTable />
+
+            <h2 className="text-lg font-semibold mt-8 mb-2">Sale Revenue</h2>
+            <SaleTable />
+
+            <h2 className="text-lg font-semibold mt-8 mb-2">Rental Revenue</h2>
+            <RentalTable />
+          </>
+        )}
+
+        {/* Main Content Grid */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {/* Recent Projects */}
           <Card className="col-span-2">
@@ -397,23 +418,6 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
-
-        {/* Key Metrics */}
-        <section className="mb-8">
-          <h2 className="mb-2 text-lg font-semibold">Key Metrics</h2>
-          <KpiGrid/>
-          <CashChart />
-        </section>
-
-        {/* Inputs -------------------------------------------------- */}
-        <h2 className="text-lg font-semibold mt-8 mb-2">Construction Costs</h2>
-        <CostTable />
-
-        <h2 className="text-lg font-semibold mt-8 mb-2">Sale Revenue</h2>
-        <SaleTable />
-
-        <h2 className="text-lg font-semibold mt-8 mb-2">Rental Revenue</h2>
-        <RentalTable />
 
         {/* KPI Performance */}
         {latestKpis.length > 0 && (
