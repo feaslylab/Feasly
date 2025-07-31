@@ -60,19 +60,19 @@ export function MarketingHeader() {
       <header
         data-header
         className={cn(
-          "sticky top-0 w-full z-50 backdrop-blur-sm bg-background/80 border-b border-border transition-all duration-300",
+          "sticky top-0 w-full z-50 backdrop-blur-sm bg-background/95 border-b border-border transition-all duration-300",
           scrolled ? "shadow-sm" : ""
         )}
         style={{ height: '80px' }}
       >
-      <div className="container mx-auto px-4 flex items-center justify-between">
+      <div className="container mx-auto px-4 h-full flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center">
-          <Link to="/" className="flex items-center">
+          <Link to="/" className="flex items-center gap-3">
             <img 
               src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
               alt="Feasly Logo" 
-              className="w-8 h-8 object-contain mr-2"
+              className="w-8 h-8 object-contain"
             />
             <span className="text-3xl md:text-4xl font-bold text-primary-dark">
               Feasly<TM />
