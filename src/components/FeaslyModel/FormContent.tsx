@@ -252,10 +252,10 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
         />
       )}
 
-      {/* Main Content with left margin to account for fixed sidebar */}
-      <div className="flex-1 overflow-hidden">
-        {/* Enhanced Sticky Header with proper spacing */}
-        <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm">
+      {/* Main Content with proper top padding to account for both headers */}
+      <div className="flex-1 overflow-hidden pt-0">
+        {/* Enhanced Sticky Header - positioned below main header */}
+        <div className="sticky top-16 z-20 border-b bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-3">
@@ -341,8 +341,8 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
           </div>
         </div>
 
-        {/* Form Content with proper top margin */}
-        <div className="p-6 mt-4">
+        {/* Form Content with proper spacing */}
+        <div className="p-6">
           {/* Right Side Validation Panel */}
           <RightSideValidationPanel />
           <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
