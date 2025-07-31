@@ -119,4 +119,39 @@
   .feasly-status-info {
     @apply bg-blue-50 text-blue-800 border-blue-200;
   }
+
+  /* Custom scrollbar styles */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted)) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted));
+    border-radius: 3px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
+
+  /* Auto-hide sidebar body spacing */
+  .sidebar-auto-space {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+  }
+
+  @media (min-width: 1024px) {
+    .sidebar-auto-space {
+      margin-left: 4rem; /* 64px for mini sidebar */
+    }
+  }
 }

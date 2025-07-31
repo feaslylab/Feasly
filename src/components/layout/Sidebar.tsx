@@ -41,9 +41,15 @@ export const Sidebar = () => {
   const { isRTL } = useLanguage();
   const { t } = useTranslation(['common', 'auth']);
   const location = useLocation();
-  const { isCollapsed, toggleSidebar, isMobile } = useSidebarState();
-  
-  const currentModuleTitle = getModuleTitle(location.pathname, t);
+  const { 
+    isCollapsed, 
+    isAutoHidden, 
+    shouldShowSidebar, 
+    handleMouseEnter, 
+    handleMouseLeave, 
+    toggleSidebar, 
+    isMobile 
+  } = useSidebarState();
 
   const handleSignOut = async () => {
     await signOut();
@@ -51,11 +57,55 @@ export const Sidebar = () => {
   };
 
   return (
-    <div className={cn(
-      "flex flex-col justify-between h-full bg-card border-border relative transition-all duration-300",
-      isRTL ? "border-l" : "border-r",
-      isCollapsed ? "w-16" : "w-64"
-    )}>
+    <>
+      {/* Mini Sidebar - Always visible when auto-hidden */}
+      {isAutoHidden && !shouldShowSidebar && !isMobile && (
+        <div className="fixed left-0 top-0 z-40 h-full w-16 bg-card border-r border-border flex flex-col">
+          {/* Mini Header */}
+          <div className="flex items-center justify-center h-14 border-b border-border">
+            <div className="w-6 h-6">
+              <img 
+                src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
+                alt="Feasly Logo" 
+                className="w-6 h-6 object-contain"
+              />
+            </div>
+          </div>
+          
+          {/* Mini Navigation */}
+          <nav className="flex-1 py-2 px-2 overflow-y-auto">
+            {navigation.map((item) => (
+              <NavLink
+                key={item.nameKey}
+                to={item.href}
+                className={({ isActive }) =>
+                  cn(
+                    "flex items-center justify-center rounded-lg transition-all duration-200 mb-1",
+                    "h-12 w-12",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  )
+                }
+                title={t(`nav.${item.nameKey}`)}
+              >
+                <item.icon className="w-5 h-5" />
+              </NavLink>
+            ))}
+          </nav>
+        </div>
+      )}
+
+      {/* Main Sidebar */}
+      <div className={cn(
+        "fixed left-0 top-0 z-50 h-full bg-card border-r border-border transition-all duration-300 ease-in-out",
+        "flex flex-col justify-between",
+        shouldShowSidebar ? "translate-x-0" : "-translate-x-full",
+        isCollapsed ? "w-16" : "w-64"
+      )}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      >
       {/* Top Section - Navigation */}
       <div className="flex flex-col min-h-0">
         {/* Simplified Header */}
@@ -76,8 +126,11 @@ export const Sidebar = () => {
           </div>
         )}
 
-        {/* Navigation - Scrollable if needed */}
-        <nav className={cn("flex-1 py-2 space-y-1 overflow-y-auto min-h-0", isCollapsed ? "px-2" : "px-4")}>
+        {/* Navigation - Scrollable */}
+        <nav className={cn(
+          "flex-1 py-2 space-y-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent",
+          isCollapsed ? "px-2" : "px-4"
+        )}>
           {navigation.map((item) => (
             <NavLink
               key={item.nameKey}
@@ -85,7 +138,7 @@ export const Sidebar = () => {
               className={({ isActive }) =>
                 cn(
                   "flex items-center gap-3 rounded-lg transition-all duration-200 touch-none",
-                  "min-h-[44px]", // Touch-friendly height for mobile
+                  "min-h-[44px]",
                   isCollapsed 
                     ? "px-3 py-3 justify-center" 
                     : "px-3 py-2.5 text-sm font-medium",
@@ -95,7 +148,7 @@ export const Sidebar = () => {
                   isRTL && !isCollapsed && "flex-row-reverse"
                 )
               }
-              title={isCollapsed ? t(`nav.${item.nameKey}`) : undefined} // Tooltip for collapsed state
+              title={isCollapsed ? t(`nav.${item.nameKey}`) : undefined}
             >
               <item.icon className={cn("w-5 h-5 flex-shrink-0")} />
               {!isCollapsed && (
@@ -167,5 +220,6 @@ export const Sidebar = () => {
         </DropdownMenu>
       </div>
     </div>
+    </>
   );
 };
