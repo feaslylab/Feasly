@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useStickyNavigation } from '@/hooks/useStickyNavigation';
 import { useMagneticScroll } from '@/hooks/useMagneticScroll';
+import { useGridValidationCounts } from '@/hooks/useGridValidationCounts';
 import { MAG_OFFSET } from '@/constants/ui';
 import { 
   Menu, 
@@ -23,7 +24,9 @@ import {
   MessageSquare,
   CheckCircle,
   AlertTriangle,
-  XCircle
+  XCircle,
+  Megaphone,
+  Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SectionStatus } from './SectionPanel';
@@ -50,6 +53,7 @@ interface ModelMobileNavProps extends ModelSideNavProps {
 // Desktop sidebar navigation with magnetic sticky behavior
 function DesktopSideNav({ sections, activeSection, onSectionClick, className }: ModelSideNavProps) {
   const navRef = useRef<HTMLDivElement>(null);
+  const validationCounts = useGridValidationCounts();
   
   // Enhanced magnetic scroll behavior - keep visible but add magnetic effects
   const { 
@@ -163,91 +167,75 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
                 gap: isSticky && scrollDirection === 'down' ? '0.125rem' : '0.25rem'
               }}
             >
-              {sections.map((section, index) => {
-                const Icon = section.icon;
-                const isActive = activeSection === section.id;
-                
-                return (
-                  <motion.div
-                    key={section.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ 
-                      opacity: 1, 
-                      x: 0,
-                      transition: { delay: index * 0.03 }
-                    }}
-                    whileHover={{ 
-                      x: 4,
-                      transition: { duration: 0.15 }
-                    }}
+            {sections.map((section) => {
+              const isActiveSection = activeSection === section.id;
+              const validation = validationCounts.grids[section.id];
+              
+              return (
+                <motion.div
+                  key={section.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.2, delay: 0.1 }}
+                  className="relative"
+                >
+                  <Button
+                    variant={isActiveSection ? "secondary" : "ghost"}
+                    className={cn(
+                      "w-full justify-start gap-3 h-12 px-4 text-left",
+                      isActiveSection && "bg-primary/10 text-primary border-l-2 border-primary"
+                    )}
+                    onClick={() => handleSectionClick(section.id)}
                   >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={cn(
-                        'w-full justify-start gap-3 h-auto py-3 px-3 relative',
-                        'transition-all duration-200 group',
-                        isActive ? [
-                          'bg-primary/10 text-primary hover:bg-primary/15',
-                          'shadow-sm shadow-primary/10',
-                          'before:absolute before:left-0 before:top-0 before:bottom-0',
-                          'before:w-1 before:bg-primary before:rounded-r',
-                          'after:absolute after:inset-0 after:bg-primary/5 after:rounded-md'
-                        ] : [
-                          'hover:bg-muted/80 hover:shadow-sm',
-                          'hover:border-primary/10'
-                        ]
-                      )}
-                      onClick={() => handleSectionClick(section.id)}
-                      data-testid="section-nav-item"
-                      data-section={section.id}
-                      aria-current={isActive ? 'page' : undefined}
-                    >
-                      <motion.div
-                        animate={{
-                          rotate: isActive ? 360 : 0,
-                          scale: isActive ? 1.1 : 1
-                        }}
-                        transition={{ 
-                          duration: 0.3,
-                          delay: isActive ? 0.1 : 0 
-                        }}
-                      >
-                        <Icon className="h-4 w-4 flex-shrink-0 relative z-10" />
-                      </motion.div>
-                      
-                      <motion.span 
-                        className="flex-1 text-left text-sm truncate relative z-10"
-                        animate={{
-                          fontWeight: isActive ? 500 : 400
-                        }}
-                      >
+                    <section.icon className={cn(
+                      "h-5 w-5 flex-shrink-0",
+                      isActiveSection ? "text-primary" : "text-muted-foreground"
+                    )} />
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="font-medium text-sm truncate">
                         {section.title}
-                      </motion.span>
-                      
-                      <div className="flex items-center gap-2 relative z-10">
-                        {section.required && (
-                          <motion.div
-                            whileHover={{ scale: 1.1 }}
-                          >
-                            <Badge variant="outline" className="h-4 px-1 text-xs">
-                              REQ
-                            </Badge>
-                          </motion.div>
-                        )}
-                        <motion.div
-                          animate={{
-                            scale: isActive ? 1.2 : 1
-                          }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          {getStatusIcon(section.status)}
-                        </motion.div>
                       </div>
-                    </Button>
-                  </motion.div>
-                );
-              })}
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      {/* Validation Badge */}
+                      {validation && (
+                        <Badge 
+                          variant={
+                            validation.badge.variant === 'success' ? 'default' :
+                            validation.badge.variant === 'warning' ? 'secondary' :
+                            validation.badge.variant === 'error' ? 'destructive' :
+                            'outline'
+                          }
+                          className={cn(
+                            "text-xs px-1.5 py-0.5 h-5 min-w-[20px] flex items-center justify-center",
+                            validation.badge.variant === 'success' && "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100",
+                            validation.badge.variant === 'warning' && "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100",
+                            validation.badge.variant === 'empty' && "bg-muted text-muted-foreground"
+                          )}
+                          title={
+                            validation.badge.variant === 'success' ? 
+                              `${validation.validItems} valid items` :
+                            validation.badge.variant === 'error' ? 
+                              `${validation.errorCount} error${validation.errorCount > 1 ? 's' : ''} found` :
+                            validation.badge.variant === 'warning' ? 
+                              `${validation.warningCount} warning${validation.warningCount > 1 ? 's' : ''} found` :
+                              'No items added yet'
+                          }
+                        >
+                          <span className="mr-1">{validation.badge.icon}</span>
+                          <span className="text-xs">{validation.badge.text}</span>
+                        </Badge>
+                      )}
+                      
+                      {/* Status Icon */}
+                      {getStatusIcon(section.status)}
+                    </div>
+                  </Button>
+                </motion.div>
+              );
+            })}
             </motion.div>
           </ScrollArea>
         </motion.aside>
@@ -417,13 +405,13 @@ export const defaultModelSections: ModelSection[] = [
   {
     id: 'marketing-costs',
     title: 'Marketing Costs',
-    icon: TrendingUp,
+    icon: Megaphone,
     status: 'empty'
   },
   {
     id: 'contingencies',
     title: 'Contingencies',
-    icon: Settings,
+    icon: Shield,
     status: 'empty'
   },
   {

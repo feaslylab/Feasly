@@ -12,6 +12,7 @@ import { ModelSideNav, defaultModelSections, ModelSection } from '../model/Model
 import { SectionPanel } from '../model/SectionPanel';
 import { useSectionStatus, useWizardValidation } from '@/hooks/useSectionValidation';
 import { useGridCalculations } from '@/hooks/useGridCalculations';
+import { useGridValidationCounts } from '@/hooks/useGridValidationCounts';
 import { useScrollSpy } from '@/hooks/useScrollSpy';
 import { feaslyModelSchema, type FeaslyModelFormData } from './types';
 import { ConstructionCostGrid } from './ConstructionCostGrid';
@@ -70,14 +71,26 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
 
   // Get form data for validation
   const formData = form.watch();
+  
+  // Grid validation counts for badges and wizard gating
+  const validationCounts = useGridValidationCounts();
 
-  // Section validation
+  // Section validation - now enhanced with grid validation
   const sections: ModelSection[] = defaultModelSections.map(section => {
     const { status } = useSectionStatus(section.id, formData);
-    return { ...section, status };
+    const gridValidation = validationCounts.grids[section.id];
+    
+    // Override status with grid validation if available
+    const enhancedStatus = gridValidation 
+      ? (gridValidation.isValid && gridValidation.totalItems > 0 ? 'valid' : 
+         gridValidation.errorCount > 0 ? 'error' : 
+         gridValidation.warningCount > 0 ? 'warning' : 'empty')
+      : status;
+      
+    return { ...section, status: enhancedStatus };
   });
 
-  // Wizard validation
+  // Wizard validation - enhanced with grid validation via wizard hook
   const sectionIds = sections.map(s => s.id);
   const wizard = useWizardValidation(sectionIds, formData);
 
@@ -215,15 +228,32 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
                 <h1 className="text-lg font-semibold">Feasibility Model</h1>
               </div>
               
-              {/* Mini KPIs */}
-              <div className="hidden md:flex items-center gap-3">
-                <Badge variant="outline" className="flex items-center gap-1">
-                  NPV: AED 2.3M
-                </Badge>
-                <Badge variant="outline" className="flex items-center gap-1">
-                  IRR: 18.2%
-                </Badge>
-              </div>
+               {/* Mini KPIs with Validation Status */}
+               <div className="hidden md:flex items-center gap-3">
+                 <Badge variant="outline" className="flex items-center gap-1">
+                   NPV: AED 2.3M
+                 </Badge>
+                 <Badge variant="outline" className="flex items-center gap-1">
+                   IRR: 18.2%
+                 </Badge>
+                 
+                 {/* Overall Validation Status */}
+                 <Badge 
+                   variant={validationCounts.overall.isValid ? 'default' : 'secondary'}
+                   className={cn(
+                     "flex items-center gap-1",
+                     validationCounts.overall.isValid 
+                       ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100" 
+                       : validationCounts.overall.totalErrors > 0
+                       ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100"
+                       : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100"
+                   )}
+                 >
+                   {validationCounts.overall.isValid ? '✅' : 
+                    validationCounts.overall.totalErrors > 0 ? '❌' : '⚠️'}
+                   {validationCounts.overall.completedSections}/{validationCounts.overall.totalSections} Ready
+                 </Badge>
+               </div>
             </div>
 
             <div className="flex items-center gap-4">
