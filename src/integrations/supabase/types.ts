@@ -1377,6 +1377,42 @@ export type Database = {
         }
         Relationships: []
       }
+      risk_variations: {
+        Row: {
+          cost_variation_percent: number
+          created_at: string
+          id: string
+          interest_rate_variation_bps: number
+          project_id: string
+          result_deltas: Json
+          sale_price_variation_percent: number
+          scenario_id: string
+          updated_at: string
+        }
+        Insert: {
+          cost_variation_percent?: number
+          created_at?: string
+          id?: string
+          interest_rate_variation_bps?: number
+          project_id: string
+          result_deltas: Json
+          sale_price_variation_percent?: number
+          scenario_id: string
+          updated_at?: string
+        }
+        Update: {
+          cost_variation_percent?: number
+          created_at?: string
+          id?: string
+          interest_rate_variation_bps?: number
+          project_id?: string
+          result_deltas?: Json
+          sale_price_variation_percent?: number
+          scenario_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       scenario_overrides: {
         Row: {
           annual_revenue_aed: number | null

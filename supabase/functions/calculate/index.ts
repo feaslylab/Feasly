@@ -1,6 +1,33 @@
 import { serve } from "https://deno.land/std@0.178.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.52.0";
 
+// Import engine utilities
+interface VariationInput {
+  costVariationPercent: number;
+  salePriceVariationPercent: number;
+  interestRateVariationBps: number;
+}
+
+function applyVariation(scenario: any, variation: VariationInput) {
+  const { costVariationPercent, salePriceVariationPercent, interestRateVariationBps } = variation;
+  
+  return {
+    ...scenario,
+    constructionItems: scenario.constructionItems.map((item: any) => ({
+      ...item,
+      baseCost: item.baseCost * (1 + costVariationPercent / 100)
+    })),
+    saleLines: scenario.saleLines.map((line: any) => ({
+      ...line,
+      pricePerUnit: line.pricePerUnit * (1 + salePriceVariationPercent / 100)
+    })),
+    loanFacility: scenario.loanFacility ? {
+      ...scenario.loanFacility,
+      interestRate: scenario.loanFacility.interestRate + (interestRateVariationBps / 10000)
+    } : undefined
+  };
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -67,25 +94,46 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseKey);
     
-    const { projectId, scenarioId, scenario } = await req.json();
+    const { projectId, scenarioId, scenario, variation } = await req.json();
     
     console.log('Calculating scenario for project:', projectId, 'scenario:', scenarioId);
     
+    // Apply variation if provided (for sensitivity analysis)
+    const adjustedScenario = variation ? applyVariation(scenario, variation) : scenario;
+    
     // Run the calculation
-    const result = runScenario(scenario);
+    const result = runScenario(adjustedScenario);
     
-    // Cache the result in scenario_results table
-    const { error: upsertError } = await supabase
-      .from('scenario_results')
-      .upsert({
-        project_id: projectId,
-        scenario_id: scenarioId,
-        result: result
-      });
-    
-    if (upsertError) {
-      console.error('Error caching scenario result:', upsertError);
-      throw upsertError;
+    // If this is a variation calculation, store in risk_variations table
+    if (variation) {
+      const { error: variationError } = await supabase
+        .from('risk_variations')
+        .upsert({
+          project_id: projectId,
+          scenario_id: scenarioId,
+          cost_variation_percent: variation.costVariationPercent,
+          sale_price_variation_percent: variation.salePriceVariationPercent,
+          interest_rate_variation_bps: variation.interestRateVariationBps,
+          result_deltas: result
+        });
+      
+      if (variationError) {
+        console.error('Error storing risk variation:', variationError);
+      }
+    } else {
+      // Cache the base result in scenario_results table
+      const { error: upsertError } = await supabase
+        .from('scenario_results')
+        .upsert({
+          project_id: projectId,
+          scenario_id: scenarioId,
+          result: result
+        });
+      
+      if (upsertError) {
+        console.error('Error caching scenario result:', upsertError);
+        throw upsertError;
+      }
     }
     
     console.log('Scenario calculation completed and cached');

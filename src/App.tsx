@@ -24,6 +24,7 @@ import ProjectPublic from "./pages/ProjectPublic";
 import DemoProject from "./pages/DemoProject";
 import FeaslyModel from "./pages/FeaslyModel";
 import CashFlowPage from "./pages/model/CashFlowPage";
+import RiskPage from "./pages/model/RiskPage";
 import FeaslyFlow from "./pages/FeaslyFlow";
 import FeaslyFinance from "./pages/FeaslyFinance";
 import FeaslyConsolidate from "./pages/FeaslyConsolidate";
@@ -115,6 +116,7 @@ const AppRoutes = () => {
         <Route index element={<FeaslyModel />} />
         <Route path=":projectId/cash-flow" element={<CashFlowPage />} />
         <Route path=":projectId/:scenarioId/cash-flow" element={<CashFlowPage />} />
+        <Route path=":projectId/:scenarioId/risk" element={<RiskPage />} />
       </Route>
       <Route path="/model" element={<Navigate to="/feasly-model" replace />} />
       <Route path="/feasly-flow" element={<AppLayout />}>
