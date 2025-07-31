@@ -511,7 +511,7 @@ export default function Dashboard() {
                       <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                         <div className="w-2 h-2 sm:w-3 sm:h-3 bg-emerald-500 rounded-full animate-pulse" />
                         <div>
-                           <p className="text-xs sm:text-sm font-medium text-success-foreground">
+                           <p className="text-xs sm:text-sm font-medium text-primary-dark">
                              {activeProjects} Active Projects
                            </p>
                            <p className="text-xs text-foreground font-medium">
