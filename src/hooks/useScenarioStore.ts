@@ -60,7 +60,7 @@ export function useScenarioStore(projectId: string | null) {
     } finally {
       setLoading(false);
     }
-  }, [projectId, user, current]);
+  }, [projectId, user?.id, current?.id]);
 
   const create = async (name: string): Promise<Scenario | null> => {
     if (!user) return null;
