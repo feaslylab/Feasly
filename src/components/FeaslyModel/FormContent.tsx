@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, Save, CheckCircle, XCircle, AlertTriangle, BarChart3 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Save, CheckCircle, XCircle, AlertTriangle, BarChart3, Building2, Calendar, MapPin, DollarSign, FileText, Megaphone, Shield, TrendingUp, Users, Target, Settings, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModelSideNav, defaultModelSections, ModelSection } from '../model/ModelSideNav';
 import { SectionPanel } from '../model/SectionPanel';
@@ -324,6 +324,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="project-metadata"
               title="Project Information"
+              icon={Building2}
               status={sections.find(s => s.id === 'project-metadata')?.status || 'empty'}
               isOpen={openSections.has('project-metadata')}
               onToggle={(open) => handleSectionToggle('project-metadata', open)}
@@ -335,6 +336,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="timeline"
               title="Project Timeline"
+              icon={Calendar}
               status={sections.find(s => s.id === 'timeline')?.status || 'empty'}
               isOpen={openSections.has('timeline')}
               onToggle={(open) => handleSectionToggle('timeline', open)}
@@ -346,6 +348,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="site-metrics"
               title="Site Metrics"
+              icon={MapPin}
               status={sections.find(s => s.id === 'site-metrics')?.status || 'empty'}
               isOpen={openSections.has('site-metrics')}
               onToggle={(open) => handleSectionToggle('site-metrics', open)}
@@ -357,6 +360,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="financial-inputs"
               title="Financial Inputs"
+              icon={DollarSign}
               status={sections.find(s => s.id === 'financial-inputs')?.status || 'empty'}
               isOpen={openSections.has('financial-inputs')}
               onToggle={(open) => handleSectionToggle('financial-inputs', open)}
@@ -369,6 +373,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="construction-development"
               title="Construction & Development"
+              icon={Building2}
               status={sections.find(s => s.id === 'construction-development')?.status || 'empty'}
               isOpen={openSections.has('construction-development')}
               onToggle={(open) => handleSectionToggle('construction-development', open)}
@@ -380,6 +385,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="soft-costs"
               title="Soft Costs"
+              icon={FileText}
               status={sections.find(s => s.id === 'soft-costs')?.status || 'empty'}
               isOpen={openSections.has('soft-costs')}
               onToggle={(open) => handleSectionToggle('soft-costs', open)}
@@ -391,6 +397,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="marketing-costs"
               title="Marketing Costs"
+              icon={Megaphone}
               status={sections.find(s => s.id === 'marketing-costs')?.status || 'empty'}
               isOpen={openSections.has('marketing-costs')}
               onToggle={(open) => handleSectionToggle('marketing-costs', open)}
@@ -402,6 +409,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="contingencies"
               title="Contingencies"
+              icon={Shield}
               status={sections.find(s => s.id === 'contingencies')?.status || 'empty'}
               isOpen={openSections.has('contingencies')}
               onToggle={(open) => handleSectionToggle('contingencies', open)}
@@ -413,6 +421,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="revenue-segments"
               title="Revenue Segments"
+              icon={TrendingUp}
               status={sections.find(s => s.id === 'revenue-segments')?.status || 'empty'}
               isOpen={openSections.has('revenue-segments')}
               onToggle={(open) => handleSectionToggle('revenue-segments', open)}
@@ -424,6 +433,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="rental-segments"
               title="Rental Segments"
+              icon={Building2}
               status={sections.find(s => s.id === 'rental-segments')?.status || 'empty'}
               isOpen={openSections.has('rental-segments')}
               onToggle={(open) => handleSectionToggle('rental-segments', open)}
@@ -435,6 +445,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="scenarios"
               title="Scenario Analysis"
+              icon={BarChart3}
               status={sections.find(s => s.id === 'scenarios')?.status || 'empty'}
               isOpen={openSections.has('scenarios')}
               onToggle={(open) => handleSectionToggle('scenarios', open)}
@@ -446,6 +457,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="results-insights"
               title="Results & Insights"
+              icon={Target}
               status={sections.find(s => s.id === 'results-insights')?.status || 'empty'}
               isOpen={openSections.has('results-insights')}
               onToggle={(open) => handleSectionToggle('results-insights', open)}
@@ -458,6 +470,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="export-ai"
               title="Export & AI Insights"
+              icon={FileText}
               status={sections.find(s => s.id === 'export-ai')?.status || 'empty'}
               isOpen={openSections.has('export-ai')}
               onToggle={(open) => handleSectionToggle('export-ai', open)}
@@ -472,6 +485,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="compliance"
               title="Compliance Status"
+              icon={Settings}
               status={sections.find(s => s.id === 'compliance')?.status || 'empty'}
               isOpen={openSections.has('compliance')}
               onToggle={(open) => handleSectionToggle('compliance', open)}
@@ -483,6 +497,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             <SectionPanel
               id="comments"
               title="Comments & Notes"
+              icon={MessageSquare}
               status={sections.find(s => s.id === 'comments')?.status || 'empty'}
               isOpen={openSections.has('comments')}
               onToggle={(open) => handleSectionToggle('comments', open)}

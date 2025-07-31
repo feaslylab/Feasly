@@ -18,6 +18,7 @@ interface SectionPanelProps {
   className?: string;
   lazyLoad?: boolean;
   rowCount?: number; // For grid components
+  icon?: React.ComponentType<any>; // Add icon prop
 }
 
 const statusConfig = {
@@ -52,7 +53,8 @@ export function SectionPanel({
   status = 'empty',
   className,
   lazyLoad = false,
-  rowCount
+  rowCount,
+  icon: IconComponent
 }: SectionPanelProps) {
   const statusInfo = statusConfig[status];
   const StatusIcon = statusInfo.icon;
@@ -138,6 +140,15 @@ export function SectionPanel({
                           isOpen ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
                         )} />
                       </motion.div>
+                      
+                      {/* Add icon if provided */}
+                      {IconComponent && (
+                        <IconComponent className={cn(
+                          "h-4 w-4 transition-colors duration-200",
+                          isOpen ? "text-primary" : "text-muted-foreground group-hover:text-primary"
+                        )} />
+                      )}
+                      
                       <motion.span 
                         className={cn(
                           "transition-colors duration-200",
