@@ -80,27 +80,24 @@ export function useScenarioStore(projectId: string | null) {
 
     // 2. insert
     const { data, error } = await supabase
-      .from('scenarios' as any)
-      .insert({
-        id: row.id,
-        name: row.name,
-        project_id: row.project_id,
-        user_id: row.user_id
-      })
+      .from('scenarios')
+      .insert(row)
       .select()
       .single();
 
     if (error) {
-      console.error('scenario insert failed', error);
       toast({
-        title: 'Error',
-        description: 'Could not create scenario – try again',
+        title: 'Error creating scenario',
+        /* Bubble up exact SQL error for dev; generic for prod */
+        description: import.meta.env.MODE === 'development'
+          ? error.details || error.message
+          : 'Could not create scenario – please try again.',
         variant: 'destructive',
       });
       return null;
     }
 
-    // 3. update local cache & select it
+    // data is the actual DB row (with defaults/triggers). Use it.
     if (data) {
       const newScenario = data as unknown as Scenario;
       setScenarios(prev => [...prev, newScenario]);
