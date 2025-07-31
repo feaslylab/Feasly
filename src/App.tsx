@@ -64,7 +64,7 @@ const AppRoutes = () => {
             <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/comparison" element={<FeatureComparison />} />
-          <Route path="/welcome" element={<AuthPage onSuccess={() => { console.log('Login success, navigating to dashboard'); }} />} />
+          <Route path="/welcome" element={<AuthPage onSuccess={() => { console.log('Login success, navigating to dashboard'); window.location.href = '/dashboard'; }} />} />
           {/* Development-only route for legacy calc-demo */}
           {import.meta.env.DEV && <Route path="/calc-demo" element={<CalcDemo />} />}
         </Routes>
