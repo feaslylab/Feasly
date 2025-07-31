@@ -1,16 +1,19 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
 import { 
   CheckCircle, 
   AlertTriangle, 
   XCircle, 
   Clock,
   Target,
-  TrendingUp
+  TrendingUp,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useStickyNavigation } from '@/hooks/useStickyNavigation';
@@ -31,6 +34,7 @@ interface RightSideValidationPanelProps {
 }
 
 export function RightSideValidationPanel({ className }: RightSideValidationPanelProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
   // Try to get form context, but handle gracefully if not available
   let formState, formData;
   try {
@@ -144,9 +148,23 @@ export function RightSideValidationPanel({ className }: RightSideValidationPanel
         style={stickyStyles}
       >
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Target className="h-4 w-4 text-primary" />
-            Validation Status
+          <CardTitle className="flex items-center justify-between text-sm">
+            <div className="flex items-center gap-2">
+              <Target className="h-4 w-4 text-primary" />
+              Validation Status
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="h-6 w-6 p-0"
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4" />
+              ) : (
+                <ChevronDown className="h-4 w-4" />
+              )}
+            </Button>
           </CardTitle>
           
           {/* Overall Progress */}
@@ -164,127 +182,139 @@ export function RightSideValidationPanel({ className }: RightSideValidationPanel
             />
             
             <div className="grid grid-cols-3 gap-2 text-xs">
-              <div className="text-center">
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-center hover:bg-muted/50 rounded p-1 transition-colors"
+              >
                 <div className="font-medium text-success">{overallProgress.completed}</div>
                 <div className="text-muted-foreground">Complete</div>
-              </div>
-              <div className="text-center">
+              </button>
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-center hover:bg-muted/50 rounded p-1 transition-colors"
+              >
                 <div className="font-medium text-warning">{overallProgress.partial}</div>
                 <div className="text-muted-foreground">Partial</div>
-              </div>
-              <div className="text-center">
+              </button>
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="text-center hover:bg-muted/50 rounded p-1 transition-colors"
+              >
                 <div className="font-medium text-muted-foreground">
                   {overallProgress.total - overallProgress.completed - overallProgress.partial}
                 </div>
                 <div className="text-muted-foreground">Pending</div>
-              </div>
+              </button>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="pt-0">
-          <ScrollArea className="h-[calc(100vh-16rem)]">
-            <div className="space-y-3">
-              <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                Section Status
-              </h4>
-              
-              {sectionStatuses.map((section) => (
-                <div
-                  key={section.id}
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-2 flex-1">
-                    {getStatusIcon(section.status)}
-                    <div className="flex-1 min-w-0">
-                      <div className="text-xs font-medium truncate">
-                        {section.title}
-                      </div>
-                      {section.completionRatio > 0 && section.completionRatio < 1 && (
-                        <div className="text-xs text-muted-foreground">
-                          {Math.round(section.completionRatio * 100)}% complete
-                        </div>
-                      )}
-                      {section.missingFields.length > 0 && (
-                        <div className="text-xs text-destructive">
-                          {section.missingFields.length} missing
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <Badge 
-                    variant="outline" 
-                    className={cn(
-                      'text-xs px-1.5 py-0.5',
-                      {
-                        'border-success text-success': section.status === 'valid',
-                        'border-warning text-warning': section.status === 'warning',
-                        'border-destructive text-destructive': section.status === 'error',
-                        'border-muted text-muted-foreground': section.status === 'empty'
-                      }
-                    )}
-                  >
-                    {section.status === 'valid' && 'Done'}
-                    {section.status === 'warning' && 'Issues'}
-                    {section.status === 'error' && 'Error'}
-                    {section.status === 'empty' && 'Pending'}
-                  </Badge>
-                </div>
-              ))}
-
-              {/* Form Errors Summary */}
-              {formState.errors && Object.keys(formState.errors).length > 0 && (
-                <div className="mt-4 p-3 rounded-lg bg-destructive/5 border border-destructive/20">
-                  <h4 className="text-xs font-medium text-destructive mb-2 flex items-center gap-1">
-                    <XCircle className="h-3 w-3" />
-                    Form Errors ({Object.keys(formState.errors).length})
-                  </h4>
-                  <div className="space-y-1 text-xs text-destructive/80 max-h-20 overflow-y-auto">
-                     {Object.entries(formState.errors).slice(0, 5).map(([field, error]) => (
-                       <div key={field} className="truncate">
-                         • {field}: {(error as any)?.message || 'Invalid value'}
-                       </div>
-                    ))}
-                    {Object.keys(formState.errors).length > 5 && (
-                      <div className="text-muted-foreground">
-                        +{Object.keys(formState.errors).length - 5} more errors
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Quick Stats */}
-              <div className="mt-4 p-3 rounded-lg bg-muted/30">
-                <h4 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
-                  <TrendingUp className="h-3 w-3" />
-                  Quick Stats
+        {/* Expandable Section Details */}
+        {isExpanded && (
+          <CardContent className="pt-0">
+            <ScrollArea className="h-[calc(100vh-20rem)]">
+              <div className="space-y-3">
+                <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Section Status
                 </h4>
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <div>
-                    <div className="font-medium">{formData.construction_items?.length || 0}</div>
-                    <div className="text-muted-foreground">Cost Items</div>
-                  </div>
-                  <div>
-                    <div className="font-medium">{formData.sale_lines?.length || 0}</div>
-                    <div className="text-muted-foreground">Sale Lines</div>
-                  </div>
-                  <div>
-                    <div className="font-medium">{formData.rental_lines?.length || 0}</div>
-                    <div className="text-muted-foreground">Rental Lines</div>
-                  </div>
-                  <div>
-                    <div className="font-medium">
-                      {formData.project_name ? '✓' : '—'}
+                
+                {sectionStatuses.map((section) => (
+                  <div
+                    key={section.id}
+                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-2 flex-1">
+                      {getStatusIcon(section.status)}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-xs font-medium truncate">
+                          {section.title}
+                        </div>
+                        {section.completionRatio > 0 && section.completionRatio < 1 && (
+                          <div className="text-xs text-muted-foreground">
+                            {Math.round(section.completionRatio * 100)}% complete
+                          </div>
+                        )}
+                        {section.missingFields.length > 0 && (
+                          <div className="text-xs text-destructive">
+                            {section.missingFields.length} missing
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="text-muted-foreground">Project Name</div>
+                    
+                    <Badge 
+                      variant="outline" 
+                      className={cn(
+                        'text-xs px-1.5 py-0.5',
+                        {
+                          'border-success text-success': section.status === 'valid',
+                          'border-warning text-warning': section.status === 'warning',
+                          'border-destructive text-destructive': section.status === 'error',
+                          'border-muted text-muted-foreground': section.status === 'empty'
+                        }
+                      )}
+                    >
+                      {section.status === 'valid' && 'Done'}
+                      {section.status === 'warning' && 'Issues'}
+                      {section.status === 'error' && 'Error'}
+                      {section.status === 'empty' && 'Pending'}
+                    </Badge>
+                  </div>
+                ))}
+
+                {/* Form Errors Summary */}
+                {formState.errors && Object.keys(formState.errors).length > 0 && (
+                  <div className="mt-4 p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+                    <h4 className="text-xs font-medium text-destructive mb-2 flex items-center gap-1">
+                      <XCircle className="h-3 w-3" />
+                      Form Errors ({Object.keys(formState.errors).length})
+                    </h4>
+                    <div className="space-y-1 text-xs text-destructive/80 max-h-20 overflow-y-auto">
+                       {Object.entries(formState.errors).slice(0, 5).map(([field, error]) => (
+                         <div key={field} className="truncate">
+                           • {field}: {(error as any)?.message || 'Invalid value'}
+                         </div>
+                      ))}
+                      {Object.keys(formState.errors).length > 5 && (
+                        <div className="text-muted-foreground">
+                          +{Object.keys(formState.errors).length - 5} more errors
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Quick Stats */}
+                <div className="mt-4 p-3 rounded-lg bg-muted/30">
+                  <h4 className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    Quick Stats
+                  </h4>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <div className="font-medium">{formData.construction_items?.length || 0}</div>
+                      <div className="text-muted-foreground">Cost Items</div>
+                    </div>
+                    <div>
+                      <div className="font-medium">{formData.sale_lines?.length || 0}</div>
+                      <div className="text-muted-foreground">Sale Lines</div>
+                    </div>
+                    <div>
+                      <div className="font-medium">{formData.rental_lines?.length || 0}</div>
+                      <div className="text-muted-foreground">Rental Lines</div>
+                    </div>
+                    <div>
+                      <div className="font-medium">
+                        {formData.project_name ? '✓' : '—'}
+                      </div>
+                      <div className="text-muted-foreground">Project Name</div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </ScrollArea>
-        </CardContent>
+            </ScrollArea>
+          </CardContent>
+        )}
       </Card>
     </aside>
   );
