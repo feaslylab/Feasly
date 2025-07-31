@@ -89,5 +89,45 @@
     "alerts": {
       "title": "Portfolio Alerts"
     }
+  },
+  "finance": {
+    "title": "Financial Analysis",
+    "cashFlow": "Cash Flow",
+    "revenue": "Revenue",
+    "costs": "Costs",
+    "profit": "Profit",
+    "loss": "Loss",
+    "irr": "Internal Rate of Return",
+    "npv": "Net Present Value",
+    "roi": "Return on Investment",
+    "paybackPeriod": "Payback Period",
+    "profitMargin": "Profit Margin",
+    "totalConstructionCost": "Total Construction Cost",
+    "totalRevenue": "Total Revenue",
+    "scenario": "Scenario",
+    "baseCase": "Base Case",
+    "optimistic": "Optimistic",
+    "pessimistic": "Pessimistic"
+  },
+  "risk": {
+    "title": "Risk Analysis",
+    "riskLevel": "Risk Level",
+    "low": "Low",
+    "medium": "Medium", 
+    "high": "High",
+    "critical": "Critical",
+    "riskFactor": "Risk Factor",
+    "mitigation": "Mitigation",
+    "probability": "Probability",
+    "impact": "Impact",
+    "riskScore": "Risk Score"
+  },
+  "errors": {
+    "loadingFailed": "Failed to load data",
+    "saveFailed": "Failed to save changes",
+    "networkError": "Network connection error",
+    "unauthorized": "Access denied",
+    "tryAgain": "Try Again",
+    "contactSupport": "Contact Support"
   }
 }

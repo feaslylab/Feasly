@@ -5,8 +5,13 @@ import i18n from './lib/i18n';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '@/components/auth/AuthProvider';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { initSentry, initPostHog } from './lib/analytics';
 import App from './App.tsx'
 import './index.css'
+
+// Initialize analytics
+initSentry();
+initPostHog();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

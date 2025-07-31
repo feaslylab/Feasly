@@ -34,6 +34,10 @@ npm i
 
 # Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
+
+# Step 5: Run quality checks
+npm run bundle:check   # Check bundle size (≤250kB gzipped)
+npm run lint:a11y      # Run accessibility audit
 ```
 
 **Edit a file directly in GitHub**
@@ -71,3 +75,38 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+
+## Analytics & Monitoring
+
+This project includes optional analytics and error monitoring:
+
+### Environment Variables
+
+Create a `.env.local` file with:
+
+```env
+# Analytics (optional - set to 'true' to enable)
+VITE_ENABLE_ANALYTICS=false
+
+# Sentry (error monitoring)
+VITE_SENTRY_DSN=your_sentry_dsn_here
+
+# PostHog (product analytics)  
+VITE_POSTHOG_KEY=your_posthog_key_here
+VITE_POSTHOG_HOST=https://app.posthog.com
+```
+
+### Features
+
+- **Error Monitoring**: Sentry integration for production error tracking
+- **Product Analytics**: PostHog for user behavior insights and page views
+- **Privacy-First**: Analytics only enabled with explicit flag
+- **Development Friendly**: Disabled by default in development
+
+## Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run bundle:check` - Analyze bundle size (enforces ≤250kB gzipped)
+- `npm run lint:a11y` - Run accessibility audit
+- `npm test` - Run unit tests
