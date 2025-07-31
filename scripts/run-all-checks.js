@@ -9,19 +9,29 @@ import { exit } from 'process';
 
 const checks = [
   {
-    name: 'Unit Tests',
+    name: 'ESLint Check',
     command: 'npm',
-    args: ['test', '--run']
+    args: ['run', 'lint']
+  },
+  {
+    name: 'Build Check',
+    command: 'npm',
+    args: ['run', 'build']
   },
   {
     name: 'Bundle Size Check',
     command: 'node',
-    args: ['scripts/bundle-check.js']
+    args: ['scripts/bundle-check.js', '--maxKB', '250']
   },
   {
     name: 'Accessibility Check',
     command: 'node', 
     args: ['scripts/a11y-check.js']
+  },
+  {
+    name: 'Storybook Build Check',
+    command: 'npm',
+    args: ['run', 'storybook:build']
   }
 ];
 

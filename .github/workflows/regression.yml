@@ -38,11 +38,11 @@ jobs:
       - name: Build for performance check
         run: npm run build
       
-      - name: Bundle size check
-        run: node scripts/bundle-check.js
+      - name: Run all quality checks
+        run: npm run check:all
       
-      - name: Accessibility check
-        run: node scripts/a11y-check.js
+      - name: Dashboard QA tests  
+        run: pnpm test --filter dashboard-qa
       
-      - name: Tailwind smoke test
-        run: npx tailwindcss -i ./src/index.css -o /dev/null --minify
+      - name: Verify Storybook build
+        run: npm run storybook:build

@@ -361,8 +361,8 @@ export default function ConsolidatedPortfolioTable({ className }: ConsolidatedPo
                     return [formatCurrency(value), name];
                   }}
                 />
-                <Bar dataKey="profit" fill="#3b82f6" name="Profit" />
-                <Bar dataKey="roi" fill="#10b981" name="ROI %" />
+                <Bar dataKey="profit" fill="hsl(var(--chart-revenue))" name="Profit" />
+                <Bar dataKey="roi" fill="hsl(var(--chart-profit))" name="ROI %" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>

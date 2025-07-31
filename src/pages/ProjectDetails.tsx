@@ -1210,7 +1210,7 @@ const ProjectDetails = () => {
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">Optimistic</CardTitle>
-                      <Badge variant="default" className="bg-green-100 text-green-800">Best Case</Badge>
+                      <Badge variant="default" className="bg-success/10 text-success">Best Case</Badge>
                     </div>
                   </CardHeader>
                   <CardContent>

@@ -508,8 +508,8 @@ export default function Dashboard() {
                       })()}
                       
                       {/* Quick stats - Mobile optimized */}
-                      <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-emerald-500 rounded-full animate-pulse" />
+                      <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl bg-success/10 border border-success/20">
+                        <div className="w-2 h-2 sm:w-3 sm:h-3 bg-success rounded-full animate-pulse" />
                         <div>
                            <p className="text-xs sm:text-sm font-medium text-primary-dark">
                              {activeProjects} Active Projects
@@ -625,8 +625,8 @@ export default function Dashboard() {
                       0
                     </div>
                     <div className="flex items-center space-x-2 text-sm">
-                      <span className="text-emerald-600 font-medium flex items-center gap-1">
-                        <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span className="text-success font-medium flex items-center gap-1">
+                        <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
                         {activeProjects} active
                       </span>
                       <span className="text-muted-foreground">•</span>
@@ -662,7 +662,7 @@ export default function Dashboard() {
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
                     <CardTitle className="text-sm font-medium text-foreground/80">Portfolio NPV</CardTitle>
-                    <div className="h-10 w-10 rounded-full bg-emerald-500/10 flex items-center justify-center group-hover:bg-emerald-500/20 transition-colors duration-300 group-hover:scale-110">
+                    <div className="h-10 w-10 rounded-full bg-success/10 flex items-center justify-center group-hover:bg-success/20 transition-colors duration-300 group-hover:scale-110">
                       <DollarSign className="h-5 w-5 text-success" />
                     </div>
                   </CardHeader>
@@ -699,8 +699,8 @@ export default function Dashboard() {
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
                     <CardTitle className="text-sm font-medium text-foreground/80">Average IRR</CardTitle>
-                    <div className="h-10 w-10 rounded-full bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 transition-colors duration-300 group-hover:scale-110">
-                      <BarChart3 className="h-5 w-5 text-amber-600" />
+                    <div className="h-10 w-10 rounded-full bg-warning/10 flex items-center justify-center group-hover:bg-warning/20 transition-colors duration-300 group-hover:scale-110">
+                      <BarChart3 className="h-5 w-5 text-warning" />
                     </div>
                   </CardHeader>
                   <CardContent className="relative">
@@ -711,8 +711,8 @@ export default function Dashboard() {
                       Portfolio weighted average
                     </p>
                     <div className="mt-3 flex items-center space-x-1">
-                      <Target className="h-4 w-4 text-amber-600" />
-                      <span className="text-sm text-amber-600 font-medium">
+                      <Target className="h-4 w-4 text-warning" />
+                      <span className="text-sm text-warning font-medium">
                         {averageIRR > 0.1 ? 'Above target' : averageIRR > 0.05 ? 'On target' : 'Below target'}
                       </span>
                     </div>
@@ -759,13 +759,13 @@ export default function Dashboard() {
                     </p>
                     {alerts.length === 0 ? (
                       <div className="mt-3 flex items-center space-x-1">
-                        <CheckCircle className="h-4 w-4 text-emerald-600 animate-pulse" />
-                        <span className="text-sm text-emerald-600 font-medium">All clear</span>
+                        <CheckCircle className="h-4 w-4 text-success animate-pulse" />
+                        <span className="text-sm text-success font-medium">All clear</span>
                       </div>
                     ) : (
                       <div className="mt-3 flex items-center space-x-1">
-                        <Bell className="h-4 w-4 text-red-600 animate-pulse" />
-                        <span className="text-sm text-red-600 font-medium">Action needed</span>
+                        <Bell className="h-4 w-4 text-destructive animate-pulse" />
+                        <span className="text-sm text-destructive font-medium">Action needed</span>
                       </div>
                     )}
                   </CardContent>
@@ -818,8 +818,8 @@ export default function Dashboard() {
             <Card className="border-0 shadow-elevation-2 bg-gradient-to-br from-card via-card to-emerald-500/5">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
-                    <DollarSign className="h-4 w-4 text-emerald-600" />
+                  <div className="h-8 w-8 rounded-lg bg-success/10 flex items-center justify-center">
+                    <DollarSign className="h-4 w-4 text-success" />
                   </div>
                   <span>Sales</span>
                 </CardTitle>
@@ -832,8 +832,8 @@ export default function Dashboard() {
             <Card className="border-0 shadow-elevation-2 bg-gradient-to-br from-card via-card to-amber-500/5">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                    <TrendingUp className="h-4 w-4 text-amber-600" />
+                  <div className="h-8 w-8 rounded-lg bg-warning/10 flex items-center justify-center">
+                    <TrendingUp className="h-4 w-4 text-warning" />
                   </div>
                   <span>Rentals</span>
                 </CardTitle>
@@ -995,8 +995,8 @@ export default function Dashboard() {
             <CardHeader className="border-b border-border/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="h-10 w-10 rounded-lg bg-red-500/10 flex items-center justify-center">
-                    <AlertCircle className="h-5 w-5 text-red-600" />
+                  <div className="h-10 w-10 rounded-lg bg-destructive/10 flex items-center justify-center">
+                    <AlertCircle className="h-5 w-5 text-destructive" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">Alerts</CardTitle>
@@ -1091,8 +1091,8 @@ export default function Dashboard() {
                 
                 {alerts.length === 0 && (
                   <div className="text-center py-8">
-                    <div className="h-12 w-12 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
-                      <CheckCircle className="h-6 w-6 text-emerald-600 animate-pulse" />
+                    <div className="h-12 w-12 mx-auto rounded-full bg-success/10 flex items-center justify-center mb-3">
+                      <CheckCircle className="h-6 w-6 text-success animate-pulse" />
                     </div>
                     <p className="text-sm font-medium text-foreground mb-1">All Clear!</p>
                     <p className="text-xs text-muted-foreground">

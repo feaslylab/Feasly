@@ -283,8 +283,8 @@ export default function Projects() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'draft': return 'bg-gray-50 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-300';
-      case 'active': return 'bg-blue-50 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-300';
-      case 'archived': return 'bg-red-50 text-red-800 border-red-200 dark:bg-red-900 dark:text-red-300';
+      case 'active': return 'bg-primary/10 text-primary border-primary/20 dark:bg-primary/20 dark:text-primary-light';
+      case 'archived': return 'bg-destructive/10 text-destructive border-destructive/20 dark:bg-destructive/20 dark:text-destructive-foreground';
       default: return 'bg-gray-50 text-gray-800 border-gray-200 dark:bg-gray-900 dark:text-gray-300';
     }
   };

@@ -100,7 +100,7 @@ export const GeographicMap = ({ projects, formatCurrency, onProjectClick }: Geog
             width={mapWidth - 2 * padding}
             height={mapHeight - 2 * padding}
             fill="none"
-            stroke="#e2e8f0"
+            stroke="hsl(var(--border))"
             strokeWidth="2"
             rx="8"
           />

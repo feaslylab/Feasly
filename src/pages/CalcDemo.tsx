@@ -109,7 +109,7 @@ export default function CalcDemo() {
 
       <button 
         onClick={addRental}
-        className="bg-emerald-600 text-emerald-50 px-4 py-2 rounded mb-4 hover:bg-emerald-700 transition-colors"
+        className="bg-success text-success-foreground px-4 py-2 rounded mb-4 hover:bg-success/90 transition-colors"
       >
         Add Rental (150 rooms, ADR 800, 68% occ, P48-60)
       </button>

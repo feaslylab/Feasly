@@ -11,7 +11,7 @@
 .hero-subtitle {
   opacity: 1 !important;
   visibility: visible !important;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  text-shadow: 0 2px 8px hsl(var(--foreground) / 0.15);
   z-index: 20;
   position: relative;
   display: block !important;

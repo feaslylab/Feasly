@@ -265,7 +265,7 @@ export default function FeaslyInsights() {
           <div>
             <h1 className="text-3xl font-bold">
               {t('title') || 'Feasly Insights'}
-              <Badge className="ml-3 bg-blue-100 text-blue-800">v2 - Advanced Analytics</Badge>
+              <Badge className="ml-3 bg-primary/10 text-primary">v2 - Advanced Analytics</Badge>
             </h1>
             <p className="text-muted-foreground">
               {t('description') || 'Advanced analytics and insights for your portfolio'}

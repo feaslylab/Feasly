@@ -112,9 +112,9 @@ const comparisonFeatures: ComparisonFeature[] = [
 
 const FeatureIcon = ({ supported }: { supported: boolean }) => (
   supported ? (
-    <Check className="w-5 h-5 text-green-600" />
+    <Check className="w-5 h-5 text-success" />
   ) : (
-    <X className="w-5 h-5 text-red-500" />
+    <X className="w-5 h-5 text-destructive" />
   )
 );
 
