@@ -100,28 +100,29 @@ export function useStickyNavigation(options: StickyNavigationOptions = {}) {
 
   // Get sticky container styles
   const getStickyContainerStyles = useCallback(() => {
-    // Always use sticky positioning that properly follows scroll
+    // Use sticky positioning that "floats" in place as user scrolls
     const baseStyles = {
       position: 'sticky' as const,
-      top: `${topOffset}px`,
+      top: `${topOffset}px`, // This keeps it floating at the same visual position
       alignSelf: 'flex-start',
       maxHeight,
       overflowY: 'auto' as const,
       overflowX: 'hidden' as const,
     };
 
-    // Add enhanced styles when in sticky state
+    // Enhanced floating styles when actively scrolling
     if (isSticky) {
       return {
         ...baseStyles,
-        backgroundColor: 'hsl(var(--background) / 0.95)',
-        backdropFilter: 'blur(8px)',
+        backgroundColor: 'hsl(var(--background) / 0.96)',
+        backdropFilter: 'blur(12px)',
         borderRight: '1px solid hsl(var(--border))',
+        boxShadow: '2px 0 8px hsl(var(--foreground) / 0.1)',
         zIndex: 30,
       };
     }
 
-    // Base sticky positioning styles
+    // Base floating styles
     return {
       ...baseStyles,
       backgroundColor: 'hsl(var(--background) / 0.98)',

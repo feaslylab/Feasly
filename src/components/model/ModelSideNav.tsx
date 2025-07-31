@@ -68,8 +68,8 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
   const isVisible = true;
 
   const { getStickyContainerStyles, checkStickyParent } = useStickyNavigation({
-    topOffset: 64 + magneticOffset, // Account for global header + magnetic offset
-    maxHeight: 'calc(100vh - 4rem)'
+    topOffset: 80, // Fixed offset from top of viewport - creates floating effect
+    maxHeight: 'calc(100vh - 6rem)' // Allow full height minus some spacing
   });
 
   // Check for sticky parent issues on mount
@@ -104,24 +104,22 @@ function DesktopSideNav({ sections, activeSection, onSectionClick, className }: 
       data-testid="desktop-sidenav"
       data-is-sticky={isSticky}
       animate={{ 
-        y: magneticOffset * 0.5, // Subtle magnetic movement
-        scale: isSticky ? 0.98 : 1,
-        backdropFilter: isSticky ? 'blur(12px)' : 'blur(8px)'
+        scale: isSticky ? 0.99 : 1, // Subtle scale when actively floating
+        backdropFilter: isSticky ? 'blur(12px)' : 'blur(4px)'
       }}
       transition={{
-        type: "spring",
-        stiffness: 300,
-        damping: 30,
-        mass: 0.8
+        type: "tween",
+        duration: 0.2,
+        ease: "easeOut"
       }}
       className={cn(
-        'w-64 border-r transition-all duration-300',
+        'w-64 border-r transition-all duration-200',
         isSticky ? [
-          'bg-background/90 backdrop-blur-md shadow-lg',
-          'border-primary/20'
+          'bg-background/96 backdrop-blur-md shadow-lg',
+          'border-primary/10'
         ] : [
-          'bg-background/95 backdrop-blur',
-          'supports-[backdrop-filter]:bg-background/60'
+          'bg-background/98 backdrop-blur-sm',
+          'supports-[backdrop-filter]:bg-background/95'
         ],
         className
       )}
