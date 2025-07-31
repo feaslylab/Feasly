@@ -94,7 +94,7 @@ export default function ScenarioComparisonChart({ projectId }: ScenarioCompariso
 
     try {
       const canvas = await html2canvas(targetRef.current, {
-        backgroundColor: '#ffffff',
+        backgroundColor: 'hsl(var(--background))',
         scale: 2,
         logging: false,
         useCORS: true,

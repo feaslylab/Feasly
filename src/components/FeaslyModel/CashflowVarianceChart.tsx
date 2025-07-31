@@ -26,17 +26,29 @@ const metricLabels = {
   cashBalance: "Cash Balance"
 };
 
-const scenarioColors = {
-  base: "#2563eb",      // Blue
-  optimistic: "#16a34a", // Green  
-  pessimistic: "#dc2626", // Red
-  custom: "#7c3aed"      // Purple
+// Import chart colors from palette
+import { chartHelpers, CHART_CATEGORIES } from "@/theme/chartPalette";
+import { useTheme } from "next-themes";
+
+// Use theme-aware chart colors
+const getScenarioColors = (theme: 'light' | 'dark' = 'light') => {
+  const colors = chartHelpers.getFinancialColors(theme);
+  return {
+    base: colors.profit,        // Primary blue
+    optimistic: colors.revenue, // Green for positive
+    pessimistic: colors.cost,   // Red for negative
+    custom: 'hsl(271, 81%, 56%)'  // Purple from palette
+  };
 };
 
 export function CashflowVarianceChart({ projectId }: CashflowVarianceChartProps) {
   const [selectedMetric, setSelectedMetric] = useState<MetricType>("netCashflow");
   const [chartType, setChartType] = useState<ChartType>("line");
   const chartRef = useRef<HTMLDivElement>(null);
+  const { theme } = useTheme();
+  
+  // Get theme-aware scenario colors
+  const scenarioColors = getScenarioColors(theme === 'dark' ? 'dark' : 'light');
 
   // Watch currency code from form context
   const form = useFormContext<FeaslyModelFormData>();
@@ -109,7 +121,7 @@ export function CashflowVarianceChart({ projectId }: CashflowVarianceChartProps)
 
     try {
       const canvas = await html2canvas(chartRef.current, {
-        backgroundColor: '#ffffff',
+        backgroundColor: theme === 'dark' ? 'hsl(var(--background))' : '#ffffff',
         scale: 2,
       });
       

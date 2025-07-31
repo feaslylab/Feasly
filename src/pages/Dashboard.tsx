@@ -369,7 +369,7 @@ export default function Dashboard() {
           {/* Enhanced skeleton for metrics cards */}
           <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 mb-8 sm:mb-10">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="relative overflow-hidden border-0 rounded-xl bg-gradient-to-br from-card/50 to-primary/5 shadow-lg">
+              <div key={i} className="relative overflow-hidden border-0 rounded-xl bg-gradient-to-br from-card/50 to-primary/5 shadow-elevation-2">
                 <div className="p-4 sm:p-6">
                   <div className="flex items-center justify-between mb-3">
                     <Skeleton className="h-4 w-24 bg-gradient-to-r from-muted/40 to-muted/60 animate-pulse" />
@@ -388,7 +388,7 @@ export default function Dashboard() {
           {/* Enhanced skeleton for content sections */}
           <div className="grid gap-6 lg:grid-cols-3 mb-10">
             {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="border-0 rounded-xl shadow-lg bg-gradient-to-br from-card/50 via-card/50 to-primary/5">
+              <div key={i} className="border-0 rounded-xl shadow-elevation-2 bg-gradient-to-br from-card/50 via-card/50 to-primary/5">
                 <div className="p-6">
                   <div className="flex items-center gap-3 mb-4">
                     <Skeleton className="h-8 w-8 rounded-lg bg-gradient-to-r from-primary/20 to-primary/40 animate-pulse" />
@@ -461,7 +461,7 @@ export default function Dashboard() {
                                         <Target className="h-4 w-4 sm:h-5 lg:h-6 sm:w-5 lg:w-6 text-primary" />
                                       </div>
                                       <div className="absolute -top-0.5 -right-0.5 w-3 h-3 sm:w-4 sm:h-4 bg-emerald-500 rounded-full flex items-center justify-center">
-                                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full" />
+                                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary-foreground rounded-full" />
                                       </div>
                                     </div>
                                     <div>
@@ -507,7 +507,7 @@ export default function Dashboard() {
                 <div className="xl:flex-shrink-0 w-full xl:w-auto">
                   <div className="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 gap-3 sm:gap-4 xl:gap-4">
                     <Link to="/projects/new" className="xl:order-1">
-                      <Button size="lg" className="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 h-auto bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] group">
+                      <Button size="lg" className="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 h-auto bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300 hover:scale-[1.02] group">
                         <div className="flex items-center gap-2 sm:gap-3">
                           <Plus className="h-5 w-5 sm:h-6 sm:w-6 group-hover:rotate-90 transition-transform duration-300" />
                           <div className="text-left">
@@ -545,7 +545,7 @@ export default function Dashboard() {
 
         {/* Activity Feed Sidebar */}
         {activityVisible && (
-          <Card className="mb-8 border-0 shadow-lg bg-gradient-to-r from-card via-card to-primary/5">
+          <Card className="mb-8 border-0 shadow-elevation-2 bg-gradient-to-r from-card via-card to-primary/5">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center space-x-2">
@@ -584,7 +584,7 @@ export default function Dashboard() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-2 sm:pb-3">
                     <CardTitle className="text-xs sm:text-sm font-medium text-foreground/80">Total Projects</CardTitle>
@@ -634,7 +634,7 @@ export default function Dashboard() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-emerald-500/10 via-emerald-500/5 to-transparent shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                   <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
                     <CardTitle className="text-sm font-medium text-foreground/80">Portfolio NPV</CardTitle>
@@ -671,7 +671,7 @@ export default function Dashboard() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
                     <CardTitle className="text-sm font-medium text-foreground/80">Average IRR</CardTitle>
@@ -709,7 +709,7 @@ export default function Dashboard() {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                <Card className="group relative overflow-hidden border-0 bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent shadow-elevation-2 hover:shadow-elevation-3 transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                   <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                   <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
                     <CardTitle className="text-sm font-medium text-foreground/80">Active Alerts</CardTitle>
@@ -777,7 +777,7 @@ export default function Dashboard() {
           </div>
           
           <div className="grid gap-6 lg:grid-cols-3">
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
+            <Card className="border-0 shadow-elevation-2 bg-gradient-to-br from-card via-card to-primary/5">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -791,7 +791,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-emerald-500/5">
+            <Card className="border-0 shadow-elevation-2 bg-gradient-to-br from-card via-card to-emerald-500/5">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <div className="h-8 w-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
@@ -805,7 +805,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
             
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-amber-500/5">
+            <Card className="border-0 shadow-elevation-2 bg-gradient-to-br from-card via-card to-amber-500/5">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
@@ -821,7 +821,7 @@ export default function Dashboard() {
           </div>
 
           {/* Enhanced Cash Flow Chart */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
+          <Card className="border-0 shadow-elevation-2 bg-gradient-to-br from-card via-card to-primary/5">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center space-x-2">
@@ -847,7 +847,7 @@ export default function Dashboard() {
         {/* Premium Content Grid */}
         <div className="grid gap-6 lg:grid-cols-3 mb-10">
           {/* Enhanced Recent Projects */}
-          <Card className="lg:col-span-2 border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
+          <Card className="lg:col-span-2 border-0 shadow-elevation-2 bg-gradient-to-br from-card via-card to-primary/5">
             <CardHeader className="border-b border-border/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -869,7 +869,7 @@ export default function Dashboard() {
             <CardContent className="p-6">
               <div className="space-y-4">
                 {projects.slice(0, 5).map((project, index) => (
-                  <div key={project.id} className="group flex items-center justify-between p-4 rounded-lg border border-border/50 hover:border-primary/20 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]">
+                  <div key={project.id} className="group flex items-center justify-between p-4 rounded-lg border border-border/50 hover:border-primary/20 hover:shadow-elevation-2 transition-all duration-300 hover:scale-[1.02]">
                     <div className="flex items-center space-x-4">
                       <div className="h-12 w-12 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center group-hover:from-primary/20 group-hover:to-primary/10 transition-colors duration-300 relative">
                         <Building2 className="h-5 w-5 text-primary" />
@@ -967,7 +967,7 @@ export default function Dashboard() {
           </Card>
 
           {/* Enhanced Recent Alerts */}
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-red-500/5">
+          <Card className="border-0 shadow-elevation-2 bg-gradient-to-br from-card via-card to-red-500/5">
             <CardHeader className="border-b border-border/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -1083,7 +1083,7 @@ export default function Dashboard() {
 
         {/* Enhanced KPI Performance Section */}
         {latestKpis.length > 0 && (
-          <Card className="border-0 shadow-lg bg-gradient-to-br from-card via-card to-primary/5">
+          <Card className="border-0 shadow-elevation-2 bg-gradient-to-br from-card via-card to-primary/5">
             <CardHeader className="border-b border-border/10">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
@@ -1104,7 +1104,7 @@ export default function Dashboard() {
             <CardContent className="p-6">
               <div className="grid gap-6 md:grid-cols-3">
                 {latestKpis.map((kpi, index) => (
-                  <div key={index} className="group relative overflow-hidden rounded-xl border border-border/30 p-6 hover:border-primary/20 hover:shadow-lg transition-all duration-300">
+                  <div key={index} className="group relative overflow-hidden rounded-xl border border-border/30 p-6 hover:border-primary/20 hover:shadow-elevation-2 transition-all duration-300">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="relative space-y-4">
                       <div className="flex items-center justify-between">

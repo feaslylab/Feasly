@@ -5,6 +5,8 @@ import {
   LineChart, Line, ScatterChart, Scatter, Tooltip as RechartsTooltip, Legend
 } from "recharts";
 import { format } from "date-fns";
+import { chartHelpers } from "@/theme/chartPalette";
+import { useTheme } from "next-themes";
 
 interface Project {
   id: string;
@@ -30,6 +32,11 @@ interface ScenarioChartsProps {
 }
 
 export default function ScenarioCharts({ projects, onProjectClick }: ScenarioChartsProps) {
+  const { theme } = useTheme();
+  
+  // Get theme-aware colors from chart palette
+  const colors = chartHelpers.getFinancialColors(theme === 'dark' ? 'dark' : 'light');
+  
   // Chart data preparations
   const bubbleChartData = projects.map(p => ({
     name: p.name,
@@ -106,7 +113,7 @@ export default function ScenarioCharts({ projects, onProjectClick }: ScenarioCha
                   if (active && payload && payload[0]) {
                     const data = payload[0].payload;
                     return (
-                      <div className="bg-white p-3 border rounded shadow-lg">
+                      <div className="bg-card p-3 border rounded shadow-elevation-2">
                         <p className="font-medium">{data.name}</p>
                         <p>IRR: {data.x}%</p>
                         <p>ROI: {data.y}%</p>
@@ -120,7 +127,7 @@ export default function ScenarioCharts({ projects, onProjectClick }: ScenarioCha
               />
               <Scatter 
                 dataKey="z" 
-                fill="hsl(var(--primary))" 
+                fill={colors.profit} 
                 onClick={(data) => {
                   const project = projects.find(p => p.id === data.id);
                   if (project) onProjectClick(project);
@@ -145,8 +152,8 @@ export default function ScenarioCharts({ projects, onProjectClick }: ScenarioCha
               <YAxis />
               <RechartsTooltip />
               <Legend />
-              <Line type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" name="Revenue" />
-              <Line type="monotone" dataKey="cost" stroke="hsl(var(--destructive))" name="Cost" />
+              <Line type="monotone" dataKey="revenue" stroke={colors.revenue} name="Revenue" />
+              <Line type="monotone" dataKey="cost" stroke={colors.cost} name="Cost" />
             </LineChart>
           </ResponsiveContainer>
         </CardContent>
@@ -166,8 +173,8 @@ export default function ScenarioCharts({ projects, onProjectClick }: ScenarioCha
               <YAxis />
               <RechartsTooltip />
               <Legend />
-              <Bar dataKey="irr" fill="hsl(var(--primary))" name="IRR %" />
-              <Bar dataKey="netProfit" fill="hsl(var(--secondary))" name="Net Profit (M)" />
+              <Bar dataKey="irr" fill={colors.profit} name="IRR %" />
+              <Bar dataKey="netProfit" fill={colors.revenue} name="Net Profit (M)" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -188,7 +195,7 @@ export default function ScenarioCharts({ projects, onProjectClick }: ScenarioCha
               <RechartsTooltip />
               <Bar 
                 dataKey="irr" 
-                fill="hsl(var(--primary))"
+                fill={colors.profit}
                 onClick={(data) => {
                   const project = projects.find(p => p.id === data.id);
                   if (project) onProjectClick(project);

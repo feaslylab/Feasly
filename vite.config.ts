@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { VitePWA } from 'vite-plugin-pwa';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -12,7 +13,14 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' && componentTagger(),
+    ...(mode === "development" ? [componentTagger()] : []),
+    // Bundle analyzer - generates stats.html after build
+    visualizer({
+      filename: 'dist/stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+    }),
     VitePWA({
       registerType: 'autoUpdate',
       workbox: {
@@ -70,5 +78,53 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        // Manual chunk splitting for better caching
+        manualChunks: {
+          // Chart libraries in separate chunk
+          'charts': ['recharts', 'd3-dsv'],
+          // Date utilities
+          'date-utils': ['date-fns'],
+          // Large utility libraries  
+          'utils': ['lodash', 'clsx', 'tailwind-merge'],
+          // UI framework
+          'ui-radix': [
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu', 
+            '@radix-ui/react-select',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-accordion'
+          ],
+          // React Query and data fetching
+          'data': ['@tanstack/react-query', '@supabase/supabase-js'],
+        }
+      }
+    },
+    // Performance optimizations
+    target: 'es2020',
+    minify: 'esbuild',
+    cssMinify: true,
+    reportCompressedSize: true,
+    chunkSizeWarningLimit: 600,
+  },
+  // Optimize dependencies
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom', 
+      'react-router-dom',
+      'framer-motion',
+      'lucide-react'
+    ],
+    exclude: [
+      // Exclude heavy dev-only dependencies
+      '@testing-library/react',
+      '@testing-library/user-event',
+      'vitest'
+    ]
   },
 }));
