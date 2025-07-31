@@ -65,7 +65,7 @@ export default function Header() {
               className="w-7 h-7 object-contain"
             />
           </div>
-          <span className="text-3xl font-bold text-foreground">Feasly</span>
+          <span className="text-4xl font-bold text-foreground">Feasly</span>
           <div className="flex items-center gap-1 ml-2">
             <ThemeToggle />
             <LanguageSwitcher />
