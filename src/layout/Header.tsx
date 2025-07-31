@@ -10,9 +10,9 @@ import { Button } from "@/components/ui/button";
 import AlertDrawer from "@/components/dashboard/AlertDrawer";
 import { exportModel } from "@/api/exportModel";
 import { CommentButton } from "@/components/collaboration/CommentButton";
-import { PresenceDots } from "@/components/collaboration/PresenceDots";
 import NewScenarioDialog from '@/components/modals/NewScenarioDialog';
 import ScenarioRenameDialog from '@/components/modals/ScenarioRenameDialog';
+import GlobalActions from "@/components/layout/GlobalActions";
 
 export default function Header() {
   const { user } = useAuth();
@@ -54,10 +54,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-30 bg-background/70 backdrop-blur border-b">
       <div className="flex items-center justify-between px-6 h-14">
-        <div className="flex items-center gap-3">
-          <span className="font-bold text-lg">Feasly 🏗️</span>
-          {projectId && <PresenceDots />}
-        </div>
+        {/* Empty left space for layout balance */}
+        <div className="w-24"></div>
 
         {/* Centered selectors */}
         <div className="flex items-center gap-4">
@@ -168,51 +166,8 @@ export default function Header() {
           </Menu>
         </div>
 
-         {/* User utility bar */}
-         <div className="flex items-center divide-x divide-border">
-           <div className="flex items-center gap-2 pr-3">
-             {/* Project comments button */}
-             {projectId && (
-               <CommentButton
-                 targetId={`project:${projectId}`}
-                 targetLabel="Project"
-                 variant="ghost"
-                 size="sm"
-               />
-             )}
-             
-             {/* Export ZIP button */}
-             <Button
-               onClick={handleExportZip}
-               variant="ghost"
-               size="sm"
-               disabled={!projectId || !scenarioId}
-               className="flex items-center gap-2"
-             >
-               <Download className="h-4 w-4" />
-               <span className="hidden sm:inline">Export</span>
-             </Button>
-
-             {/* Alerts bell */}
-             <div className="relative">
-               <Button
-                 onClick={() => setAlertDrawerOpen(true)}
-                 variant="ghost"
-                 size="sm"
-                 className="relative p-2"
-               >
-                 <Bell className="h-4 w-4" />
-                 {unreadCount > 0 && (
-                   <span className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-destructive text-destructive-foreground rounded-full flex items-center justify-center">
-                     {unreadCount > 9 ? '9+' : unreadCount}
-                   </span>
-                 )}
-               </Button>
-             </div>
-           </div>
-           
-           <div className="pl-3 text-sm text-muted-foreground">{user?.email}</div>
-         </div>
+         {/* Global Actions Bar */}
+         <GlobalActions onAlertsClick={() => setAlertDrawerOpen(true)} />
        </div>
 
       <AlertDrawer 

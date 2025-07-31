@@ -5,12 +5,10 @@ import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "react-i18next";
-import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useSidebarState } from "@/hooks/useSidebarState";
-import { TM } from "@/components/ui/trademark";
+import SidebarHeader from "./SidebarHeader";
 
 const navigation = [
   { nameKey: "dashboard", href: "/dashboard", icon: BarChart3 },
@@ -60,63 +58,8 @@ export const Sidebar = () => {
     )}>
       {/* Top Section - Navigation */}
       <div className="flex flex-col min-h-0">
-        {/* Logo Header with Toggle */}
-        <div className={cn(
-          "flex h-16 items-center border-b border-border flex-shrink-0",
-          isCollapsed ? "px-3 justify-center" : "px-6 gap-3"
-        )}>
-          {/* Sidebar Toggle Button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleSidebar}
-            className={cn(
-              "h-8 w-8 flex-shrink-0",
-              isCollapsed && "mx-auto"
-            )}
-          >
-            {isCollapsed ? (
-              <Menu className="h-4 w-4" />
-            ) : (
-              <ChevronLeft className={cn("h-4 w-4", isRTL && "rotate-180")} />
-            )}
-          </Button>
-          {!isCollapsed && (
-            <>
-              {/* Feasly Logo */}
-              <div className="w-8 h-8 flex items-center justify-center flex-shrink-0">
-                <img 
-                  src="/lovable-uploads/c54aee74-e595-47d1-9bf8-b8efef6fae7d.png" 
-                  alt="Feasly Logo" 
-                  className="w-8 h-8 object-contain"
-                />
-              </div>
-              
-              {/* Brand and Module Title */}
-              <div className={cn("flex-1 min-w-0", isRTL && "text-right")}>
-                <div className="flex items-center gap-2 md:gap-2">
-                  <h1 className="text-lg font-bold text-foreground flex-shrink-0">Feasly<TM /></h1>
-                  <span className="text-muted-foreground hidden sm:block">—</span>
-                  <span className="text-sm font-medium text-primary truncate hidden sm:block">
-                    {currentModuleTitle}
-                  </span>
-                </div>
-                {/* Mobile: Show module title on second line */}
-                <div className="sm:hidden">
-                  <p className="text-xs text-primary font-medium truncate leading-tight">
-                    {currentModuleTitle}
-                  </p>
-                </div>
-              </div>
-              
-              {/* Controls */}
-              <div className="flex items-center gap-1 flex-shrink-0">
-                <ThemeToggle />
-                <LanguageSwitcher />
-              </div>
-            </>
-          )}
-        </div>
+        {/* Simplified Header */}
+        <SidebarHeader />
 
         {/* Quick Action */}
         {!isCollapsed && (
