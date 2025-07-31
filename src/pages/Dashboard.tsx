@@ -111,23 +111,25 @@ export default function Dashboard() {
 
       if (kpiError) throw kpiError;
 
-      // Fetch alerts
+      // Fetch alerts for user's projects
       const { data: alertsData, error: alertsError } = await supabase
         .from('feasly_alerts')
-        .select(`
-          id, title, body, severity, resolved, created_at, alert_type,
-          projects!inner(user_id)
-        `)
-        .eq('projects.user_id', user?.id)
+        .select('id, title, body, severity, resolved, created_at, alert_type, project_id')
         .eq('resolved', false)
         .order('created_at', { ascending: false })
         .limit(5);
 
       if (alertsError) throw alertsError;
 
+      // Filter alerts to only include those from user's projects
+      const userProjectIds = (projectsData || []).map(p => p.id);
+      const filteredAlerts = (alertsData || []).filter(alert => 
+        userProjectIds.includes(alert.project_id)
+      );
+
       setProjects(projectsData || []);
       setKpis(kpiData || []);
-      setAlerts(alertsData || []);
+      setAlerts(filteredAlerts || []);
     } catch (error: any) {
       console.error('Error fetching dashboard data:', error);
       toast({
