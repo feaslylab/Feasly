@@ -163,16 +163,14 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
         
         <CardHeader className={cn("text-center space-y-6 relative z-10", isRTL && "text-right")}>
           <motion.div 
-            className="mx-auto w-16 h-16 bg-gradient-to-br from-primary to-primary-dark rounded-2xl flex items-center justify-center shadow-glow transform transition-all duration-500 hover:scale-105 hover:shadow-lg"
+            className="mx-auto flex items-center justify-center"
             initial={{ scale: 0, rotate: -180 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
-            <img 
-              src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
-              alt="Feasly Logo" 
-              className="w-10 h-10 object-contain"
-            />
+            <span className="text-6xl font-bold bg-gradient-to-br from-primary to-primary-dark bg-clip-text text-transparent">
+              F
+            </span>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}

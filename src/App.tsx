@@ -162,7 +162,7 @@ const App = () => (
       <QueryClientProvider client={queryClient}>
         <OrganizationProvider>
           <TooltipProvider>
-            <ConditionalHeader />
+            <Header />
             <Toaster />
             <Sonner />
             <PerformanceMonitor />
@@ -173,15 +173,5 @@ const App = () => (
     </LanguageProvider>
   </ThemeProvider>
 );
-
-const ConditionalHeader = () => {
-  const location = useLocation();
-  const isAuthRoute = location.pathname === '/welcome';
-  
-  // Don't show Header on auth pages
-  if (isAuthRoute) return null;
-  
-  return <Header />;
-};
 
 export default App;
