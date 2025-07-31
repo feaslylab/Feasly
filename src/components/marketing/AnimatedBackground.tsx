@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 
 export function AnimatedBackground() {
-  const shapes = Array.from({ length: 8 }, (_, i) => ({
+  const shapes = Array.from({ length: 10 }, (_, i) => ({
     id: i,
     size: Math.random() * 60 + 20,
     x: Math.random() * 100,
@@ -42,8 +42,8 @@ export function AnimatedBackground() {
             top: `${shape.y}%`,
           }}
           animate={{
-            y: [0, -35, 0, 30, 0], // Much more floating motion (increased from -15/15 to -35/30)
-            x: [0, 25, -20, 22, 0], // More dramatic drift (increased from 10/-5/8 to 25/-20/22)
+            y: [0, -50, 0, 45, 0], // Much more dramatic floating motion
+            x: [0, 35, -30, 32, 0], // Much more expansive drift across screen
             scale: [1, 1.02, 0.98, 1.01, 1], // Very subtle breathing
             opacity: [0.6, 0.8, 0.7, 0.9, 0.6], // Much more solid (60% increase)
           }}
@@ -57,7 +57,7 @@ export function AnimatedBackground() {
       ))}
 
       {/* Additional floating orbs for atmosphere */}
-      {Array.from({ length: 4 }, (_, i) => (
+      {Array.from({ length: 6 }, (_, i) => (
         <motion.div
           key={`orb-${i}`}
           className="absolute rounded-full bg-gradient-to-r from-accent/30 to-primary/30 blur-md"
@@ -68,8 +68,8 @@ export function AnimatedBackground() {
             top: `${Math.random() * 100}%`,
           }}
           animate={{
-            y: [0, -40, 20, -30, 0], // More dynamic floating (increased from -20/10/-15)
-            x: [0, 30, -25, 28, 0], // More expansive drift (increased from 15/-10/12)
+            y: [0, -55, 25, -45, 0], // Even more dramatic floating motion
+            x: [0, 40, -35, 38, 0], // Much more expansive horizontal movement
             scale: [1, 1.05, 0.95, 1.02, 1],
             opacity: [0.4, 0.7, 0.5, 0.8, 0.4], // More solid orbs
           }}
