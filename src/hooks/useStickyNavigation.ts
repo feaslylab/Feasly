@@ -100,10 +100,7 @@ export function useStickyNavigation(options: StickyNavigationOptions = {}) {
 
   // Get sticky container styles
   const getStickyContainerStyles = useCallback(() => {
-    if (!shouldBeSticky) {
-      return {};
-    }
-
+    // Always use sticky positioning for the navigation
     const baseStyles = {
       position: 'sticky' as const,
       top: `${topOffset}px`,
@@ -113,7 +110,7 @@ export function useStickyNavigation(options: StickyNavigationOptions = {}) {
       overflowX: 'hidden' as const,
     };
 
-    // Add additional styles for better sticky behavior
+    // Add enhanced styles when in sticky state
     if (isSticky) {
       return {
         ...baseStyles,
@@ -124,8 +121,14 @@ export function useStickyNavigation(options: StickyNavigationOptions = {}) {
       };
     }
 
-    return baseStyles;
-  }, [shouldBeSticky, isSticky, topOffset, maxHeight]);
+    // Even when not in enhanced sticky state, still use position sticky
+    return {
+      ...baseStyles,
+      backgroundColor: 'hsl(var(--background) / 0.98)',
+      backdropFilter: 'blur(4px)',
+      zIndex: 20,
+    };
+  }, [isSticky, topOffset, maxHeight]);
 
   // Get portal container styles for problematic layouts
   const getPortalStyles = useCallback(() => {
