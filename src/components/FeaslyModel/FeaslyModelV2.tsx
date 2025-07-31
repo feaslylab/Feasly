@@ -201,10 +201,10 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
         />
       )}
 
-      {/* Main Content Area with Right Panel */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Central Content */}
-        <div className="flex-1 overflow-hidden">
+      {/* Main Content */}
+      <div className="flex-1 overflow-hidden">
+        {/* Right Side Validation Panel - Fixed positioned */}
+        <RightSideValidationPanel />
         {/* Sticky Header */}
         <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="flex items-center justify-between p-4">
@@ -445,14 +445,8 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
           </FormProvider>
         </div>
       </div>
-
-      {/* Right Side Validation Panel */}
-      {!isMobile && (
-        <RightSideValidationPanel />
-      )}
     </div>
-  </div>
-);
+  );
 }
 
 export { FeaslyModelV2, isV2Enabled };

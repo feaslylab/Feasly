@@ -31,8 +31,43 @@ interface RightSideValidationPanelProps {
 }
 
 export function RightSideValidationPanel({ className }: RightSideValidationPanelProps) {
-  const { formState, watch } = useFormContext<FeaslyModelFormData>();
-  const formData = watch();
+  // Try to get form context, but handle gracefully if not available
+  let formState, formData;
+  try {
+    const form = useFormContext<FeaslyModelFormData>();
+    if (form) {
+      formState = form.formState;
+      formData = form.watch();
+    }
+  } catch {
+    // Form context not available, use defaults
+    formState = { errors: {} };
+    formData = {};
+  }
+  
+  // If no form context, render a simplified version
+  if (!formState || !formData) {
+    return (
+      <aside 
+        className={cn('fixed right-4 top-20 w-72 z-40', className)}
+      >
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <Target className="h-4 w-4 text-primary" />
+              Validation Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">
+              Validation panel loading...
+            </p>
+          </CardContent>
+        </Card>
+      </aside>
+    );
+  }
+  
   
   const { getStickyContainerStyles } = useStickyNavigation({
     topOffset: 80, // Account for header + some spacing
@@ -103,10 +138,11 @@ export function RightSideValidationPanel({ className }: RightSideValidationPanel
 
   return (
     <aside 
-      className={cn('w-72 border-l bg-background/95 backdrop-blur', className)}
-      style={stickyStyles}
+      className={cn('fixed right-4 top-20 w-72 z-40 hidden lg:block', className)}
     >
-      <Card className="border-0 shadow-none">
+      <Card className="shadow-lg border-2"
+        style={stickyStyles}
+      >
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-sm">
             <Target className="h-4 w-4 text-primary" />
@@ -205,10 +241,10 @@ export function RightSideValidationPanel({ className }: RightSideValidationPanel
                     Form Errors ({Object.keys(formState.errors).length})
                   </h4>
                   <div className="space-y-1 text-xs text-destructive/80 max-h-20 overflow-y-auto">
-                    {Object.entries(formState.errors).slice(0, 5).map(([field, error]) => (
-                      <div key={field} className="truncate">
-                        • {field}: {error?.message || 'Invalid value'}
-                      </div>
+                     {Object.entries(formState.errors).slice(0, 5).map(([field, error]) => (
+                       <div key={field} className="truncate">
+                         • {field}: {(error as any)?.message || 'Invalid value'}
+                       </div>
                     ))}
                     {Object.keys(formState.errors).length > 5 && (
                       <div className="text-muted-foreground">
