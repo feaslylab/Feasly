@@ -10,41 +10,27 @@ import { Download, FileText, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useReportGeneration } from '@/hooks/useReportGeneration';
 
 export default function ResultsPage() {
   const { t } = useTranslation();
   const { toast } = useToast();
   const { projectId, scenarioId } = useParams<{ projectId: string; scenarioId: string }>();
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const { generateReport, isGenerating } = useReportGeneration();
   
   const { result, isLoading, error } = useScenarioResults(projectId || null, scenarioId || null);
 
   const handleGeneratePDF = async () => {
     if (!projectId || !scenarioId) return;
     
-    setIsGeneratingPDF(true);
-    toast({
-      title: t('Generating Report'),
-      description: t('Creating PDF report, this may take a moment...'),
-    });
-
     try {
-      // This would call the report edge function
-      // For now, show success
-      setTimeout(() => {
-        setIsGeneratingPDF(false);
-        toast({
-          title: t('Report Generated'),
-          description: t('Your PDF report is ready for download'),
-        });
-      }, 2000);
+      const reportUrl = await generateReport(projectId, scenarioId, { reportType: 'standard' });
+      
+      // Open the report in a new tab
+      window.open(reportUrl, '_blank');
     } catch (error) {
-      setIsGeneratingPDF(false);
-      toast({
-        title: t('Generation Failed'),
-        description: t('Failed to generate PDF report'),
-        variant: 'destructive'
-      });
+      // Error handling is done in the hook
+      console.error('Failed to generate report:', error);
     }
   };
 
@@ -81,11 +67,11 @@ export default function ResultsPage() {
           </Badge>
           <Button 
             onClick={handleGeneratePDF}
-            disabled={isGeneratingPDF || !result}
+            disabled={isGenerating || !result}
             variant="outline"
             size="sm"
           >
-            {isGeneratingPDF ? (
+            {isGenerating ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 {t('Generating...')}
