@@ -156,22 +156,39 @@ const AppRoutes = () => {
   );
 };
 
-const App = () => (
-  <ThemeProvider>
-    <LanguageProvider>
-      <QueryClientProvider client={queryClient}>
-        <OrganizationProvider>
-          <TooltipProvider>
-            <Header />
-            <Toaster />
-            <Sonner />
-            <PerformanceMonitor />
-            <AppRoutes />
-          </TooltipProvider>
-        </OrganizationProvider>
-      </QueryClientProvider>
-    </LanguageProvider>
-  </ThemeProvider>
-);
+const App = () => {
+  const location = useLocation();
+  
+  // Don't show dashboard Header on marketing or auth pages
+  const isMarketingRoute = location.pathname === '/' || 
+    location.pathname.startsWith('/features') || 
+    location.pathname.startsWith('/pricing') || 
+    location.pathname.startsWith('/use-cases') || 
+    location.pathname.startsWith('/docs') || 
+    location.pathname.startsWith('/press') || 
+    location.pathname.startsWith('/privacy') || 
+    location.pathname.startsWith('/terms') || 
+    location.pathname.startsWith('/comparison') || 
+    location.pathname === '/welcome';
+
+  return (
+    <ThemeProvider>
+      <LanguageProvider>
+        <QueryClientProvider client={queryClient}>
+          <OrganizationProvider>
+            <TooltipProvider>
+              {/* Only show dashboard Header on authenticated app pages */}
+              {!isMarketingRoute && <Header />}
+              <Toaster />
+              <Sonner />
+              <PerformanceMonitor />
+              <AppRoutes />
+            </TooltipProvider>
+          </OrganizationProvider>
+        </QueryClientProvider>
+      </LanguageProvider>
+    </ThemeProvider>
+  );
+};
 
 export default App;
