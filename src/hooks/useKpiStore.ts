@@ -23,10 +23,13 @@ export function useKpiStore(projectId:string|null, scenarioId:string|null) {
       .eq("project_id", projectId)
       .order("created_at",{ascending:false})
       .limit(1)
-      .maybeSingle()
       .then(({data,error})=>{
-        if(error) console.error(error);
-        setKpi(data||null);
+        if(error) {
+          console.error(error);
+          setKpi(null);
+        } else {
+          setKpi(data && data.length > 0 ? data[0] : null);
+        }
         setLoad(false);
       });
   },[projectId,scenarioId]);
