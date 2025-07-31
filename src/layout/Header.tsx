@@ -11,14 +11,16 @@ import AlertDrawer from "@/components/dashboard/AlertDrawer";
 import { exportModel } from "@/api/exportModel";
 import { CommentButton } from "@/components/collaboration/CommentButton";
 import { PresenceDots } from "@/components/collaboration/PresenceDots";
+import NewScenarioDialog from '@/components/modals/NewScenarioDialog';
 
 export default function Header() {
   const { user } = useAuth();
   const { projects } = useProjectStore();
   const { projectId, setProject, scenarioId, setScenario } = useSelectionStore();
-  const { scenarios, create, setCurrent } = useScenarioStore(projectId);
+  const { scenarios, create, setCurrent, reload } = useScenarioStore(projectId);
   const { unreadCount } = useAlerts();
   const [alertDrawerOpen, setAlertDrawerOpen] = useState(false);
+  const [newScenarioOpen, setNewScenarioOpen] = useState(false);
 
   const handleExportZip = async () => {
     if (!projectId || !scenarioId) {
@@ -105,24 +107,12 @@ export default function Header() {
               </Menu.Item>
             ))}
             <Menu.Item>
-              {({ active, close }) => (
+              {({ active }) => (
                 <button 
                   className={`${
                     active ? 'bg-violet-500 text-white' : 'text-gray-900'
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  onClick={async () => {
-                    const name = prompt('Scenario name:')?.trim();
-                    if (!name) return;
-
-                    const newScenario = await create(name);     // ← await the hook
-                    if (!newScenario) return;
-
-                    // selection store picks it up
-                    setScenario(newScenario.id);
-
-                    // optional: close menu so user sees change
-                    close();            // (headless-ui helper supplied in render prop)
-                  }}
+                  onClick={() => setNewScenarioOpen(true)}
                 >
                   + New scenario
                 </button>
@@ -181,6 +171,19 @@ export default function Header() {
       <AlertDrawer 
         isOpen={alertDrawerOpen} 
         onClose={() => setAlertDrawerOpen(false)} 
+      />
+
+      <NewScenarioDialog
+        open={newScenarioOpen}
+        onClose={() => setNewScenarioOpen(false)}
+        onCreate={async (name) => {
+          const s = await create(name);      // comes from useScenarioStore
+          if (s) {
+            setScenario(s.id);               // selectionStore
+            setCurrent(s);                   // local store
+            reload();                        // refresh items
+          }
+        }}
       />
     </header>
   );

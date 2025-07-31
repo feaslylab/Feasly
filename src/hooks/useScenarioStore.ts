@@ -79,7 +79,17 @@ export function useScenarioStore(projectId: string | null) {
     };
 
     // 2. insert
-    const { error } = await supabase.from('scenarios' as any).insert(row);
+    const { data, error } = await supabase
+      .from('scenarios' as any)
+      .insert({
+        id: row.id,
+        name: row.name,
+        project_id: row.project_id,
+        user_id: row.user_id
+      })
+      .select()
+      .single();
+
     if (error) {
       console.error('scenario insert failed', error);
       toast({
@@ -91,11 +101,14 @@ export function useScenarioStore(projectId: string | null) {
     }
 
     // 3. update local cache & select it
-    setScenarios(prev => [...prev, row]);
-    setCurrent(row);
+    if (data) {
+      const newScenario = data as unknown as Scenario;
+      setScenarios(prev => [...prev, newScenario]);
+      setCurrent(newScenario);
+      return newScenario;
+    }
 
-    return row; // <— caller can await + use .id
-    // 'create' only needs project & user
+    return null;
   }, [projectId ?? '', user?.id ?? '']);
 
   // ALL hooks must be called before any early returns
