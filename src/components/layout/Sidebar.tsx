@@ -73,15 +73,15 @@ export const Sidebar = () => {
           </div>
           
           {/* Mini Navigation */}
-          <nav className="flex-1 py-2 px-2 overflow-y-auto">
+          <nav className="flex-1 py-4 px-2 overflow-y-auto space-y-2">
             {navigation.map((item) => (
               <NavLink
                 key={item.nameKey}
                 to={item.href}
                 className={({ isActive }) =>
                   cn(
-                    "flex items-center justify-center rounded-lg transition-all duration-200 mb-1",
-                    "h-12 w-12",
+                    "flex items-center justify-center rounded-lg transition-all duration-200",
+                    "h-10 w-10 mx-auto", // Added mx-auto for centered positioning
                     isActive
                       ? "bg-primary text-primary-foreground shadow-sm"
                       : "text-muted-foreground hover:text-foreground hover:bg-accent"
@@ -89,7 +89,7 @@ export const Sidebar = () => {
                 }
                 title={t(`nav.${item.nameKey}`)}
               >
-                <item.icon className="w-5 h-5" />
+                <item.icon className="w-4 h-4" /> {/* Slightly smaller icons */}
               </NavLink>
             ))}
           </nav>
@@ -128,8 +128,8 @@ export const Sidebar = () => {
 
         {/* Navigation - Scrollable */}
         <nav className={cn(
-          "flex-1 py-2 space-y-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent",
-          isCollapsed ? "px-2" : "px-4"
+          "flex-1 py-4 space-y-2 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent",
+          isCollapsed ? "px-3" : "px-4"
         )}>
           {navigation.map((item) => (
             <NavLink
@@ -140,8 +140,8 @@ export const Sidebar = () => {
                   "flex items-center gap-3 rounded-lg transition-all duration-200 touch-none",
                   "min-h-[44px]",
                   isCollapsed 
-                    ? "px-3 py-3 justify-center" 
-                    : "px-3 py-2.5 text-sm font-medium",
+                    ? "px-2 py-2 justify-center mx-auto w-10" // Better spacing for collapsed state
+                    : "px-3 py-3 text-sm font-medium", // More padding for expanded state
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-accent",
@@ -150,7 +150,7 @@ export const Sidebar = () => {
               }
               title={isCollapsed ? t(`nav.${item.nameKey}`) : undefined}
             >
-              <item.icon className={cn("w-5 h-5 flex-shrink-0")} />
+              <item.icon className={cn("w-4 h-4 flex-shrink-0")} /> {/* Slightly smaller icons */}
               {!isCollapsed && (
                 <span className="truncate">{t(`nav.${item.nameKey}`)}</span>
               )}
