@@ -197,6 +197,12 @@ export default function Dashboard() {
     return { greeting: 'Good night', icon: '🌙', class: 'from-primary-dark to-primary', textClass: 'text-primary' };
   };
 
+  // Function to capitalize first letter of name
+  const formatUserName = (name: string) => {
+    if (!name) return 'Admin';
+    return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+  };
+
   // Portfolio health score calculation
   const calculateHealthScore = () => {
     if (kpis.length === 0) return { score: 0, status: 'No Data', color: 'text-muted-foreground' };
@@ -443,11 +449,11 @@ export default function Dashboard() {
                           <div className="text-5xl sm:text-6xl lg:text-7xl xl:text-8xl flex-shrink-0 animate-fade-in">{timeGreeting.icon}</div>
                           <div className="min-w-0 flex-1">
                             <div className="space-y-2">
-                              <h1 className={`text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold ${timeGreeting.textClass} leading-tight animate-fade-in`}>
+                              <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-primary leading-tight animate-fade-in">
                                 {timeGreeting.greeting}
                               </h1>
-                              <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-foreground animate-fade-in">
-                                {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'admin'}
+                              <p className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-script font-semibold text-primary animate-fade-in tracking-wide">
+                                {formatUserName(user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'admin')}
                               </p>
                               <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-base sm:text-lg text-muted-foreground animate-fade-in">
                                 <span className="font-medium">{dateStr}</span>

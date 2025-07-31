@@ -19,10 +19,11 @@ export default {
 				'2xl': '1440px'
 			}
 		},
-		fontFamily: {
-			sans: ['Inter', 'system-ui', 'sans-serif'],
-			mono: ['JetBrains Mono', 'Consolas', 'Monaco', 'monospace'],
-		},
+	fontFamily: {
+		sans: ['Inter', 'system-ui', 'sans-serif'],
+		mono: ['JetBrains Mono', 'Consolas', 'Monaco', 'monospace'],
+		script: ['Dancing Script', 'cursive'],
+	},
 		fontSize: {
 			'xs': ['11px', { lineHeight: '16px', fontWeight: '400' }],
 			'sm': ['12px', { lineHeight: '18px', fontWeight: '400' }],
