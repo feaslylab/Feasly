@@ -43,14 +43,16 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-30 bg-background/70 backdrop-blur border-b">
-      <div className="flex items-center px-6 h-14">
-      <span className="font-bold text-lg mr-6">Feasly</span>
+      <div className="flex items-center justify-between px-6 h-14">
+        <span className="font-bold text-lg">Feasly</span>
 
-      {/* ─ Project selector ───────────────────────────────── */}
-      <Menu as="div" className="relative mr-4">
-        <Menu.Button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-          {projects.find(p=>p.id===projectId)?.name ?? "Select project"}
-        </Menu.Button>
+        {/* Centered selectors */}
+        <div className="flex items-center gap-4">
+          {/* ─ Project selector ───────────────────────────────── */}
+          <Menu as="div" className="relative">
+            <Menu.Button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+              {projects.find(p=>p.id===projectId)?.name ?? "Select project"}
+            </Menu.Button>
         <Menu.Items className="absolute left-0 mt-2 w-56 origin-top-left divide-y divide-gray-100 rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[100]">
           <div className="px-1 py-1 bg-white dark:bg-gray-800">
             {projects.map(p=>(
@@ -71,9 +73,9 @@ export default function Header() {
         </Menu.Items>
       </Menu>
 
-      {/* ─ Scenario selector ─────────────────────────────── */}
-      <Menu as="div" className="relative mr-4">
-        <Menu.Button 
+          {/* ─ Scenario selector ─────────────────────────────── */}
+          <Menu as="div" className="relative">
+            <Menu.Button
           className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2"
           disabled={!projectId}
         >
@@ -114,9 +116,11 @@ export default function Header() {
             </Menu.Item>
           </div>
         </Menu.Items>
-      </Menu>
+          </Menu>
+        </div>
 
-      <div className="ml-auto flex items-center gap-3">
+        {/* Right side actions */}
+        <div className="flex items-center gap-3">
         {/* Export ZIP button */}
         <Button
           onClick={handleExportZip}
