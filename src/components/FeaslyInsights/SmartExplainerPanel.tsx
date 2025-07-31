@@ -25,13 +25,13 @@ interface SmartExplainerPanelProps {
 const getInsightIcon = (type: InsightItem['type']) => {
   switch (type) {
     case 'opportunity':
-      return <TrendingUp className="h-4 w-4 text-green-600" />;
+      return <TrendingUp className="h-4 w-4 text-success" />;
     case 'risk':
-      return <AlertTriangle className="h-4 w-4 text-red-600" />;
+      return <AlertTriangle className="h-4 w-4 text-destructive" />;
     case 'caution':
-      return <AlertCircle className="h-4 w-4 text-yellow-600" />;
+      return <AlertCircle className="h-4 w-4 text-warning" />;
     case 'note':
-      return <Pin className="h-4 w-4 text-blue-600" />;
+      return <Pin className="h-4 w-4 text-primary" />;
     default:
       return <Pin className="h-4 w-4" />;
   }

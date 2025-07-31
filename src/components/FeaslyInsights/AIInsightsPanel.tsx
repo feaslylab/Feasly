@@ -47,10 +47,10 @@ export default function AIInsightsPanel({ projects, allProjects, onProjectClick 
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <Card className="border-green-200">
+      <Card className="border-success/20">
         <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-          <Lightbulb className="h-5 w-5 text-green-600 mr-2" />
-          <CardTitle className="text-sm font-medium text-green-800">Top Opportunities</CardTitle>
+          <Lightbulb className="h-5 w-5 text-success mr-2" />
+          <CardTitle className="text-sm font-medium text-success-foreground">Top Opportunities</CardTitle>
         </CardHeader>
         <CardContent>
           {topOpportunities.length > 0 ? (
@@ -58,11 +58,11 @@ export default function AIInsightsPanel({ projects, allProjects, onProjectClick 
               {topOpportunities.map(project => (
                 <div 
                   key={project.id} 
-                  className="text-sm cursor-pointer hover:bg-green-50 p-2 rounded"
+                  className="text-sm cursor-pointer hover:bg-success/10 p-2 rounded"
                   onClick={() => onProjectClick(project)}
                 >
                   <div className="font-medium">{project.name}</div>
-                  <div className="text-green-600">IRR: {project.irr.toFixed(1)}%</div>
+                  <div className="text-success">IRR: {project.irr.toFixed(1)}%</div>
                 </div>
               ))}
             </div>
@@ -72,10 +72,10 @@ export default function AIInsightsPanel({ projects, allProjects, onProjectClick 
         </CardContent>
       </Card>
 
-      <Card className="border-red-200">
+      <Card className="border-destructive/20">
         <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-          <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
-          <CardTitle className="text-sm font-medium text-red-800">Risk Alerts</CardTitle>
+          <AlertTriangle className="h-5 w-5 text-destructive mr-2" />
+          <CardTitle className="text-sm font-medium text-destructive-foreground">Risk Alerts</CardTitle>
         </CardHeader>
         <CardContent>
           {riskAlerts.length > 0 ? (
@@ -83,11 +83,11 @@ export default function AIInsightsPanel({ projects, allProjects, onProjectClick 
               {riskAlerts.slice(0, 3).map(project => (
                 <div 
                   key={project.id} 
-                  className="text-sm cursor-pointer hover:bg-red-50 p-2 rounded"
+                  className="text-sm cursor-pointer hover:bg-destructive/10 p-2 rounded"
                   onClick={() => onProjectClick(project)}
                 >
                   <div className="font-medium">{project.name}</div>
-                  <div className="text-red-600">
+                  <div className="text-destructive">
                     {project.netProfit < 0 ? 'Negative profit' : 
                      project.roi < 5 ? 'Low ROI' : 'Low margin'}
                   </div>
@@ -100,10 +100,10 @@ export default function AIInsightsPanel({ projects, allProjects, onProjectClick 
         </CardContent>
       </Card>
 
-      <Card className="border-yellow-200">
+      <Card className="border-warning/20">
         <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-          <Search className="h-5 w-5 text-yellow-600 mr-2" />
-          <CardTitle className="text-sm font-medium text-yellow-800">Data Gaps</CardTitle>
+          <Search className="h-5 w-5 text-warning mr-2" />
+          <CardTitle className="text-sm font-medium text-warning-foreground">Data Gaps</CardTitle>
         </CardHeader>
         <CardContent>
           {dataGaps.length > 0 ? (
@@ -111,11 +111,11 @@ export default function AIInsightsPanel({ projects, allProjects, onProjectClick 
               {dataGaps.slice(0, 3).map(project => (
                 <div 
                   key={project.id} 
-                  className="text-sm cursor-pointer hover:bg-yellow-50 p-2 rounded"
+                  className="text-sm cursor-pointer hover:bg-warning/10 p-2 rounded"
                   onClick={() => onProjectClick(project)}
                 >
                   <div className="font-medium">{project.name}</div>
-                  <div className="text-yellow-600">Missing key data</div>
+                  <div className="text-warning">Missing key data</div>
                 </div>
               ))}
             </div>
@@ -125,10 +125,10 @@ export default function AIInsightsPanel({ projects, allProjects, onProjectClick 
         </CardContent>
       </Card>
 
-      <Card className="border-blue-200">
+      <Card className="border-primary/20">
         <CardHeader className="flex flex-row items-center space-y-0 pb-2">
-          <TrendingUp className="h-5 w-5 text-blue-600 mr-2" />
-          <CardTitle className="text-sm font-medium text-blue-800">Scenario Sensitivity</CardTitle>
+          <TrendingUp className="h-5 w-5 text-primary mr-2" />
+          <CardTitle className="text-sm font-medium text-primary-foreground">Scenario Sensitivity</CardTitle>
         </CardHeader>
         <CardContent>
           {scenarioSensitivity.length > 0 ? (
@@ -136,11 +136,11 @@ export default function AIInsightsPanel({ projects, allProjects, onProjectClick 
               {scenarioSensitivity.slice(0, 3).map(project => (
                 <div 
                   key={project.id} 
-                  className="text-sm cursor-pointer hover:bg-blue-50 p-2 rounded"
+                  className="text-sm cursor-pointer hover:bg-primary/10 p-2 rounded"
                   onClick={() => onProjectClick(project)}
                 >
                   <div className="font-medium">{project.name}</div>
-                  <div className="text-blue-600">High sensitivity</div>
+                  <div className="text-primary">High sensitivity</div>
                 </div>
               ))}
             </div>

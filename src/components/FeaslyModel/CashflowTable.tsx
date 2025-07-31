@@ -27,10 +27,10 @@ const SCENARIO_LABELS = {
 } as const;
 
 const SCENARIO_COLORS = {
-  base: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-  optimistic: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-  pessimistic: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
-  custom: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
+  base: "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-foreground",
+  optimistic: "bg-success/10 text-success dark:bg-success/20 dark:text-success-foreground",
+  pessimistic: "bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive-foreground",
+  custom: "bg-muted text-muted-foreground dark:bg-muted dark:text-muted-foreground"
 } as const;
 
 export default function CashflowTable({ projectId, formData, onRecalculate }: CashflowTableProps) {
@@ -279,43 +279,43 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
                       </div>
                       <div className="text-center p-3 bg-muted/50 rounded-lg">
                         <div className="text-sm text-muted-foreground">Total Profit</div>
-                        <div className={`text-lg font-semibold ${scenarioSummary.totalProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <div className={`text-lg font-semibold ${scenarioSummary.totalProfit >= 0 ? 'text-success' : 'text-destructive'}`}>
                           {formatAmount(scenarioSummary.totalProfit)}
                         </div>
                       </div>
                       <div className="text-center p-3 bg-muted/50 rounded-lg">
                         <div className="text-sm text-muted-foreground">Profit Margin</div>
-                        <div className={`text-lg font-semibold ${scenarioSummary.profitMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        <div className={`text-lg font-semibold ${scenarioSummary.profitMargin >= 0 ? 'text-success' : 'text-destructive'}`}>
                           {formatPercentage(scenarioSummary.profitMargin)}
                         </div>
                       </div>
                     </div>
                     {((scenarioSummary as any).totalVatPaid > 0 || (scenarioSummary as any).totalVatRecovered > 0) && (
                       <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="text-center p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                        <div className="text-center p-3 bg-warning/10 border border-warning/20 rounded-lg">
                           <div className="text-sm text-muted-foreground">Total VAT Paid</div>
-                          <div className="text-lg font-semibold text-orange-700">{formatAmount((scenarioSummary as any).totalVatPaid)}</div>
+                          <div className="text-lg font-semibold text-warning">{formatAmount((scenarioSummary as any).totalVatPaid)}</div>
                         </div>
-                        <div className="text-center p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="text-center p-3 bg-success/10 border border-success/20 rounded-lg">
                           <div className="text-sm text-muted-foreground">Total VAT Recovered</div>
-                          <div className="text-lg font-semibold text-green-700">{formatAmount((scenarioSummary as any).totalVatRecovered)}</div>
+                          <div className="text-lg font-semibold text-success">{formatAmount((scenarioSummary as any).totalVatRecovered)}</div>
                         </div>
                       </div>
                     )}
                     {/* Add Escrow Summary if applicable */}
                     {((scenarioSummary as any).totalEscrowReserved > 0 || (scenarioSummary as any).totalEscrowReleased > 0) && (
                       <div className="grid grid-cols-3 gap-4 mb-6">
-                        <div className="text-center p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <div className="text-center p-3 bg-primary/10 border border-primary/20 rounded-lg">
                           <div className="text-sm text-muted-foreground">Escrow Reserved</div>
-                          <div className="text-lg font-semibold text-blue-700">{formatAmount((scenarioSummary as any).totalEscrowReserved)}</div>
+                          <div className="text-lg font-semibold text-primary">{formatAmount((scenarioSummary as any).totalEscrowReserved)}</div>
                         </div>
-                        <div className="text-center p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="text-center p-3 bg-success/10 border border-success/20 rounded-lg">
                           <div className="text-sm text-muted-foreground">Escrow Released</div>
-                          <div className="text-lg font-semibold text-green-700">{formatAmount((scenarioSummary as any).totalEscrowReleased)}</div>
+                          <div className="text-lg font-semibold text-success">{formatAmount((scenarioSummary as any).totalEscrowReleased)}</div>
                         </div>
-                        <div className="text-center p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                        <div className="text-center p-3 bg-muted border border-border rounded-lg">
                           <div className="text-sm text-muted-foreground">Escrow Balance</div>
-                          <div className={`text-lg font-semibold ${(scenarioSummary as any).totalEscrowReserved - (scenarioSummary as any).totalEscrowReleased >= 0 ? 'text-blue-700' : 'text-red-700'}`}>
+                          <div className={`text-lg font-semibold ${(scenarioSummary as any).totalEscrowReserved - (scenarioSummary as any).totalEscrowReleased >= 0 ? 'text-primary' : 'text-destructive'}`}>
                             {formatAmount((scenarioSummary as any).totalEscrowReserved - (scenarioSummary as any).totalEscrowReleased)}
                           </div>
                         </div>
@@ -325,13 +325,13 @@ export default function CashflowTable({ projectId, formData, onRecalculate }: Ca
                     {/* Add Zakat Summary if applicable */}
                     {((scenarioSummary as any).totalZakatDue > 0) && (
                       <div className="grid grid-cols-2 gap-4 mb-6">
-                        <div className="text-center p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                        <div className="text-center p-3 bg-accent border border-border rounded-lg">
                           <div className="text-sm text-muted-foreground">Total Zakat Due</div>
-                          <div className="text-lg font-semibold text-purple-700">{formatAmount((scenarioSummary as any).totalZakatDue)}</div>
+                          <div className="text-lg font-semibold text-accent-foreground">{formatAmount((scenarioSummary as any).totalZakatDue)}</div>
                         </div>
-                        <div className="text-center p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="text-center p-3 bg-success/10 border border-success/20 rounded-lg">
                           <div className="text-sm text-muted-foreground">Net Profit After Zakat</div>
-                          <div className="text-lg font-semibold text-green-700">{formatAmount(scenarioSummary.totalProfit - ((scenarioSummary as any).totalZakatDue || 0))}</div>
+                          <div className="text-lg font-semibold text-success">{formatAmount(scenarioSummary.totalProfit - ((scenarioSummary as any).totalZakatDue || 0))}</div>
                         </div>
                       </div>
                     )}

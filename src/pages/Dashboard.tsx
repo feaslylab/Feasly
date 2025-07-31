@@ -1037,10 +1037,10 @@ export default function Dashboard() {
                         </Badge>
                       </h4>
                       {typeAlerts.slice(0, 2).map((alert) => (
-                        <div key={alert.id} className="flex items-start space-x-3 p-3 rounded-lg border border-border/30 hover:border-red-500/20 hover:shadow-sm transition-all duration-300 ml-4">
+                        <div key={alert.id} className="flex items-start space-x-3 p-3 rounded-lg border border-border/30 hover:border-destructive/20 hover:shadow-sm transition-all duration-300 ml-4">
                           <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
-                            alert.severity === 'high' ? 'bg-red-500/10 animate-pulse' : 
-                            alert.severity === 'medium' ? 'bg-amber-500/10' : 'bg-blue-500/10'
+                            alert.severity === 'high' ? 'bg-destructive/10 animate-pulse' : 
+                            alert.severity === 'medium' ? 'bg-warning/10' : 'bg-primary/10'
                           }`}>
                             <AlertCircle className={`h-4 w-4 ${getSeverityColor(alert.severity)}`} />
                           </div>
@@ -1052,9 +1052,9 @@ export default function Dashboard() {
                                 {new Date(alert.created_at).toLocaleDateString()}
                               </p>
                               <Badge variant="outline" className={`text-xs ${
-                                alert.severity === 'high' ? 'border-red-200 text-red-700' :
-                                alert.severity === 'medium' ? 'border-amber-200 text-amber-700' :
-                                'border-blue-200 text-blue-700'
+                                alert.severity === 'high' ? 'border-destructive/20 text-destructive' :
+                                alert.severity === 'medium' ? 'border-warning/20 text-warning' :
+                                'border-primary/20 text-primary'
                               }`}>
                                 {alert.severity.toUpperCase()}
                               </Badge>
@@ -1066,10 +1066,10 @@ export default function Dashboard() {
                   ))
                 ) : (
                   alerts.slice(0, 5).map((alert, index) => (
-                    <div key={alert.id} className="flex items-start space-x-3 p-3 rounded-lg border border-border/30 hover:border-red-500/20 hover:shadow-sm transition-all duration-300">
+                    <div key={alert.id} className="flex items-start space-x-3 p-3 rounded-lg border border-border/30 hover:border-destructive/20 hover:shadow-sm transition-all duration-300">
                       <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${
-                        alert.severity === 'high' ? 'bg-red-500/10 animate-pulse' : 
-                        alert.severity === 'medium' ? 'bg-amber-500/10' : 'bg-blue-500/10'
+                        alert.severity === 'high' ? 'bg-destructive/10 animate-pulse' : 
+                        alert.severity === 'medium' ? 'bg-warning/10' : 'bg-primary/10'
                       }`}>
                         <AlertCircle className={`h-4 w-4 ${getSeverityColor(alert.severity)}`} />
                       </div>

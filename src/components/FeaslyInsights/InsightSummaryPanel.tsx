@@ -25,16 +25,16 @@ interface InsightSummaryPanelProps {
 
 export default function InsightSummaryPanel({ summary, currency, formatCurrency }: InsightSummaryPanelProps) {
   const getIRRColor = (irr: number) => {
-    if (irr >= 20) return 'text-green-600';
-    if (irr >= 15) return 'text-yellow-600';
-    return 'text-red-600';
+    if (irr >= 20) return 'text-success';
+    if (irr >= 15) return 'text-warning';
+    return 'text-destructive';
   };
 
   const getRiskLevelColor = (level: string) => {
     switch (level) {
-      case 'Low': return 'bg-green-100 text-green-800';
-      case 'Medium': return 'bg-yellow-100 text-yellow-800';
-      case 'High': return 'bg-red-100 text-red-800';
+      case 'Low': return 'bg-success/10 text-success';
+      case 'Medium': return 'bg-warning/10 text-warning';
+      case 'High': return 'bg-destructive/10 text-destructive';
       default: return 'bg-gray-100 text-gray-800';
     }
   };
@@ -93,7 +93,7 @@ export default function InsightSummaryPanel({ summary, currency, formatCurrency 
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
-          <div className={cn("text-2xl font-bold", summary.totalNetProfit < 0 ? "text-red-600" : "text-green-600")}>
+          <div className={cn("text-2xl font-bold", summary.totalNetProfit < 0 ? "text-destructive" : "text-success")}>
             {formatCurrency(summary.totalNetProfit)}
           </div>
         </CardContent>

@@ -77,12 +77,12 @@ export function ComplianceConfigPanel({ projectId, className }: ComplianceConfig
   return (
     <div className={cn('space-y-6', className)}>
       {/* Escrow Module */}
-      <Card className="border-blue-200 bg-blue-50/30 dark:border-blue-800 dark:bg-blue-950/30">
+      <Card className="border-primary/20 bg-primary/5 dark:border-primary/20 dark:bg-primary/10">
         <CardHeader>
           <div className="flex items-center space-x-3">
-            <Shield className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <Shield className="h-6 w-6 text-primary dark:text-primary" />
             <div>
-              <CardTitle className="text-blue-800 dark:text-blue-200">🛡️ Escrow Management</CardTitle>
+              <CardTitle className="text-primary dark:text-primary-foreground">🛡️ Escrow Management</CardTitle>
               <CardDescription>Configure escrow reserves and release triggers (Saudi compliance)</CardDescription>
             </div>
           </div>
@@ -116,7 +116,7 @@ export function ComplianceConfigPanel({ projectId, className }: ComplianceConfig
 
           {/* Escrow Settings - Show only when enabled */}
           {(escrowEnabled || settings.escrow.enabled) && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 bg-blue-50/50 dark:bg-blue-950/50 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 bg-primary/5 dark:bg-primary/10 rounded-lg border border-primary/20 dark:border-primary/20">
               {/* Escrow Percentage */}
               <FormField
                 control={form.control}
@@ -259,12 +259,12 @@ export function ComplianceConfigPanel({ projectId, className }: ComplianceConfig
       </Card>
 
       {/* Zakat Module */}
-      <Card className="border-green-200 bg-green-50/30 dark:border-green-800 dark:bg-green-950/30">
+      <Card className="border-success/20 bg-success/5 dark:border-success/20 dark:bg-success/10">
         <CardHeader>
           <div className="flex items-center space-x-3">
-            <Scale className="h-6 w-6 text-green-600 dark:text-green-400" />
+            <Scale className="h-6 w-6 text-success dark:text-success" />
             <div>
-              <CardTitle className="text-green-800 dark:text-green-200">🧾 Zakat Calculation</CardTitle>
+              <CardTitle className="text-success dark:text-success-foreground">🧾 Zakat Calculation</CardTitle>
               <CardDescription>Islamic tax calculation (2.5% on qualifying profits)</CardDescription>
             </div>
           </div>
@@ -298,7 +298,7 @@ export function ComplianceConfigPanel({ projectId, className }: ComplianceConfig
 
           {/* Zakat Settings - Show only when applicable */}
           {(zakatApplicable || settings.zakat.applicable) && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 bg-green-50/50 dark:bg-green-950/50 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 bg-success/5 dark:bg-success/10 rounded-lg border border-success/20 dark:border-success/20">
               {/* Zakat Rate */}
               <FormField
                 control={form.control}
@@ -408,11 +408,11 @@ export function ComplianceConfigPanel({ projectId, className }: ComplianceConfig
 
       {/* Compliance Status Summary */}
       {(escrowEnabled || zakatApplicable || settings.escrow.enabled || settings.zakat.applicable) && (
-        <Card className="border-amber-200 bg-amber-50/30 dark:border-amber-800 dark:bg-amber-950/30">
+        <Card className="border-warning/20 bg-warning/5 dark:border-warning/20 dark:bg-warning/10">
           <CardHeader>
             <div className="flex items-center space-x-2">
-              <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-              <CardTitle className="text-amber-800 dark:text-amber-200">Compliance Summary</CardTitle>
+              <AlertTriangle className="h-5 w-5 text-warning dark:text-warning" />
+              <CardTitle className="text-warning dark:text-warning-foreground">Compliance Summary</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -421,7 +421,7 @@ export function ComplianceConfigPanel({ projectId, className }: ComplianceConfig
                 <span className="text-muted-foreground">Escrow Management:</span>
                 <span className={cn(
                   "font-medium",
-                  (escrowEnabled || settings.escrow.enabled) ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground"
+                  (escrowEnabled || settings.escrow.enabled) ? "text-primary dark:text-primary" : "text-muted-foreground"
                 )}>
                   {(escrowEnabled || settings.escrow.enabled) ? '✓ Enabled' : '✗ Disabled'}
                 </span>
@@ -430,7 +430,7 @@ export function ComplianceConfigPanel({ projectId, className }: ComplianceConfig
                 <span className="text-muted-foreground">Zakat Applicable:</span>
                 <span className={cn(
                   "font-medium",
-                  (zakatApplicable || settings.zakat.applicable) ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
+                  (zakatApplicable || settings.zakat.applicable) ? "text-success dark:text-success" : "text-muted-foreground"
                 )}>
                   {(zakatApplicable || settings.zakat.applicable) ? '✓ Yes' : '✗ No'}
                 </span>
