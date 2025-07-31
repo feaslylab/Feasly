@@ -252,92 +252,66 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
         />
       )}
 
-      {/* Main Content with proper top padding to account for both headers */}
-      <div className="flex-1 overflow-hidden pt-0">
-        {/* Enhanced Sticky Header - positioned below main header */}
-        <div className="sticky top-16 z-20 border-b bg-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60 shadow-sm">
-          <div className="flex items-center justify-between p-4">
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-1 bg-gradient-to-b from-primary to-primary-dark rounded-full"></div>
-                <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
-                  Feasibility Model
-                </h1>
+      {/* Main Content - Removed pt-0, proper spacing */}
+      <div className="flex-1 overflow-hidden">
+        {/* Simplified Header - Remove sticky to prevent conflicts */}
+        <div className="border-b bg-background shadow-sm">
+          <div className="flex flex-wrap items-center justify-between p-4 gap-4">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg font-semibold text-foreground">Feasibility Model</h1>
               </div>
               
-               {/* Enhanced Mini KPIs with better spacing and styling */}
-               <div className="hidden lg:flex items-center gap-4 bg-gradient-to-r from-primary/5 to-transparent rounded-xl px-4 py-2">
-                 <div className="flex items-center gap-3">
-                   <Badge variant="outline" className="flex items-center gap-2 bg-card shadow-sm border-border/50">
-                     <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                     NPV: <span className="font-semibold text-emerald-600">AED 2.3M</span>
-                   </Badge>
-                   <Badge variant="outline" className="flex items-center gap-2 bg-card shadow-sm border-border/50">
-                     <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                     IRR: <span className="font-semibold text-blue-600">18.2%</span>
-                   </Badge>
-                 </div>
+               {/* Compact KPIs */}
+               <div className="hidden md:flex items-center gap-2">
+                 <Badge variant="outline" className="text-xs px-2 py-1">
+                   NPV: <span className="font-medium text-emerald-600">AED 2.3M</span>
+                 </Badge>
+                 <Badge variant="outline" className="text-xs px-2 py-1">
+                   IRR: <span className="font-medium text-blue-600">18.2%</span>
+                 </Badge>
                  
-                 {/* Overall Validation Status with enhanced styling */}
+                 {/* Compact Validation Status */}
                  <Badge 
-                   variant={validationCounts.overall.isValid ? 'default' : 'secondary'}
+                   variant="outline"
                    className={cn(
-                     "flex items-center gap-2 shadow-sm border-border/50 transition-all duration-200 cursor-pointer hover:scale-105",
+                     "text-xs px-2 py-1 cursor-pointer hover:scale-105 transition-transform",
                      validationCounts.overall.isValid 
-                       ? "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-100 dark:border-emerald-800" 
+                       ? "text-emerald-700 border-emerald-300" 
                        : validationCounts.overall.totalErrors > 0
-                       ? "bg-red-50 text-red-700 border-red-200 dark:bg-red-900/50 dark:text-red-100 dark:border-red-800"
-                       : "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/50 dark:text-amber-100 dark:border-amber-800"
+                       ? "text-red-700 border-red-300"
+                       : "text-amber-700 border-amber-300"
                    )}
                    onClick={handleValidationClick}
                    title="Click to jump to first error"
                  >
-                   {validationCounts.overall.isValid ? (
-                     <CheckCircle className="h-3 w-3" />
-                   ) : validationCounts.overall.totalErrors > 0 ? (
-                     <XCircle className="h-3 w-3" />
-                   ) : (
-                     <AlertTriangle className="h-3 w-3" />
-                   )}
-                   {validationCounts.overall.completedSections}/{validationCounts.overall.totalSections} Sections Ready
+                   {validationCounts.overall.isValid ? '✓' : 
+                    validationCounts.overall.totalErrors > 0 ? '✗' : '⚠'}
+                   {validationCounts.overall.completedSections}/{validationCounts.overall.totalSections}
                  </Badge>
                </div>
             </div>
 
-            <div className="flex items-center gap-4">
-              {/* Sticky Save Status within header */}
+            <div className="flex items-center gap-3 flex-shrink-0">
+              {/* Compact Save Status */}
               {lastSaved && (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground bg-card rounded-lg px-3 py-2 shadow-sm border border-border/50">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                  <span className="font-medium">Auto-saved</span>
-                  <span className="text-xs opacity-70">• {lastSaved}</span>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                  <span>Saved {lastSaved}</span>
                 </div>
               )}
 
-              {/* Enhanced Wizard Toggle with better styling */}
-              <div className="flex items-center gap-3 bg-card rounded-lg px-3 py-2 shadow-sm border border-border/50">
-                <Label htmlFor="wizard-mode" className="text-sm font-medium cursor-pointer">
-                  Guided Mode
-                </Label>
+              {/* Compact Wizard Toggle */}
+              <div className="flex items-center gap-2">
+                <Label htmlFor="wizard-mode" className="text-xs font-medium">Guided</Label>
                 <Switch
                   id="wizard-mode"
                   checked={isWizardMode}
                   onCheckedChange={setIsWizardMode}
-                  data-testid="wizard-toggle"
-                  className="data-[state=checked]:bg-primary"
+                  className="scale-75"
                 />
               </div>
             </div>
-          </div>
-          
-          {/* Progress indicator */}
-          <div className="h-1 w-full bg-muted/30">
-            <div 
-              className="h-full bg-gradient-to-r from-primary to-primary-light transition-all duration-500"
-              style={{ 
-                width: `${(validationCounts.overall.completedSections / validationCounts.overall.totalSections) * 100}%` 
-              }}
-            />
           </div>
         </div>
 
