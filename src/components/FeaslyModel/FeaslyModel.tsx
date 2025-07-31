@@ -40,6 +40,7 @@ import ScenarioPlayback from "./ScenarioPlayback";
 import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
 import { useExportData } from "@/hooks/useExportData";
 import { ComplianceStatusPanel } from "./ComplianceStatusPanel";
+import { FeaslyModelV2, isV2Enabled } from "./FeaslyModelV2";
 
 export default function FeaslyModel() {
   const { isRTL } = useLanguage();
@@ -111,6 +112,18 @@ export default function FeaslyModel() {
     const formData = form.getValues();
     await calculateCashflow(formData, versionLabel);
   };
+
+  // Feature flag check - render v2 if enabled
+  if (isV2Enabled) {
+    return (
+      <FeaslyModelV2
+        projectId={projectId}
+        onSubmit={onSubmit}
+        onSaveDraft={onSaveDraft}
+        initialData={form.getValues()}
+      />
+    );
+  }
 
   return (
     <div className={cn(
