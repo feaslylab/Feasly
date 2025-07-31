@@ -84,6 +84,7 @@ export function ConstructionCostGrid({ className }: ConstructionCostGridProps) {
       className={className}
       placeholder="No construction items yet. Add your first item to begin."
       maxHeight={600}
+      fieldName="construction_items"
     />
   );
 }

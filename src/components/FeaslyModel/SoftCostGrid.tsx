@@ -90,6 +90,7 @@ export function SoftCostGrid({ className }: SoftCostGridProps) {
       className={className}
       placeholder="No soft cost items yet. Add professional fees, permits, insurance, etc."
       maxHeight={600}
+      fieldName="soft_cost_items"
     />
   );
 }

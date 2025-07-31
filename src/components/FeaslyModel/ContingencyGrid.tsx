@@ -86,6 +86,7 @@ export function ContingencyGrid({ className }: ContingencyGridProps) {
       className={className}
       placeholder="No contingencies defined yet. Add contingencies to manage project risks."
       maxHeight={400}
+      fieldName="contingency_items"
     />
   );
 }

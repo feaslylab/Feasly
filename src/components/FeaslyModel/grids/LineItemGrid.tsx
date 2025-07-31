@@ -21,7 +21,9 @@ import { cn } from '@/lib/utils';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { LineItemBase, GridConfig, GridState, ValidationResult, BulkAction } from './types';
 import { BulkActionsBar } from './BulkActionsBar';
+import { UndoRedoControls } from './UndoRedoControls';
 import { CSVImportModal } from '../import/CSVImportModal';
+import { useGridUndoRedo } from '@/hooks/useGridUndoRedo';
 
 interface LineItemGridProps<T extends LineItemBase> {
   data: T[];
@@ -31,6 +33,7 @@ interface LineItemGridProps<T extends LineItemBase> {
   className?: string;
   placeholder?: string;
   maxHeight?: number;
+  fieldName?: string; // For undo/redo integration with form
 }
 
 export function LineItemGrid<T extends LineItemBase>({
@@ -40,7 +43,8 @@ export function LineItemGrid<T extends LineItemBase>({
   onValidate,
   className,
   placeholder = "No items added yet",
-  maxHeight = 600
+  maxHeight = 600,
+  fieldName
 }: LineItemGridProps<T>) {
   const [state, setState] = useState<GridState<T>>({
     items: data,
@@ -54,6 +58,15 @@ export function LineItemGrid<T extends LineItemBase>({
   
   const [showImportModal, setShowImportModal] = useState(false);
   const parentRef = useRef<HTMLDivElement>(null);
+  
+  // Undo/Redo functionality (only if fieldName is provided and we're in form context)
+  let undoRedo: any = null;
+  try {
+    undoRedo = fieldName ? useGridUndoRedo(fieldName as any) : null;
+  } catch (error) {
+    // Not in form context, undo/redo not available
+    undoRedo = null;
+  }
   
   // Sync external data changes
   useEffect(() => {
@@ -249,6 +262,19 @@ export function LineItemGrid<T extends LineItemBase>({
           <Badge variant="outline">
             {processedItems.length} of {state.items.length} items
           </Badge>
+          
+          {/* Undo/Redo Controls */}
+          {undoRedo && (
+            <UndoRedoControls
+              canUndo={undoRedo.canUndo}
+              canRedo={undoRedo.canRedo}
+              onUndo={undoRedo.undo}
+              onRedo={undoRedo.redo}
+              onClearHistory={undoRedo.clearHistory}
+              showClear={true}
+              className="ml-2"
+            />
+          )}
         </div>
         
         <div className="flex items-center gap-2">

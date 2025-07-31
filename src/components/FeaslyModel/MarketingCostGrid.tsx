@@ -90,6 +90,7 @@ export function MarketingCostGrid({ className }: MarketingCostGridProps) {
       className={className}
       placeholder="No marketing campaigns yet. Add digital, print, outdoor campaigns, etc."
       maxHeight={600}
+      fieldName="marketing_cost_items"
     />
   );
 }
