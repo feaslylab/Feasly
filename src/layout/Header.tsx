@@ -9,6 +9,7 @@ import { useAlerts } from "@/hooks/useAlerts";
 import { Button } from "@/components/ui/button";
 import AlertDrawer from "@/components/dashboard/AlertDrawer";
 import { exportModel } from "@/api/exportModel";
+import { NewScenarioModal } from "@/components/scenarios/NewScenarioModal";
 
 export default function Header() {
   const { user } = useAuth();
@@ -17,6 +18,7 @@ export default function Header() {
   const { scenarios, create, setCurrent } = useScenarioStore(projectId);
   const { unreadCount } = useAlerts();
   const [alertDrawerOpen, setAlertDrawerOpen] = useState(false);
+  const [newScenarioModalOpen, setNewScenarioModalOpen] = useState(false);
 
   const handleExportZip = async () => {
     if (!projectId || !scenarioId) {
@@ -38,6 +40,13 @@ export default function Header() {
     } catch (error) {
       console.error('Export error:', error);
       alert('Export failed. Please try again.');
+    }
+  };
+
+  const handleCreateScenario = async (name: string) => {
+    const scenario = await create(name);
+    if (scenario) {
+      setScenario(scenario.id);
     }
   };
 
@@ -103,12 +112,7 @@ export default function Header() {
                   className={`${
                     active ? 'bg-violet-500 text-white' : 'text-gray-900'
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  onClick={async ()=>{
-                    const name=prompt("New scenario name");
-                    if(!name) return;
-                    const s = await create(name);
-                    if (s) setScenario(s.id);
-                  }}
+                  onClick={() => setNewScenarioModalOpen(true)}
                 >
                   + New scenario
                 </button>
@@ -157,6 +161,12 @@ export default function Header() {
       <AlertDrawer 
         isOpen={alertDrawerOpen} 
         onClose={() => setAlertDrawerOpen(false)} 
+      />
+
+      <NewScenarioModal
+        isOpen={newScenarioModalOpen}
+        onClose={() => setNewScenarioModalOpen(false)}
+        onConfirm={handleCreateScenario}
       />
     </header>
   );
