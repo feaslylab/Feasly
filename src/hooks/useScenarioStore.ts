@@ -59,7 +59,7 @@ export function useScenarioStore(projectId: string | null) {
     } finally {
       setLoading(false);
     }
-  }, [projectId, user?.id, current?.id]);
+  }, [projectId ?? '', user?.id ?? '', current?.id ?? '']);
 
   const reload = useCallback(async () => {
     await loadScenarios();
@@ -96,7 +96,7 @@ export function useScenarioStore(projectId: string | null) {
 
     return row; // <— caller can await + use .id
     // 'create' only needs project & user
-  }, [projectId, user?.id]);
+  }, [projectId ?? '', user?.id ?? '']);
 
   // Return early if no projectId, but after all hooks are defined
   if (!projectId) {
