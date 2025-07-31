@@ -136,67 +136,84 @@ export default function MarketingHome() {
   }, []);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col relative">
+      {/* Premium Background Pattern */}
+      <div className="fixed inset-0 bg-gradient-to-br from-background via-background/95 to-primary/5 pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.1),transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--primary-light)/0.08),transparent_50%)] pointer-events-none" />
+      
       {/* Cursor Trail Effect */}
       <CursorTrail />
       
-      {/* Hero Section */}
-      <AnimatedHero 
-        title={t('home.hero.title')} 
-        subtitle={t('home.hero.subtitle')} 
-        description={t('home.hero.description')} 
-      />
+      {/* Enhanced Hero Section */}
+      <div className="relative z-10">
+        <AnimatedHero 
+          title={t('home.hero.title')} 
+          subtitle={t('home.hero.subtitle')} 
+          description={t('home.hero.description')} 
+        />
+      </div>
 
-      {/* The Problem We Solve */}
-      <ScrollSection background="muted" className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto mb-16">
+      {/* Enhanced Problem Section */}
+      <ScrollSection background="muted" className="py-24 relative overflow-hidden">
+        {/* Premium Background Elements */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary-light/5 rounded-full blur-3xl" />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-5xl mx-auto mb-20">
             <ScrollProgressiveReveal direction="scale" delay={0.2}>
-              <GlitchText text={t('home.problems.title')} className="text-3xl md:text-4xl font-bold mb-6 text-center" />
+              <div className="text-center mb-16">
+                <GlitchText text={t('home.problems.title')} className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent" />
+                <div className="w-24 h-1 bg-gradient-to-r from-primary to-primary-light mx-auto rounded-full" />
+              </div>
             </ScrollProgressiveReveal>
             
-            <ScrollProgressiveReveal direction="up" delay={0.4} stagger={true} staggerDelay={0.2} className="space-y-6 text-lg text-muted-foreground max-w-2xl mx-auto">
+            <ScrollProgressiveReveal direction="up" delay={0.4} stagger={true} staggerDelay={0.2} className="space-y-8 text-lg max-w-3xl mx-auto">
               <ScrollCard index={0} totalCards={4}>
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
-                  <div className="pt-1">
+                <div className="group flex items-start gap-6 p-8 rounded-2xl bg-gradient-to-br from-background via-background/95 to-background/90 backdrop-blur-xl border border-border/50 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
+                  <div className="pt-1 group-hover:scale-110 transition-transform duration-300">
                     <AnimatedRedX delay={0.2} />
                   </div>
-                  <p className="flex-1">{t('home.problems.excelFragile')}</p>
+                  <p className="flex-1 text-foreground/90 leading-relaxed">{t('home.problems.excelFragile')}</p>
                 </div>
               </ScrollCard>
               
               <ScrollCard index={1} totalCards={4}>
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
-                  <div className="pt-1">
+                <div className="group flex items-start gap-6 p-8 rounded-2xl bg-gradient-to-br from-background via-background/95 to-background/90 backdrop-blur-xl border border-border/50 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
+                  <div className="pt-1 group-hover:scale-110 transition-transform duration-300">
                     <AnimatedRedX delay={0.4} />
                   </div>
-                  <p className="flex-1">{t('home.problems.legacyTools')}</p>
+                  <p className="flex-1 text-foreground/90 leading-relaxed">{t('home.problems.legacyTools')}</p>
                 </div>
               </ScrollCard>
               
               <ScrollCard index={2} totalCards={4}>
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
-                  <div className="pt-1">
+                <div className="group flex items-start gap-6 p-8 rounded-2xl bg-gradient-to-br from-background via-background/95 to-background/90 backdrop-blur-xl border border-border/50 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
+                  <div className="pt-1 group-hover:scale-110 transition-transform duration-300">
                     <AnimatedRedX delay={0.6} />
                   </div>
-                  <p className="flex-1">{t('home.problems.missingArabic')}</p>
+                  <p className="flex-1 text-foreground/90 leading-relaxed">{t('home.problems.missingArabic')}</p>
                 </div>
               </ScrollCard>
               
               <ScrollCard index={3} totalCards={4}>
-                <div className="flex items-start gap-4 p-4 rounded-lg bg-background/50 backdrop-blur-sm border border-border/50">
-                  <div className="pt-1">
+                <div className="group flex items-start gap-6 p-8 rounded-2xl bg-gradient-to-br from-background via-background/95 to-background/90 backdrop-blur-xl border border-border/50 shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1">
+                  <div className="pt-1 group-hover:scale-110 transition-transform duration-300">
                     <AnimatedRedX delay={0.8} />
                   </div>
-                  <p className="flex-1">{t('home.problems.sharingMess')}</p>
+                  <p className="flex-1 text-foreground/90 leading-relaxed">{t('home.problems.sharingMess')}</p>
                 </div>
               </ScrollCard>
             </ScrollProgressiveReveal>
             
             <ScrollProgressiveReveal direction="scale" delay={0.8}>
-              <div className="mt-12 text-center">
-                <div className="text-2xl font-bold" style={{ color: '#1e3a8a' }}>
-                  {t('home.problems.solution')}
+              <div className="mt-16 text-center">
+                <div className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-primary/10 via-primary/5 to-primary-light/10 border border-primary/20 backdrop-blur-sm">
+                  <div className="w-3 h-3 bg-gradient-to-r from-primary to-primary-light rounded-full animate-pulse" />
+                  <span className="text-2xl font-bold bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+                    {t('home.problems.solution')}
+                  </span>
                 </div>
               </div>
             </ScrollProgressiveReveal>
@@ -313,33 +330,42 @@ export default function MarketingHome() {
       {/* Who Uses Feasly */}
       <WhoUsesFeasly />
 
-      {/* Features Grid */}
-      <ScrollSection background="muted" className="py-20" id="features">
-        <div className="container mx-auto px-4">
+      {/* Enhanced Features Grid */}
+      <ScrollSection background="muted" className="py-24 relative overflow-hidden" id="features">
+        {/* Premium Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-muted via-muted/90 to-primary/5" />
+        <div className="absolute top-0 left-1/3 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        
+        <div className="container mx-auto px-4 relative z-10">
           <ScrollProgressiveReveal direction="scale" delay={0.2}>
-            <div className="text-center mb-16">
+            <div className="text-center mb-20">
+              <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-medium mb-8">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                Platform Features
+              </div>
               <ScrollTextReveal 
                 text={t('home.features.title')}
-                className="text-3xl md:text-4xl font-bold mb-4"
+                className="text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent"
                 cascade={true}
               />
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              <p className="text-xl text-muted-foreground max-w-4xl mx-auto leading-relaxed">
                 {t('home.features.subtitle')}
               </p>
             </div>
           </ScrollProgressiveReveal>
 
           <ScrollProgressiveReveal direction="up" delay={0.4} stagger={true} staggerDelay={0.1}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {features.map((feature, index) => (
                 <ScrollCard key={feature.title} index={index} totalCards={features.length}>
-                  <SpotlightCard className="h-full">
-                    <div className="p-6">
-                      <div className={cn("p-4 rounded-lg mb-4 w-fit", feature.color)}>
-                        <feature.icon className={cn("h-8 w-8", feature.iconColor)} />
+                  <SpotlightCard className="h-full group">
+                    <div className="p-8 h-full flex flex-col">
+                      <div className={cn("p-5 rounded-2xl mb-6 w-fit relative group-hover:scale-110 transition-transform duration-300", feature.color)}>
+                        <feature.icon className={cn("h-10 w-10", feature.iconColor)} />
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl" />
                       </div>
-                      <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                      <p className="text-muted-foreground leading-relaxed">{feature.description}</p>
+                      <h3 className="text-2xl font-bold mb-4 text-foreground group-hover:text-primary transition-colors duration-300">{feature.title}</h3>
+                      <p className="text-muted-foreground leading-relaxed flex-1 text-lg">{feature.description}</p>
                     </div>
                   </SpotlightCard>
                 </ScrollCard>
@@ -348,11 +374,11 @@ export default function MarketingHome() {
           </ScrollProgressiveReveal>
 
           <ScrollProgressiveReveal direction="scale" delay={0.8}>
-            <div className="text-center mt-12">
+            <div className="text-center mt-16">
               <MagneticButton strength={0.1}>
-                <Button size="lg" asChild>
+                <Button size="lg" className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105" asChild>
                   <Link to="/features">
-                    View All Features <ArrowRight className="ml-2 h-4 w-4" />
+                    View All Features <ArrowRight className="ml-2 h-5 w-5" />
                   </Link>
                 </Button>
               </MagneticButton>
@@ -376,63 +402,71 @@ export default function MarketingHome() {
       {/* Feasly vs Old Way */}
       <FeaslyVsOldWay />
 
-      {/* Built for Real Projects */}
-      <section className="py-20" id="compliance">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+      {/* Enhanced Built for Real Projects */}
+      <section className="py-24 relative overflow-hidden" id="compliance">
+        {/* Premium Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-primary/5 to-background" />
+        <div className="absolute bottom-0 right-0 w-80 h-80 bg-primary-light/10 rounded-full blur-3xl" />
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center mb-20">
+            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-medium mb-8">
+              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+              Enterprise Ready
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold mb-8 bg-gradient-to-r from-foreground via-foreground to-foreground/80 bg-clip-text text-transparent">
               Built for Real Projects
             </h2>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-xl text-muted-foreground leading-relaxed">
               Designed from the ground up for the unique requirements of the GCC real estate market.
             </p>
           </div>
 
           <StaggerGrid columns={2}>
             <TiltCard>
-              <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300 h-full">
-                <div className="bg-primary/10 p-3 rounded-full">
-                  <Building2 className="h-6 w-6 text-primary" />
+              <div className="group flex items-start gap-6 p-10 rounded-3xl border border-border bg-gradient-to-br from-card via-card/95 to-primary/5 hover:shadow-2xl transition-all duration-500 h-full backdrop-blur-xl hover:-translate-y-2 hover:border-primary/30">
+                <div className="bg-gradient-to-br from-primary/20 to-primary/10 p-4 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                  <Building2 className="h-8 w-8 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Designed for $100M+ real estate developments</h3>
-                  <p className="text-muted-foreground">Handle complex, large-scale projects with confidence and precision.</p>
+                  <h3 className="text-2xl font-bold mb-4 text-foreground">Designed for $100M+ real estate developments</h3>
+                  <p className="text-muted-foreground text-lg leading-relaxed">Handle complex, large-scale projects with confidence and precision.</p>
                 </div>
               </div>
             </TiltCard>
-            
+
             <TiltCard>
-              <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300 h-full">
-                <div className="bg-success/10 p-3 rounded-full">
-                  <BarChart4 className="h-6 w-6 text-success" />
+              <div className="group flex items-start gap-6 p-10 rounded-3xl border border-border bg-gradient-to-br from-card via-card/95 to-success/5 hover:shadow-2xl transition-all duration-500 h-full backdrop-blur-xl hover:-translate-y-2 hover:border-success/30">
+                <div className="bg-gradient-to-br from-success/20 to-success/10 p-4 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                  <BarChart4 className="h-8 w-8 text-success" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Used by feasibility teams, analysts, and investment professionals</h3>
-                  <p className="text-muted-foreground">Trusted by the experts who build the future of real estate.</p>
+                  <h3 className="text-2xl font-bold mb-4 text-foreground">Used by feasibility teams and investment professionals</h3>
+                  <p className="text-muted-foreground text-lg leading-relaxed">Trusted by the experts who build the future of real estate.</p>
                 </div>
               </div>
             </TiltCard>
-            
+
             <TiltCard>
-              <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300 h-full">
-                <div className="bg-warning/10 p-3 rounded-full">
-                  <Globe2 className="h-6 w-6 text-warning" />
+              <div className="group flex items-start gap-6 p-10 rounded-3xl border border-border bg-gradient-to-br from-card via-card/95 to-warning/5 hover:shadow-2xl transition-all duration-500 h-full backdrop-blur-xl hover:-translate-y-2 hover:border-warning/30">
+                <div className="bg-gradient-to-br from-warning/20 to-warning/10 p-4 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                  <Globe2 className="h-8 w-8 text-warning" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Optimized for GCC mandates and Arabic-first workflows</h3>
-                  <p className="text-muted-foreground">Built specifically for the Gulf region's unique market conditions.</p>
+                  <h3 className="text-2xl font-bold mb-4 text-foreground">Optimized for GCC mandates and Arabic workflows</h3>
+                  <p className="text-muted-foreground text-lg leading-relaxed">Built specifically for the Gulf region's unique market conditions.</p>
                 </div>
               </div>
             </TiltCard>
-            
+
             <TiltCard>
-              <div className="flex items-start gap-4 p-6 rounded-xl border border-border bg-background hover:shadow-md transition-all duration-300 h-full">
-                <div className="bg-secondary/10 p-3 rounded-full">
-                  <Layers className="h-6 w-6 text-secondary" />
+              <div className="group flex items-start gap-6 p-10 rounded-3xl border border-border bg-gradient-to-br from-card via-card/95 to-secondary/5 hover:shadow-2xl transition-all duration-500 h-full backdrop-blur-xl hover:-translate-y-2 hover:border-secondary/30">
+                <div className="bg-gradient-to-br from-secondary/20 to-secondary/10 p-4 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                  <Layers className="h-8 w-8 text-secondary" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold mb-2">Handles project types from single towers to giga-project portfolios</h3>
-                  <p className="text-muted-foreground">Scale from individual developments to massive portfolio analysis.</p>
+                  <h3 className="text-2xl font-bold mb-4 text-foreground">Handles single towers to giga-project portfolios</h3>
+                  <p className="text-muted-foreground text-lg leading-relaxed">Scale from individual developments to massive portfolio analysis.</p>
                 </div>
               </div>
             </TiltCard>
