@@ -16,6 +16,7 @@ import {
   useRentalStore
 } from "@/hooks/useTableStores";
 import KpiGrid from "@/components/KpiGrid";
+import CashChart from "@/components/CashChart";
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -398,6 +399,7 @@ export default function Dashboard() {
         <section className="mb-8">
           <h2 className="mb-2 text-lg font-semibold">Key Metrics</h2>
           <KpiGrid/>
+          <CashChart />
         </section>
 
         {/* KPI Performance */}
