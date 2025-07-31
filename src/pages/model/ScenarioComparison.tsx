@@ -301,6 +301,7 @@ export default function ScenarioComparison() {
             <Switch 
               checked={showPercentageDeltas}
               onCheckedChange={setShowPercentageDeltas}
+              data-testid="delta-toggle"
             />
           </div>
           <Button 
@@ -308,6 +309,7 @@ export default function ScenarioComparison() {
             disabled={isExporting || comparisons.length === 0}
             variant="outline"
             size="sm"
+            data-testid="export-xlsx-btn"
           >
             <Download className="h-4 w-4 mr-2" />
             {isExporting ? t('Exporting...') : t('Export XLSX')}

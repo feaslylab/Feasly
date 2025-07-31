@@ -26,6 +26,7 @@ import FeaslyModel from "./pages/FeaslyModel";
 import CashFlowPage from "./pages/model/CashFlowPage";
 import RiskPage from "./pages/model/RiskPage";
 import ResultsPage from "./pages/model/ResultsPage";
+import ScenarioComparison from "./pages/model/ScenarioComparison";
 import FeaslyFlow from "./pages/FeaslyFlow";
 import FeaslyFinance from "./pages/FeaslyFinance";
 import FeaslyConsolidate from "./pages/FeaslyConsolidate";
@@ -119,6 +120,7 @@ const AppRoutes = () => {
         <Route path=":projectId/:scenarioId/cash-flow" element={<CashFlowPage />} />
         <Route path=":projectId/:scenarioId/risk" element={<RiskPage />} />
         <Route path=":projectId/:scenarioId/results" element={<ResultsPage />} />
+        <Route path=":projectId/:scenarioId/compare" element={<ScenarioComparison />} />
       </Route>
       <Route path="/model" element={<Navigate to="/feasly-model" replace />} />
       <Route path="/feasly-flow" element={<AppLayout />}>
