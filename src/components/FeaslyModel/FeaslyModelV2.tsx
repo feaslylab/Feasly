@@ -203,8 +203,6 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
 
       {/* Main Content */}
       <div className="flex-1 overflow-hidden">
-        {/* Right Side Validation Panel - Fixed positioned */}
-        <RightSideValidationPanel />
         {/* Sticky Header */}
         <div className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="flex items-center justify-between p-4">
@@ -252,6 +250,8 @@ function FeaslyModelV2({ projectId, onSubmit, onSaveDraft, initialData }: Feasly
         {/* Form Content */}
         <div className="p-6">
           <FormProvider {...form}>
+            {/* Right Side Validation Panel - Now inside FormProvider */}
+            <RightSideValidationPanel />
             <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             {/* Project Metadata */}
             <SectionPanel
