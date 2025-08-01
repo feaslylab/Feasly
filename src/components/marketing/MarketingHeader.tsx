@@ -107,7 +107,7 @@ export function MarketingHeader() {
         <div className="hidden md:flex items-center space-x-3">
           <LanguageSwitcher />
           <ThemeToggle />
-          <Button variant="outline" asChild>
+          <Button asChild>
             <Link to="/welcome">{t('nav.login')}</Link>
           </Button>
         </div>
@@ -152,7 +152,7 @@ export function MarketingHeader() {
               )
             )}
             <div className="flex flex-col space-y-3 pt-2">
-              <Button variant="outline" asChild className="w-full">
+              <Button asChild className="w-full">
                 <Link to="/welcome" onClick={() => setMobileMenuOpen(false)}>
                   {t('nav.login')}
                 </Link>
