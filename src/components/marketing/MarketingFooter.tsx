@@ -44,7 +44,7 @@ export function MarketingFooter() {
                 alt="Feasly Logo" 
                 className="w-8 h-8 object-contain mr-2"
               />
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
+              <span className="text-xl font-bold font-playfair bg-gradient-to-r from-primary to-primary-light bg-clip-text text-transparent">
                 Feasly
               </span>
             </Link>
