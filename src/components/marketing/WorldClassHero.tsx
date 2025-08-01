@@ -163,7 +163,7 @@ export function WorldClassHero() {
             transition={{ duration: 0.8, delay: 0.8 }}
           >
             <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-10 leading-relaxed">
-              Feasly replaces spreadsheets, outdated tools, and consulting bottlenecks with precision-grade capital modeling — built in the Gulf, for the Gulf.
+              Feasly replaces spreadsheets, outdated tools, and consulting bottlenecks with precision-grade capital modeling, built in the Gulf, for the Gulf.
             </p>
           </motion.div>
 

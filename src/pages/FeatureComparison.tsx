@@ -229,7 +229,7 @@ function FeatureComparison() {
                 <CardContent>
                   <p className="text-muted-foreground">
                     Import your existing Excel models and EstateMaster .edmf files directly. 
-                    No rebuilding required—get up and running in minutes.
+                    No rebuilding required... get up and running in minutes.
                   </p>
                 </CardContent>
               </Card>

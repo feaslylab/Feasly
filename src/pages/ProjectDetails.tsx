@@ -729,7 +729,7 @@ const ProjectDetails = () => {
       toast({
         title: isDemo ? "Demo Mode Enabled" : "Demo Mode Disabled",
         description: isDemo 
-          ? "Demo mode enabled — this project can now be viewed at /demo"
+          ? "Demo mode enabled... this project can now be viewed at /demo"
           : "This project is no longer available in demo mode.",
       });
 

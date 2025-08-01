@@ -51,7 +51,7 @@ export function AiInsightPanel() {
     if (buildableRatio > 90) {
       insights.push({
         icon: <Ruler className="h-4 w-4" />,
-        message: "Buildable ratio above 90% — verify zoning compliance",
+        message: "Buildable ratio above 90%, verify zoning compliance",
         category: "Risk",
         severity: "warning"
       });
@@ -61,7 +61,7 @@ export function AiInsightPanel() {
     if (averageSalePrice === 0 && expectedLeaseRate === 0) {
       insights.push({
         icon: <Calculator className="h-4 w-4" />,
-        message: "No revenue inputs detected — add sale/lease values",
+        message: "No revenue inputs detected, add sale/lease values",
         category: "Financial",
         severity: "error"
       });
@@ -71,7 +71,7 @@ export function AiInsightPanel() {
     if (zakatApplicable && zakatRate > 0) {
       insights.push({
         icon: <Percent className="h-4 w-4" />,
-        message: `Zakat enabled — profit will be reduced by ${zakatRate}%`,
+        message: `Zakat enabled, profit will be reduced by ${zakatRate}%`,
         category: "Financial",
         severity: "info"
       });
@@ -81,7 +81,7 @@ export function AiInsightPanel() {
     if (targetROI > 0 && targetROI < 10) {
       insights.push({
         icon: <TrendingDown className="h-4 w-4" />,
-        message: "ROI target below 10% — consider cost optimization",
+        message: "ROI target below 10%, consider cost optimization",
         category: "Performance",
         severity: "warning"
       });
@@ -91,7 +91,7 @@ export function AiInsightPanel() {
     if (targetIRR > 25) {
       insights.push({
         icon: <TrendingDown className="h-4 w-4" />,
-        message: "IRR target above 25% — validate market assumptions",
+        message: "IRR target above 25%, validate market assumptions",
         category: "Risk",
         severity: "warning"
       });
@@ -101,7 +101,7 @@ export function AiInsightPanel() {
     if (totalCost > 0 && constructionCost / totalCost > 0.7) {
       insights.push({
         icon: <Calculator className="h-4 w-4" />,
-        message: "Construction costs >70% of total — review specifications",
+        message: "Construction costs >70% of total, review specifications",
         category: "Financial",
         severity: "info"
       });
