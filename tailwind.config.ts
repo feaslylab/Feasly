@@ -23,6 +23,7 @@ export default {
 		sans: ['Inter', 'system-ui', 'sans-serif'],
 		mono: ['JetBrains Mono', 'Consolas', 'Monaco', 'monospace'],
 		script: ['Dancing Script', 'cursive'],
+		playfair: ['Playfair Display', 'ui-serif', 'Georgia', 'serif'],
 	},
 		fontSize: {
 			'xs': ['11px', { lineHeight: '16px', fontWeight: '400' }],
