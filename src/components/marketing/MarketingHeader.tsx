@@ -74,7 +74,7 @@ export function MarketingHeader() {
               alt="Feasly Logo" 
               className="w-8 h-8 object-contain"
             />
-            <span className="text-3xl md:text-4xl font-bold text-primary-dark">
+            <span className="text-3xl md:text-4xl font-bold font-playfair text-primary-dark">
               Feasly<TM />
             </span>
           </Link>
