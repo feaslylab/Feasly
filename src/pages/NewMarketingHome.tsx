@@ -264,18 +264,18 @@ export default function NewMarketingHome() {
           
           <div className="container mx-auto px-4 relative z-10">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl md:text-6xl font-bold mb-6 text-background">
+              <h2 className="text-4xl md:text-6xl font-bold mb-6 text-background dark:text-foreground">
                 Ready to Transform
                 <br />
                 <span className="bg-gradient-to-r from-primary-light to-primary bg-clip-text text-transparent">
                   GCC Real Estate?
                 </span>
                 <br />
-                <span className="text-3xl md:text-4xl text-background/90 mt-4 block">
+                <span className="text-3xl md:text-4xl text-background/90 dark:text-foreground/90 mt-4 block">
                   Ready to kill the spreadsheet?
                 </span>
               </h2>
-              <p className="text-xl text-background/80 mb-10 leading-relaxed">
+              <p className="text-xl text-background/80 dark:text-foreground/80 mb-10 leading-relaxed">
                 Join the exclusive beta program. Be among the first to experience sovereign-grade modeling infrastructure.
               </p>
               
