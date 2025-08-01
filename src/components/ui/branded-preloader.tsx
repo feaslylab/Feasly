@@ -47,7 +47,7 @@ export function BrandedPreloader() {
         
         {/* Logo container with rotation */}
         <motion.div
-          className="relative w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl"
+          className="relative w-20 h-20 flex items-center justify-center"
           animate={{ rotate: 360 }}
           transition={{
             duration: 4,
@@ -55,8 +55,12 @@ export function BrandedPreloader() {
             ease: "linear",
           }}
         >
-          {/* Feasly F Icon */}
-          <div className="text-2xl font-bold text-primary">F</div>
+          {/* Feasly Logo */}
+          <img 
+            src="/lovable-uploads/070ac141-e042-40ea-9bc5-6df0bee525e3.png" 
+            alt="Feasly Logo" 
+            className="w-full h-full object-contain"
+          />
         </motion.div>
       </motion.div>
 
