@@ -22,6 +22,7 @@ import {
 import { motion } from "framer-motion";
 import { ScrollReveal } from "@/components/marketing/ScrollReveal";
 import { AnimatedFeatureCard } from "@/components/marketing/AnimatedFeatureCard";
+import { WorldClassHero } from "@/components/marketing/WorldClassHero";
 
 export default function NewMarketingHome() {
   useEffect(() => {
@@ -92,68 +93,15 @@ export default function NewMarketingHome() {
 
   return (
     <div className="flex flex-col relative">
-      {/* Premium Background Pattern */}
-      <div className="fixed inset-0 bg-gradient-to-br from-background via-background/95 to-primary/5 pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.1),transparent_50%)] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--primary-light)/0.08),transparent_50%)] pointer-events-none" />
-      
-      {/* Hero Section */}
-      <section className="min-h-[90vh] flex flex-col items-center justify-center text-center relative z-10 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-          >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-medium mb-8">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-              Built in the GCC, for the GCC
-            </div>
-
-            {/* Logo */}
-            <div className="mb-8">
-              <img 
-                src="/lovable-uploads/9c1fb9f6-2ebe-4aca-a9d2-295f77d9d4ba.png" 
-                alt="Feasly Logo" 
-                className="w-24 h-24 mx-auto drop-shadow-lg"
-              />
-            </div>
-
-            {/* Main Headline */}
-            <h1 className="text-5xl/tight md:text-7xl font-bold text-foreground max-w-4xl mx-auto mb-6">
-              Modern Modeling Infrastructure
-              <br />
-              <span className="bg-gradient-to-r from-primary via-primary-light to-primary-dark bg-clip-text text-transparent">
-                for the GCC
-              </span>
-            </h1>
-
-            {/* Subheading */}
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-10 leading-relaxed">
-              Feasly replaces spreadsheets, outdated tools, and consulting bottlenecks with precision-grade capital modeling — built in the Gulf, for the Gulf.
-            </p>
-
-            {/* CTA */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button size="lg" className="px-8 py-4 text-lg font-semibold">
-                Register Interest
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+      {/* World-Class Hero Section */}
+      <WorldClassHero />
 
       {/* Why Feasly Section */}
       <ScrollReveal>
-        <section className="py-24 bg-muted/30 relative">
+        <section className="py-24 bg-gradient-to-b from-muted/50 via-muted/30 to-background relative">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Why Feasly?</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">Why Feasly?</h2>
               <p className="text-xl text-muted-foreground">
                 Transform your data ingestion into structured modeling pipelines with exportable logic
               </p>
@@ -165,7 +113,7 @@ export default function NewMarketingHome() {
                   <div className={`p-5 rounded-2xl mb-6 w-fit bg-gradient-to-br ${feature.color}`}>
                     <feature.icon className={`h-8 w-8 ${feature.iconColor}`} />
                   </div>
-                  <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                  <h3 className="text-xl font-bold mb-3 text-foreground">{feature.title}</h3>
                   <p className="text-muted-foreground">{feature.description}</p>
                 </AnimatedFeatureCard>
               ))}
@@ -179,7 +127,7 @@ export default function NewMarketingHome() {
         <section className="py-24">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Built For</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">Built For</h2>
               <p className="text-xl text-muted-foreground">
                 Serving the full spectrum of GCC real estate professionals
               </p>
@@ -201,7 +149,7 @@ export default function NewMarketingHome() {
                       <div className="p-4 rounded-2xl bg-primary/10 mb-6 group-hover:scale-110 transition-transform duration-300">
                         <client.icon className="h-8 w-8 text-primary" />
                       </div>
-                      <h3 className="text-2xl font-bold mb-3">{client.title}</h3>
+                      <h3 className="text-2xl font-bold mb-3 text-foreground">{client.title}</h3>
                       <p className="text-muted-foreground">{client.description}</p>
                     </div>
                   </Card>
@@ -214,10 +162,10 @@ export default function NewMarketingHome() {
 
       {/* Regional Trust Section */}
       <ScrollReveal>
-        <section className="py-24 bg-muted/30">
+        <section className="py-24 bg-gradient-to-b from-muted/50 via-muted/30 to-background">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto text-center mb-16">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Regional Trust & Deployment</h2>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">Regional Trust & Deployment</h2>
               <p className="text-xl text-muted-foreground">
                 Sovereign-ready hosting across the Gulf Cooperation Council
               </p>
@@ -235,7 +183,7 @@ export default function NewMarketingHome() {
                 >
                   <Card className="p-6 text-center border-border/50 hover:shadow-lg transition-all duration-300">
                     <div className="text-4xl mb-4">{region.flag}</div>
-                    <h3 className="text-lg font-bold mb-2">{region.country}</h3>
+                    <h3 className="text-lg font-bold mb-2 text-foreground">{region.country}</h3>
                     <div className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-success/10 text-success border border-success/20">
                       <CheckCircle className="h-3 w-3" />
                       {region.status}
@@ -259,19 +207,19 @@ export default function NewMarketingHome() {
             <div className="max-w-5xl mx-auto">
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
-                  <h2 className="text-4xl md:text-5xl font-bold mb-6">Platform Vision</h2>
+                  <h2 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">Platform Vision</h2>
                   <h3 className="text-2xl font-semibold text-primary mb-6">From Excel to Giga-City Consolidation</h3>
                   <p className="text-lg text-muted-foreground mb-8 leading-relaxed">
                     Transform legacy modeling workflows into sovereign-scale infrastructure. Feasly bridges the gap between spreadsheet limitations and enterprise-grade financial modeling requirements.
                   </p>
-                  <Button variant="outline" size="lg" className="group">
+                  <Button variant="outline" size="lg" className="group border-2 border-primary/30 hover:border-primary/50 hover:bg-primary/5">
                     Explore the Platform
                     <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </div>
                 
                 <div className="relative">
-                  <div className="bg-card rounded-2xl border border-border shadow-xl overflow-hidden">
+                  <div className="bg-card/80 backdrop-blur-xl rounded-2xl border border-border/50 shadow-xl overflow-hidden">
                     <div className="aspect-[4/3] w-full bg-gradient-to-br from-background to-muted/50 flex items-center justify-center">
                       <div className="text-center space-y-4">
                         <div className="flex items-center justify-center gap-4">
@@ -287,20 +235,66 @@ export default function NewMarketingHome() {
                   </div>
                   
                   {/* Floating badges */}
-                  <div className="absolute -top-4 -right-4 bg-card border border-border rounded-xl p-3 shadow-lg">
+                  <div className="absolute -top-4 -right-4 bg-card/90 backdrop-blur-sm border border-border/50 rounded-xl p-3 shadow-lg">
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-success animate-pulse"></div>
                       <span className="text-sm font-medium">GCC Ready</span>
                     </div>
                   </div>
                   
-                  <div className="absolute -bottom-4 -left-4 bg-card border border-border rounded-xl p-3 shadow-lg">
+                  <div className="absolute -bottom-4 -left-4 bg-card/90 backdrop-blur-sm border border-border/50 rounded-xl p-3 shadow-lg">
                     <div className="flex items-center gap-2">
                       <Shield className="h-4 w-4 text-primary" />
                       <span className="text-sm font-medium">Sovereign Grade</span>
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Premium CTA Section - Enhanced Visibility */}
+      <ScrollReveal>
+        <section className="py-24 bg-gradient-to-br from-foreground via-foreground/95 to-primary/20 relative overflow-hidden">
+          {/* Background Effects */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary/20 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary-light/20 rounded-full blur-3xl" />
+          
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-4xl mx-auto text-center">
+              <h2 className="text-4xl md:text-6xl font-bold mb-6 text-background">
+                Ready to Transform
+                <br />
+                <span className="bg-gradient-to-r from-primary-light to-primary bg-clip-text text-transparent">
+                  GCC Real Estate?
+                </span>
+              </h2>
+              <p className="text-xl text-background/80 mb-10 leading-relaxed">
+                Join the exclusive beta program. Be among the first to experience sovereign-grade modeling infrastructure.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row gap-6 justify-center">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button 
+                    size="lg" 
+                    className="px-10 py-6 text-lg font-semibold bg-primary hover:bg-primary-light text-primary-foreground border-2 border-primary-light hover:border-primary shadow-2xl"
+                  >
+                    Request Beta Access
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </Button>
+                </motion.div>
+                
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="px-10 py-6 text-lg font-semibold border-2 border-background/30 bg-background/10 backdrop-blur-sm text-background hover:bg-background/20 hover:border-background/50"
+                  >
+                    Platform Overview
+                  </Button>
+                </motion.div>
               </div>
             </div>
           </div>
