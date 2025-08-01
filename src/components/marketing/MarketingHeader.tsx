@@ -110,9 +110,6 @@ export function MarketingHeader() {
           <Button variant="outline" asChild>
             <Link to="/welcome">{t('nav.login')}</Link>
           </Button>
-          <Button asChild>
-            <Link to="/welcome">{t('nav.startFreeTrial')}</Link>
-          </Button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -158,11 +155,6 @@ export function MarketingHeader() {
               <Button variant="outline" asChild className="w-full">
                 <Link to="/welcome" onClick={() => setMobileMenuOpen(false)}>
                   {t('nav.login')}
-                </Link>
-              </Button>
-              <Button asChild className="w-full">
-                <Link to="/welcome" onClick={() => setMobileMenuOpen(false)}>
-                  {t('nav.startFreeTrial')}
                 </Link>
               </Button>
             </div>
