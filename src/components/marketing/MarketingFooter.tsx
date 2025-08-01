@@ -40,7 +40,7 @@ export function MarketingFooter() {
           <div className="space-y-4">
             <Link to="/" className="flex items-center">
               <img 
-                src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
+                src="/lovable-uploads/89cbafc3-6eb7-4543-a767-15db07676b80.png" 
                 alt="Feasly Logo" 
                 className="w-8 h-8 object-contain mr-2"
               />
