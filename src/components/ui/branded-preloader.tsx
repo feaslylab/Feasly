@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
+import { TM } from "@/components/ui/trademark";
 import { useEffect, useState } from "react";
 
 export function BrandedPreloader() {
@@ -121,8 +122,8 @@ export function BrandedPreloader() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 0.6 }}
         >
-          <h1 className="text-4xl font-bold text-white tracking-wide">
-            FEASLY
+          <h1 className="text-4xl font-bold font-playfair text-white tracking-wide">
+            Feasly<TM />
           </h1>
         </motion.div>
 
