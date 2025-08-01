@@ -1,7 +1,7 @@
-import { ComingSoon } from "@/components/marketing/ComingSoon";
+import MarketingWrapper from "./MarketingWrapper";
 
 const Index = () => {
-  return <ComingSoon />;
+  return <MarketingWrapper />;
 };
 
 export default Index;

@@ -47,6 +47,10 @@ import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import FeatureComparison from "./pages/FeatureComparison";
 import CalcDemo from "./pages/CalcDemo";
+import ProductPage from "./pages/ProductPage";
+import NewPricingPage from "./pages/NewPricingPage";
+import CompliancePage from "./pages/CompliancePage";
+import ContactPage from "./pages/ContactPage";
 
 const queryClient = new QueryClient();
 
@@ -68,7 +72,7 @@ const AppRoutes = () => {
   const isAuthRoute = window.location.pathname === '/welcome';
   
   // If we're on the marketing site path, show marketing content
-  if (isMarketingRoute || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison') || window.location.pathname === '/welcome') {
+  if (isMarketingRoute || window.location.pathname.startsWith('/product') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/compliance') || window.location.pathname.startsWith('/contact') || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison') || window.location.pathname === '/welcome') {
     
     // If user is authenticated and on welcome page, redirect to dashboard
     if (user && window.location.pathname === '/welcome') {
@@ -80,15 +84,18 @@ const AppRoutes = () => {
       <PageTransition routeKey={location.pathname}>
         <Routes>
           <Route path="/" element={<MarketingWrapper />} />
+          <Route path="/product" element={<ProductPage />} />
+          <Route path="/pricing" element={<NewPricingPage />} />
+          <Route path="/compliance" element={<CompliancePage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/features" element={<FeaturesPage />} />
-            <Route path="/pricing" element={<PricingPage />} />
-            <Route path="/use-cases" element={<UseCasesPage />} />
-            <Route path="/docs" element={<DocsPage />} />
-            <Route path="/demo" element={<DemoPage />} />
-            <Route path="/press" element={<PressPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/comparison" element={<FeatureComparison />} />
+          <Route path="/use-cases" element={<UseCasesPage />} />
+          <Route path="/docs" element={<DocsPage />} />
+          <Route path="/demo" element={<DemoPage />} />
+          <Route path="/press" element={<PressPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/comparison" element={<FeatureComparison />} />
           <Route path="/welcome" element={<AuthPage onSuccess={() => { if (!import.meta.env.PROD) console.log('Login success, will be redirected by auth logic'); }} />} />
           {/* Development-only route for legacy calc-demo */}
           {import.meta.env.DEV && <Route path="/calc-demo" element={<CalcDemo />} />}
@@ -165,8 +172,11 @@ const App = () => {
   
   // Don't show dashboard Header on marketing or auth pages
   const isMarketingRoute = location.pathname === '/' || 
-    location.pathname.startsWith('/features') || 
+    location.pathname.startsWith('/product') || 
     location.pathname.startsWith('/pricing') || 
+    location.pathname.startsWith('/compliance') || 
+    location.pathname.startsWith('/contact') || 
+    location.pathname.startsWith('/features') || 
     location.pathname.startsWith('/use-cases') || 
     location.pathname.startsWith('/docs') || 
     location.pathname.startsWith('/press') || 
