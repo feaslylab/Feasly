@@ -9,6 +9,8 @@ import skyline3 from "@/assets/skyline-3.jpg";
 export function WorldClassHero() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [typewriterText, setTypewriterText] = useState("");
+  const [showTypewriter, setShowTypewriter] = useState(false);
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   
@@ -16,17 +18,43 @@ export function WorldClassHero() {
   const springY = useSpring(mouseY, { stiffness: 150, damping: 50 });
 
   const skylineImages = [skyline1, skyline2, skyline3];
+  const typewriterFullText = "Modern Modeling Infrastructure for the GCC";
 
   useEffect(() => {
     setIsLoaded(true);
+    
+    // Start typewriter effect after initial fade-in
+    const typewriterTimer = setTimeout(() => {
+      setShowTypewriter(true);
+    }, 1200);
     
     // Rotate images every 8 seconds
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % skylineImages.length);
     }, 8000);
     
-    return () => clearInterval(interval);
+    return () => {
+      clearTimeout(typewriterTimer);
+      clearInterval(interval);
+    };
   }, [skylineImages.length]);
+
+  // Typewriter effect
+  useEffect(() => {
+    if (!showTypewriter) return;
+    
+    let currentIndex = 0;
+    const typeInterval = setInterval(() => {
+      if (currentIndex <= typewriterFullText.length) {
+        setTypewriterText(typewriterFullText.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(typeInterval);
+      }
+    }, 80); // Adjust speed here
+    
+    return () => clearInterval(typeInterval);
+  }, [showTypewriter, typewriterFullText]);
 
   const handleMouseMove = (e: React.MouseEvent) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -112,16 +140,30 @@ export function WorldClassHero() {
           animate={{ opacity: isLoaded ? 1 : 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
         >
-          {/* Badge */}
+          {/* Badge with Enhanced Animation */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.2, type: "spring", bounce: 0.4 }}
           >
-            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-medium mb-8">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-              Built in the GCC, for the GCC
-            </div>
+            <motion.div 
+              className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary font-medium mb-8"
+              whileHover={{ scale: 1.05, borderColor: "hsl(var(--primary)/0.4)" }}
+              transition={{ duration: 0.2 }}
+            >
+              <motion.div 
+                className="w-2 h-2 bg-primary rounded-full"
+                animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+              >
+                Built in the GCC, for the GCC
+              </motion.span>
+            </motion.div>
           </motion.div>
 
           {/* Logo */}
@@ -141,45 +183,82 @@ export function WorldClassHero() {
             </div>
           </motion.div>
 
-          {/* Main Headline - YOUR EXACT CONTENT */}
+          {/* Main Headline with Typewriter Effect */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.6 }}
           >
             <h1 className="text-5xl/tight md:text-7xl font-bold text-foreground max-w-4xl mx-auto mb-6">
-              Modern Modeling Infrastructure
-              <br />
-              <span className="bg-gradient-to-r from-primary via-primary-light to-primary-dark bg-clip-text text-transparent">
-                for the GCC
-              </span>
+              {showTypewriter ? (
+                <>
+                  <span className="block">
+                    {typewriterText.split(' for the GCC')[0]}
+                    {typewriterText.includes(' for the GCC') && (
+                      <>
+                        <br />
+                        <span className="bg-gradient-to-r from-primary via-primary-light to-primary-dark bg-clip-text text-transparent">
+                          for the GCC
+                        </span>
+                      </>
+                    )}
+                    <motion.span
+                      className="inline-block w-1 h-16 md:h-20 bg-primary ml-2"
+                      animate={{ opacity: [1, 0] }}
+                      transition={{ duration: 0.8, repeat: Infinity }}
+                    />
+                  </span>
+                </>
+              ) : (
+                <span className="opacity-0">Modern Modeling Infrastructure for the GCC</span>
+              )}
             </h1>
           </motion.div>
 
-          {/* Subheading - YOUR EXACT CONTENT */}
+          {/* Subheading with Character Animation */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.8 }}
+            transition={{ duration: 0.8, delay: 2.8 }} // After typewriter completes
           >
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-10 leading-relaxed">
+            <motion.p 
+              className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-10 leading-relaxed"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 3.0, duration: 1.2 }}
+            >
               Feasly replaces spreadsheets, outdated tools, and consulting bottlenecks with precision-grade capital modeling, built in the Gulf, for the Gulf.
-            </p>
+            </motion.p>
           </motion.div>
 
-          {/* CTA - Only changed trial to beta as requested */}
+          {/* CTA with Premium Animation */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.0 }}
+            initial={{ opacity: 0, y: 20, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.8, delay: 4.0, type: "spring", bounce: 0.3 }}
           >
             <motion.div
-              whileHover={{ scale: 1.05 }}
+              whileHover={{ 
+                scale: 1.05,
+                boxShadow: "0 10px 30px -10px hsl(var(--primary) / 0.3)"
+              }}
               whileTap={{ scale: 0.95 }}
+              transition={{ duration: 0.2 }}
             >
-              <Button size="lg" className="px-8 py-4 text-lg font-semibold">
-                Register Interest
-                <ArrowRight className="ml-2 h-5 w-5" />
+              <Button size="lg" className="px-8 py-4 text-lg font-semibold relative overflow-hidden group">
+                <motion.span
+                  className="relative z-10 flex items-center"
+                  initial={{ x: 0 }}
+                  whileHover={{ x: 2 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  Register Interest
+                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
+                </motion.span>
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-primary-light to-primary opacity-0 group-hover:opacity-100"
+                  transition={{ duration: 0.3 }}
+                />
               </Button>
             </motion.div>
           </motion.div>
