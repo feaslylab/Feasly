@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { motion } from "framer-motion";
 import { MarketingHeader } from "./MarketingHeader";
 import { MarketingFooter } from "./MarketingFooter";
-import { StickyCTAFooter } from "./StickyCTAFooter";
+
 import { useTranslation } from "react-i18next";
 import { HeroLoadingFallback } from "./HeroLoadingFallback";
 
@@ -21,7 +21,6 @@ export function EnhancedMarketingLayout({ children }: EnhancedMarketingLayoutPro
         <main className="flex-1 relative z-10 flex items-center justify-center">
           <HeroLoadingFallback />
         </main>
-        <StickyCTAFooter />
         <MarketingFooter />
       </div>
     );
@@ -39,7 +38,7 @@ export function EnhancedMarketingLayout({ children }: EnhancedMarketingLayoutPro
       <main className="flex-1 relative z-10">
         {children}
       </main>
-      <StickyCTAFooter />
+      
       <MarketingFooter />
     </motion.div>
   );
