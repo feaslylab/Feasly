@@ -84,7 +84,7 @@ export function MarketingFooter() {
                 Territory Notice
               </p>
               <p className="text-xs">
-                Feasly™ is provided by Feasly (DIFC) Ltd for customers in the GCC and selected international markets. 
+                Feasly™ is provided by Feasly Ltd for customers in the GCC and selected international markets. 
                 Services are not offered to Australian residents.
               </p>
             </div>
@@ -92,8 +92,7 @@ export function MarketingFooter() {
             {/* Copyright and Company Info */}
             <div>
               <p>© {new Date().getFullYear()} Feasly. Model the future. Manage with precision.</p>
-              <p className="text-xs mt-1">Feasly Technologies (DIFC) Ltd</p>
-              <p className="text-xs">Registered office: Unit GA, Level 1 Gate Avenue - South Zone, DIFC</p>
+              <p className="text-xs mt-1">Feasly Ltd</p>
             </div>
           </div>
         </div>
