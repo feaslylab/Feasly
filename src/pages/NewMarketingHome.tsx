@@ -270,6 +270,10 @@ export default function NewMarketingHome() {
                 <span className="bg-gradient-to-r from-primary-light to-primary bg-clip-text text-transparent">
                   GCC Real Estate?
                 </span>
+                <br />
+                <span className="text-3xl md:text-4xl text-background/90 mt-4 block">
+                  Ready to kill the spreadsheet?
+                </span>
               </h2>
               <p className="text-xl text-background/80 mb-10 leading-relaxed">
                 Join the exclusive beta program. Be among the first to experience sovereign-grade modeling infrastructure.
