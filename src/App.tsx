@@ -5,12 +5,15 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { PageTransition } from "@/components/ui/page-transition";
 import { PerformanceMonitor } from "@/components/ui/performance-monitor";
+import { BrandedPreloader } from "@/components/ui/branded-preloader";
+import { useAppReady } from "@/hooks/useAppReady";
 import { analytics } from "./lib/analytics";
 
 import { AuthPage } from "@/pages/Auth";
@@ -158,6 +161,7 @@ const AppRoutes = () => {
 
 const App = () => {
   const location = useLocation();
+  const isAppReady = useAppReady();
   
   // Don't show dashboard Header on marketing or auth pages
   const isMarketingRoute = location.pathname === '/' || 
@@ -177,12 +181,26 @@ const App = () => {
         <QueryClientProvider client={queryClient}>
           <OrganizationProvider>
             <TooltipProvider>
-              {/* Only show dashboard Header on authenticated app pages */}
-              {!isMarketingRoute && <Header />}
+              <AnimatePresence mode="wait">
+                {!isAppReady ? (
+                  <BrandedPreloader key="preloader" />
+                ) : (
+                  <motion.div
+                    key="app"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.4 }}
+                    className="min-h-screen"
+                  >
+                    {/* Only show dashboard Header on authenticated app pages */}
+                    {!isMarketingRoute && <Header />}
+                    <AppRoutes />
+                  </motion.div>
+                )}
+              </AnimatePresence>
               <Toaster />
               <Sonner />
               <PerformanceMonitor />
-              <AppRoutes />
             </TooltipProvider>
           </OrganizationProvider>
         </QueryClientProvider>

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { MarketingLayout } from "@/components/marketing/MarketingLayout";
+import { EnhancedMarketingLayout } from "@/components/marketing/EnhancedMarketingLayout";
 import MarketingHome from "./MarketingHome";
 
 export default function MarketingWrapper() {
@@ -9,8 +9,8 @@ export default function MarketingWrapper() {
   }, []);
 
   return (
-    <MarketingLayout>
+    <EnhancedMarketingLayout>
       <MarketingHome />
-    </MarketingLayout>
+    </EnhancedMarketingLayout>
   );
 }
