@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import skyline1 from "@/assets/skyline-1.jpg";
-import skyline2 from "@/assets/skyline-2.jpg";
-import skyline3 from "@/assets/skyline-3.jpg";
-import skyline4 from "@/assets/skyline-4.jpg";
-import skyline5 from "@/assets/skyline-5.jpg";
-import skyline6 from "@/assets/skyline-6.jpg";
-import riyadhSkyline1 from "@/assets/riyadh-skyline-1.jpg";
-import dohaSkyline1 from "@/assets/doha-skyline-1.jpg";
-import dohaSkyline2 from "@/assets/doha-skyline-2.jpg";
-import gccSkyline1 from "@/assets/gcc-skyline-1.jpg";
+import contemporary1 from "@/assets/contemporary-1.jpg";
+import contemporary2 from "@/assets/contemporary-2.jpg";
+import contemporary3 from "@/assets/contemporary-3.jpg";
+import contemporary4 from "@/assets/contemporary-4.jpg";
+import contemporary5 from "@/assets/contemporary-5.jpg";
+import contemporary6 from "@/assets/contemporary-6.jpg";
+import contemporary7 from "@/assets/contemporary-7.jpg";
+import contemporary8 from "@/assets/contemporary-8.jpg";
+import contemporary9 from "@/assets/contemporary-9.jpg";
+import contemporary10 from "@/assets/contemporary-10.jpg";
 
 export function WorldClassHero() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -24,7 +24,7 @@ export function WorldClassHero() {
   const springX = useSpring(mouseX, { stiffness: 150, damping: 50 });
   const springY = useSpring(mouseY, { stiffness: 150, damping: 50 });
 
-  const skylineImages = [skyline1, skyline2, skyline3, skyline4, skyline5, skyline6, riyadhSkyline1, dohaSkyline1, dohaSkyline2, gccSkyline1];
+  const skylineImages = [contemporary1, contemporary2, contemporary3, contemporary4, contemporary5, contemporary6, contemporary7, contemporary8, contemporary9, contemporary10];
   const typewriterFullText = "Modern Modeling Infrastructure for the GCC";
 
   useEffect(() => {
