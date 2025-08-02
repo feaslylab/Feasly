@@ -78,11 +78,11 @@ export function WorldClassHero() {
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url(${image})`,
-              opacity: currentImageIndex === index ? 0.56 : 0,
+              opacity: currentImageIndex === index ? 0.75 : 0, // Increased from 0.56 to 0.75
             }}
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ 
-              opacity: currentImageIndex === index ? 0.56 : 0,
+              opacity: currentImageIndex === index ? 0.75 : 0,
               scale: currentImageIndex === index ? 1.05 : 1.1
             }}
             transition={{ 
@@ -132,7 +132,7 @@ export function WorldClassHero() {
         ))}
         
         {/* Enhanced Green Tint Overlay */}
-        <div className="absolute inset-0 bg-green-500/25 mix-blend-soft-light" />
+        <div className="absolute inset-0 bg-green-500/35 mix-blend-soft-light" />
         
         {/* Background Gradient to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/85" />
