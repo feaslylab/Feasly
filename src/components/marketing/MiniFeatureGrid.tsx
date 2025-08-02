@@ -25,7 +25,7 @@ export function MiniFeatureGrid() {
               transition={{ delay: index * 0.1 }}
               className="text-center group"
             >
-              <div className={`p-4 rounded-2xl mb-4 w-fit mx-auto bg-gradient-to-br ${feature.color} group-hover:scale-110 transition-transform duration-300`}>
+              <div className={`p-4 rounded-2xl mb-4 w-fit mx-auto backdrop-blur-md bg-white/15 dark:bg-white/5 shadow-lg/20 border border-white/10 group-hover:scale-110 transition-transform duration-300`}>
                 <feature.icon className={`h-8 w-8 ${feature.iconColor}`} />
               </div>
               <h3 className="text-lg font-semibold mb-1 text-foreground">
