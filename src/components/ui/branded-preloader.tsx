@@ -162,7 +162,7 @@ export function BrandedPreloader() {
             >
               {progress < 30 ? 'Initializing...' : 
                progress < 60 ? 'Loading Resources...' : 
-               progress < 90 ? 'Almost Ready...' : 'Launching Feasly...'}
+               progress < 90 ? 'Almost Ready...' : <>Launching Feasly<TM />...</>}
             </motion.p>
             <motion.p
               className="text-white/70 text-sm font-medium"
