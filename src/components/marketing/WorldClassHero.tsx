@@ -9,6 +9,9 @@ import skyline4 from "@/assets/skyline-4.jpg";
 import skyline5 from "@/assets/skyline-5.jpg";
 import skyline6 from "@/assets/skyline-6.jpg";
 import skyline8 from "@/assets/skyline-8.jpg";
+import skyline9 from "@/assets/skyline-9.jpg";
+import skyline10 from "@/assets/skyline-10.jpg";
+import skyline11 from "@/assets/skyline-11.jpg";
 
 export function WorldClassHero() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -21,7 +24,7 @@ export function WorldClassHero() {
   const springX = useSpring(mouseX, { stiffness: 150, damping: 50 });
   const springY = useSpring(mouseY, { stiffness: 150, damping: 50 });
 
-  const skylineImages = [skyline1, skyline2, skyline3, skyline4, skyline5, skyline6, skyline8];
+  const skylineImages = [skyline1, skyline2, skyline3, skyline4, skyline5, skyline6, skyline8, skyline9, skyline10, skyline11];
   const typewriterFullText = "Modern Modeling Infrastructure for the GCC";
 
   useEffect(() => {
@@ -32,10 +35,10 @@ export function WorldClassHero() {
       setShowTypewriter(true);
     }, 1200);
     
-    // Rotate images every 5 seconds (faster transition)
+    // Rotate images every 3 seconds (even faster transition)
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % skylineImages.length);
-    }, 5000);
+    }, 3000);
     
     return () => {
       clearTimeout(typewriterTimer);
@@ -135,8 +138,8 @@ export function WorldClassHero() {
           </motion.div>
         ))}
         
-        {/* Enhanced Green Tint Overlay */}
-        <div className="absolute inset-0 bg-green-500/35 mix-blend-soft-light" />
+        {/* Enhanced Green Tint Overlay - Increased by 25% */}
+        <div className="absolute inset-0 bg-green-500/44 mix-blend-soft-light" />
         
         {/* Background Gradient to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/85" />
