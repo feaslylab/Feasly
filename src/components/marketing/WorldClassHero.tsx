@@ -5,6 +5,10 @@ import { ArrowRight } from "lucide-react";
 import skyline1 from "@/assets/skyline-1.jpg";
 import skyline2 from "@/assets/skyline-2.jpg";
 import skyline3 from "@/assets/skyline-3.jpg";
+import skyline4 from "@/assets/skyline-4.jpg";
+import skyline5 from "@/assets/skyline-5.jpg";
+import skyline6 from "@/assets/skyline-6.jpg";
+import skyline8 from "@/assets/skyline-8.jpg";
 
 export function WorldClassHero() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -17,7 +21,7 @@ export function WorldClassHero() {
   const springX = useSpring(mouseX, { stiffness: 150, damping: 50 });
   const springY = useSpring(mouseY, { stiffness: 150, damping: 50 });
 
-  const skylineImages = [skyline1, skyline2, skyline3];
+  const skylineImages = [skyline1, skyline2, skyline3, skyline4, skyline5, skyline6, skyline8];
   const typewriterFullText = "Modern Modeling Infrastructure for the GCC";
 
   useEffect(() => {
@@ -28,10 +32,10 @@ export function WorldClassHero() {
       setShowTypewriter(true);
     }, 1200);
     
-    // Rotate images every 8 seconds
+    // Rotate images every 5 seconds (faster transition)
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % skylineImages.length);
-    }, 8000);
+    }, 5000);
     
     return () => {
       clearTimeout(typewriterTimer);
