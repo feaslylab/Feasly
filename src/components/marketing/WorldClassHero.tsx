@@ -245,7 +245,7 @@ export function WorldClassHero() {
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
             >
-               <Button size="lg" className="px-10 py-6 text-xl font-semibold font-playfair relative overflow-hidden group shadow-2xl border-2 border-primary/20 hover:border-primary/40">
+               <Button size="lg" className="px-10 py-6 text-xl font-semibold font-playfair relative overflow-hidden group shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
                 <motion.span
                   className="relative z-10 flex items-center"
                   initial={{ x: 0 }}
