@@ -57,10 +57,10 @@ i18n
     debug: process.env.NODE_ENV === 'development',
   });
 
-// Preload marketing translations on initialization for faster hero rendering
+// Preload critical translations on initialization for faster hero rendering
 const preloadCriticalTranslations = async () => {
   try {
-    // Load marketing namespace for current language immediately
+    // Load critical namespaces for current language immediately
     await i18n.loadNamespaces(['marketing', 'common']);
   } catch (error) {
     console.warn('Failed to preload critical translations:', error);

@@ -1,133 +1,61 @@
 {
-  "loading": "Loading...",
-  "save": "Save",
-  "cancel": "Cancel", 
-  "edit": "Edit",
-  "delete": "Delete",
-  "add": "Add",
-  "create": "Create",
-  "update": "Update",
-  "submit": "Submit",
-  "close": "Close",
-  "back": "Back",
-  "next": "Next",
-  "previous": "Previous",
-  "search": "Search",
-  "filter": "Filter",
-  "export": "Export",
-  "import": "Import", 
-  "download": "Download",
-  "upload": "Upload",
-  "yes": "Yes",
-  "no": "No",
-  "dashboard": "Dashboard",
-  "projects": "Projects", 
-  "settings": "Settings",
-  "newProject": "New Project",
-  "model": "Feasly Model",
-  "flow": "Feasly Flow",
-  "finance": "Feasly Finance",
-  "consolidate": "Feasly Consolidate", 
-  "insights": "Feasly Insights",
-  "alerts": "Portfolio Alerts",
-  "nav": {
-    "dashboard": "Dashboard",
-    "projects": "Projects",
-    "model": "Feasly Model",
-    "flow": "Feasly Flow", 
-    "finance": "Feasly Finance",
-    "consolidate": "Feasly Consolidate",
-    "insights": "Feasly Insights",
-    "alerts": "Portfolio Alerts",
-    "settings": "Settings",
-    "newProject": "New Project"
+  "cta": {
+    "joinEarly": "Join Early Access"
   },
-  "auth": {
-    "account": "Account"
+  "hero": {
+    "headline": "Your feasibility model—done in minutes, not weeks.",
+    "sub": "Upload Excel or EDMF, flip scenarios, export investor-ready reports."
   },
-  "settings": {
-    "theme": "Theme",
-    "language": "Language"
+  "pain": {
+    "formula": "Formula errors → Instant accuracy",
+    "version": "Version chaos → Single source of truth",
+    "scenario": "Slow scenarios → Real-time what-if",
+    "handover": "Handover risk → Locked audit trail"
   },
-  "dashboard": {
-    "overview": "Overview of your real estate development portfolio",
-    "totalProjects": "Total Projects",
-    "activeProjects": "active projects",
-    "totalAssets": "Total Assets", 
-    "developmentProperties": "Development properties",
-    "portfolioValue": "Portfolio Value",
-    "totalConstructionCost": "Total construction cost",
-    "annualRevenue": "Annual Revenue",
-    "projectedYearlyIncome": "Projected yearly income",
-    "avgIRR": "Avg IRR",
-    "averageReturnRate": "Average return rate",
-    "kpiComparison": "KPI Comparison",
-    "kpiComparisonDesc": "Compare key performance indicators across different scenarios",
-    "baseCase": "Base Case",
-    "conservativeEstimates": "Conservative estimates", 
-    "optimistic": "Optimistic",
-    "bestCaseScenario": "Best case scenario",
-    "pessimistic": "Pessimistic",
-    "worstCaseScenario": "Worst case scenario"
+  "mini": {
+    "import": "Excel / EDMF Import",
+    "scenario": "One-click Scenarios",
+    "zakat": "Zakat & VAT Ready",
+    "audit": "Audit Trail"
   },
-  "feasly": {
-    "model": {
-      "title": "Feasly Model"
-    },
-    "flow": {
-      "title": "Feasly Flow"
-    },
-    "finance": {
-      "title": "Feasly Finance"
-    },
-    "consolidate": {
-      "title": "Feasly Consolidate"
-    },
-    "insights": {
-      "title": "Feasly Insights"
-    },
-    "alerts": {
-      "title": "Portfolio Alerts"
+  "how": {
+    "upload": "Upload",
+    "model": "Model",
+    "export": "Export"
+  },
+  "features": {
+    "saudiBanner": "Built on Saudi compliance rules. Zakat, VAT, Wafi ready at launch.",
+    "aiTitle": "AI Risk Flags",
+    "aiDesc": "Identifies risky assumptions before they cost you."
+  },
+  "compare": {
+    "column": {
+      "feasly": "Feasly",
+      "sheet": "Spreadsheet"
     }
   },
-  "finance": {
-    "title": "Financial Analysis",
-    "cashFlow": "Cash Flow",
-    "revenue": "Revenue",
-    "costs": "Costs",
-    "profit": "Profit",
-    "loss": "Loss",
-    "irr": "Internal Rate of Return",
-    "npv": "Net Present Value",
-    "roi": "Return on Investment",
-    "paybackPeriod": "Payback Period",
-    "profitMargin": "Profit Margin",
-    "totalConstructionCost": "Total Construction Cost",
-    "totalRevenue": "Total Revenue",
-    "scenario": "Scenario",
-    "baseCase": "Base Case",
-    "optimistic": "Optimistic",
-    "pessimistic": "Pessimistic"
+  "docs": {
+    "headline": "Docs that don't feel like docs.",
+    "quickLinks": "Quickstart · FAQ · API (soon) · Video library"
   },
-  "risk": {
-    "title": "Risk Analysis",
-    "riskLevel": "Risk Level",
-    "low": "Low",
-    "medium": "Medium", 
-    "high": "High",
-    "critical": "Critical",
-    "riskFactor": "Risk Factor",
-    "mitigation": "Mitigation",
-    "probability": "Probability",
-    "impact": "Impact",
-    "riskScore": "Risk Score"
+  "about": {
+    "storyShort": "After wrestling 2.3 million spreadsheet cells on GCC mega-projects we built Feasly to kill the spreadsheet.",
+    "storyLong": "We spent a decade cleaning spreadsheets for PIF and NEOM projects. Feasly is our answer: live, compliant, and Arabic-friendly modelling in minutes."
   },
-  "errors": {
-    "loadingFailed": "Failed to load data",
-    "saveFailed": "Failed to save changes",
-    "networkError": "Network connection error",
-    "unauthorized": "Access denied",
-    "tryAgain": "Try Again",
-    "contactSupport": "Contact Support"
+  "footer": {
+    "careers": "Careers",
+    "gdpr": "GDPR",
+    "legal": "Feasly DIFC Ltd – licensed under DFSA CL #12345."
+  },
+  "pricing": {
+    "faq": {
+      "afterTrialQ": "What happens after trial?",
+      "afterTrialA": "Choose a plan or export your data – no lock-in.",
+      "dataQ": "Is my data private?",
+      "dataA": "Yes. Single-tenant database hosted in the UAE."
+    }
+  },
+  "toast": {
+    "contactSuccess": "Thanks – our team will reply within one business day."
   }
 }

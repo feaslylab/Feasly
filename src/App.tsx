@@ -51,6 +51,8 @@ import ProductPage from "./pages/ProductPage";
 import NewPricingPage from "./pages/NewPricingPage";
 import CompliancePage from "./pages/CompliancePage";
 import ContactPage from "./pages/ContactPage";
+import CareersPage from "./pages/CareersPage";
+import GDPRPage from "./pages/GDPRPage";
 
 const queryClient = new QueryClient();
 
@@ -72,7 +74,7 @@ const AppRoutes = () => {
   const isAuthRoute = window.location.pathname === '/welcome';
   
   // If we're on the marketing site path, show marketing content
-  if (isMarketingRoute || window.location.pathname.startsWith('/product') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/compliance') || window.location.pathname.startsWith('/contact') || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison') || window.location.pathname === '/welcome') {
+  if (isMarketingRoute || window.location.pathname.startsWith('/product') || window.location.pathname.startsWith('/pricing') || window.location.pathname.startsWith('/compliance') || window.location.pathname.startsWith('/contact') || window.location.pathname.startsWith('/features') || window.location.pathname.startsWith('/use-cases') || window.location.pathname.startsWith('/docs') || window.location.pathname.startsWith('/press') || window.location.pathname.startsWith('/privacy') || window.location.pathname.startsWith('/terms') || window.location.pathname.startsWith('/comparison') || window.location.pathname.startsWith('/careers') || window.location.pathname.startsWith('/gdpr') || window.location.pathname === '/welcome') {
     
     // If user is authenticated and on welcome page, redirect to dashboard
     if (user && window.location.pathname === '/welcome') {
@@ -96,6 +98,8 @@ const AppRoutes = () => {
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/comparison" element={<FeatureComparison />} />
+          <Route path="/careers" element={<CareersPage />} />
+          <Route path="/gdpr" element={<GDPRPage />} />
           <Route path="/welcome" element={<AuthPage onSuccess={() => { if (!import.meta.env.PROD) console.log('Login success, will be redirected by auth logic'); }} />} />
           {/* Development-only route for legacy calc-demo */}
           {import.meta.env.DEV && <Route path="/calc-demo" element={<CalcDemo />} />}
@@ -183,6 +187,8 @@ const App = () => {
     location.pathname.startsWith('/privacy') || 
     location.pathname.startsWith('/terms') || 
     location.pathname.startsWith('/comparison') || 
+    location.pathname.startsWith('/careers') || 
+    location.pathname.startsWith('/gdpr') || 
     location.pathname === '/welcome';
 
   return (
