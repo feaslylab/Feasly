@@ -67,6 +67,11 @@ export function Hero() {
                   alt="Feasly platform preview"
                   className="w-full h-full object-cover"
                   loading="lazy"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const container = e.currentTarget.closest('.absolute.inset-0') as HTMLElement;
+                    if (container) container.style.display = 'none';
+                  }}
                 />
               </div>
             </div>

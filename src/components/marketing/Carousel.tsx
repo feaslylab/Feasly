@@ -60,6 +60,9 @@ export function Carousel() {
                       className="w-full h-auto object-cover"
                       style={{ aspectRatio: "600/400" }}
                       loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=600&h=400&fit=crop';
+                      }}
                     />
                   </div>
                 ))}

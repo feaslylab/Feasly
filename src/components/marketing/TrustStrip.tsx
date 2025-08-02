@@ -1,11 +1,14 @@
-import { ShieldCheck, Server, CheckCircle } from "lucide-react";
+import { Shield, Server, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 export function TrustStrip() {
+  const { t } = useTranslation('common');
+  
   const trustItems = [
-    { icon: ShieldCheck, text: "DIFC-licensed" },
-    { icon: Server, text: "Hosted in UAE" },
-    { icon: CheckCircle, text: "Zakat/VAT compliant" }
+    { icon: Shield, text: t('trust.encryption') },
+    { icon: Server, text: t('trust.datacentres') },
+    { icon: CheckCircle, text: t('trust.taxReady') }
   ];
 
   return (

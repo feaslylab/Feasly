@@ -38,14 +38,15 @@
     "headline": "Docs that don't feel like docs.",
     "quickLinks": "Quickstart · FAQ · API (soon) · Video library"
   },
-  "about": {
-    "storyShort": "After wrestling 2.3 million spreadsheet cells on GCC mega-projects we built Feasly to kill the spreadsheet.",
-    "storyLong": "We spent a decade cleaning spreadsheets for PIF and NEOM projects. Feasly is our answer: live, compliant, and Arabic-friendly modelling in minutes."
+  "trust": {
+    "encryption": "Bank-grade encryption",
+    "datacentres": "Regional data centres", 
+    "taxReady": "GCC tax-ready"
   },
   "footer": {
     "careers": "Careers",
     "gdpr": "GDPR",
-    "legal": "Feasly DIFC Ltd – licensed under DFSA CL #12345."
+    "legal": "© {year} Feasly. All rights reserved."
   },
   "pricing": {
     "faq": {
