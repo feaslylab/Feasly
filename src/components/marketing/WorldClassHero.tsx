@@ -66,7 +66,7 @@ export function WorldClassHero() {
 
   return (
     <section 
-      className="min-h-[90vh] flex flex-col items-center justify-center relative overflow-hidden"
+      className="min-h-[95vh] flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-background via-background/98 to-muted/30"
       onMouseMove={handleMouseMove}
     >
       {/* Premium Background with Rotating Skylines */}
@@ -134,7 +134,7 @@ export function WorldClassHero() {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 relative z-10 max-w-6xl text-center">
+      <div className="container mx-auto px-6 lg:px-8 relative z-10 max-w-7xl text-center">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: isLoaded ? 1 : 0 }}
@@ -189,7 +189,7 @@ export function WorldClassHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.6 }}
           >
-            <h1 className="text-5xl/tight md:text-7xl font-bold text-foreground max-w-4xl mx-auto mb-6">
+            <h1 className="text-5xl/tight md:text-7xl font-bold font-playfair text-foreground max-w-4xl mx-auto mb-6 tracking-tight">
               {showTypewriter ? (
                 <>
                   <span className="block">
@@ -197,7 +197,7 @@ export function WorldClassHero() {
                     {typewriterText.includes(' for the GCC') && (
                       <>
                         <br />
-                        <span className="bg-gradient-to-r from-primary via-primary-light to-primary-dark bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-primary via-primary-light to-primary-dark bg-clip-text text-transparent font-playfair">
                           for the GCC
                         </span>
                       </>
@@ -222,7 +222,7 @@ export function WorldClassHero() {
             transition={{ duration: 0.8, delay: 2.8 }} // After typewriter completes
           >
             <motion.p 
-              className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-10 leading-relaxed"
+              className="text-xl md:text-2xl font-playfair text-muted-foreground max-w-4xl mx-auto mb-10 leading-relaxed tracking-wide"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 3.0, duration: 1.2 }}
@@ -245,7 +245,7 @@ export function WorldClassHero() {
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
             >
-              <Button size="lg" className="px-8 py-4 text-lg font-semibold relative overflow-hidden group">
+               <Button size="lg" className="px-10 py-6 text-xl font-semibold font-playfair relative overflow-hidden group shadow-2xl border-2 border-primary/20 hover:border-primary/40">
                 <motion.span
                   className="relative z-10 flex items-center"
                   initial={{ x: 0 }}
@@ -253,7 +253,7 @@ export function WorldClassHero() {
                   transition={{ duration: 0.2 }}
                 >
                   Register Interest
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
+                  <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform duration-200" />
                 </motion.span>
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-primary-light to-primary opacity-0 group-hover:opacity-100"
