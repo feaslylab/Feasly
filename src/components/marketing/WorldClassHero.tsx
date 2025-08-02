@@ -8,6 +8,10 @@ import skyline3 from "@/assets/skyline-3.jpg";
 import skyline4 from "@/assets/skyline-4.jpg";
 import skyline5 from "@/assets/skyline-5.jpg";
 import skyline6 from "@/assets/skyline-6.jpg";
+import riyadhSkyline1 from "@/assets/riyadh-skyline-1.jpg";
+import dohaSkyline1 from "@/assets/doha-skyline-1.jpg";
+import dohaSkyline2 from "@/assets/doha-skyline-2.jpg";
+import gccSkyline1 from "@/assets/gcc-skyline-1.jpg";
 
 export function WorldClassHero() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -20,7 +24,7 @@ export function WorldClassHero() {
   const springX = useSpring(mouseX, { stiffness: 150, damping: 50 });
   const springY = useSpring(mouseY, { stiffness: 150, damping: 50 });
 
-  const skylineImages = [skyline1, skyline2, skyline3, skyline4, skyline5, skyline6];
+  const skylineImages = [skyline1, skyline2, skyline3, skyline4, skyline5, skyline6, riyadhSkyline1, dohaSkyline1, dohaSkyline2, gccSkyline1];
   const typewriterFullText = "Modern Modeling Infrastructure for the GCC";
 
   useEffect(() => {
