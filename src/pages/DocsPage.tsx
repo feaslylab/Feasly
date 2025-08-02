@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { MarketingLayout } from "@/components/marketing/MarketingLayout";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -90,10 +91,19 @@ const resources = [
 ];
 
 export default function DocsPage() {
+  const { t } = useTranslation('common');
+
   useEffect(() => {
     window.scrollTo(0, 0);
     document.title = "Documentation | Feasly";
   }, []);
+
+  const quickLinks = [
+    { title: "Quickstart", href: "#quickstart" },
+    { title: "FAQ", href: "#faq" },
+    { title: "API (soon)", href: "#api" },
+    { title: "Video library", href: "#videos" }
+  ];
 
   return (
     <MarketingLayout>
@@ -110,7 +120,7 @@ export default function DocsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
               >
-                Get answers fast.
+                {t('docs.headline')}
               </motion.h1>
               <motion.p 
                 className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-3xl mx-auto"
@@ -118,7 +128,7 @@ export default function DocsPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
               >
-                Getting started · Excel import · Scenario engine · Arabic interface · API (soon)
+                {t('docs.quickLinks')}
               </motion.p>
               <motion.div 
                 className="flex flex-col sm:flex-row justify-center gap-4"

@@ -1,6 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
   Check,
   X,
@@ -12,13 +15,19 @@ import {
   Zap,
   ArrowRight,
   Crown,
-  Building2
+  Building2,
+  CalendarDays,
+  Info
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { ScrollReveal } from "@/components/marketing/ScrollReveal";
 import { EnhancedMarketingLayout } from "@/components/marketing/EnhancedMarketingLayout";
+import { formatCurrency } from "@/lib/formatNumber";
 
 export default function NewPricingPage() {
+  const { t, i18n } = useTranslation('common');
+  const [isCalendlyOpen, setIsCalendlyOpen] = useState(false);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     document.title = "Pricing | Feasly - Simple pricing for powerful modeling";
@@ -27,7 +36,8 @@ export default function NewPricingPage() {
   const plans = [
     {
       name: "Starter",
-      price: "Coming Soon",
+      price: formatCurrency(299, 'AED', i18n.language),
+      period: "/ month (ex VAT)",
       description: "Perfect for individual developers and small teams",
       features: [
         "1 user seat",
@@ -44,13 +54,14 @@ export default function NewPricingPage() {
         "No Arabic interface", 
         "No custom branding"
       ],
-      cta: "Join Waitlist",
+      cta: t('cta.joinEarly'),
       popular: false,
       icon: Users
     },
     {
       name: "Pro",
-      price: "Coming Soon", 
+      price: formatCurrency(299, 'AED', i18n.language),
+      period: "/ month (ex VAT)",
       description: "Full feature access for growing teams",
       features: [
         "5 user seats",
@@ -66,13 +77,14 @@ export default function NewPricingPage() {
         "Advanced analytics"
       ],
       limitations: [],
-      cta: "Join Waitlist",
+      cta: t('cta.joinEarly'),
       popular: true,
       icon: Star
     },
     {
       name: "Enterprise",
       price: "Request Pricing",
+      period: "",
       description: "Sovereign-grade deployment for large organizations", 
       features: [
         "Unlimited users",
@@ -89,7 +101,7 @@ export default function NewPricingPage() {
         "Regional data sovereignty"
       ],
       limitations: [],
-      cta: "Contact Sales",
+      cta: "Book a demo",
       popular: false,
       icon: Crown
     }
@@ -145,6 +157,14 @@ export default function NewPricingPage() {
     {
       question: "Is there a free trial?",
       answer: "We offer personalized demos for qualified prospects. Enterprise customers receive a 30-day pilot program with full onboarding support."
+    },
+    {
+      question: t('pricing.faq.afterTrialQ'),
+      answer: t('pricing.faq.afterTrialA')
+    },
+    {
+      question: t('pricing.faq.dataQ'),
+      answer: t('pricing.faq.dataA')
     }
   ];
 
@@ -218,7 +238,10 @@ export default function NewPricingPage() {
                             <plan.icon className="h-8 w-8 text-primary" />
                           </div>
                           <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                          <div className="text-3xl font-bold text-primary mb-2">{plan.price}</div>
+                          <div className="text-3xl font-bold text-primary mb-2">
+                            {plan.price}
+                            {plan.period && <span className="text-sm font-normal text-muted-foreground"> {plan.period}</span>}
+                          </div>
                           <p className="text-muted-foreground">{plan.description}</p>
                         </div>
 
@@ -247,13 +270,42 @@ export default function NewPricingPage() {
                         </div>
 
                         {/* CTA */}
-                        <Button 
-                          className={`w-full ${plan.popular ? 'bg-primary hover:bg-primary/90' : ''}`}
-                          variant={plan.popular ? 'default' : 'outline'}
-                        >
-                          {plan.cta}
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
+                        {plan.cta === "Book a demo" ? (
+                          <Dialog open={isCalendlyOpen} onOpenChange={setIsCalendlyOpen}>
+                            <DialogTrigger asChild>
+                              <Button 
+                                className={`w-full ${plan.popular ? 'bg-primary hover:bg-primary/90' : ''}`}
+                                variant={plan.popular ? 'default' : 'outline'}
+                              >
+                                <CalendarDays className="mr-2 h-4 w-4" />
+                                {plan.cta}
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl h-[600px]">
+                              <DialogHeader>
+                                <DialogTitle>Book a Demo</DialogTitle>
+                              </DialogHeader>
+                              <div className="flex-1">
+                                <iframe
+                                  src={import.meta.env.VITE_CALENDLY_URL || "https://calendly.com/feasly-demo"}
+                                  width="100%"
+                                  height="100%"
+                                  frameBorder="0"
+                                  title="Book a Demo"
+                                  className="rounded-lg"
+                                />
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        ) : (
+                          <Button 
+                            className={`w-full ${plan.popular ? 'bg-primary hover:bg-primary/90' : ''}`}
+                            variant={plan.popular ? 'default' : 'outline'}
+                          >
+                            {plan.cta}
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     </Card>
                   </motion.div>
@@ -306,6 +358,16 @@ export default function NewPricingPage() {
                       ))}
                     </div>
                   </div>
+                </div>
+                
+                {/* Savings Banner */}
+                <div className="mt-8 max-w-2xl mx-auto">
+                  <Alert className="border-primary/30 bg-primary/5">
+                    <Info className="h-4 w-4 text-primary" />
+                    <AlertDescription className="text-primary-foreground">
+                      Need annual billing? Save 16 percent with yearly subscriptions.
+                    </AlertDescription>
+                  </Alert>
                 </div>
               </div>
             </div>
