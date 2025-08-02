@@ -78,22 +78,46 @@ export function WorldClassHero() {
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url(${image})`,
-              opacity: currentImageIndex === index ? 0.41 : 0, // 59% transparency = 0.41 opacity
+              opacity: currentImageIndex === index ? 0.56 : 0, // Increased from 0.41 to 0.56 (15% increase)
             }}
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 0, scale: 1.1 }}
             animate={{ 
-              opacity: currentImageIndex === index ? 0.41 : 0,
-              scale: currentImageIndex === index ? 1.05 : 1.1
+              opacity: currentImageIndex === index ? 0.56 : 0,
+              scale: currentImageIndex === index ? [1.1, 1.05, 1.08, 1.05] : 1.1
             }}
             transition={{ 
-              duration: 2,
-              ease: "easeInOut"
+              duration: currentImageIndex === index ? 3 : 2,
+              ease: "easeInOut",
+              scale: {
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }
             }}
-          />
+          >
+            {/* Ripple Effect Overlay */}
+            <motion.div
+              className="absolute inset-0"
+              animate={{
+                background: [
+                  "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                  "radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                  "radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                  "radial-gradient(circle at 60% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                  "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%)"
+                ]
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </motion.div>
         ))}
         
-        {/* Light Green Tint Overlay */}
-        <div className="absolute inset-0 bg-green-500/20 mix-blend-soft-light" />
+        {/* Enhanced Green Tint Overlay */}
+        <div className="absolute inset-0 bg-green-500/25 mix-blend-soft-light" />
         
         {/* Background Gradient to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/85" />
