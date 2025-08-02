@@ -78,41 +78,56 @@ export function WorldClassHero() {
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url(${image})`,
-              opacity: currentImageIndex === index ? 0.56 : 0, // Increased from 0.41 to 0.56 (15% increase)
+              opacity: currentImageIndex === index ? 0.56 : 0,
             }}
-            initial={{ opacity: 0, scale: 1.1 }}
+            initial={{ opacity: 0, scale: 1.05 }}
             animate={{ 
               opacity: currentImageIndex === index ? 0.56 : 0,
-              scale: currentImageIndex === index ? [1.1, 1.05, 1.08, 1.05] : 1.1
+              scale: currentImageIndex === index ? 1.05 : 1.1
             }}
             transition={{ 
-              duration: currentImageIndex === index ? 3 : 2,
-              ease: "easeInOut",
-              scale: {
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }
+              duration: 2.5,
+              ease: "easeInOut"
             }}
           >
-            {/* Ripple Effect Overlay */}
-            <motion.div
-              className="absolute inset-0"
-              animate={{
-                background: [
-                  "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%)",
-                  "radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1) 0%, transparent 50%)",
-                  "radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)",
-                  "radial-gradient(circle at 60% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)",
-                  "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%)"
-                ]
-              }}
-              transition={{
-                duration: 8,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-            />
+            {/* Subtle Ripple Effect - Only on Active Image */}
+            {currentImageIndex === index && (
+              <motion.div
+                className="absolute inset-0 opacity-30"
+                animate={{
+                  background: [
+                    "radial-gradient(circle at 30% 40%, rgba(255,255,255,0.08) 20%, transparent 60%)",
+                    "radial-gradient(circle at 70% 60%, rgba(255,255,255,0.08) 20%, transparent 60%)",
+                    "radial-gradient(circle at 40% 70%, rgba(255,255,255,0.08) 20%, transparent 60%)",
+                    "radial-gradient(circle at 60% 30%, rgba(255,255,255,0.08) 20%, transparent 60%)",
+                    "radial-gradient(circle at 30% 40%, rgba(255,255,255,0.08) 20%, transparent 60%)"
+                  ]
+                }}
+                transition={{
+                  duration: 12,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              />
+            )}
+            
+            {/* Gentle Breathing Effect - Only on Active Image */}
+            {currentImageIndex === index && (
+              <motion.div
+                className="absolute inset-0"
+                animate={{
+                  opacity: [0.1, 0.2, 0.1]
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+                style={{
+                  background: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, transparent 70%)"
+                }}
+              />
+            )}
           </motion.div>
         ))}
         
