@@ -269,20 +269,19 @@ export function WorldClassHero() {
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
             >
-               <Button size="lg" className="px-10 py-6 text-xl font-semibold font-playfair relative overflow-hidden group shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200">
+               <Button 
+                size="lg" 
+                className="px-10 py-6 text-xl font-semibold font-playfair bg-gradient-to-r from-primary to-primary-light hover:from-primary-light hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl hover:shadow-primary/25 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 border-0 group"
+              >
                 <motion.span
-                  className="relative z-10 flex items-center"
+                  className="flex items-center"
                   initial={{ x: 0 }}
                   whileHover={{ x: 2 }}
                   transition={{ duration: 0.2 }}
                 >
                   Register Interest
-                  <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 transition-transform duration-200" />
+                  <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 group-hover:scale-110 transition-all duration-300" />
                 </motion.span>
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-primary-light to-primary opacity-0 group-hover:opacity-100"
-                  transition={{ duration: 0.3 }}
-                />
               </Button>
             </motion.div>
           </motion.div>
