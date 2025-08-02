@@ -6,12 +6,10 @@ import contemporary1 from "@/assets/contemporary-1.jpg";
 import contemporary2 from "@/assets/contemporary-2.jpg";
 import contemporary3 from "@/assets/contemporary-3.jpg";
 import contemporary4 from "@/assets/contemporary-4.jpg";
-import contemporary5 from "@/assets/contemporary-5.jpg";
-import contemporary6 from "@/assets/contemporary-6.jpg";
-import contemporary7 from "@/assets/contemporary-7.jpg";
-import contemporary8 from "@/assets/contemporary-8.jpg";
-import contemporary9 from "@/assets/contemporary-9.jpg";
-import contemporary10 from "@/assets/contemporary-10.jpg";
+import modernBuilding1 from "@/assets/modern-building-1.jpg";
+import modernBuilding2 from "@/assets/modern-building-2.jpg";
+import modernBuilding3 from "@/assets/modern-building-3.jpg";
+import modernBuilding5 from "@/assets/modern-building-5.jpg";
 
 export function WorldClassHero() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -24,7 +22,7 @@ export function WorldClassHero() {
   const springX = useSpring(mouseX, { stiffness: 150, damping: 50 });
   const springY = useSpring(mouseY, { stiffness: 150, damping: 50 });
 
-  const skylineImages = [contemporary1, contemporary2, contemporary3, contemporary4, contemporary5, contemporary6, contemporary7, contemporary8, contemporary9, contemporary10];
+  const skylineImages = [contemporary1, contemporary2, contemporary3, contemporary4, modernBuilding1, modernBuilding2, modernBuilding3, modernBuilding5];
   const typewriterFullText = "Modern Modeling Infrastructure for the GCC";
 
   useEffect(() => {
