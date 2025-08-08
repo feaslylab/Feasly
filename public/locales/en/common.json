@@ -38,6 +38,18 @@
     "headline": "Docs that don't feel like docs.",
     "quickLinks": "Quickstart · FAQ · API (soon) · Video library"
   },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "model": "Feasly Model",
+    "flow": "Feasly Flow",
+    "finance": "Feasly Finance",
+    "consolidate": "Feasly Consolidate",
+    "insights": "Feasly Insights",
+    "alerts": "Alerts",
+    "settings": "Settings",
+    "newProject": "New Project"
+  },
   "trust": {
     "encryption": "Bank-grade encryption",
     "datacentres": "Regional data centres", 
