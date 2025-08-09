@@ -284,7 +284,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
       )}
 
       {/* Main Content - Removed pt-0, proper spacing */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden relative z-50 pointer-events-auto isolation-auto">
         {/* Simplified Header - Remove sticky to prevent conflicts */}
         <div className="border-b bg-background shadow-sm">
           <div className="flex flex-wrap items-center justify-between p-4 gap-4">
