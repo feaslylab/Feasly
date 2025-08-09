@@ -28,7 +28,7 @@ const App = () => {
             <Sonner />
               <div className="min-h-screen bg-background">
                 <Header />
-                <main>
+                <main className="pt-14">
                   <Suspense fallback={<div>Loading...</div>}>
                     <Routes>
                       <Route path="/" element={<Navigate to="/projects" replace />} />
