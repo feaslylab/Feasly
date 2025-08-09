@@ -116,7 +116,16 @@ export const Sidebar = () => {
           <div className="px-4 pb-2 pt-6 flex-shrink-0">
             <Button 
               asChild
-              className={cn("w-full justify-start gap-3 px-3 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary", isRTL && !isCollapsed && "flex-row-reverse")}
+              className={cn(
+                "relative w-full justify-start gap-3 px-3 py-3 text-primary-foreground",
+                "rounded-lg bg-gradient-to-b from-primary/95 to-primary-dark",
+                "ring-1 ring-border",
+                "shadow-[0_6px_0_hsl(var(--primary)/0.55),_0_10px_20px_-10px_hsl(var(--primary)/0.45)]",
+                "hover:shadow-[0_8px_0_hsl(var(--primary)/0.55),_0_12px_24px_-10px_hsl(var(--primary)/0.5)]",
+                "transition-all duration-200 hover:translate-y-[-1px] active:translate-y-0",
+                "before:absolute before:inset-x-0 before:top-0 before:h-[45%] before:bg-gradient-to-b before:from-primary-foreground/15 before:to-transparent before:pointer-events-none before:rounded-lg",
+                isRTL && !isCollapsed && "flex-row-reverse"
+              )}
             >
               <NavLink to="/projects">
                 <Plus className="w-4 h-4" />
