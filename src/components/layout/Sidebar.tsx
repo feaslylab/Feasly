@@ -116,10 +116,10 @@ export const Sidebar = () => {
           <div className="px-4 pb-2 pt-6 flex-shrink-0">
             <Button 
               asChild
-              className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
+              className={cn("w-full justify-start gap-3 px-3 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary", isRTL && !isCollapsed && "flex-row-reverse")}
             >
               <NavLink to="/projects">
-                <Plus className={cn("w-4 h-4", isRTL ? "ml-2" : "mr-2")} />
+                <Plus className="w-4 h-4" />
                 {t('nav.newProject')}
               </NavLink>
             </Button>
