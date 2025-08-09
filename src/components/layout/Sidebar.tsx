@@ -113,7 +113,7 @@ export const Sidebar = () => {
 
         {/* Quick Action */}
         {!isCollapsed && (
-          <div className="px-4 pb-4 pt-6 flex-shrink-0">
+          <div className="px-4 pb-2 pt-6 flex-shrink-0">
             <Button 
               asChild
               className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
@@ -128,7 +128,7 @@ export const Sidebar = () => {
 
         {/* Navigation - Scrollable */}
         <nav className={cn(
-          "flex-1 py-4 space-y-2 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent",
+          "flex-1 pt-2 pb-4 space-y-2 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent",
           isCollapsed ? "px-3" : "px-4"
         )}>
           {navigation.map((item) => (
