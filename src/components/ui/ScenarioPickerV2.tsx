@@ -48,7 +48,7 @@ async function fetchUserScenarios(userId: string): Promise<ScenarioOption[]> {
       scenarioId: 'base-scenario',
       scenarioType: 'base',
       displayName: 'North Tower – Base',
-      value: 'demo-project-1-base-scenario'
+      value: 'demo-project-1::base-scenario'
     },
     {
       projectId: 'demo-project-1',
@@ -56,7 +56,7 @@ async function fetchUserScenarios(userId: string): Promise<ScenarioOption[]> {
       scenarioId: 'optimistic-scenario',
       scenarioType: 'optimistic',
       displayName: 'North Tower – Optimistic',
-      value: 'demo-project-1-optimistic-scenario'
+      value: 'demo-project-1::optimistic-scenario'
     },
     {
       projectId: 'demo-project-2',
@@ -64,7 +64,7 @@ async function fetchUserScenarios(userId: string): Promise<ScenarioOption[]> {
       scenarioId: 'base-scenario',
       scenarioType: 'base',
       displayName: 'Marina Plaza – Base',
-      value: 'demo-project-2-base-scenario'
+      value: 'demo-project-2::base-scenario'
     }
   ];
 
@@ -122,7 +122,7 @@ export function ScenarioPickerV2({
     const scenarioId = value?.scenarioId || params.scenarioId;
     
     if (projectId && scenarioId) {
-      return `${projectId}-${scenarioId}`;
+      return `${projectId}::${scenarioId}`;
     }
     return '';
   }, [value, params]);
@@ -133,19 +133,22 @@ export function ScenarioPickerV2({
   const handleValueChange = (newValue: string) => {
     if (disabled || isCalculating) return;
     
-    const [projectId, scenarioId] = newValue.split('-');
-    if (!projectId || !scenarioId) return;
+    const [selectedProjectId, selectedScenarioId] = newValue.split('::');
+    if (!selectedProjectId || !selectedScenarioId) return;
+
+    const isUuid = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+    const safeProjectId = isUuid(selectedProjectId) ? selectedProjectId : (params.projectId || selectedProjectId);
 
     // Determine the target route based on current location (allow override)
     const routeBase = baseRoute && baseRoute.length > 0
       ? baseRoute.replace(/^\//, '')
       : location.pathname.split('/')[1];
-    const targetPath = `/${routeBase}/${projectId}/${scenarioId}`;
+    const targetPath = `/${routeBase}/${safeProjectId}/${selectedScenarioId}`;
     
     const navigationSuccess = attemptNavigation(targetPath);
     
     if (navigationSuccess && onChange) {
-      onChange({ projectId, scenarioId });
+      onChange({ projectId: safeProjectId, scenarioId: selectedScenarioId });
     }
   };
 
