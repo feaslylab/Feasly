@@ -9,25 +9,6 @@
 
 /* Professional Project Management & Financial Modeling Design System */
 
-/* Floating animations for KPI cards */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-4px); }
-}
-
-@keyframes float-reverse {
-  0%, 100% { transform: translateY(-4px); }
-  50% { transform: translateY(0px); }
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-float-reverse {
-  animation: float-reverse 6s ease-in-out infinite;
-}
-
 @layer base {
   :root {
     /* Brand Colors - Matching Feasly Logo Gradient (Darker) */

@@ -66,7 +66,7 @@ export function WorldClassHero() {
 
   return (
     <section 
-      className="min-h-[90vh] flex flex-col items-center justify-center relative overflow-hidden"
+      className="min-h-[95vh] flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-background via-background/98 to-muted/30"
       onMouseMove={handleMouseMove}
     >
       {/* Premium Background with Rotating Skylines */}
@@ -78,22 +78,46 @@ export function WorldClassHero() {
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url(${image})`,
-              opacity: currentImageIndex === index ? 0.41 : 0, // 59% transparency = 0.41 opacity
+              opacity: currentImageIndex === index ? 0.56 : 0, // Increased from 0.41 to 0.56 (15% increase)
             }}
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 0, scale: 1.1 }}
             animate={{ 
-              opacity: currentImageIndex === index ? 0.41 : 0,
-              scale: currentImageIndex === index ? 1.05 : 1.1
+              opacity: currentImageIndex === index ? 0.56 : 0,
+              scale: currentImageIndex === index ? [1.1, 1.05, 1.08, 1.05] : 1.1
             }}
             transition={{ 
-              duration: 2,
-              ease: "easeInOut"
+              duration: currentImageIndex === index ? 3 : 2,
+              ease: "easeInOut",
+              scale: {
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }
             }}
-          />
+          >
+            {/* Ripple Effect Overlay */}
+            <motion.div
+              className="absolute inset-0"
+              animate={{
+                background: [
+                  "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                  "radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                  "radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                  "radial-gradient(circle at 60% 20%, rgba(255,255,255,0.1) 0%, transparent 50%)",
+                  "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 0%, transparent 50%)"
+                ]
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            />
+          </motion.div>
         ))}
         
-        {/* Light Green Tint Overlay */}
-        <div className="absolute inset-0 bg-green-500/20 mix-blend-soft-light" />
+        {/* Enhanced Green Tint Overlay */}
+        <div className="absolute inset-0 bg-green-500/25 mix-blend-soft-light" />
         
         {/* Background Gradient to ensure text readability */}
         <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/90 to-background/85" />
@@ -134,7 +158,7 @@ export function WorldClassHero() {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 relative z-10 max-w-6xl text-center">
+      <div className="container mx-auto px-6 lg:px-8 relative z-10 max-w-7xl text-center">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: isLoaded ? 1 : 0 }}
@@ -189,7 +213,7 @@ export function WorldClassHero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.6 }}
           >
-            <h1 className="text-5xl/tight md:text-7xl font-bold text-foreground max-w-4xl mx-auto mb-6">
+            <h1 className="text-5xl/tight md:text-7xl font-bold font-playfair text-foreground max-w-4xl mx-auto mb-6 tracking-tight">
               {showTypewriter ? (
                 <>
                   <span className="block">
@@ -197,7 +221,7 @@ export function WorldClassHero() {
                     {typewriterText.includes(' for the GCC') && (
                       <>
                         <br />
-                        <span className="bg-gradient-to-r from-primary via-primary-light to-primary-dark bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-primary via-primary-light to-primary-dark bg-clip-text text-transparent font-playfair">
                           for the GCC
                         </span>
                       </>
@@ -222,7 +246,7 @@ export function WorldClassHero() {
             transition={{ duration: 0.8, delay: 2.8 }} // After typewriter completes
           >
             <motion.p 
-              className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-10 leading-relaxed"
+              className="text-xl md:text-2xl font-playfair text-muted-foreground max-w-4xl mx-auto mb-10 leading-relaxed tracking-wide"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 3.0, duration: 1.2 }}
@@ -245,20 +269,19 @@ export function WorldClassHero() {
               whileTap={{ scale: 0.95 }}
               transition={{ duration: 0.2 }}
             >
-              <Button size="lg" className="px-8 py-4 text-lg font-semibold relative overflow-hidden group">
+               <Button 
+                size="lg" 
+                className="px-10 py-6 text-xl font-semibold font-playfair bg-gradient-to-r from-primary to-primary-light hover:from-primary-light hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl hover:shadow-primary/25 transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 border-0 group"
+              >
                 <motion.span
-                  className="relative z-10 flex items-center"
+                  className="flex items-center"
                   initial={{ x: 0 }}
                   whileHover={{ x: 2 }}
                   transition={{ duration: 0.2 }}
                 >
                   Register Interest
-                  <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform duration-200" />
+                  <ArrowRight className="ml-3 h-6 w-6 group-hover:translate-x-1 group-hover:scale-110 transition-all duration-300" />
                 </motion.span>
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-primary-light to-primary opacity-0 group-hover:opacity-100"
-                  transition={{ duration: 0.3 }}
-                />
               </Button>
             </motion.div>
           </motion.div>

@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { WaitlistForm } from "@/components/marketing/WaitlistForm";
 
@@ -33,7 +32,6 @@ const footerLinks = [
 ];
 
 export function MarketingFooter() {
-  const { t } = useTranslation('common');
   return (
     <footer className="bg-background border-t border-border py-12">
       <div className="container mx-auto px-4">
@@ -74,16 +72,6 @@ export function MarketingFooter() {
                   Terms of Service
                 </Link>
               </li>
-              <li>
-                <Link to="/careers" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  {t('footer.careers')}
-                </Link>
-              </li>
-              <li>
-                <Link to="/gdpr" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  {t('footer.gdpr')}
-                </Link>
-              </li>
             </ul>
           </div>
         </div>
@@ -103,7 +91,6 @@ export function MarketingFooter() {
             
             {/* Copyright and Company Info */}
             <div>
-              <p className="mb-1">{t('footer.legal')}</p>
               <p>© {new Date().getFullYear()} Feasly. Model the future. Manage with precision.</p>
               <p className="text-xs mt-1">Feasly Ltd</p>
             </div>

@@ -1,74 +1,133 @@
 {
-  "cta": {
-    "joinEarly": "Join Early Access"
-  },
-  "hero": {
-    "headline": "Your feasibility model...done in minutes, not weeks.",
-    "sub": "Upload Excel or EDMF, flip scenarios, export investor-ready reports."
-  },
-  "pain": {
-    "formula": "Formula errors → Instant accuracy",
-    "version": "Version chaos → Single source of truth",
-    "scenario": "Slow scenarios → Real-time what-if",
-    "handover": "Handover risk → Locked audit trail"
-  },
-  "mini": {
-    "import": "Excel / EDMF Import",
-    "scenario": "One-click Scenarios",
-    "zakat": "Zakat & VAT Ready",
-    "audit": "Audit Trail"
-  },
-  "how": {
-    "upload": "Upload",
-    "model": "Model",
-    "export": "Export"
-  },
-  "features": {
-    "saudiBanner": "Built on Saudi compliance rules. Zakat, VAT, Wafi ready at launch.",
-    "aiTitle": "AI Risk Flags",
-    "aiDesc": "Identifies risky assumptions before they cost you."
-  },
-  "compare": {
-    "column": {
-      "feasly": "Feasly",
-      "sheet": "Spreadsheet"
-    }
-  },
-  "docs": {
-    "headline": "Docs that don't feel like docs.",
-    "quickLinks": "Quickstart · FAQ · API (soon) · Video library"
-  },
+  "loading": "Loading...",
+  "save": "Save",
+  "cancel": "Cancel", 
+  "edit": "Edit",
+  "delete": "Delete",
+  "add": "Add",
+  "create": "Create",
+  "update": "Update",
+  "submit": "Submit",
+  "close": "Close",
+  "back": "Back",
+  "next": "Next",
+  "previous": "Previous",
+  "search": "Search",
+  "filter": "Filter",
+  "export": "Export",
+  "import": "Import", 
+  "download": "Download",
+  "upload": "Upload",
+  "yes": "Yes",
+  "no": "No",
+  "dashboard": "Dashboard",
+  "projects": "Projects", 
+  "settings": "Settings",
+  "newProject": "New Project",
+  "model": "Feasly Model",
+  "flow": "Feasly Flow",
+  "finance": "Feasly Finance",
+  "consolidate": "Feasly Consolidate", 
+  "insights": "Feasly Insights",
+  "alerts": "Portfolio Alerts",
   "nav": {
     "dashboard": "Dashboard",
     "projects": "Projects",
     "model": "Feasly Model",
-    "flow": "Feasly Flow",
+    "flow": "Feasly Flow", 
     "finance": "Feasly Finance",
     "consolidate": "Feasly Consolidate",
     "insights": "Feasly Insights",
-    "alerts": "Alerts",
+    "alerts": "Portfolio Alerts",
     "settings": "Settings",
     "newProject": "New Project"
   },
-  "trust": {
-    "encryption": "Bank-grade encryption",
-    "datacentres": "Regional data centres", 
-    "taxReady": "GCC tax-ready"
+  "auth": {
+    "account": "Account"
   },
-  "footer": {
-    "careers": "Careers",
-    "gdpr": "GDPR",
-    "legal": "© {year} Feasly. All rights reserved."
+  "settings": {
+    "theme": "Theme",
+    "language": "Language"
   },
-  "pricing": {
-    "faq": {
-      "afterTrialQ": "What happens after trial?",
-      "afterTrialA": "Choose a plan or export your data – no lock-in.",
-      "dataQ": "Is my data private?",
-      "dataA": "Yes. Single-tenant database hosted in the UAE."
+  "dashboard": {
+    "overview": "Overview of your real estate development portfolio",
+    "totalProjects": "Total Projects",
+    "activeProjects": "active projects",
+    "totalAssets": "Total Assets", 
+    "developmentProperties": "Development properties",
+    "portfolioValue": "Portfolio Value",
+    "totalConstructionCost": "Total construction cost",
+    "annualRevenue": "Annual Revenue",
+    "projectedYearlyIncome": "Projected yearly income",
+    "avgIRR": "Avg IRR",
+    "averageReturnRate": "Average return rate",
+    "kpiComparison": "KPI Comparison",
+    "kpiComparisonDesc": "Compare key performance indicators across different scenarios",
+    "baseCase": "Base Case",
+    "conservativeEstimates": "Conservative estimates", 
+    "optimistic": "Optimistic",
+    "bestCaseScenario": "Best case scenario",
+    "pessimistic": "Pessimistic",
+    "worstCaseScenario": "Worst case scenario"
+  },
+  "feasly": {
+    "model": {
+      "title": "Feasly Model"
+    },
+    "flow": {
+      "title": "Feasly Flow"
+    },
+    "finance": {
+      "title": "Feasly Finance"
+    },
+    "consolidate": {
+      "title": "Feasly Consolidate"
+    },
+    "insights": {
+      "title": "Feasly Insights"
+    },
+    "alerts": {
+      "title": "Portfolio Alerts"
     }
   },
-  "toast": {
-    "contactSuccess": "Thanks – our team will reply within one business day."
+  "finance": {
+    "title": "Financial Analysis",
+    "cashFlow": "Cash Flow",
+    "revenue": "Revenue",
+    "costs": "Costs",
+    "profit": "Profit",
+    "loss": "Loss",
+    "irr": "Internal Rate of Return",
+    "npv": "Net Present Value",
+    "roi": "Return on Investment",
+    "paybackPeriod": "Payback Period",
+    "profitMargin": "Profit Margin",
+    "totalConstructionCost": "Total Construction Cost",
+    "totalRevenue": "Total Revenue",
+    "scenario": "Scenario",
+    "baseCase": "Base Case",
+    "optimistic": "Optimistic",
+    "pessimistic": "Pessimistic"
+  },
+  "risk": {
+    "title": "Risk Analysis",
+    "riskLevel": "Risk Level",
+    "low": "Low",
+    "medium": "Medium", 
+    "high": "High",
+    "critical": "Critical",
+    "riskFactor": "Risk Factor",
+    "mitigation": "Mitigation",
+    "probability": "Probability",
+    "impact": "Impact",
+    "riskScore": "Risk Score"
+  },
+  "errors": {
+    "loadingFailed": "Failed to load data",
+    "saveFailed": "Failed to save changes",
+    "networkError": "Network connection error",
+    "unauthorized": "Access denied",
+    "tryAgain": "Try Again",
+    "contactSupport": "Contact Support"
   }
 }
