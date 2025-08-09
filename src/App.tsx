@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import Header from "@/layout/Header";
@@ -26,7 +26,6 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <BrowserRouter>
               <div className="min-h-screen bg-background">
                 <Header />
                 <main>
@@ -44,7 +43,6 @@ const App = () => {
                   </Suspense>
                 </main>
               </div>
-            </BrowserRouter>
           </TooltipProvider>
         </OrganizationProvider>
       </AuthProvider>
