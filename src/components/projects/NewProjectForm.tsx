@@ -5,11 +5,13 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { format } from "date-fns";
 import { CalendarIcon, ArrowLeft } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useOrganization } from "@/contexts/OrganizationContext";
 import { SUPPORTED_CURRENCIES } from "@/lib/currencyConversion";
 
 import { Button } from "@/components/ui/button";
@@ -61,6 +63,8 @@ export const NewProjectForm = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { currentOrganization } = useOrganization();
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<FormData>({
@@ -94,6 +98,7 @@ export const NewProjectForm = () => {
           end_date: data.end_date ? format(data.end_date, "yyyy-MM-dd") : null,
           currency_code: data.currency_code,
           user_id: user.id,
+          organization_id: currentOrganization?.id || null,
         })
         .select()
         .single();
@@ -107,7 +112,9 @@ export const NewProjectForm = () => {
         description: "Project created successfully",
       });
 
-      navigate(`/projects/${project.id}`);
+      // Refresh project lists and go back to dashboard
+      queryClient.invalidateQueries({ queryKey: ["organization-projects"] });
+      navigate("/projects");
     } catch (error) {
       console.error("Error creating project:", error);
       toast({
