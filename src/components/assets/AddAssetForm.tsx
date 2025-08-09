@@ -63,14 +63,15 @@ export const AddAssetForm = ({ projectId, trigger }: AddAssetFormProps) => {
 
   const createAssetMutation = useMutation({
     mutationFn: async (data: AssetFormData) => {
+      // Assets table doesn't have start_date - exclude it from insert
+      const { start_date, ...assetValues } = data;
+      const payload = {
+        project_id: projectId,
+        ...assetValues,
+      } as any;
       const { error } = await supabase
         .from("assets")
-        .insert({
-          project_id: projectId,
-          ...data,
-          start_date: data.start_date?.toISOString().split('T')[0], // Convert to YYYY-MM-DD
-        });
-
+        .insert(payload);
       if (error) throw error;
     },
     onSuccess: () => {

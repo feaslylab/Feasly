@@ -90,7 +90,7 @@ export const FinancialSummaryCards = ({
       
       const { data, error } = await supabase
         .from("scenario_overrides")
-        .select("*")
+        .select("asset_id, field_name, override_value")
         .eq("scenario_id", selectedScenarioId);
 
       if (error) {
@@ -98,8 +98,7 @@ export const FinancialSummaryCards = ({
         // Don't show toast for this error as it's expected for now
         return [];
       }
-      
-      return data || [];
+      return (data || []) as ScenarioOverride[];
     },
     enabled: !!selectedScenarioId,
   });

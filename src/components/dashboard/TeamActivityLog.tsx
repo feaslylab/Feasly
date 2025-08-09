@@ -40,44 +40,37 @@ export const TeamActivityLog = ({ filters }: TeamActivityLogProps) => {
 
       // Build query with filters
       let query = supabase
-        .from('activity_log')
+        .from('organization_audit_logs')
         .select(`
           id,
-          user_name,
           action,
-          timestamp,
-          project_id,
-          projects (
-            name
-          )
+          created_at,
+          resource_type,
+          resource_id,
+          organization_id
         `)
-        .order('timestamp', { ascending: false })
+        .order('created_at', { ascending: false })
         .limit(20);
 
-      // Apply project filter if selected
-      if (filters.projectId) {
-        query = query.eq('project_id', filters.projectId);
-      }
+      // Project filter not applicable to organization_audit_logs
 
-      // Apply date filter if selected
       if (filters.dateRange) {
         const daysAgo = new Date();
         daysAgo.setDate(daysAgo.getDate() - filters.dateRange);
-        query = query.gte('timestamp', daysAgo.toISOString());
+        query = query.gte('created_at', daysAgo.toISOString());
       }
 
       const { data: activityData, error } = await query;
 
       if (error) throw error;
 
-      // Transform the data to include project names
-      const transformedActivities = activityData?.map(activity => ({
+      const transformedActivities = activityData?.map((activity: any) => ({
         id: activity.id,
-        user_name: activity.user_name,
+        user_name: 'User',
         action: activity.action,
-        timestamp: activity.timestamp,
-        project_id: activity.project_id,
-        project_name: (activity.projects as any)?.name || null,
+        timestamp: activity.created_at,
+        project_id: undefined,
+        project_name: undefined,
       })) || [];
 
       setActivities(transformedActivities);

@@ -10,17 +10,16 @@ interface Asset {
   id: string;
   project_id: string;
   name: string;
-  type: 'Residential' | 'Mixed Use' | 'Retail' | 'Hospitality' | 'Infrastructure';
-  gfa_sqm: number;
-  construction_cost_aed: number;
-  annual_operating_cost_aed: number;
-  annual_revenue_aed: number;
-  occupancy_rate_percent: number;
-  cap_rate_percent: number;
-  development_timeline_months: number;
-  stabilization_period_months: number;
-  created_at: string;
-  updated_at: string;
+  asset_type: 'Residential' | 'Mixed Use' | 'Retail' | 'Hospitality' | 'Infrastructure';
+  gfa_sqm: number | null;
+  construction_cost_aed: number | null;
+  operating_cost_aed: number | null;
+  annual_revenue_aed: number | null;
+  occupancy_rate_percent: number | null;
+  cap_rate_percent: number | null;
+  development_timeline_months: number | null;
+  stabilization_period_months: number | null;
+  created_at: string | null;
 }
 
 interface ScenarioOverride {
@@ -65,7 +64,7 @@ export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario, ca
     queryFn: async () => {
       const { data, error } = await supabase
         .from("assets")
-        .select("*")
+        .select("id, project_id, name, asset_type, gfa_sqm, construction_cost_aed, operating_cost_aed, annual_revenue_aed, occupancy_rate_percent, cap_rate_percent, development_timeline_months, stabilization_period_months, created_at")
         .eq("project_id", projectId)
         .order("created_at", { ascending: false });
 
@@ -82,7 +81,7 @@ export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario, ca
       
       const { data, error } = await supabase
         .from("scenario_overrides")
-        .select("*")
+        .select("id, scenario_id, asset_id, field_name, override_value")
         .eq("scenario_id", selectedScenarioId);
 
       if (error) throw error;
@@ -97,7 +96,8 @@ export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario, ca
     if (override) {
       return override.override_value;
     }
-    return asset[fieldName as keyof Asset] as number;
+    const value = asset[fieldName as keyof Asset] as number | null | undefined;
+    return value ?? 0;
   };
 
   if (isLoading) {
@@ -163,7 +163,7 @@ export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario, ca
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">{asset.name}</CardTitle>
               <div className="flex items-center gap-2">
-                <Badge variant="secondary">{asset.type}</Badge>
+                <Badge variant="secondary">{asset.asset_type}</Badge>
                 {canEdit && selectedScenario && !selectedScenario.is_base && selectedScenarioId && (
                   <EditScenarioValuesForm 
                     asset={asset}
@@ -174,7 +174,7 @@ export const AssetsList = ({ projectId, selectedScenarioId, selectedScenario, ca
               </div>
             </div>
             <CardDescription>
-              {formatNumber(asset.gfa_sqm)} sqm • {asset.development_timeline_months} months
+              {formatNumber(asset.gfa_sqm || 0)} sqm • {(asset.development_timeline_months ?? 0)} months
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

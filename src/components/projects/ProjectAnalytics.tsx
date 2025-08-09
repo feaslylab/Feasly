@@ -101,11 +101,11 @@ export const ProjectAnalytics = ({ projectId, assets, projectCurrency = "AED" }:
       const scenarioIds = scenarios.map(s => s.id);
       const { data, error } = await supabase
         .from("scenario_overrides")
-        .select("*")
+        .select("scenario_id, asset_id, field_name, override_value")
         .in("scenario_id", scenarioIds);
 
       if (error) throw error;
-      return data;
+      return (data || []) as { scenario_id: string; asset_id: string; field_name: string; override_value: number }[];
     },
     enabled: !!scenarios && scenarios.length > 0,
   });
@@ -166,8 +166,8 @@ export const ProjectAnalytics = ({ projectId, assets, projectCurrency = "AED" }:
 
   // Calculate metrics for all scenarios
   const scenarioMetrics = scenarios.map(scenario => {
-    const scenarioOverrides = allOverrides.filter(o => o.scenario_id === scenario.id);
-    const metrics = calculateFinancialMetrics(assets, scenarioOverrides);
+    const scenarioOverrides = allOverrides.filter((o: any) => o.scenario_id === scenario.id);
+    const metrics = calculateFinancialMetrics(assets, scenarioOverrides as any);
     
     // Use name as type fallback, or determine type from name
     let scenarioType = scenario.name;
