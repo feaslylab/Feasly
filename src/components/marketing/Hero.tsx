@@ -3,17 +3,46 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import heroLaptop from "@/assets/hero-laptop.jpg";
+import bg1 from "@/assets/hero-bg-1.jpg";
+import bg2 from "@/assets/hero-bg-2.jpg";
+import bg3 from "@/assets/hero-bg-3.jpg";
 
 export function Hero() {
   const { t } = useTranslation('common');
 
   return (
     <section 
-      className="relative py-24 lg:py-32 min-h-[90vh] bg-cover bg-center bg-no-repeat overflow-hidden"
-      style={{ backgroundImage: "url('/assets/hero-bg.jpg')" }}
+      className="relative py-24 lg:py-32 min-h-[90vh] overflow-hidden"
     >
-      {/* Background overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/80" />
+      {/* Background rotating images */}
+      <div className="absolute inset-0">
+        <motion.img
+          src={bg1}
+          alt="Abstract green-tinted background 1"
+          className="w-full h-full object-cover absolute inset-0"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: [1, 0, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.img
+          src={bg2}
+          alt="Abstract green-tinted background 2"
+          className="w-full h-full object-cover absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 0] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 6 }}
+        />
+        <motion.img
+          src={bg3}
+          alt="Abstract green-tinted background 3"
+          className="w-full h-full object-cover absolute inset-0"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 0, 1] }}
+          transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 12 }}
+        />
+      </div>
+      {/* Background overlay tint */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-background/60 to-background/80" />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-[900px] mx-auto text-center">
@@ -71,7 +100,7 @@ export function Hero() {
       
       {/* Floating KPI Cards */}
       <motion.div 
-        className="absolute left-5 top-1/4 animate-float hidden lg:block"
+        className="absolute left-10 xl:left-20 top-1/4 animate-float hidden lg:block"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 1 }}
@@ -83,7 +112,7 @@ export function Hero() {
       </motion.div>
       
       <motion.div 
-        className="absolute right-6 top-1/3 animate-float-reverse hidden lg:block"
+        className="absolute right-10 xl:right-20 top-1/3 animate-float-reverse hidden lg:block"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 1.2 }}
