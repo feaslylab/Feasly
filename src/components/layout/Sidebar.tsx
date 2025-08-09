@@ -113,7 +113,7 @@ export const Sidebar = () => {
 
         {/* Quick Action */}
         {!isCollapsed && (
-          <div className="p-4 flex-shrink-0">
+          <div className="px-4 pb-4 pt-6 flex-shrink-0">
             <Button 
               asChild
               className="w-full bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary"
