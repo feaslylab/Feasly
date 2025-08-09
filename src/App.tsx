@@ -7,6 +7,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import Header from "@/layout/Header";
+import { Sidebar } from "@/components/layout/Sidebar";
 
 const Index = lazy(() => import("./pages/Index"));
 const NewProject = lazy(() => import("./pages/NewProject"));
@@ -27,22 +28,25 @@ const App = () => {
             <Toaster />
             <Sonner />
               <div className="min-h-screen bg-background">
-                <Header />
-                <main className="pt-14">
-                  <Suspense fallback={<div>Loading...</div>}>
-                    <Routes>
-                      <Route path="/" element={<Navigate to="/projects" replace />} />
-                      <Route path="/projects" element={<Projects />} />
-                      <Route path="/projects/new" element={<NewProject />} />
-                      <Route path="/feasly-model/:projectId/:scenarioId" element={<FeaslyModel />} />
-                      <Route path="/demo" element={<DemoPage />} />
-                      <Route path="/demo-project" element={<DemoProject />} />
-                      <Route path="/auth" element={<Auth />} />
-                      <Route path="/welcome" element={<Index />} />
-                      <Route path="*" element={<Navigate to="/projects" replace />} />
-                    </Routes>
-                  </Suspense>
-                </main>
+                <Sidebar />
+                <div className="flex flex-col min-w-0 min-h-screen sidebar-auto-space">
+                  <Header />
+                  <main className="pt-14">
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <Routes>
+                        <Route path="/" element={<Navigate to="/projects" replace />} />
+                        <Route path="/projects" element={<Projects />} />
+                        <Route path="/projects/new" element={<NewProject />} />
+                        <Route path="/feasly-model/:projectId/:scenarioId" element={<FeaslyModel />} />
+                        <Route path="/demo" element={<DemoPage />} />
+                        <Route path="/demo-project" element={<DemoProject />} />
+                        <Route path="/auth" element={<Auth />} />
+                        <Route path="/welcome" element={<Index />} />
+                        <Route path="*" element={<Navigate to="/projects" replace />} />
+                      </Routes>
+                    </Suspense>
+                  </main>
+                </div>
               </div>
           </TooltipProvider>
         </OrganizationProvider>
