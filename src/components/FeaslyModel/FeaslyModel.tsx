@@ -2,14 +2,16 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "react-i18next";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useSearchParams, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useSearchParams, useParams, useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import { Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { feaslyModelSchema, type FeaslyModelFormData, type ScenarioType } from "./types";
+import { supabase } from "@/integrations/supabase/client";
+import { useSelectionStore } from "@/state/selectionStore";
 import { ProjectMetadata } from "./ProjectMetadata";
 import { TimelineSection } from "./TimelineSection";
 import { SiteMetrics } from "./SiteMetrics";
@@ -56,6 +58,44 @@ export default function FeaslyModel() {
   // Get project ID from URL params or use compliance demo project
   const projectId = params.projectId || searchParams.get('projectId') || "f47ac10b-58cc-4372-a567-0e02b2c3d479";
   const { milestones } = useMilestones(projectId);
+  
+  // Sync selection store with route params and resolve 'base-scenario' alias
+  const { setProject, setScenario } = useSelectionStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!projectId) return;
+    setProject(projectId);
+
+    const scenarioParam = (params as any).scenarioId as string | undefined;
+
+    const resolveScenario = async () => {
+      if (!scenarioParam || scenarioParam === 'base-scenario') {
+        const { data, error } = await supabase
+          .from('scenarios')
+          .select('id, is_base')
+          .eq('project_id', projectId)
+          .order('is_base', { ascending: false })
+          .limit(1)
+          .single();
+
+        const resolvedId = data?.id as string | undefined;
+        if (resolvedId) {
+          setScenario(resolvedId);
+          if (scenarioParam !== resolvedId) {
+            navigate(`/feasly-model/${projectId}/${resolvedId}`, { replace: true });
+          }
+        } else {
+          setScenario(null);
+        }
+      } else {
+        setScenario(scenarioParam);
+      }
+    };
+
+    resolveScenario();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, (params as any).scenarioId]);
   
   // Get export data to retrieve project name
   const { data: exportData } = useExportData(projectId);
