@@ -92,7 +92,7 @@ export function SectionPanel({
       >
         {/* Animated background gradient */}
         <motion.div
-          className="absolute inset-0 opacity-0 bg-gradient-to-r from-primary/3 to-primary-light/3"
+          className="absolute inset-0 opacity-0 bg-gradient-to-r from-primary/3 to-primary-light/3 pointer-events-none"
           animate={{ opacity: isOpen ? 1 : 0 }}
           transition={{ duration: 0.3 }}
         />
