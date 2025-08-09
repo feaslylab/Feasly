@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { Building2, Calendar, FileText, Monitor } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { ReadOnlyScenarioSelector } from "@/components/scenarios/ReadOnlyScenarioSelector";
 import { FinancialSummaryCards } from "@/components/financial/FinancialSummaryCards";
 

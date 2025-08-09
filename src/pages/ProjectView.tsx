@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { ArrowLeft, Building2, Calendar, FileText, Lock } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { ReadOnlyScenarioSelector } from "@/components/scenarios/ReadOnlyScenarioSelector";
 import { FinancialSummaryCards } from "@/components/financial/FinancialSummaryCards";

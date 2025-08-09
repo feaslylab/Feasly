@@ -8,7 +8,7 @@ import { calculateFinancialMetrics } from "@/lib/financialCalculations";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { AddAssetForm } from "@/components/assets/AddAssetForm";
 import { AssetsList } from "@/components/assets/AssetsList";

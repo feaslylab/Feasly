@@ -36,8 +36,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [lastActivity, setLastActivity] = useState(Date.now());
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Listen for auth changes FIRST
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!import.meta.env.PROD) console.log('Auth state change:', event, 'session:', session, 'user:', session?.user);
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
@@ -46,11 +49,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     });
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!import.meta.env.PROD) console.log('Auth state change:', event, 'session:', session, 'user:', session?.user);
+    // Then get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);

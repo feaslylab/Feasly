@@ -4,7 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "@/components/auth/AuthProvider";
+
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import Header from "@/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -16,13 +16,13 @@ const DemoPage = lazy(() => import("./pages/DemoPage"));
 const DemoProject = lazy(() => import("./pages/DemoProject"));
 const Auth = lazy(() => import("./pages/Auth").then(m => ({ default: (m as any).default ?? (m as any).AuthPage })));
 const FeaslyModel = lazy(() => import("./components/FeaslyModel/FeaslyModel"));
-
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const queryClient = new QueryClient();
 
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      
         <OrganizationProvider>
           <TooltipProvider>
             <Toaster />
@@ -41,8 +41,8 @@ const App = () => {
                         <Route path="/demo" element={<DemoPage />} />
                         <Route path="/demo-project" element={<DemoProject />} />
                         <Route path="/auth" element={<Auth />} />
+                        <Route path="/reset-password" element={<ResetPassword />} />
                         <Route path="/welcome" element={<Index />} />
-                        <Route path="*" element={<Navigate to="/projects" replace />} />
                       </Routes>
                     </Suspense>
                   </main>
@@ -50,7 +50,7 @@ const App = () => {
               </div>
           </TooltipProvider>
         </OrganizationProvider>
-      </AuthProvider>
+      
     </QueryClientProvider>
   );
 };

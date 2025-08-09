@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useOrganization } from "@/contexts/OrganizationContext";
 import { SUPPORTED_CURRENCIES } from "@/lib/currencyConversion";
