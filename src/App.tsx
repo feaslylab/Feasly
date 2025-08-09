@@ -129,6 +129,7 @@ const AppRoutes = () => {
       </Route>
       <Route path="/feasly-model" element={<AppLayout />}>
         <Route index element={<FeaslyModel />} />
+        <Route path=":projectId/:scenarioId" element={<FeaslyModel />} />
         <Route path=":projectId/cash-flow" element={<CashFlowPage />} />
         <Route path=":projectId/:scenarioId/cash-flow" element={<CashFlowPage />} />
         <Route path=":projectId/:scenarioId/risk" element={<RiskPage />} />

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -51,9 +51,10 @@ export default function FeaslyModel() {
   const { toast } = useToast();
   const [activeScenario, setActiveScenario] = useState<ScenarioType>("base");
   const [searchParams] = useSearchParams();
+  const params = useParams();
   
   // Get project ID from URL params or use compliance demo project
-  const projectId = searchParams.get('projectId') || "f47ac10b-58cc-4372-a567-0e02b2c3d479";
+  const projectId = params.projectId || searchParams.get('projectId') || "f47ac10b-58cc-4372-a567-0e02b2c3d479";
   const { milestones } = useMilestones(projectId);
   
   // Get export data to retrieve project name

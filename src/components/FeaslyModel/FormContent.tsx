@@ -34,6 +34,8 @@ import { ComplianceStatusPanel } from './ComplianceStatusPanel';
 import { CommentingPanel } from './CommentingPanel';
 import { RightSideValidationPanel } from './RightSideValidationPanel';
 import { FloatingActionMenu } from '@/components/ui/floating-action-menu';
+import { ScenarioPickerV2 } from '@/components/ui/ScenarioPickerV2';
+import { useSelectionStore } from '@/state/selectionStore';
 
 interface FormContentProps {
   projectId: string;
@@ -45,6 +47,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const { handleSubmit, watch } = useFormContext<FeaslyModelFormData>();
+  const { projectId: selectedProjectId, scenarioId: selectedScenarioId, setProject, setScenario } = useSelectionStore();
 
   // State management
   const [openSections, setOpenSections] = useState<Set<string>>(new Set(['project-metadata']));
@@ -286,12 +289,24 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
         <div className="border-b bg-background shadow-sm">
           <div className="flex flex-wrap items-center justify-between p-4 gap-4">
             <div className="flex items-center gap-4 min-w-0">
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg font-semibold text-foreground">Feasibility Model</h1>
-              </div>
-              
-               {/* Compact KPIs */}
-               <div className="hidden md:flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <h1 className="text-lg font-semibold text-foreground">Feasibility Model</h1>
+            </div>
+            
+            {/* Full Scenario Picker for modeling */}
+            <div className="w-64">
+              <ScenarioPickerV2
+                value={{ projectId: selectedProjectId, scenarioId: selectedScenarioId }}
+                onChange={({ projectId, scenarioId }) => {
+                  setProject(projectId);
+                  setScenario(scenarioId);
+                }}
+                baseRoute="feasly-model"
+              />
+            </div>
+            
+             {/* Compact KPIs */}
+             <div className="hidden md:flex items-center gap-2">
                  <Badge variant="outline" className="text-xs px-2 py-1">
                    NPV: <span className="font-medium text-emerald-600">AED 2.3M</span>
                  </Badge>

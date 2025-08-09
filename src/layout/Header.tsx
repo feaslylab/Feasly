@@ -15,6 +15,7 @@ import ScenarioRenameDialog from '@/components/modals/ScenarioRenameDialog';
 import GlobalActions from "@/components/layout/GlobalActions";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { ScenarioPickerV2 } from "@/components/ui/ScenarioPickerV2";
 
 export default function Header() {
   const { user } = useAuth();
@@ -93,8 +94,21 @@ export default function Header() {
           </div>
         </div>
 
-         {/* Right side - Global Actions */}
-         <GlobalActions onAlertsClick={() => setAlertDrawerOpen(true)} />
+         {/* Right side - Scenario picker + Global Actions */}
+         <div className="flex items-center gap-4">
+           <div className="hidden md:block">
+             <ScenarioPickerV2
+               value={{ projectId, scenarioId }}
+               onChange={({ projectId: pId, scenarioId: sId }) => {
+                 setProject(pId);
+                 setScenario(sId);
+               }}
+               className="w-64"
+               baseRoute="feasly-model"
+             />
+           </div>
+           <GlobalActions onAlertsClick={() => setAlertDrawerOpen(true)} />
+         </div>
        </div>
 
       <AlertDrawer 

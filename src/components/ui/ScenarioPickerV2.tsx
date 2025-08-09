@@ -35,6 +35,7 @@ interface ScenarioPickerV2Props {
   disabled?: boolean;
   isCalculating?: boolean;
   className?: string;
+  baseRoute?: string; // optional override for the base route to navigate to
 }
 
 // Fetch scenarios for the user - simplified version for MVP
@@ -75,7 +76,8 @@ export function ScenarioPickerV2({
   onChange,
   disabled = false,
   isCalculating = false,
-  className
+  className,
+  baseRoute
 }: ScenarioPickerV2Props) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -134,9 +136,11 @@ export function ScenarioPickerV2({
     const [projectId, scenarioId] = newValue.split('-');
     if (!projectId || !scenarioId) return;
 
-    // Determine the target route based on current location
-    const currentRoute = location.pathname.split('/')[1];
-    const targetPath = `/${currentRoute}/${projectId}/${scenarioId}`;
+    // Determine the target route based on current location (allow override)
+    const routeBase = baseRoute && baseRoute.length > 0
+      ? baseRoute.replace(/^\//, '')
+      : location.pathname.split('/')[1];
+    const targetPath = `/${routeBase}/${projectId}/${scenarioId}`;
     
     const navigationSuccess = attemptNavigation(targetPath);
     
