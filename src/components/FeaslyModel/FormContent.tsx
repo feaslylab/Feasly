@@ -34,7 +34,7 @@ import { ComplianceStatusPanel } from './ComplianceStatusPanel';
 import { CommentingPanel } from './CommentingPanel';
 import { RightSideValidationPanel } from './RightSideValidationPanel';
 import { FloatingActionMenu } from '@/components/ui/floating-action-menu';
-import { ScenarioPickerV2 } from '@/components/ui/ScenarioPickerV2';
+import ScenarioPickerV2 from '@/components/ui/ScenarioPickerV2';
 import { useSelectionStore } from '@/state/selectionStore';
 
 interface FormContentProps {

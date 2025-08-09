@@ -15,7 +15,7 @@ interface Project {
 interface Scenario {
   id: string;
   name: string;
-  type: string;
+  type?: string;
   project_id: string;
   is_base: boolean;
 }
@@ -55,7 +55,7 @@ export const useProjectScenarios = () => {
       const projectIds = projects.map(p => p.id);
       const { data, error } = await supabase
         .from('scenarios')
-        .select('id, name, type, project_id, is_base')
+        .select('id, name, project_id, is_base')
         .in('project_id', projectIds)
         .order('is_base', { ascending: false });
 
@@ -84,7 +84,7 @@ export const useProjectScenarios = () => {
       projectId: project.id,
       projectName: project.name,
       scenarioId: scenario.id,
-      scenarioType: scenario.type.toLowerCase(),
+      scenarioType: scenario.type ? scenario.type.toLowerCase() : (scenario.is_base ? 'base' : 'variant'),
       displayName: `${project.name} – ${scenario.name}`,
       value: `${project.id}::${scenario.id}`
     }));

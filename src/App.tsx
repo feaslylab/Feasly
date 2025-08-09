@@ -13,7 +13,7 @@ const NewProject = lazy(() => import("./pages/NewProject"));
 const Projects = lazy(() => import("./pages/Projects"));
 const DemoPage = lazy(() => import("./pages/DemoPage"));
 const DemoProject = lazy(() => import("./pages/DemoProject"));
-const Auth = lazy(() => import("./pages/Auth"));
+const Auth = lazy(() => import("./pages/Auth").then(m => ({ default: (m as any).default ?? (m as any).Auth })));
 const FeaslyModel = lazy(() => import("./components/FeaslyModel/FeaslyModel"));
 
 const queryClient = new QueryClient();

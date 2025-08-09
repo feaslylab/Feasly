@@ -15,7 +15,7 @@ import ScenarioRenameDialog from '@/components/modals/ScenarioRenameDialog';
 import GlobalActions from "@/components/layout/GlobalActions";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { ScenarioPickerV2 } from "@/components/ui/ScenarioPickerV2";
+import ScenarioPickerV2 from "@/components/ui/ScenarioPickerV2";
 
 export default function Header() {
   const { user } = useAuth();
