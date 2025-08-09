@@ -62,7 +62,12 @@ export default function Header() {
             <img 
               src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
               alt="Feasly Logo" 
-              className="w-12 h-12 object-contain flex-shrink-0"
+              className="w-12 h-12 object-contain flex-shrink-0 block dark:hidden"
+            />
+            <img 
+              src="/lovable-uploads/a2e32a9e-3370-4f4c-a261-6d08e8a7834a.png" 
+              alt="Feasly Logo - Dark" 
+              className="w-12 h-12 object-contain flex-shrink-0 hidden dark:block"
             />
             <div className="flex flex-col">
               <span className="text-xl font-bold text-foreground tracking-tight">
