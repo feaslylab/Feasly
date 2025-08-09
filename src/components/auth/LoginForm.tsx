@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Eye, EyeOff, Building2, Loader2, Mail } from "lucide-react";
+import { Eye, EyeOff, Apple, Loader2, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface LoginFormProps {
@@ -31,6 +31,7 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
   const { toast } = useToast();
   const { t } = useTranslation('auth');
   const { isRTL } = useLanguage();
+  const [oauthLoading, setOauthLoading] = useState<'google' | 'apple' | null>(null);
 
   // Auto-focus email field on mount
   useEffect(() => {
@@ -101,6 +102,25 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
       });
     } finally {
       setIsForgotPasswordLoading(false);
+    }
+  };
+
+  const handleOAuthSignIn = async (provider: 'google' | 'apple') => {
+    try {
+      setOauthLoading(provider);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${window.location.origin}/`
+        }
+      });
+      if (error) {
+        toast({ title: 'OAuth Error', description: error.message, variant: 'destructive' });
+      }
+    } catch (err) {
+      toast({ title: 'OAuth Error', description: 'Failed to start sign-in. Please try again.', variant: 'destructive' });
+    } finally {
+      setOauthLoading(null);
     }
   };
 
@@ -358,6 +378,29 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
                   {t('or')}
                 </span>
               </div>
+            </div>
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 w-full"
+                onClick={() => handleOAuthSignIn('google')}
+                disabled={oauthLoading === 'google' || isLoading || isForgotPasswordLoading}
+                aria-label="Continue with Google"
+              >
+                {t('continueWithGoogle')}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="h-11 w-full"
+                onClick={() => handleOAuthSignIn('apple')}
+                disabled={oauthLoading === 'apple' || isLoading || isForgotPasswordLoading}
+                aria-label="Continue with Apple"
+              >
+                <Apple className="mr-2 h-4 w-4" />
+                {t('continueWithApple')}
+              </Button>
             </div>
           <p className={cn(
             "text-center text-sm text-muted-foreground mt-6",
