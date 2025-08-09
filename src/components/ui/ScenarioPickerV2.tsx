@@ -139,7 +139,7 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
         onValueChange={handleValueChange}
         disabled={disabled || isCalculating}
       >
-        <SelectTrigger className={compact ? 'h-8 text-sm' : 'min-w-[300px]'}>
+        <SelectTrigger className={`w-full min-w-0 ${compact ? 'h-8 text-sm' : ''}`}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="max-w-[400px]">

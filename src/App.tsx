@@ -39,6 +39,7 @@ const App = () => {
                       <Route path="/demo-project" element={<DemoProject />} />
                       <Route path="/auth" element={<Auth />} />
                       <Route path="/welcome" element={<Index />} />
+                      <Route path="*" element={<Navigate to="/projects" replace />} />
                     </Routes>
                   </Suspense>
                 </main>
