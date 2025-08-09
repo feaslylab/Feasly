@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import heroLaptop from "@/assets/hero-laptop.jpg";
 
 export function Hero() {
   const { t } = useTranslation('common');
@@ -47,7 +48,7 @@ export function Hero() {
           </motion.div>
         </div>
         
-        {/* Mock Laptop with GIF */}
+        {/* Photorealistic Laptop Hero Image */}
         <motion.div 
           className="mt-16 max-w-4xl mx-auto relative"
           initial={{ opacity: 0, y: 40 }}
@@ -55,26 +56,15 @@ export function Hero() {
           transition={{ duration: 1, delay: 0.6 }}
         >
           <div className="relative">
-            <img 
-              src="/assets/mock-laptop.svg" 
-              alt="Laptop mockup"
-              className="w-full max-w-[1400px] mx-auto"
+            <img
+              src={heroLaptop}
+              alt="Financial modeling dashboard on a laptop"
+              className="w-full max-w-[1400px] mx-auto rounded-xl shadow-2xl"
+              loading="eager"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = '/placeholder.svg';
+              }}
             />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-[65%] h-[65%] rounded-lg overflow-hidden shadow-2xl">
-                <img 
-                  src="/assets/main-preview.gif" 
-                  alt="Feasly platform preview"
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    const container = e.currentTarget.closest('.absolute.inset-0') as HTMLElement;
-                    if (container) container.style.display = 'none';
-                  }}
-                />
-              </div>
-            </div>
           </div>
         </motion.div>
       </div>
@@ -86,7 +76,7 @@ export function Hero() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 1 }}
       >
-        <div className="backdrop-blur-md bg-white/15 dark:bg-white/5 shadow-lg/20 rounded-2xl p-4 border border-white/20">
+        <div className="backdrop-blur-md bg-white/15 dark:bg-white/5 shadow-lg/20 rounded-2xl p-4 border border-white/20 w-[160px]">
           <div className="text-2xl font-bold text-success">17.8%</div>
           <div className="text-sm text-muted-foreground">NPV</div>
         </div>
@@ -98,7 +88,7 @@ export function Hero() {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.8, delay: 1.2 }}
       >
-        <div className="backdrop-blur-md bg-white/15 dark:bg-white/5 shadow-lg/20 rounded-2xl p-4 border border-white/20">
+        <div className="backdrop-blur-md bg-white/15 dark:bg-white/5 shadow-lg/20 rounded-2xl p-4 border border-white/20 w-[160px]">
           <div className="text-2xl font-bold text-primary">22.4%</div>
           <div className="text-sm text-muted-foreground">IRR</div>
         </div>
