@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import Header from "@/layout/Header";
@@ -13,7 +13,7 @@ const NewProject = lazy(() => import("./pages/NewProject"));
 const Projects = lazy(() => import("./pages/Projects"));
 const DemoPage = lazy(() => import("./pages/DemoPage"));
 const DemoProject = lazy(() => import("./pages/DemoProject"));
-const Auth = lazy(() => import("./pages/Auth").then(m => ({ default: (m as any).default ?? (m as any).Auth })));
+const Auth = lazy(() => import("./pages/Auth").then(m => ({ default: (m as any).default ?? (m as any).AuthPage })));
 const FeaslyModel = lazy(() => import("./components/FeaslyModel/FeaslyModel"));
 
 const queryClient = new QueryClient();
@@ -26,6 +26,7 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
+            <BrowserRouter>
               <div className="min-h-screen bg-background">
                 <Header />
                 <main>
@@ -43,6 +44,7 @@ const App = () => {
                   </Suspense>
                 </main>
               </div>
+            </BrowserRouter>
           </TooltipProvider>
         </OrganizationProvider>
       </AuthProvider>
