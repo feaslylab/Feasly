@@ -151,7 +151,17 @@
 
   @media (min-width: 1024px) {
     .sidebar-auto-space {
-      margin-left: 4rem; /* 64px for mini sidebar */
+      margin-left: 4rem; /* default: mini sidebar width */
     }
+
+    /* When the sidebar is expanded, push content and header further */
+    .sidebar-expanded .sidebar-auto-space {
+      margin-left: 16rem; /* 256px expanded sidebar */
+    }
+
+    /* Adjust fixed header offset to avoid overlap */
+    .feasly-nav { left: 0; }
+    .sidebar-mini .feasly-nav { left: 4rem; }
+    .sidebar-expanded .feasly-nav { left: 16rem; }
   }
 }

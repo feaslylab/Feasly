@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Building2, BarChart3, FolderOpen, Settings, LogOut, Plus, User, Building, DollarSign, TrendingUp, AlertTriangle, Menu, ChevronLeft } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,20 @@ export const Sidebar = () => {
     toggleSidebar, 
     isMobile 
   } = useSidebarState();
+
+  // Reflect sidebar layout on the document for global spacing rules
+  const expanded = shouldShowSidebar && !isCollapsed;
+  const showMini = isAutoHidden && !shouldShowSidebar && !isMobile;
+
+  useEffect(() => {
+    const cls = document.documentElement.classList;
+    if (expanded) cls.add('sidebar-expanded'); else cls.remove('sidebar-expanded');
+    if (showMini) cls.add('sidebar-mini'); else cls.remove('sidebar-mini');
+    return () => {
+      cls.remove('sidebar-expanded');
+      cls.remove('sidebar-mini');
+    };
+  }, [expanded, showMini]);
 
   const handleSignOut = async () => {
     await signOut();
