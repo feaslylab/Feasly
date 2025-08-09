@@ -498,6 +498,8 @@ function GridRow<T extends LineItemBase>({
             hasErrors && "bg-destructive/5 border-destructive/20",
             hasWarnings && "bg-warning/5 border-warning/20"
           )}
+          onClick={() => onStateChange(prev => ({ ...prev, editingId: item.id }))}
+          onDoubleClick={() => onStateChange(prev => ({ ...prev, editingId: item.id }))}
         >
           {/* Selection checkbox */}
           {config.allowBulkEdit && (
