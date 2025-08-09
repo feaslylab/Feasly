@@ -1,3 +1,4 @@
+
 import {
   ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, Legend,
 } from "recharts";
@@ -6,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { csvFormat } from 'd3-dsv';
 import { chartHelpers } from "@/theme/chartPalette";
 import { useTheme } from "next-themes";
+import { ChartErrorBoundary } from "@/components/charts/ChartErrorBoundary";
 
 function exportCsv(rows: CashPoint[]) {
   const blob = new Blob([csvFormat(rows)], { type: 'text/csv' });
@@ -15,15 +17,31 @@ function exportCsv(rows: CashPoint[]) {
   URL.revokeObjectURL(url);
 }
 
+function toRows(cash: number[]) {
+  return cash.map((v, i) => ({
+    period : `P${i}`,
+    inflow : v > 0 ?  v : 0,
+    outflow: v < 0 ? -v : 0,
+    net    : v,
+  }));
+}
+
 export default function CashChart({ data }: { data?: number[] }) {
   const rows = data ? toRows(data) : useCashSeries();  // fallback for tests
   const { theme } = useTheme();
   
-  // Get theme-aware colors from our chart palette
-  const colors = chartHelpers.getCashFlowColors(theme === 'dark' ? 'dark' : 'light');
+  // Add safety checks for data
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return null;
+  }
 
   // hide when nothing to show
-  if (!rows.length || rows.every(p => p.net === 0)) return null;
+  if (rows.every(p => p.net === 0)) {
+    return null;
+  }
+  
+  // Get theme-aware colors from our chart palette
+  const colors = chartHelpers.getCashFlowColors(theme === 'dark' ? 'dark' : 'light');
 
   return (
     <div className="mt-8 rounded-lg bg-card p-4 shadow">
@@ -38,32 +56,25 @@ export default function CashChart({ data }: { data?: number[] }) {
         Export CSV
       </Button>
 
-      <ResponsiveContainer key={rows.length} width="100%" height={310}>
-        <AreaChart data={rows} stackOffset="sign">
-          <XAxis dataKey="period" hide />
-          <YAxis
-            tickFormatter={v => v.toLocaleString()}
-            width={70}
-          />
-          <Tooltip
-            formatter={(v: number) => v.toLocaleString()}
-            labelFormatter={p => `Period ${p}`}
-          />
-          <Legend verticalAlign="top" height={24} />
-          <Area type="monotone" dataKey="inflow" stackId="1" fillOpacity={0.55} fill={colors.inflow} stroke="none" name="Inflow"/>
-          <Area type="monotone" dataKey="outflow" stackId="1" fillOpacity={0.55} fill={colors.outflow} stroke="none" name="Outflow"/>
-          <Area type="monotone" dataKey="net" stackId="1" fillOpacity={0.55} fill={colors.net} stroke="none" name="Net"/>
-        </AreaChart>
-      </ResponsiveContainer>
+      <ChartErrorBoundary>
+        <ResponsiveContainer key={rows.length} width="100%" height={310}>
+          <AreaChart data={rows} stackOffset="sign">
+            <XAxis dataKey="period" hide />
+            <YAxis
+              tickFormatter={v => v.toLocaleString()}
+              width={70}
+            />
+            <Tooltip
+              formatter={(v: number) => v.toLocaleString()}
+              labelFormatter={p => `Period ${p}`}
+            />
+            <Legend verticalAlign="top" height={24} />
+            <Area type="monotone" dataKey="inflow" stackId="1" fillOpacity={0.55} fill={colors.inflow} stroke="none" name="Inflow"/>
+            <Area type="monotone" dataKey="outflow" stackId="1" fillOpacity={0.55} fill={colors.outflow} stroke="none" name="Outflow"/>
+            <Area type="monotone" dataKey="net" stackId="1" fillOpacity={0.55} fill={colors.net} stroke="none" name="Net"/>
+          </AreaChart>
+        </ResponsiveContainer>
+      </ChartErrorBoundary>
     </div>
   );
-}
-
-function toRows(cash: number[]) {
-  return cash.map((v, i) => ({
-    period : `P${i}`,
-    inflow : v > 0 ?  v : 0,
-    outflow: v < 0 ? -v : 0,
-    net    : v,
-  }));
 }

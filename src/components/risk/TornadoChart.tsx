@@ -1,5 +1,7 @@
+
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { useTheme } from 'next-themes';
+import { ChartErrorBoundary } from "@/components/charts/ChartErrorBoundary";
 
 interface TornadoChartProps {
   data: {
@@ -30,7 +32,7 @@ export function TornadoChart({ data, isLoading }: TornadoChartProps) {
     );
   }
 
-  if (!data) {
+  if (!data || !Array.isArray(data.variations)) {
     return (
       <div className="h-80 flex items-center justify-center">
         <div className="text-muted-foreground">Run analysis to see impact chart</div>
@@ -41,7 +43,7 @@ export function TornadoChart({ data, isLoading }: TornadoChartProps) {
   // Transform data for tornado chart (focus on NPV deltas)
   const chartData = data.variations.map((item, index) => {
     let label = '';
-    let value = item.deltas.npvDelta;
+    let value = item.deltas?.npvDelta || 0;
     
     if (item.variation.costVariationPercent !== 0) {
       label = `Cost ${item.variation.costVariationPercent > 0 ? '+' : ''}${item.variation.costVariationPercent}%`;
@@ -72,41 +74,43 @@ export function TornadoChart({ data, isLoading }: TornadoChartProps) {
       <h4 className="text-sm font-medium text-muted-foreground mb-3">
         NPV Impact Analysis
       </h4>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={chartData}
-          layout="horizontal"
-          margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" opacity={0.3} />
-          <XAxis 
-            type="number"
-            stroke="hsl(var(--muted-foreground))"
-            fontSize={12}
-            tickFormatter={formatCurrency}
-          />
-          <YAxis 
-            type="category"
-            dataKey="label"
-            stroke="hsl(var(--muted-foreground))"
-            fontSize={12}
-            width={70}
-          />
-          <Tooltip
-            formatter={(value: number) => [formatCurrency(value), 'NPV Impact']}
-            contentStyle={{
-              backgroundColor: theme === 'dark' ? 'hsl(var(--background))' : '#fff',
-              border: `1px solid hsl(var(--border))`,
-              borderRadius: '6px'
-            }}
-          />
-          <Bar dataKey="value" radius={[0, 4, 4, 0]}>
-            {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+      <ChartErrorBoundary>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart
+            data={chartData}
+            layout="horizontal"
+            margin={{ top: 5, right: 30, left: 80, bottom: 5 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" opacity={0.3} />
+            <XAxis 
+              type="number"
+              stroke="hsl(var(--muted-foreground))"
+              fontSize={12}
+              tickFormatter={formatCurrency}
+            />
+            <YAxis 
+              type="category"
+              dataKey="label"
+              stroke="hsl(var(--muted-foreground))"
+              fontSize={12}
+              width={70}
+            />
+            <Tooltip
+              formatter={(value: number) => [formatCurrency(value), 'NPV Impact']}
+              contentStyle={{
+                backgroundColor: theme === 'dark' ? 'hsl(var(--background))' : '#fff',
+                border: `1px solid hsl(var(--border))`,
+                borderRadius: '6px'
+              }}
+            />
+            <Bar dataKey="value" radius={[0, 4, 4, 0]}>
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartErrorBoundary>
     </div>
   );
 }

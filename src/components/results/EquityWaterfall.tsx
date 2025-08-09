@@ -1,5 +1,7 @@
+
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart } from 'recharts';
 import { useTheme } from 'next-themes';
+import { ChartErrorBoundary } from "@/components/charts/ChartErrorBoundary";
 
 interface EquityWaterfallProps {
   cashflow: number[];
@@ -21,7 +23,7 @@ export function EquityWaterfall({ cashflow, kpis, isLoading }: EquityWaterfallPr
     );
   }
 
-  if (!cashflow || cashflow.length === 0) {
+  if (!Array.isArray(cashflow) || cashflow.length === 0) {
     return (
       <div className="h-80 flex items-center justify-center">
         <div className="text-muted-foreground">No cashflow data available</div>
@@ -29,7 +31,7 @@ export function EquityWaterfall({ cashflow, kpis, isLoading }: EquityWaterfallPr
     );
   }
 
-  // Transform data for equity waterfall
+  // Transform data for equity waterfall with safety checks
   const chartData = cashflow.map((value, index) => {
     const year = Math.floor(index / 12) + 1;
     const cumulativeEquity = cashflow.slice(0, index + 1).reduce((sum, cf) => sum + (cf < 0 ? cf : 0), 0);
@@ -111,57 +113,59 @@ export function EquityWaterfall({ cashflow, kpis, isLoading }: EquityWaterfallPr
         <h4 className="text-sm font-medium text-muted-foreground mb-3">
           Annual Equity Flow & Returns
         </h4>
-        <ResponsiveContainer width="100%" height={300}>
-          <ComposedChart data={yearlyChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" opacity={0.3} />
-            <XAxis 
-              dataKey="year" 
-              stroke="hsl(var(--muted-foreground))"
-              fontSize={12}
-            />
-            <YAxis 
-              stroke="hsl(var(--muted-foreground))"
-              fontSize={12}
-              tickFormatter={formatCurrency}
-            />
-            <Tooltip 
-              formatter={(value: number, name: string) => {
-                const label = name === 'equityInvested' ? 'Equity Invested' : 
-                             name === 'returns' ? 'Returns' : 'Equity IRR';
-                if (name === 'equityIRR') {
-                  return [`${(value * 100).toFixed(1)}%`, label];
-                }
-                return [formatCurrency(value), label];
-              }}
-              contentStyle={{ 
-                backgroundColor: theme === 'dark' ? 'hsl(var(--background))' : '#fff',
-                border: `1px solid hsl(var(--border))`,
-                borderRadius: '6px'
-              }}
-            />
-            <Bar 
-              dataKey="equityInvested" 
-              fill={colors.equity}
-              name="equityInvested"
-              stackId="flow"
-            />
-            <Bar 
-              dataKey="returns" 
-              fill={colors.returns}
-              name="returns" 
-              stackId="flow"
-            />
-            <Line 
-              type="monotone" 
-              dataKey="equityIRR" 
-              stroke={colors.irr}
-              strokeWidth={2}
-              dot={false}
-              name="equityIRR"
-              yAxisId="right"
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
+        <ChartErrorBoundary>
+          <ResponsiveContainer width="100%" height={300}>
+            <ComposedChart data={yearlyChartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" opacity={0.3} />
+              <XAxis 
+                dataKey="year" 
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={12}
+              />
+              <YAxis 
+                stroke="hsl(var(--muted-foreground))"
+                fontSize={12}
+                tickFormatter={formatCurrency}
+              />
+              <Tooltip 
+                formatter={(value: number, name: string) => {
+                  const label = name === 'equityInvested' ? 'Equity Invested' : 
+                               name === 'returns' ? 'Returns' : 'Equity IRR';
+                  if (name === 'equityIRR') {
+                    return [`${(value * 100).toFixed(1)}%`, label];
+                  }
+                  return [formatCurrency(value), label];
+                }}
+                contentStyle={{ 
+                  backgroundColor: theme === 'dark' ? 'hsl(var(--background))' : '#fff',
+                  border: `1px solid hsl(var(--border))`,
+                  borderRadius: '6px'
+                }}
+              />
+              <Bar 
+                dataKey="equityInvested" 
+                fill={colors.equity}
+                name="equityInvested"
+                stackId="flow"
+              />
+              <Bar 
+                dataKey="returns" 
+                fill={colors.returns}
+                name="returns" 
+                stackId="flow"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="equityIRR" 
+                stroke={colors.irr}
+                strokeWidth={2}
+                dot={false}
+                name="equityIRR"
+                yAxisId="right"
+              />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </ChartErrorBoundary>
       </div>
     </div>
   );

@@ -1,8 +1,10 @@
+
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { BarChart3 } from "lucide-react";
+import { ChartErrorBoundary } from "@/components/charts/ChartErrorBoundary";
 import type { FeaslyModelFormData, ScenarioType } from "./types";
 
 export function ScenarioChart() {
@@ -96,62 +98,64 @@ export function ScenarioChart() {
       </CardHeader>
       <CardContent>
         <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={scenarioData}
-              margin={{
-                top: 20,
-                right: 30,
-                left: 20,
-                bottom: 5,
-              }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis 
-                dataKey="scenario" 
-                tick={{ fontSize: 12 }}
-              />
-              <YAxis 
-                tick={{ fontSize: 12 }}
-              />
-              <Tooltip 
-                formatter={formatTooltipValue}
-                labelClassName="font-medium"
-                contentStyle={{
-                  backgroundColor: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
-                  borderRadius: "6px"
+          <ChartErrorBoundary>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart
+                data={scenarioData}
+                margin={{
+                  top: 20,
+                  right: 30,
+                  left: 20,
+                  bottom: 5,
                 }}
-              />
-              <Legend 
-                wrapperStyle={{ fontSize: "12px" }}
-              />
-              <Bar 
-                dataKey="netProfit" 
-                name="Net Profit (M)" 
-                fill="hsl(var(--primary))" 
-                radius={[2, 2, 0, 0]}
-              />
-              <Bar 
-                dataKey="revenue" 
-                name="Revenue (M)" 
-                fill="hsl(var(--secondary))" 
-                radius={[2, 2, 0, 0]}
-              />
-              <Bar 
-                dataKey="irr" 
-                name="IRR (%)" 
-                fill="hsl(var(--accent))" 
-                radius={[2, 2, 0, 0]}
-              />
-              <Bar 
-                dataKey="roi" 
-                name="ROI (%)" 
-                fill="hsl(var(--muted))" 
-                radius={[2, 2, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="scenario" 
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis 
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip 
+                  formatter={formatTooltipValue}
+                  labelClassName="font-medium"
+                  contentStyle={{
+                    backgroundColor: "hsl(var(--card))",
+                    border: "1px solid hsl(var(--border))",
+                    borderRadius: "6px"
+                  }}
+                />
+                <Legend 
+                  wrapperStyle={{ fontSize: "12px" }}
+                />
+                <Bar 
+                  dataKey="netProfit" 
+                  name="Net Profit (M)" 
+                  fill="hsl(var(--primary))" 
+                  radius={[2, 2, 0, 0]}
+                />
+                <Bar 
+                  dataKey="revenue" 
+                  name="Revenue (M)" 
+                  fill="hsl(var(--secondary))" 
+                  radius={[2, 2, 0, 0]}
+                />
+                <Bar 
+                  dataKey="irr" 
+                  name="IRR (%)" 
+                  fill="hsl(var(--accent))" 
+                  radius={[2, 2, 0, 0]}
+                />
+                <Bar 
+                  dataKey="roi" 
+                  name="ROI (%)" 
+                  fill="hsl(var(--muted))" 
+                  radius={[2, 2, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartErrorBoundary>
         </div>
         
         {/* Summary Stats */}
