@@ -59,16 +59,23 @@ export default function Header() {
         {/* Professional Logo and Brand */}
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
-            <img 
-              src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
-              alt="Feasly Logo" 
-              className="w-12 h-12 object-contain flex-shrink-0 block dark:hidden"
-            />
-            <img 
-              src="/lovable-uploads/a2e32a9e-3370-4f4c-a261-6d08e8a7834a.png" 
-              alt="Feasly Logo - Dark" 
-              className="w-12 h-12 object-contain flex-shrink-0 hidden dark:block"
-            />
+            <div className="relative w-12 h-12 flex-shrink-0">
+              {/* Light mode logo (unchanged) */}
+              <img 
+                src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
+                alt="Feasly Logo" 
+                className="w-12 h-12 object-contain block dark:hidden"
+              />
+              {/* Dark mode logo with white backing circle */}
+              <div className="hidden dark:block absolute inset-0">
+                <div className="absolute inset-0 rounded-full bg-[hsl(0,0%,100%)]" />
+                <img 
+                  src="/lovable-uploads/a2e32a9e-3370-4f4c-a261-6d08e8a7834a.png" 
+                  alt="Feasly Logo - Dark" 
+                  className="relative w-12 h-12 object-contain"
+                />
+              </div>
+            </div>
             <div className="flex flex-col">
               <span className="text-xl font-bold text-foreground tracking-tight">
                 Feasly
