@@ -57,12 +57,11 @@ export const Sidebar = () => {
   const showMini = isAutoHidden && !shouldShowSidebar && !isMobile;
 
   useEffect(() => {
-    const cls = document.documentElement.classList;
-    if (expanded) cls.add('sidebar-expanded'); else cls.remove('sidebar-expanded');
-    if (showMini) cls.add('sidebar-mini'); else cls.remove('sidebar-mini');
+    const root = document.documentElement;
+    const offset = expanded ? '16rem' : (showMini ? '4rem' : '0px');
+    root.style.setProperty('--sidebar-offset', offset);
     return () => {
-      cls.remove('sidebar-expanded');
-      cls.remove('sidebar-mini');
+      root.style.removeProperty('--sidebar-offset');
     };
   }, [expanded, showMini]);
 

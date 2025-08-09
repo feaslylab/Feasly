@@ -143,22 +143,14 @@
     background: hsl(var(--muted-foreground));
   }
 
-  /* Auto-hide sidebar body spacing */
+  /* Global layout spacing controlled by a CSS variable set by Sidebar */
   .sidebar-auto-space {
-    margin-left: 0;
+    margin-left: var(--sidebar-offset, 0);
     transition: margin-left 0.3s ease;
   }
 
-  /* Apply offsets globally, not only on large screens */
-  .sidebar-mini .sidebar-auto-space {
-    margin-left: 4rem; /* mini sidebar width */
-  }
-  .sidebar-expanded .sidebar-auto-space {
-    margin-left: 16rem; /* expanded sidebar width */
-  }
-
   /* Adjust fixed header offset to avoid overlap */
-  .feasly-nav { left: 0; }
-  .sidebar-mini .feasly-nav { left: 4rem; }
-  .sidebar-expanded .feasly-nav { left: 16rem; }
+  .feasly-nav {
+    left: var(--sidebar-offset, 0);
+  }
 }
