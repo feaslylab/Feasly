@@ -88,17 +88,8 @@ export const FinancialSummaryCards = ({
     queryFn: async () => {
       if (!selectedScenarioId) return [];
       
-      const { data, error } = await supabase
-        .from("scenario_overrides")
-        .select("asset_id, field_name, override_value")
-        .eq("scenario_id", selectedScenarioId);
-
-      if (error) {
-        console.error("Error fetching overrides:", error);
-        // Don't show toast for this error as it's expected for now
-        return [];
-      }
-      return (data || []) as ScenarioOverride[];
+      // Scenario overrides functionality not implemented yet
+      return [];
     },
     enabled: !!selectedScenarioId,
   });

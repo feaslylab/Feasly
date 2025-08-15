@@ -33,6 +33,8 @@ export interface LoanFacility {
   interestRate: number;
   termMonths: number;
   limit?: number;
+  rate?: number;
+  ltcPercent?: number;
   drawPeriods?: number[];
   repaymentStart?: number;
 }

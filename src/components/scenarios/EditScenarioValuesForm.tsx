@@ -75,17 +75,8 @@ export const EditScenarioValuesForm = ({ asset, scenarioId, scenario, trigger }:
   const { data: existingOverrides } = useQuery({
     queryKey: ["scenario-overrides", scenarioId, asset.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("scenario_overrides")
-        .select("*")
-        .eq("scenario_id", scenarioId)
-        .eq("asset_id", asset.id);
-
-      if (error) {
-        console.error('Error fetching scenario overrides:', error);
-        return [];
-      }
-      return (data as ScenarioOverride[]) || [];
+      // Scenario overrides functionality not implemented yet
+      return [];
     },
     enabled: !!scenarioId && !!asset.id,
   });

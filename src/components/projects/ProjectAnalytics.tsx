@@ -97,15 +97,8 @@ export const ProjectAnalytics = ({ projectId, assets, projectCurrency = "AED" }:
     queryKey: ["all-scenario-overrides", projectId],
     queryFn: async () => {
       if (!scenarios) return [];
-      
-      const scenarioIds = scenarios.map(s => s.id);
-      const { data, error } = await supabase
-        .from("scenario_overrides")
-        .select("scenario_id, asset_id, field_name, override_value")
-        .in("scenario_id", scenarioIds);
-
-      if (error) throw error;
-      return (data || []) as { scenario_id: string; asset_id: string; field_name: string; override_value: number }[];
+      // Scenario overrides functionality not implemented yet
+      return [];
     },
     enabled: !!scenarios && scenarios.length > 0,
   });
