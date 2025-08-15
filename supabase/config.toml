@@ -16,7 +16,10 @@ enable_signup = true
 enable_confirmations = false
 
 [functions.import_emdf]
-verify_jwt = false
+verify_jwt = true
+
+[functions.process-excel-import]
+verify_jwt = true
 
 [functions.calculate]
 verify_jwt = true

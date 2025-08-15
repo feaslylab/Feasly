@@ -13,12 +13,34 @@ serve(async (req) => {
   }
 
   try {
-    const { fileName, userId, originalName } = await req.json()
+    // Get authenticated user from JWT
+    const authHeader = req.headers.get('authorization')
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
 
-    // Create Supabase client
+    // Create Supabase client with the user's JWT
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
-    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      global: { headers: { Authorization: authHeader } }
+    })
+
+    // Get the authenticated user
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
+    const { fileName, originalName } = await req.json()
+    const userId = user.id // Use authenticated user's ID
+
 
     // Get the uploaded file from storage
     const { data: fileData, error: downloadError } = await supabase.storage
