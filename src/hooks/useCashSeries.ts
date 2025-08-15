@@ -12,21 +12,31 @@ export interface CashPoint {
 export function useCashSeries(): CashPoint[] {
   const { projectId, scenarioId } = useSelectionStore();
 
-  // 🛈  Feasly hook already understands project/scenario and
-  //     returns a complete cash[] row (positive = inflow, negative = cost)
-  const { cash } = useFeaslyCalc(
-    [],                    // constructionItems (store supplies in hook)
-    60,                    // horizon
-    0.10,                  // discount
-    [],                    // revenueLines
-    [],                    // rentalLines
-    undefined              // loanFacility
-  );
+  try {
+    // 🛈  Feasly hook already understands project/scenario and
+    //     returns a complete cash[] row (positive = inflow, negative = cost)
+    const { cash } = useFeaslyCalc(
+      [],                    // constructionItems (store supplies in hook)
+      60,                    // horizon
+      0.10,                  // discount
+      [],                    // revenueLines
+      [],                    // rentalLines
+      undefined              // loanFacility
+    );
 
-  return cash.map((v, i) => ({
-    period : `P${i}`,
-    inflow : v > 0 ?  v : 0,
-    outflow: v < 0 ? -v : 0,
-    net    : v,
-  }));
+    // Safety check for cash array
+    if (!Array.isArray(cash) || cash.length === 0) {
+      return [];
+    }
+
+    return cash.map((v, i) => ({
+      period : `P${i}`,
+      inflow : v > 0 ?  v : 0,
+      outflow: v < 0 ? -v : 0,
+      net    : v,
+    }));
+  } catch (error) {
+    console.error('Error in useCashSeries:', error);
+    return [];
+  }
 }

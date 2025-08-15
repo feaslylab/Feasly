@@ -27,17 +27,25 @@ function toRows(cash: number[]) {
 }
 
 export default function CashChart({ data }: { data?: number[] }) {
-  const rows = data ? toRows(data) : useCashSeries();  // fallback for tests
-  const { theme } = useTheme();
+  let rows: CashPoint[] = [];
+  
+  try {
+    rows = data ? toRows(data) : useCashSeries();
+  } catch (error) {
+    console.error('Error generating cash series:', error);
+    return <div className="text-sm text-muted-foreground p-4">Unable to load cash flow data</div>;
+  }
   
   // Add safety checks for data
   if (!Array.isArray(rows) || rows.length === 0) {
-    return null;
+    return <div className="text-sm text-muted-foreground p-4">No cash flow data available</div>;
   }
+  
+  const { theme } = useTheme();
 
   // hide when nothing to show
   if (rows.every(p => p.net === 0)) {
-    return null;
+    return <div className="text-sm text-muted-foreground p-4">No cash flow activity</div>;
   }
   
   // Get theme-aware colors from our chart palette
