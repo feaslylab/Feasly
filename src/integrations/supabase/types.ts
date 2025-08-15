@@ -1724,6 +1724,10 @@ export type Database = {
         Args: { org_id: string; user_id: string }
         Returns: boolean
       }
+      is_project_team_member: {
+        Args: { project_id_param: string; user_id_param: string }
+        Returns: boolean
+      }
       log_organization_activity: {
         Args: {
           p_action: string
