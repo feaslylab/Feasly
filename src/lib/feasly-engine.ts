@@ -35,6 +35,10 @@ export interface LoanFacility {
   limit?: number;
   rate?: number;
   ltcPercent?: number;
+  annualRate?: number;
+  startPeriod?: number;
+  maturityPeriod?: number;
+  interestOnly?: boolean;
   drawPeriods?: number[];
   repaymentStart?: number;
 }

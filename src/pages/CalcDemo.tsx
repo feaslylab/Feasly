@@ -1,174 +1,114 @@
 import { useState, useEffect } from "react";
 import { useFeaslyCalc } from "../hooks/useFeaslyCalc";
 import { useConstructionStore } from "../hooks/useConstructionStore";
-import { SaleLine, RentalLine, LoanFacility } from "../../packages/feasly-engine/src";
+import { SaleLine, RentalLine, LoanFacility } from "@/lib/feasly-engine";
 
 export default function CalcDemo() {
   const [qty, setQty] = useState(12_000_000);
   const [revenueLines, setRevenueLines] = useState<SaleLine[]>([]);
   const [rentalLines, setRentalLines] = useState<RentalLine[]>([]);
   const [useLoan, setUseLoan] = useState(false);
-  const { items: storedItems, loading, saveItem, saveKPIs } = useConstructionStore();
-  
-  // Use stored items if available, otherwise use demo item
-  const items = storedItems.length > 0 ? storedItems : [{
-    baseCost: qty,
-    startPeriod: 6,
-    endPeriod: 24,
-    escalationRate: 0.05,
-    retentionPercent: 0.05,
-    retentionReleaseLag: 2
-  }];
-  
-  // Define loan facility
-  const loanFacility: LoanFacility | undefined = useLoan ? {
-    limit: 40_000_000,
-    ltcPercent: 0.70,
+
+  const { items } = useConstructionStore();
+
+  const loanFacility: LoanFacility = {
+    maxAmount: 800_000,
+    interestRate: 0.08,
+    termMonths: 12,
+    limit: 800_000,
+    ltcPercent: 0.8,
     annualRate: 0.08,
-    startPeriod: 6,
-    maturityPeriod: 60,
+    startPeriod: 1,
+    maturityPeriod: 36,
     interestOnly: true
-  } : undefined;
-  
-  const { cash: row, kpi, interestRow, loanRows } = useFeaslyCalc(items, 60, 0.10, revenueLines, rentalLines, loanFacility);
-
-  // Save KPIs whenever they change
-  useEffect(() => {
-    if (!loading) {
-      saveKPIs({
-        npv: kpi.npv,
-        irr: kpi.projectIRR,
-        profit: kpi.profit
-      });
-    }
-  }, [kpi, saveKPIs, loading]);
-
-  // Save new item when qty changes
-  const handleQtyChange = async (newQty: number) => {
-    setQty(newQty);
-    if (storedItems.length === 0) { // Only save if no stored items yet
-      await saveItem({
-        baseCost: newQty,
-        startPeriod: 6,
-        endPeriod: 24,
-        escalationRate: 0.05,
-        retentionPercent: 0.05,
-        retentionReleaseLag: 2
-      });
-    }
   };
 
-  // Add demo revenue line
-  const addRevenue = () => {
-    const newRevenueLine: SaleLine = {
-      units: 80,
-      pricePerUnit: 1_600_000,
-      startPeriod: 24,
-      endPeriod: 36,
-      escalation: 0.04
-    };
-    setRevenueLines(prev => [...prev, newRevenueLine]);
-  };
-
-  // Add demo rental line
-  const addRental = () => {
-    const newRentalLine: RentalLine = {
-      rooms: 150,
-      adr: 800,
-      occupancyRate: 0.68,
-      startPeriod: 48,
-      endPeriod: 60,
-      annualEscalation: 0.05
-    };
-    setRentalLines(prev => [...prev, newRentalLine]);
-  };
-
-  if (loading) {
-    return <div className="p-6">Loading construction data...</div>;
-  }
+  const { cash, kpi } = useFeaslyCalc(
+    [
+      {
+        baseCost: qty,
+        startPeriod: 0,
+        endPeriod: 10,
+        escalationRate: 0,
+        retentionPercent: 0,
+        retentionReleaseLag: 0,
+      },
+    ],
+    60,
+    0.10,
+    revenueLines,
+    rentalLines,
+    useLoan ? loanFacility : undefined
+  );
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-bold mb-4">Construction Cash-flow demo</h1>
-
-      <label className="block mb-2">
-        Base cost (AED):
-        <input
-          type="number" value={qty}
-          onChange={e=>handleQtyChange(+e.target.value)}
-          className="border ml-2 px-2"
-        />
-      </label>
-
-      <button 
-        onClick={addRevenue}
-        className="bg-primary text-primary-foreground px-4 py-2 rounded mb-2 mr-2 hover:bg-primary/90 transition-colors"
-      >
-        Add Revenue (80 units @ 1.6M AED, P24-36)
-      </button>
-
-      <button 
-        onClick={addRental}
-        className="bg-success text-success-foreground px-4 py-2 rounded mb-4 hover:bg-success/90 transition-colors"
-      >
-        Add Rental (150 rooms, ADR 800, 68% occ, P48-60)
-      </button>
-
-      <label className="flex items-center mb-4">
-        <input
-          type="checkbox"
-          checked={useLoan}
-          onChange={e => setUseLoan(e.target.checked)}
-          className="mr-2"
-        />
-        Use loan 70% LTC @8% rate, bullet repay P60
-      </label>
-
-      {revenueLines.length > 0 && (
-        <p className="text-sm text-gray-600 mb-1">
-          Sale revenue lines: {revenueLines.length} (Total: {revenueLines.reduce((sum, line) => 
-            sum + line.units * line.pricePerUnit, 0).toLocaleString()} AED)
+    <div className="p-8 space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">Live Calculation Demo</h1>
+        <p className="text-muted-foreground">
+          This demo shows live recalculation of financial models using the feasly engine.
         </p>
-      )}
+      </div>
 
-      {rentalLines.length > 0 && (
-        <p className="text-sm text-gray-600 mb-2">
-          Rental revenue lines: {rentalLines.length} (Avg monthly: {Math.round(
-            rentalLines.reduce((sum, line) => 
-              sum + line.adr * line.occupancyRate * line.rooms * 30.4167, 0)
-          ).toLocaleString()} AED)
-        </p>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Construction Cost</h2>
+          <input
+            type="number"
+            value={qty}
+            onChange={(e) => setQty(Number(e.target.value))}
+            className="w-full p-2 border rounded"
+            placeholder="Enter cost in AED"
+          />
+          
+          <div className="space-y-2">
+            <label className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={useLoan}
+                onChange={(e) => setUseLoan(e.target.checked)}
+              />
+              <span>Use loan facility</span>
+            </label>
+          </div>
+        </div>
 
-      {useLoan && loanRows && (
-        <p className="text-sm text-gray-600 mb-2">
-          Peak Balance: {Math.max(...loanRows.balance).toLocaleString()} AED | 
-          Total Interest: {loanRows.interest.reduce((sum, val) => sum + val, 0).toLocaleString()} AED
-        </p>
-      )}
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Key Performance Indicators</h2>
+          <div className="space-y-2">
+            <div className="p-3 bg-gray-50 rounded">
+              <div className="text-sm text-gray-600">NPV</div>
+              <div className="text-lg font-semibold">
+                {kpi.npv.toLocaleString()} AED
+              </div>
+            </div>
+            <div className="p-3 bg-gray-50 rounded">
+              <div className="text-sm text-gray-600">IRR</div>
+              <div className="text-lg font-semibold">{kpi.projectIRR}%</div>
+            </div>
+            <div className="p-3 bg-gray-50 rounded">
+              <div className="text-sm text-gray-600">Total Profit</div>
+              <div className="text-lg font-semibold">
+                {kpi.profit.toLocaleString()} AED
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <table className="border mt-4 text-xs">
-        <thead><tr>
-          {row.slice(0,60).map((_,i)=>
-            <th key={i} className="border px-1">P{i}</th>)}
-        </tr></thead>
-        <tbody><tr>
-          {row.slice(0,60).map((v,i)=>
-            <td key={i} className="border px-1 text-right">
-              {v.toLocaleString(undefined,{maximumFractionDigits:0})}
-            </td>)}
-        </tr></tbody>
-      </table>
-
-      <p className="mt-4">
-        <strong>NPV:</strong> {kpi.npv.toLocaleString(undefined,{maximumFractionDigits:0})} &nbsp;
-        <strong>Profit:</strong> {kpi.profit.toLocaleString(undefined,{maximumFractionDigits:0})} &nbsp;
-        <strong>IRR:</strong> {kpi.projectIRR !== null ? (kpi.projectIRR*100).toFixed(2)+' %' : '—'}
-      </p>
-      
-      <p className="mt-2">
-        <strong>Monthly Interest P0:</strong> {(-interestRow[0]).toLocaleString()}
-      </p>
+        <div className="space-y-4">
+          <h2 className="text-lg font-semibold">Cash Flow Preview</h2>
+          <div className="h-40 overflow-y-auto space-y-1">
+            {cash.slice(0, 12).map((amount, i) => (
+              <div key={i} className="flex justify-between text-sm">
+                <span>Month {i + 1}:</span>
+                <span className={amount >= 0 ? "text-green-600" : "text-red-600"}>
+                  {amount.toLocaleString()} AED
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

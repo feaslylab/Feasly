@@ -62,6 +62,9 @@ describe("useFeaslyCalc", () => {
         retentionPercent: 0,
         retentionReleaseLag: 0
       }], 10, 0.10, [], [], {
+        maxAmount: 10_000_000,
+        interestRate: 0.08,
+        termMonths: 10,
         limit: 10_000_000,
         ltcPercent: 0.70,
         annualRate: 0.08,
