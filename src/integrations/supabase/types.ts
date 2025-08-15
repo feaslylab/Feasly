@@ -1736,6 +1736,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      get_public_contractor_summary: {
+        Args: { project_id_param: string }
+        Returns: {
+          contractor_count: number
+          project_status: string
+          total_phases: number
+        }[]
+      }
       get_safe_team_member_info: {
         Args: { target_user_id: string }
         Returns: {
