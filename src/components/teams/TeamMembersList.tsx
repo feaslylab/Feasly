@@ -18,6 +18,7 @@ interface TeamMember {
   joined_at: string;
   profiles: {
     display_name: string | null;
+    full_name: string | null;
     avatar_url: string | null;
     email: string | null;
   } | null;
@@ -42,8 +43,8 @@ export const TeamMembersList: React.FC = () => {
           joined_at,
           profiles (
             display_name,
-            avatar_url,
-            email
+            full_name,
+            avatar_url
           )
         `)
         .eq('organization_id', currentOrganization.id)
@@ -181,13 +182,16 @@ export const TeamMembersList: React.FC = () => {
                   <Avatar className="w-10 h-10">
                     <AvatarImage src={member.profiles?.avatar_url || undefined} />
                     <AvatarFallback>
-                      {member.profiles?.display_name?.charAt(0) || 
-                       member.profiles?.email?.charAt(0) || '?'}
+                      {member.profiles?.full_name?.charAt(0) || 
+                       member.profiles?.display_name?.charAt(0) || 
+                       'U'}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <p className="font-medium">
-                      {member.profiles?.display_name || member.profiles?.email || 'Unknown User'}
+                      {member.profiles?.full_name || 
+                       member.profiles?.display_name || 
+                       'Team Member'}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       Joined {new Date(member.joined_at).toLocaleDateString()}
@@ -230,7 +234,7 @@ export const TeamMembersList: React.FC = () => {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Remove Team Member</AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to remove {member.profiles?.display_name || member.profiles?.email} from the team? 
+                              Are you sure you want to remove {member.profiles?.full_name || member.profiles?.display_name || 'this team member'} from the team? 
                               This action cannot be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>

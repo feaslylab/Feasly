@@ -1737,9 +1737,10 @@ export type Database = {
         Returns: number
       }
       get_safe_team_member_info: {
-        Args: { member_user_id: string }
+        Args: { target_user_id: string }
         Returns: {
           avatar_url: string
+          created_at: string
           display_name: string
           user_id: string
         }[]
