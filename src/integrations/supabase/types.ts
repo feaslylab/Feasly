@@ -1705,25 +1705,22 @@ export type Database = {
       }
     }
     Views: {
-      team_member_profiles: {
+      safe_team_member_profiles: {
         Row: {
           avatar_url: string | null
           created_at: string | null
-          email_hidden_for_security: string | null
           full_name: string | null
           user_id: string | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string | null
-          email_hidden_for_security?: never
           full_name?: string | null
           user_id?: string | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string | null
-          email_hidden_for_security?: never
           full_name?: string | null
           user_id?: string | null
         }
@@ -1739,12 +1736,11 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
-      get_team_member_display_info: {
-        Args: { member_user_id: string; requesting_user_id: string }
+      get_safe_team_member_info: {
+        Args: { member_user_id: string }
         Returns: {
           avatar_url: string
           display_name: string
-          email_visible: boolean
           user_id: string
         }[]
       }
