@@ -1705,7 +1705,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      team_member_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email_hidden_for_security: string | null
+          full_name: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email_hidden_for_security?: never
+          full_name?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email_hidden_for_security?: never
+          full_name?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       cleanup_expired_invitations: {
@@ -1715,6 +1738,15 @@ export type Database = {
       cleanup_expired_reports: {
         Args: Record<PropertyKey, never>
         Returns: number
+      }
+      get_team_member_display_info: {
+        Args: { member_user_id: string; requesting_user_id: string }
+        Returns: {
+          avatar_url: string
+          display_name: string
+          email_visible: boolean
+          user_id: string
+        }[]
       }
       is_organization_admin: {
         Args: { org_id: string; user_id: string }
