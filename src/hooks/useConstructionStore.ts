@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { ConstructionItem } from '../../packages/feasly-engine/src';
+import { ConstructionItem } from '@/lib/feasly-engine';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { debounce } from 'lodash';
 

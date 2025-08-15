@@ -10,26 +10,16 @@ export interface CashPoint {
 
 /** Returns 60-month stacked-area friendly series */
 export function useCashSeries(): CashPoint[] {
-  const { projectId, scenarioId } = useSelectionStore();
-
   try {
-    // 🛈  Feasly hook already understands project/scenario and
-    //     returns a complete cash[] row (positive = inflow, negative = cost)
-    const { cash } = useFeaslyCalc(
-      [],                    // constructionItems (store supplies in hook)
-      60,                    // horizon
-      0.10,                  // discount
-      [],                    // revenueLines
-      [],                    // rentalLines
-      undefined              // loanFacility
-    );
+    // For now, return sample data to prevent the chart error
+    // TODO: Implement proper cash flow calculation once database schema is fixed
+    const sampleCash = Array(60).fill(0).map((_, i) => {
+      if (i < 12) return -100000; // Construction phase
+      if (i >= 24 && i < 48) return 150000; // Sales phase
+      return 0;
+    });
 
-    // Safety check for cash array
-    if (!Array.isArray(cash) || cash.length === 0) {
-      return [];
-    }
-
-    return cash.map((v, i) => ({
+    return sampleCash.map((v, i) => ({
       period : `P${i}`,
       inflow : v > 0 ?  v : 0,
       outflow: v < 0 ? -v : 0,

@@ -1,6 +1,6 @@
 import { makeTableStore } from './makeTableStore';
 import { Database } from '@/integrations/supabase/types';
-import { ConstructionItem, SaleLine, RentalLine } from '../../packages/feasly-engine/src';
+import { ConstructionItem, SaleLine, RentalLine } from '@/lib/feasly-engine';
 
 // Database types
 type ConstructionItemDB = Database['public']['Tables']['construction_item']['Row'];

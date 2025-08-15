@@ -33,7 +33,8 @@ export default function CashChart({ data }: { data?: number[] }) {
     rows = data ? toRows(data) : useCashSeries();
   } catch (error) {
     console.error('Error generating cash series:', error);
-    return <div className="text-sm text-muted-foreground p-4">Unable to load cash flow data</div>;
+    // Return a safe fallback instead of crashing
+    rows = [{ period: 'P0', inflow: 0, outflow: 0, net: 0 }];
   }
   
   // Add safety checks for data

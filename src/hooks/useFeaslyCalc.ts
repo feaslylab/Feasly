@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { ConstructionItem, buildConstructionRow, computeKPIs, accrueInterestRow, SaleLine, buildSaleRevenue, RentalLine, buildRentalRevenue, LoanFacility, buildLoanSchedule } from "../../packages/feasly-engine/src";
+import { ConstructionItem, buildConstructionRow, computeKPIs, accrueInterestRow, SaleLine, buildSaleRevenue, RentalLine, buildRentalRevenue, LoanFacility, buildLoanSchedule } from "@/lib/feasly-engine";
 
 /** Accepts an array of ConstructionItem objects and returns a
     consolidated monthly cash-outflow row (negative numbers).      */
