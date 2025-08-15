@@ -27,6 +27,7 @@ function toRows(cash: number[]) {
 }
 
 export default function CashChart({ data }: { data?: number[] }) {
+  const { theme } = useTheme();
   let rows: CashPoint[] = [];
   
   try {
@@ -42,15 +43,29 @@ export default function CashChart({ data }: { data?: number[] }) {
     return <div className="text-sm text-muted-foreground p-4">No cash flow data available</div>;
   }
   
-  const { theme } = useTheme();
+  // Add safety check for theme context
+  if (!theme) {
+    return <div className="text-sm text-muted-foreground p-4">Loading chart...</div>;
+  }
 
   // hide when nothing to show
   if (rows.every(p => p.net === 0)) {
     return <div className="text-sm text-muted-foreground p-4">No cash flow activity</div>;
   }
   
-  // Get theme-aware colors from our chart palette
-  const colors = chartHelpers.getCashFlowColors(theme === 'dark' ? 'dark' : 'light');
+  // Get theme-aware colors from our chart palette - with fallback
+  let colors;
+  try {
+    colors = chartHelpers.getCashFlowColors(theme === 'dark' ? 'dark' : 'light');
+  } catch (error) {
+    console.error('Error getting chart colors:', error);
+    // Fallback colors
+    colors = {
+      inflow: 'hsl(142, 71%, 45%)',
+      outflow: 'hsl(0, 84%, 60%)',
+      net: 'hsl(217, 79%, 53%)'
+    };
+  }
 
   return (
     <div className="mt-8 rounded-lg bg-card p-4 shadow">

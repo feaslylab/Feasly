@@ -12,8 +12,12 @@ export function AnimatedChart() {
   const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setAnimate(true), 500);
-    return () => clearTimeout(timer);
+    try {
+      const timer = setTimeout(() => setAnimate(true), 500);
+      return () => clearTimeout(timer);
+    } catch (error) {
+      console.error('AnimatedChart initialization error:', error);
+    }
   }, []);
 
   return (
