@@ -34,6 +34,7 @@ export type Database = {
       }
       assets: {
         Row: {
+          annual_operating_cost_aed: number | null
           annual_revenue_aed: number | null
           asset_type: string
           cap_rate_percent: number | null
@@ -47,8 +48,10 @@ export type Database = {
           operating_cost_aed: number | null
           project_id: string | null
           stabilization_period_months: number | null
+          updated_at: string | null
         }
         Insert: {
+          annual_operating_cost_aed?: number | null
           annual_revenue_aed?: number | null
           asset_type: string
           cap_rate_percent?: number | null
@@ -62,8 +65,10 @@ export type Database = {
           operating_cost_aed?: number | null
           project_id?: string | null
           stabilization_period_months?: number | null
+          updated_at?: string | null
         }
         Update: {
+          annual_operating_cost_aed?: number | null
           annual_revenue_aed?: number | null
           asset_type?: string
           cap_rate_percent?: number | null
@@ -77,6 +82,7 @@ export type Database = {
           operating_cost_aed?: number | null
           project_id?: string | null
           stabilization_period_months?: number | null
+          updated_at?: string | null
         }
         Relationships: [
           {

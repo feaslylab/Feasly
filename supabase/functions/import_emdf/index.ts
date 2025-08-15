@@ -149,7 +149,33 @@ Deno.serve(async (req) => {
   }
 
   try {
+    // Get authenticated user from JWT
+    const authHeader = req.headers.get('authorization')
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Missing authorization header' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
+    // Create Supabase client with user authentication
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    // Verify authentication
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    if (userError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
     const { name, bucket, metadata } = await req.json();
+    const userId = user.id; // Use authenticated user's ID
     
     if (bucket !== "emdf_imports") {
       return new Response("Wrong bucket", { 
@@ -180,7 +206,6 @@ Deno.serve(async (req) => {
     
     await Deno.remove(tmp);
 
-    const userId = metadata?.user_id ?? null;
     const projectId = crypto.randomUUID();
     const scenarioId = crypto.randomUUID();
 
