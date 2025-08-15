@@ -13,7 +13,7 @@ export const useProjectAccess = (projectId: string) => {
       // Check if user is project owner
       const { data: project } = await supabase
         .from("projects")
-        .select("user_id, organization_id, is_public")
+        .select("user_id, organization_id")
         .eq("id", projectId)
         .single();
 
@@ -47,7 +47,7 @@ export const useProjectAccess = (projectId: string) => {
         isTeamMember: !!teamMember,
         isOrgMember,
         hasWriteAccess: isOwner || teamMember?.role === 'admin' || teamMember?.role === 'editor',
-        hasReadAccess: isOwner || !!teamMember || isOrgMember || project.is_public,
+        hasReadAccess: isOwner || !!teamMember || isOrgMember,
         canViewComments: isOwner || !!teamMember || isOrgMember,
         teamRole: teamMember?.role,
         project

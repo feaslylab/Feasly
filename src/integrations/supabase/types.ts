@@ -1246,7 +1246,6 @@ export type Database = {
           id: string
           is_demo: boolean | null
           is_pinned: boolean | null
-          is_public: boolean | null
           name: string
           organization_id: string | null
           project_ai_summary: string | null
@@ -1285,7 +1284,6 @@ export type Database = {
           id?: string
           is_demo?: boolean | null
           is_pinned?: boolean | null
-          is_public?: boolean | null
           name: string
           organization_id?: string | null
           project_ai_summary?: string | null
@@ -1324,7 +1322,6 @@ export type Database = {
           id?: string
           is_demo?: boolean | null
           is_pinned?: boolean | null
-          is_public?: boolean | null
           name?: string
           organization_id?: string | null
           project_ai_summary?: string | null
@@ -1735,14 +1732,6 @@ export type Database = {
       cleanup_expired_reports: {
         Args: Record<PropertyKey, never>
         Returns: number
-      }
-      get_public_contractor_summary: {
-        Args: { project_id_param: string }
-        Returns: {
-          contractor_count: number
-          project_status: string
-          total_phases: number
-        }[]
       }
       get_safe_team_member_info: {
         Args: { target_user_id: string }

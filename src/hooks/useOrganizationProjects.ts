@@ -18,7 +18,6 @@ type Project = {
   tags?: string[];
   project_ai_summary?: string | null;
   is_pinned?: boolean;
-  is_public?: boolean;
   is_demo?: boolean;
 }
 
