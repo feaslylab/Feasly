@@ -81,8 +81,11 @@ export const EditScenarioValuesForm = ({ asset, scenarioId, scenario, trigger }:
         .eq("scenario_id", scenarioId)
         .eq("asset_id", asset.id);
 
-      if (error) throw error;
-      return data as ScenarioOverride[];
+      if (error) {
+        console.error('Error fetching scenario overrides:', error);
+        return [];
+      }
+      return (data as ScenarioOverride[]) || [];
     },
     enabled: !!scenarioId && !!asset.id,
   });
