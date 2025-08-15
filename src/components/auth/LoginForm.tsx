@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Eye, EyeOff, Apple, Loader2, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { validateEmail, checkRateLimit } from "@/lib/validation";
 
 interface LoginFormProps {
   onToggleMode: () => void;
@@ -41,10 +42,10 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
   }, []);
 
   // Real-time email validation
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email && !emailRegex.test(email)) {
-      setEmailError(t('emailInvalid'));
+  const validateEmailInput = (email: string) => {
+    const validation = validateEmail(email);
+    if (!validation.isValid) {
+      setEmailError(validation.error || t('emailInvalid'));
     } else {
       setEmailError("");
     }
@@ -53,7 +54,7 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newEmail = e.target.value;
     setEmail(newEmail);
-    validateEmail(newEmail);
+    validateEmailInput(newEmail);
   };
 
   const handleForgotPassword = async () => {
@@ -127,6 +128,17 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!import.meta.env.PROD) console.log('Login form submitted');
+    
+    // Rate limiting check
+    if (!checkRateLimit(email)) {
+      toast({
+        title: "Too Many Attempts",
+        description: "Please wait 15 minutes before trying again.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsLoading(true);
 
     try {

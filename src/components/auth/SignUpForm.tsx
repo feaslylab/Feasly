@@ -10,6 +10,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslation } from "react-i18next";
 import { Eye, EyeOff, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { validateEmail, validatePassword, validateFullName, sanitizeText, checkRateLimit } from "@/lib/validation";
 
 interface SignUpFormProps {
   onToggleMode: () => void;
@@ -26,30 +27,77 @@ export const SignUpForm = ({ onToggleMode, onSuccess }: SignUpFormProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
   const { isRTL } = useLanguage();
   const { t } = useTranslation('auth');
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    const sanitizedValue = sanitizeText(value);
+    setFormData(prev => ({ ...prev, [field]: sanitizedValue }));
+    
+    // Clear validation error when user starts typing
+    if (validationErrors[field]) {
+      setValidationErrors(prev => ({ ...prev, [field]: "" }));
+    }
+    
+    // Real-time validation
+    if (field === 'email') {
+      const emailValidation = validateEmail(sanitizedValue);
+      if (!emailValidation.isValid) {
+        setValidationErrors(prev => ({ ...prev, email: emailValidation.error || "" }));
+      }
+    } else if (field === 'fullName') {
+      const nameValidation = validateFullName(sanitizedValue);
+      if (!nameValidation.isValid) {
+        setValidationErrors(prev => ({ ...prev, fullName: nameValidation.error || "" }));
+      }
+    } else if (field === 'password') {
+      const passwordValidation = validatePassword(sanitizedValue);
+      if (!passwordValidation.isValid) {
+        setValidationErrors(prev => ({ ...prev, password: passwordValidation.error || "" }));
+      }
+    }
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (formData.password !== formData.confirmPassword) {
+    // Rate limiting check
+    if (!checkRateLimit(formData.email)) {
       toast({
-        title: "Password Mismatch",
-        description: "Passwords do not match. Please try again.",
+        title: "Too Many Attempts",
+        description: "Please wait 15 minutes before trying again.",
         variant: "destructive",
       });
       return;
     }
-
-    if (formData.password.length < 6) {
+    
+    // Comprehensive validation
+    const emailValidation = validateEmail(formData.email);
+    const passwordValidation = validatePassword(formData.password);
+    const nameValidation = validateFullName(formData.fullName);
+    
+    const errors: Record<string, string> = {};
+    
+    if (!emailValidation.isValid) {
+      errors.email = emailValidation.error || "";
+    }
+    if (!passwordValidation.isValid) {
+      errors.password = passwordValidation.error || "";
+    }
+    if (!nameValidation.isValid) {
+      errors.fullName = nameValidation.error || "";
+    }
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+    
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
       toast({
-        title: "Weak Password",
-        description: "Password must be at least 6 characters long.",
+        title: "Validation Error",
+        description: "Please fix the errors below and try again.",
         variant: "destructive",
       });
       return;
