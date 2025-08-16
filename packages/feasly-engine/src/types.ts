@@ -210,6 +210,15 @@ export type ProfitAndLossBlock = {
   detail: Record<string, unknown>;
 };
 
+export type CashFlowBlock = {
+  from_operations: DecimalArray;    // PATMI + WC adjustments
+  from_investing: DecimalArray;     // capex, acquisitions, disposals (capex for now)
+  from_financing: DecimalArray;     // debt draws, repayments, equity, fees, DSRA flows
+  net_change: DecimalArray;         // sum of above
+  cash_closing: DecimalArray;       // reconcile to balance_sheet.cash
+  detail: Record<string, unknown>;
+};
+
 // Small helpers used later
 export function normalizePhasing(phasing: number[]): number[] {
   if (!phasing?.length) return [];

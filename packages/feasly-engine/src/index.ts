@@ -13,6 +13,7 @@ import { computeZakat } from "./zakat";
 import { computeCAM } from "./cam";
 import { computeBalanceSheet } from "./balanceSheet";
 import { computePnL } from "./pnl";
+import { computeCashFlow } from "./computeCashFlow";
 
 export type DecimalArray = Decimal[];
 
@@ -65,6 +66,14 @@ export type EngineOutput = {
     corp_tax: DecimalArray;
     zakat: DecimalArray;
     patmi: DecimalArray;         // profit after tax & zakat
+    detail: Record<string, unknown>;
+  };
+  cash_flow: {
+    from_operations: DecimalArray;    // PATMI + WC adjustments
+    from_investing: DecimalArray;     // capex, acquisitions, disposals (capex for now)
+    from_financing: DecimalArray;     // debt draws, repayments, equity, fees, DSRA flows
+    net_change: DecimalArray;         // sum of above
+    cash_closing: DecimalArray;       // reconcile to balance_sheet.cash
     detail: Record<string, unknown>;
   };
   time: { df: number[]; dt: number[]; };
@@ -318,6 +327,19 @@ export function runModel(rawInputs: unknown): EngineOutput {
     pnl
   });
 
+  // Cash Flow Statement computation
+  const cf = computeCashFlow({
+    T,
+    pnl,
+    revenue: { accounts_receivable: revenue.accounts_receivable ?? zeros(T) },
+    costs,
+    depreciation: dep,
+    financing: fin,
+    tax: { carry_vat: vat.carry },
+    balance_sheet: bs,
+    cash
+  });
+
   // Basic tie-out diagnostic
   const tieOK = bs.imbalance.every(x => x.abs().lt(0.01));
   console.log(`🧮 Balance Sheet ties: ${tieOK}`);
@@ -356,6 +378,7 @@ export function runModel(rawInputs: unknown): EngineOutput {
     cash,
     balance_sheet: bs,
     profit_and_loss: pnl,
+    cash_flow: cf,
     time: { df, dt }
   };
 }

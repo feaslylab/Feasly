@@ -114,3 +114,15 @@ export function numberifyPnL(p: any) {
     patmi: num(p.patmi ?? []),
   };
 }
+
+export function numberifyCashFlow(cf: any) {
+  const num = (a: unknown[]) => (a ?? []).map(toNum);
+  return {
+    ...cf,
+    from_operations: num(cf.from_operations ?? []),
+    from_investing: num(cf.from_investing ?? []),
+    from_financing: num(cf.from_financing ?? []),
+    net_change: num(cf.net_change ?? []),
+    cash_closing: num(cf.cash_closing ?? []),
+  };
+}

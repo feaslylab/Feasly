@@ -37,6 +37,7 @@ import { FloatingActionMenu } from '@/components/ui/floating-action-menu';
 import ScenarioPickerV2 from '@/components/ui/ScenarioPickerV2';
 import { useSelectionStore } from '@/state/selectionStore';
 import ReconciliationCard from '@/components/recon/ReconciliationCard';
+import { CashFlowCard } from '@/components/recon/CashFlowCard';
 
 interface FormContentProps {
   projectId: string;
@@ -557,6 +558,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
             >
               {/* Import and add ReconciliationCard here */}
               <ReconciliationCard />
+              <CashFlowCard />
               <KPIResults />
             </SectionPanel>
 
