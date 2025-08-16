@@ -90,6 +90,7 @@ export type DebtTranche = z.infer<typeof DebtTranche>;
 export const TaxBlock = z.object({
   vat_enabled: z.boolean().default(false),
   vat_rate: z.number().nonnegative().default(0),
+  vat_timing: z.enum(["invoice","cash"]).default("invoice"),
   corp_tax_enabled: z.boolean().default(false),
   corp_tax_rate: z.number().nonnegative().default(0),
   zakat_enabled: z.boolean().default(false),

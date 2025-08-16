@@ -174,8 +174,8 @@ export function runModel(rawInputs: unknown): EngineOutput {
   revenue.rev_sales = recognized_sales; // keep legacy field equal to recognized
   (revenue as any).rev_cam = cam.cam_revenue;
 
-  // VAT (based on recognized sales & rent, and input eligibility proxy)
-  const vat = computeVAT(inputs, revenue.recognized_sales, revenue.rev_rent, costs.capex, costs.opex);
+  // VAT (based on timing and VAT classes)
+  const vat = computeVAT(inputs, revenue.billings_total, revenue.collections, revenue.rev_rent, costs.capex, costs.opex);
 
   // Depreciation (simple total-capex proxy for Phase 1 VAT/Dep)
   const dep = computeDepreciation(inputs, costs.capex);
