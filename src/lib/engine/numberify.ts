@@ -54,7 +54,10 @@ export function numberifyFin(fin: any) {
 export function numberifyTax(t: any) {
   return {
     ...t,
+    vat_output: numArr(t.vat_output ?? []),
+    vat_input: numArr(t.vat_input ?? []),
     vat_net: numArr(t.vat_net ?? []),
+    carry_vat: numArr(t.carry_vat ?? []),
     corp: numArr(t.corp ?? []),
     zakat: numArr(t.zakat ?? []),
   };

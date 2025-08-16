@@ -65,11 +65,13 @@ function createCAMTestProject(): any {
       {
         key: "retail",
         category: "retail",
-        meaning: "occupancy",
-        rentable_area_sqm: 5000,
-        initial_rent_sqm_month: 100,
+        sellable_area_sqm: 5000,
+        initial_rent_sqm_m: 100,
         vat_class_output: "standard",
-        occupancy: [0, 0.2, 0.4, 0.6, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8] // 80% by month 5
+        curve: { 
+          meaning: "occupancy", 
+          values: [0, 0.2, 0.4, 0.6, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8, 0.8] // 80% by month 5
+        }
       }
     ],
     cost_items: [
@@ -191,6 +193,27 @@ function runValidationTest() {
   console.log(`Proportional (100%) input VAT: ${totalInputProp.toFixed(2)}`);
   console.log(`✅ Proportional > Fixed: ${totalInputProp > totalInputFixed}`);
   
+  // Test F2: Partial exemption test
+  console.log("\n🏢 Test F2: Partial Exemption");
+  const partialExemptProject = createTestProject();
+  partialExemptProject.tax.input_recovery_method = "proportional_to_taxable_outputs";
+  
+  // Add exempt office space
+  partialExemptProject.unit_types.push({
+    key: "exempt_office",
+    category: "office", 
+    sellable_area_sqm: 1000,
+    initial_rent_sqm_m: 50,
+    vat_class_output: "exempt",
+    curve: { meaning: "occupancy", values: Array(12).fill(0.8) }
+  });
+  
+  const partialResult = runModel(partialExemptProject);
+  const avgRecoveryRatio = partialResult.tax.detail?.input_recovery_ratio ?? 1;
+  
+  console.log(`Recovery ratio with exempt: ${avgRecoveryRatio.toFixed(3)}`);
+  console.log(`✅ Recovery ratio < 1.0: ${avgRecoveryRatio < 1.0}`);
+  
   // Test G: Cash source verification
   console.log("\n💵 Test G: Cash Source Verification");
   const cashStr = JSON.stringify(cashResult.cash);
@@ -208,7 +231,8 @@ function runValidationTest() {
     escrowInvariantHolds,
     camVATIncluded: totalVATOut > camVATContribution,
     inputRecoveryDifferent: totalInputProp > totalInputFixed,
-    cashUsesCollections: !usesBillings && !usesRecognized
+    cashUsesCollections: !usesBillings && !usesRecognized,
+    partialExemptionWorks: avgRecoveryRatio < 1.0
   };
 }
 

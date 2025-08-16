@@ -28,7 +28,10 @@ export type EngineOutput = {
     dsra_balance: DecimalArray; dsra_funding: DecimalArray; dsra_release: DecimalArray;
     detail: Record<string, unknown>; 
   };
-  tax: { vat_net: DecimalArray; corp: DecimalArray; zakat: DecimalArray; };
+  tax: { 
+    vat_output: DecimalArray; vat_input: DecimalArray; vat_net: DecimalArray; carry_vat: DecimalArray; 
+    corp: DecimalArray; zakat: DecimalArray; detail: Record<string, unknown>; 
+  };
   depreciation: { total: DecimalArray; nbv: DecimalArray; detail: Record<string, unknown>; };
   cash: { project_before_fin: DecimalArray; project: DecimalArray; equity_cf: DecimalArray; };
   time: { df: number[]; dt: number[]; };
@@ -175,7 +178,7 @@ export function runModel(rawInputs: unknown): EngineOutput {
   (revenue as any).rev_cam = cam.cam_revenue;
 
   // VAT (based on timing and VAT classes, includes CAM)
-  const vat = computeVAT(inputs, revenue.billings_total, revenue.collections, revenue.rev_rent, revenue.rev_cam, costs.capex, costs.opex);
+  const vat = computeVAT(inputs, revenue.billings_total, revenue.collections, revenue.rev_rent, cam.cam_revenue, costs.capex, costs.opex);
 
   // Depreciation (simple total-capex proxy for Phase 1 VAT/Dep)
   const dep = computeDepreciation(inputs, costs.capex);
@@ -254,10 +257,19 @@ export function runModel(rawInputs: unknown): EngineOutput {
     },
     costs: {
       ...costs,
-      opex_net_of_cam: cam.opex_net_of_cam
+      opex_net_of_cam: cam.opex_net_of_cam,
+      vat_input: vat.input
     },
     financing: fin,
-    tax: { vat_net: vat.net, corp: corp.tax, zakat: zak.zakat },
+    tax: { 
+      vat_output: vat.output,
+      vat_input: vat.input,
+      vat_net: vat.net, 
+      carry_vat: vat.carry,
+      corp: corp.tax, 
+      zakat: zak.zakat,
+      detail: vat.detail
+    },
     depreciation: {
       total: dep.total,
       nbv: dep.nbv,
