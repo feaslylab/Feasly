@@ -39,6 +39,11 @@ export function numberifyFin(fin: any) {
     interest: numArr(fin.interest ?? []),
     principal: numArr(fin.principal ?? []),
     balance: numArr(fin.balance ?? []),
+    fees_upfront: numArr(fin.fees_upfront ?? []),
+    fees_ongoing: numArr(fin.fees_ongoing ?? []),
+    dsra_balance: numArr(fin.dsra_balance ?? []),
+    dsra_funding: numArr(fin.dsra_funding ?? []),
+    dsra_release: numArr(fin.dsra_release ?? []),
   };
 }
 

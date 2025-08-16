@@ -16,7 +16,12 @@ export type DecimalArray = Decimal[];
 export type EngineOutput = {
   revenue: { rev_sales: DecimalArray; rev_rent: DecimalArray; vat_output: DecimalArray; billings_total: DecimalArray; recognized_sales: DecimalArray; allowed_release: DecimalArray; detail: Record<string, unknown>; };
   costs:   { capex: DecimalArray; opex: DecimalArray; vat_input: DecimalArray; detail: Record<string, unknown>; };
-  financing: { draws: DecimalArray; interest: DecimalArray; principal: DecimalArray; balance: DecimalArray; detail: Record<string, unknown>; };
+  financing: { 
+    draws: DecimalArray; interest: DecimalArray; principal: DecimalArray; balance: DecimalArray; 
+    fees_upfront: DecimalArray; fees_ongoing: DecimalArray; 
+    dsra_balance: DecimalArray; dsra_funding: DecimalArray; dsra_release: DecimalArray;
+    detail: Record<string, unknown>; 
+  };
   tax: { vat_net: DecimalArray; corp: DecimalArray; zakat: DecimalArray; };
   depreciation: { total: DecimalArray; nbv: DecimalArray; detail: Record<string, unknown>; };
   cash: { project_before_fin: DecimalArray; project: DecimalArray; equity_cf: DecimalArray; };
@@ -169,10 +174,27 @@ export function runModel(rawInputs: unknown): EngineOutput {
     fin
   );
 
+  // Rebuild cash subtracting VAT + corp + zakat + financing fees + DSRA
   const cash = {
     project_before_fin: cashBase.project_before_fin,
-    project: cashBase.project.map((v, t) => v.minus(vat.net[t]).minus(corp.tax[t]).minus(zak.zakat[t])), // pay VAT net + corp tax + zakat
-    equity_cf: cashBase.equity_cf.map((v, t) => v.minus(vat.net[t]).minus(corp.tax[t]).minus(zak.zakat[t])) // placeholder until waterfall
+    project: cashBase.project.map((v, t) => 
+      v.minus(vat.net[t])
+       .minus(corp.tax[t])
+       .minus(zak.zakat[t])
+       .minus(fin.fees_upfront[t])
+       .minus(fin.fees_ongoing[t])
+       .minus(fin.dsra_funding[t])
+       .add(fin.dsra_release[t])
+    ),
+    equity_cf: cashBase.equity_cf.map((v, t) => 
+      v.minus(vat.net[t])
+       .minus(corp.tax[t])
+       .minus(zak.zakat[t])
+       .minus(fin.fees_upfront[t])
+       .minus(fin.fees_ongoing[t])
+       .minus(fin.dsra_funding[t])
+       .add(fin.dsra_release[t])
+    )
   };
 
   return {

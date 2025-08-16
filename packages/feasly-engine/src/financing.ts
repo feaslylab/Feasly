@@ -2,10 +2,15 @@ import Decimal from "decimal.js";
 import { ProjectInputs } from "./types";
 
 export type FinancingBlock = {
-  draws: Decimal[];          // +ve cash in
-  interest: Decimal[];       // cash interest paid (for now)
-  principal: Decimal[];      // repayments (annuity/bullet)
-  balance: Decimal[];        // end-of-period outstanding
+  draws: Decimal[];          // +ve cash in (portfolio total)
+  interest: Decimal[];       // cash interest paid (portfolio total)
+  principal: Decimal[];      // repayments (portfolio total)
+  balance: Decimal[];        // end-of-period outstanding (portfolio total)
+  fees_upfront: Decimal[];   // upfront fees on draws (portfolio total)
+  fees_ongoing: Decimal[];   // ongoing fees on undrawn commitment (portfolio total)
+  dsra_balance: Decimal[];   // DSRA balance (portfolio total)
+  dsra_funding: Decimal[];   // cash to fund DSRA (portfolio total)
+  dsra_release: Decimal[];   // cash released from DSRA (portfolio total)
   detail: Record<string, unknown>;
 };
 
@@ -20,35 +25,89 @@ function pmtMonthly(rate_m: Decimal, n: number, pv: Decimal): Decimal {
   return num.div(den);
 }
 
-/** naive LTC-based draw plan: capex (and optionally opex) net of equity → debt up to LTC */
-function planDrawsFromCapex(capex: Decimal[], ltc: number): Decimal[] {
-  // Assume debt funds LTC * capex each period; equity funds the rest (no cash balance yet)
-  const T = capex.length;
-  const out = zeros(T);
-  for (let t = 0; t < T; t++) {
-    out[t] = capex[t].mul(ltc);
+/** Allocate funding need across tranches by priority, respecting availability and limits */
+function allocateDraws(
+  fundingNeed: Decimal[], 
+  tranches: any[], 
+  totalCapex: Decimal
+): Record<string, Decimal[]> {
+  const T = fundingNeed.length;
+  const allocation: Record<string, Decimal[]> = {};
+  
+  // Initialize allocations
+  for (const tranche of tranches) {
+    allocation[tranche.key] = zeros(T);
   }
-  return out;
+  
+  // Sort by priority
+  const sortedTranches = [...tranches].sort((a, b) => a.draw_priority - b.draw_priority);
+  
+  for (let t = 0; t < T; t++) {
+    let remaining = fundingNeed[t];
+    
+    for (const tranche of sortedTranches) {
+      if (remaining.lte(0)) break;
+      
+      // Check availability window
+      const start = tranche.availability_start_m ?? 0;
+      const end = tranche.availability_end_m ?? T - 1;
+      if (t < start || t > end) continue;
+      
+      // Calculate capacity (simplified LTC check)
+      const ltc = tranche.limit_ltc ?? 0;
+      const capacity = totalCapex.mul(ltc);
+      
+      // Get cumulative drawn so far for this tranche
+      let cumDrawn = new Decimal(0);
+      for (let i = 0; i < t; i++) {
+        cumDrawn = cumDrawn.add(allocation[tranche.key][i]);
+      }
+      
+      const available = Decimal.max(capacity.minus(cumDrawn), new Decimal(0));
+      const draw = Decimal.min(remaining, available);
+      
+      allocation[tranche.key][t] = draw;
+      remaining = remaining.minus(draw);
+    }
+  }
+  
+  return allocation;
 }
 
-/** Build one tranche schedule given draws, tenor, amort type, and monthly rate */
+/** Build schedule for a single tranche */
 function trancheSchedule(
-  draws: Decimal[],        // exogenous or planned
-  tenor_m: number,
-  amort_type: "bullet" | "annuity",
-  rate_m: Decimal
-) {
-  const T = draws.length;
+  tranche: any,
+  draws: Decimal[],
+  T: number
+): {
+  interest: Decimal[];
+  principal: Decimal[];
+  balance: Decimal[];
+  fees_upfront: Decimal[];
+  fees_ongoing: Decimal[];
+  dsra_balance: Decimal[];
+  dsra_funding: Decimal[];
+  dsra_release: Decimal[];
+} {
   const interest = zeros(T);
   const principal = zeros(T);
   const balance = zeros(T);
+  const fees_upfront = zeros(T);
+  const fees_ongoing = zeros(T);
+  const dsra_balance = zeros(T);
+  const dsra_funding = zeros(T);
+  const dsra_release = zeros(T);
 
-  // Running outstanding
+  const rate_m = new Decimal(tranche.nominal_rate_pa).div(12);
+  const upfront_pct = new Decimal(tranche.upfront_fee_pct ?? 0);
+  const ongoing_pct = new Decimal(tranche.ongoing_fee_pct_pa ?? 0).div(12);
+  const dsra_months = tranche.dsra_months ?? 0;
+  
   let bal = new Decimal(0);
+  let dsra_bal = new Decimal(0);
+  let cumDrawn = new Decimal(0);
 
-  // 1) Build outstanding through time with interest accrual
-  // 2) Apply repayments depending on amort type (annuity after "availability" assumed starts once balance > 0)
-  // Simplification: if annuity, start an annuity stream once the draw window is over (= after last non-zero draw)
+  // Find last draw for amortization start
   const lastDrawIdx = (() => {
     let idx = -1;
     for (let t = 0; t < T; t++) if (!draws[t].isZero()) idx = t;
@@ -56,96 +115,143 @@ function trancheSchedule(
   })();
 
   for (let t = 0; t < T; t++) {
-    // receive draw
-    bal = bal.add(draws[t]);
-
-    // interest on opening balance (post-draw– we'll approximate interest on current bal)
+    // Process draw
+    const draw = draws[t];
+    bal = bal.add(draw);
+    cumDrawn = cumDrawn.add(draw);
+    
+    // Upfront fees on draws
+    fees_upfront[t] = draw.mul(upfront_pct);
+    
+    // Ongoing fees on undrawn commitment during availability
+    const start = tranche.availability_start_m ?? 0;
+    const end = tranche.availability_end_m ?? T - 1;
+    if (t >= start && t <= end) {
+      const ltc = tranche.limit_ltc ?? 0;
+      const capacity = new Decimal(ltc); // Simplified - should use project value
+      const undrawn = Decimal.max(capacity.minus(cumDrawn), new Decimal(0));
+      fees_ongoing[t] = undrawn.mul(ongoing_pct);
+    }
+    
+    // Interest on opening balance
     const int_t = bal.mul(rate_m);
     interest[t] = int_t;
     bal = bal.add(int_t);
-
-    // repayments
-    if (amort_type === "bullet") {
-      // bullet: repay at maturity (lastDrawIdx + tenor_m - 1), guard bounds
-      const mat = Math.min(lastDrawIdx + tenor_m, T - 1);
+    
+    // DSRA logic
+    if (dsra_months > 0 && !bal.isZero()) {
+      const monthlyCharge = tranche.dsra_on === "interest_plus_fees" 
+        ? int_t.add(fees_ongoing[t])
+        : int_t;
+      const target = monthlyCharge.mul(dsra_months);
+      
+      if (dsra_bal.lt(target)) {
+        const funding = target.minus(dsra_bal);
+        dsra_funding[t] = funding;
+        dsra_bal = dsra_bal.add(funding);
+      }
+    }
+    
+    // Principal repayments
+    if (tranche.amort_type === "bullet") {
+      const mat = Math.min(lastDrawIdx + (tranche.tenor_months ?? 0), T - 1);
       if (t === mat) {
-        principal[t] = bal; // repay everything
+        principal[t] = bal;
         bal = new Decimal(0);
+        // Release DSRA at maturity
+        dsra_release[t] = dsra_bal;
+        dsra_bal = new Decimal(0);
       }
     } else {
-      // annuity: constant payment from start t0 = lastDrawIdx+1 until t0+tenor_m-1
+      // Annuity
       const t0 = lastDrawIdx + 1;
-      if (t === t0) {
-        // compute payment based on balance at t0
-        const remaining = Math.max(tenor_m, 1);
-        const payment = pmtMonthly(rate_m, remaining, bal);
-        // Store on detail for reference
-      }
-      // If in annuity window, compute a constant payment (recompute each t0)
-      const t0a = lastDrawIdx + 1;
-      if (t >= t0a && t < t0a + tenor_m) {
-        const payment = pmtMonthly(rate_m, tenor_m, balanceAtStart(draws, interest, t0a)); // helper below
-        // Payment first covers interest then principal
-        const interestPortion = Decimal.min(payment, bal.mul(rate_m)); // approximate current-period interest
-        const principalPortion = Decimal.max(payment.minus(interestPortion), new Decimal(0));
+      if (t >= t0 && t < t0 + (tranche.tenor_months ?? 0)) {
+        const payment = pmtMonthly(rate_m, tranche.tenor_months ?? 0, bal);
+        const principalPortion = Decimal.max(payment.minus(int_t), new Decimal(0));
         principal[t] = principalPortion;
         bal = bal.minus(principalPortion);
       }
     }
-
+    
     balance[t] = Decimal.max(bal, new Decimal(0));
+    dsra_balance[t] = dsra_bal;
   }
 
-  return { interest, principal, balance };
-}
-
-/** compute balance at period start for annuity start (approximate with cumulative draws and interest to t0-1) */
-function balanceAtStart(draws: Decimal[], interest: Decimal[], t0: number): Decimal {
-  let b = new Decimal(0);
-  for (let t = 0; t < t0; t++) b = b.add(draws[t]).add(interest[t]);
-  return b;
+  return {
+    interest, principal, balance, fees_upfront, fees_ongoing,
+    dsra_balance, dsra_funding, dsra_release
+  };
 }
 
 export function computeFinancing(inputs: ProjectInputs, capex: Decimal[]): FinancingBlock {
   const T = inputs.project.periods;
+  const totalCapex = capex.reduce((a, b) => a.add(b), new Decimal(0));
+  
+  // Initialize portfolio arrays
   const draws = zeros(T);
   const interest = zeros(T);
   const principal = zeros(T);
   const balance = zeros(T);
+  const fees_upfront = zeros(T);
+  const fees_ongoing = zeros(T);
+  const dsra_balance = zeros(T);
+  const dsra_funding = zeros(T);
+  const dsra_release = zeros(T);
+  
   const detail: Record<string, unknown> = { tranches: [] };
 
   if (!inputs.debt?.length) {
-    return { draws, interest, principal, balance, detail };
+    return { 
+      draws, interest, principal, balance, 
+      fees_upfront, fees_ongoing, dsra_balance, dsra_funding, dsra_release, 
+      detail 
+    };
   }
 
-  // For Prompt 4: single synthetic draw plan from capex and first tranche LTC; extend later for multi-tranche
-  const first = inputs.debt[0];
-  const ltc = (first.limit_ltc ?? 0);
-  const tenor_m = first.tenor_months;
-  const rate_pa = (first.fee_commitment_pct_pa ?? 0) + 0; // Placeholder: you likely have a nominal rate field; wire it when available
-  const rate_m = new Decimal(rate_pa).div(12);            // If you already store nominal rate, use it here.
-
-  // plan draws
-  const plannedDraws = planDrawsFromCapex(capex, ltc);
-
-  // tranche schedule
-  const { interest: i1, principal: p1, balance: b1 } = trancheSchedule(plannedDraws, tenor_m, (first.amort_type as any) ?? "bullet", rate_m);
-
-  // aggregate into engine-level arrays (single tranche for now)
+  // Plan funding need (simple LTC approach for now)
+  const fundingNeed = zeros(T);
   for (let t = 0; t < T; t++) {
-    draws[t] = draws[t].add(plannedDraws[t]);
-    interest[t] = interest[t].add(i1[t]);
-    principal[t] = principal[t].add(p1[t]);
-    balance[t] = balance[t].add(b1[t]);
+    // Sum all tranches' LTC to get total funding ratio
+    const totalLTC = inputs.debt.reduce((sum, tr) => sum + (tr.limit_ltc ?? 0), 0);
+    fundingNeed[t] = capex[t].mul(totalLTC);
   }
 
-  (detail.tranches as any[]) = [{
-    key: first.key,
-    draws: plannedDraws.map(d => d.toNumber()),
-    interest: i1.map(d => d.toNumber()),
-    principal: p1.map(d => d.toNumber()),
-    balance: b1.map(d => d.toNumber())
-  }];
+  // Allocate draws across tranches
+  const drawAllocation = allocateDraws(fundingNeed, inputs.debt, totalCapex);
 
-  return { draws, interest, principal, balance, detail };
+  // Process each tranche
+  const trancheResults: any[] = [];
+  for (const tranche of inputs.debt) {
+    const trancheDraws = drawAllocation[tranche.key];
+    const schedule = trancheSchedule(tranche, trancheDraws, T);
+    
+    // Aggregate to portfolio level
+    for (let t = 0; t < T; t++) {
+      draws[t] = draws[t].add(trancheDraws[t]);
+      interest[t] = interest[t].add(schedule.interest[t]);
+      principal[t] = principal[t].add(schedule.principal[t]);
+      balance[t] = balance[t].add(schedule.balance[t]);
+      fees_upfront[t] = fees_upfront[t].add(schedule.fees_upfront[t]);
+      fees_ongoing[t] = fees_ongoing[t].add(schedule.fees_ongoing[t]);
+      dsra_balance[t] = dsra_balance[t].add(schedule.dsra_balance[t]);
+      dsra_funding[t] = dsra_funding[t].add(schedule.dsra_funding[t]);
+      dsra_release[t] = dsra_release[t].add(schedule.dsra_release[t]);
+    }
+
+    trancheResults.push({
+      key: tranche.key,
+      draws: trancheDraws.map(d => d.toNumber()),
+      ...Object.fromEntries(
+        Object.entries(schedule).map(([k, v]) => [k, (v as Decimal[]).map(x => x.toNumber())])
+      )
+    });
+  }
+
+  detail.tranches = trancheResults;
+
+  return { 
+    draws, interest, principal, balance, 
+    fees_upfront, fees_ongoing, dsra_balance, dsra_funding, dsra_release, 
+    detail 
+  };
 }
