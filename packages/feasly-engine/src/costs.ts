@@ -48,6 +48,7 @@ export type CostsBlock = {
       base_amount: number;
       series: number[]; // escalated monthly series
       index_bucket?: string;
+      vat_input_eligible?: boolean;
     }>
   };
 };
@@ -89,7 +90,8 @@ export function computeCosts(inputs: ProjectInputs): CostsBlock {
       is_opex: !!item.is_opex,
       base_amount: base.toNumber(),
       series: escalated.map(d => d.toNumber()),
-      index_bucket: item.index_bucket
+      index_bucket: item.index_bucket,
+      vat_input_eligible: item.vat_input_eligible
     });
   }
 

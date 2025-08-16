@@ -34,11 +34,20 @@ export function buildAllowedReleaseSeries(
   inputs: ProjectInputs,
   progress: number[],
   contractValueTotal: Decimal
-): Decimal[] {
+): { 
+  allowed_release: Decimal[]; 
+  clamping_occurred: boolean;
+} {
   const T = progress.length;
   const out = new Array<Decimal>(T).fill(new Decimal(0));
+  let clampingOccurred = false;
 
-  if (!inputs.escrow?.wafi_enabled) return out.map(() => new Decimal(0));
+  if (!inputs.escrow?.wafi_enabled) {
+    return { 
+      allowed_release: out.map(() => new Decimal(0)), 
+      clamping_occurred: false 
+    };
+  }
 
   const { alpha, beta } = inputs.escrow.collection_cap ?? { alpha: 1, beta: 1 };
   let cumAllowed = new Decimal(0);
@@ -52,7 +61,11 @@ export function buildAllowedReleaseSeries(
     out[t] = periodAllowed;
     cumAllowed = cumAllowed.add(periodAllowed);
   }
-  return out;
+  
+  return { 
+    allowed_release: out, 
+    clamping_occurred: clampingOccurred 
+  };
 }
 
 function milestoneCum(inputs: ProjectInputs, t: number): number {

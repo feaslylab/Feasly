@@ -55,7 +55,7 @@ export function runModel(rawInputs: unknown): EngineOutput {
 
   // 2) Allowed release series (per-period) from escrow settings
   const contractValueTotal = revenue.billings_total.reduce((a,b)=>a.add(b), new Decimal(0));
-  const allowed_release_series = buildAllowedReleaseSeries(inputs, progress, contractValueTotal);
+  const { allowed_release: allowed_release_series } = buildAllowedReleaseSeries(inputs, progress, contractValueTotal);
 
   // 3) Recognition policies per product → combine into recognized_sales_raw
   const recognized_raw = zeros(T);
@@ -131,11 +131,18 @@ export function runModel(rawInputs: unknown): EngineOutput {
   // 4) Apply escrow cap to collections: cumulative collections ≤ cumulative allowed_release
   let cumColl = new Decimal(0);
   let cumAllow = new Decimal(0);
+  let collectionsClampingOccurred = false;
   for (let t=0;t<T;t++){
     const allowed = allowed_release_series[t];
     cumAllow = cumAllow.add(allowed);
     const room = Decimal.max(new Decimal(0), cumAllow.minus(cumColl));
-    const take = Decimal.min(room, revenue.collections[t]);
+    const originalCollection = revenue.collections[t];
+    const take = Decimal.min(room, originalCollection);
+    
+    if (take.lt(originalCollection)) {
+      collectionsClampingOccurred = true;
+    }
+    
     revenue.collections[t] = take;
     cumColl = cumColl.add(take);
   }
@@ -178,10 +185,10 @@ export function runModel(rawInputs: unknown): EngineOutput {
   (revenue as any).rev_cam = cam.cam_revenue;
 
   // VAT (based on timing and VAT classes, includes CAM)
-  const vat = computeVAT(inputs, revenue.billings_total, revenue.collections, revenue.rev_rent, cam.cam_revenue, costs.capex, costs.opex);
+  const vat = computeVAT(inputs, revenue.billings_total, revenue.collections, revenue.rev_rent, cam.cam_revenue, costs.capex, costs.opex, costs.detail.items);
 
   // Depreciation (simple total-capex proxy for Phase 1 VAT/Dep)
-  const dep = computeDepreciation(inputs, costs.capex);
+  const dep = computeDepreciation(inputs, costs.capex, costs.detail.items);
 
   // Financing (needed for corp tax interest calculation)
   const fin = computeFinancing(inputs, costs.capex);
@@ -253,7 +260,11 @@ export function runModel(rawInputs: unknown): EngineOutput {
       ...revenue,
       rev_cam: cam.cam_revenue,
       collections: revenue.collections,
-      accounts_receivable: revenue.accounts_receivable
+      accounts_receivable: revenue.accounts_receivable,
+      detail: {
+        ...revenue.detail,
+        collections_clamping_occurred: collectionsClampingOccurred
+      }
     },
     costs: {
       ...costs,

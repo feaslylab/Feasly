@@ -36,14 +36,24 @@ function straightLineSeries(
   return out;
 }
 
-export function computeDepreciation(inputs: ProjectInputs, capex: Decimal[]): DepreciationBlock {
+export function computeDepreciation(
+  inputs: ProjectInputs, 
+  capex: Decimal[], 
+  costItemsDetail: Array<{
+    key: string;
+    is_opex: boolean;
+    base_amount: number;
+    series: number[];
+    index_bucket?: string;
+  }>
+): DepreciationBlock {
   const T = capex.length;
   const perItem: DepreciationBlock["perItem"] = [];
   const total = zeros(T);
 
   for (const item of inputs.cost_items) {
     const pol = item.depreciation;
-    if (!pol || pol.method === "none") continue;
+    if (!pol || pol.method === "none" || item.is_opex) continue; // Only depreciate capex items
 
     const start = pol.start_month ?? 0;
     const lifeM = pol.useful_life_months ?? 0;
@@ -51,11 +61,13 @@ export function computeDepreciation(inputs: ProjectInputs, capex: Decimal[]): De
 
     let series: Decimal[] = zeros(T);
     if (pol.method === "straight_line") {
-      // Build the per-item capex series first (already escalated in computeCosts, but we don't have that here).
-      // We approximate by allocating the item's base amount following its phasing only (without index),
-      // because depreciation should use *capitalized cost*. For parity with computeCosts, consider passing the escalated per-item series later.
-      // For now, we'll use the capex total as proxy (OK for Phase 1).
-      series = straightLineSeries(capex, start, lifeM, salvage);
+      // Find the corresponding escalated series for this item
+      const itemDetail = costItemsDetail.find(d => d.key === item.key);
+      if (itemDetail && !itemDetail.is_opex) {
+        // Convert the escalated series to Decimal[] for depreciation calculation
+        const escalatedCapex = itemDetail.series.map(v => new Decimal(v));
+        series = straightLineSeries(escalatedCapex, start, lifeM, salvage);
+      }
     }
 
     // accumulate
@@ -70,7 +82,7 @@ export function computeDepreciation(inputs: ProjectInputs, capex: Decimal[]): De
     });
   }
 
-  // NBV rollforward (proxy): capex cumulative minus dep cumulative
+  // NBV rollforward: capex cumulative minus dep cumulative
   const nbv = zeros(T);
   let cumCapex = new Decimal(0);
   let cumDep = new Decimal(0);
