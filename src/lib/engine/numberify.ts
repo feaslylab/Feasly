@@ -79,3 +79,22 @@ export function numberifyCash(c: any) {
     equity_cf: numArr(c.equity_cf ?? []),
   };
 }
+
+export function numberifyBalanceSheet(bs: any) {
+  const num = (a: any[] = []) => a.map(toNum);
+  return {
+    ...bs,
+    cash: num(bs.cash),
+    accounts_receivable: num(bs.accounts_receivable),
+    dsra_cash: num(bs.dsra_cash),
+    nbv: num(bs.nbv),
+    vat_asset: num(bs.vat_asset),
+    debt: num(bs.debt),
+    vat_liability: num(bs.vat_liability),
+    paid_in_equity: num(bs.paid_in_equity),
+    retained_earnings: num(bs.retained_earnings),
+    assets_total: num(bs.assets_total),
+    liab_equity_total: num(bs.liab_equity_total),
+    imbalance: num(bs.imbalance),
+  };
+}

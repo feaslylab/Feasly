@@ -1,4 +1,5 @@
 import { z } from "zod";
+import Decimal from "decimal.js";
 
 export const Periodicity = z.enum(["monthly"]);
 export type Periodicity = z.infer<typeof Periodicity>;
@@ -170,6 +171,28 @@ export const ProjectInputs = z.object({
   collections_default: Curve.optional()
 });
 export type ProjectInputs = z.infer<typeof ProjectInputs>;
+
+export type DecimalArray = Decimal[];
+
+export type BalanceSheetBlock = {
+  // Assets
+  cash: DecimalArray;                // running cash balance
+  accounts_receivable: DecimalArray; // from revenue.accounts_receivable
+  dsra_cash: DecimalArray;           // from financing.dsra_balance
+  nbv: DecimalArray;                 // from depreciation.nbv
+  vat_asset: DecimalArray;           // VAT receivable (carry < 0)
+  // Liabilities
+  debt: DecimalArray;                // financing.balance
+  vat_liability: DecimalArray;       // VAT payable (net after carry > 0)
+  // Equity
+  paid_in_equity: DecimalArray;      // cumulative equity injections (+)
+  retained_earnings: DecimalArray;   // plug so Assets = Liab + Equity
+  // Diagnostics
+  assets_total: DecimalArray;
+  liab_equity_total: DecimalArray;
+  imbalance: DecimalArray;           // assets_total - liab_equity_total
+  detail: Record<string, unknown>;
+};
 
 // Small helpers used later
 export function normalizePhasing(phasing: number[]): number[] {

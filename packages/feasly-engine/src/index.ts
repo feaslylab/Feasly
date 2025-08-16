@@ -11,6 +11,7 @@ import { computeVAT } from "./tax";
 import { computeCorpTax } from "./corpTax";
 import { computeZakat } from "./zakat";
 import { computeCAM } from "./cam";
+import { computeBalanceSheet } from "./balanceSheet";
 
 export type DecimalArray = Decimal[];
 
@@ -34,6 +35,25 @@ export type EngineOutput = {
   };
   depreciation: { total: DecimalArray; nbv: DecimalArray; detail: Record<string, unknown>; };
   cash: { project_before_fin: DecimalArray; project: DecimalArray; equity_cf: DecimalArray; };
+  balance_sheet: {
+    // Assets
+    cash: DecimalArray;                // running cash balance
+    accounts_receivable: DecimalArray; // from revenue.accounts_receivable
+    dsra_cash: DecimalArray;           // from financing.dsra_balance
+    nbv: DecimalArray;                 // from depreciation.nbv
+    vat_asset: DecimalArray;           // VAT receivable (carry < 0)
+    // Liabilities
+    debt: DecimalArray;                // financing.balance
+    vat_liability: DecimalArray;       // VAT payable (net after carry > 0)
+    // Equity
+    paid_in_equity: DecimalArray;      // cumulative equity injections (+)
+    retained_earnings: DecimalArray;   // plug so Assets = Liab + Equity
+    // Diagnostics
+    assets_total: DecimalArray;
+    liab_equity_total: DecimalArray;
+    imbalance: DecimalArray;           // assets_total - liab_equity_total
+    detail: Record<string, unknown>;
+  };
   time: { df: number[]; dt: number[]; };
 };
 
@@ -255,6 +275,25 @@ export function runModel(rawInputs: unknown): EngineOutput {
     equity_cf
   };
 
+  // Balance Sheet computation
+  const bs = computeBalanceSheet({
+    T,
+    revenue: { accounts_receivable: revenue.accounts_receivable ?? zeros(T) },
+    depreciation: { nbv: dep.nbv },
+    financing: { balance: fin.balance, dsra_balance: fin.dsra_balance },
+    tax: { 
+      vat_output: vat.output ?? zeros(T),
+      vat_input:  vat.input  ?? zeros(T),
+      vat_net:    vat.net,
+      vat_carry:  vat.carry
+    },
+    cash
+  });
+
+  // Basic tie-out diagnostic
+  const tieOK = bs.imbalance.every(x => x.abs().lt(0.01));
+  console.log(`🧮 Balance Sheet ties: ${tieOK}`);
+
   return {
     revenue: {
       ...revenue,
@@ -287,6 +326,7 @@ export function runModel(rawInputs: unknown): EngineOutput {
       detail: {} // (optional) expose perItem later if you want; we keep output lean now
     },
     cash,
+    balance_sheet: bs,
     time: { df, dt }
   };
 }
