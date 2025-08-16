@@ -98,3 +98,19 @@ export function numberifyBalanceSheet(bs: any) {
     imbalance: num(bs.imbalance),
   };
 }
+
+export function numberifyPnL(p: any) {
+  const num = (a: unknown[]) => (a ?? []).map(toNum);
+  return {
+    ...p,
+    revenue: num(p.revenue ?? []),
+    opex: num(p.opex ?? []),
+    depreciation: num(p.depreciation ?? []),
+    ebit: num(p.ebit ?? []),
+    interest: num(p.interest ?? []),
+    pbt: num(p.pbt ?? []),
+    corp_tax: num(p.corp_tax ?? []),
+    zakat: num(p.zakat ?? []),
+    patmi: num(p.patmi ?? []),
+  };
+}

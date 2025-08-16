@@ -12,6 +12,7 @@ import { computeCorpTax } from "./corpTax";
 import { computeZakat } from "./zakat";
 import { computeCAM } from "./cam";
 import { computeBalanceSheet } from "./balanceSheet";
+import { computePnL } from "./pnl";
 
 export type DecimalArray = Decimal[];
 
@@ -52,6 +53,18 @@ export type EngineOutput = {
     assets_total: DecimalArray;
     liab_equity_total: DecimalArray;
     imbalance: DecimalArray;           // assets_total - liab_equity_total
+    detail: Record<string, unknown>;
+  };
+  profit_and_loss: {
+    revenue: DecimalArray;       // recognized_sales + rev_rent + rev_cam
+    opex: DecimalArray;          // use opex_net_of_cam to avoid double counting
+    depreciation: DecimalArray;
+    ebit: DecimalArray;
+    interest: DecimalArray;
+    pbt: DecimalArray;
+    corp_tax: DecimalArray;
+    zakat: DecimalArray;
+    patmi: DecimalArray;         // profit after tax & zakat
     detail: Record<string, unknown>;
   };
   time: { df: number[]; dt: number[]; };
@@ -275,6 +288,19 @@ export function runModel(rawInputs: unknown): EngineOutput {
     equity_cf
   };
 
+  // P&L computation
+  const pnl = computePnL({
+    T,
+    recognized_sales: revenue.recognized_sales,
+    rev_rent: revenue.rev_rent,
+    rev_cam: cam.cam_revenue,
+    opex_net_of_cam: cam.opex_net_of_cam,
+    depreciation: dep.total,
+    interest: fin.interest,
+    corp_tax: corp.tax,
+    zakat: zak.zakat
+  });
+
   // Balance Sheet computation
   const bs = computeBalanceSheet({
     T,
@@ -327,6 +353,7 @@ export function runModel(rawInputs: unknown): EngineOutput {
     },
     cash,
     balance_sheet: bs,
+    profit_and_loss: pnl,
     time: { df, dt }
   };
 }

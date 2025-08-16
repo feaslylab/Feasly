@@ -36,6 +36,7 @@ import { RightSideValidationPanel } from './RightSideValidationPanel';
 import { FloatingActionMenu } from '@/components/ui/floating-action-menu';
 import ScenarioPickerV2 from '@/components/ui/ScenarioPickerV2';
 import { useSelectionStore } from '@/state/selectionStore';
+import ReconciliationCard from '@/components/recon/ReconciliationCard';
 
 interface FormContentProps {
   projectId: string;
@@ -554,6 +555,8 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               hasPrevious={hasSectionPrevious('results-insights')}
               lazyLoad
             >
+              {/* Import and add ReconciliationCard here */}
+              <ReconciliationCard />
               <KPIResults />
             </SectionPanel>
 

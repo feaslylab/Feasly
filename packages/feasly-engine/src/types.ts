@@ -194,6 +194,19 @@ export type BalanceSheetBlock = {
   detail: Record<string, unknown>;
 };
 
+export type ProfitAndLossBlock = {
+  revenue: DecimalArray;       // recognized_sales + rev_rent + rev_cam
+  opex: DecimalArray;          // use opex_net_of_cam to avoid double counting
+  depreciation: DecimalArray;
+  ebit: DecimalArray;
+  interest: DecimalArray;
+  pbt: DecimalArray;
+  corp_tax: DecimalArray;
+  zakat: DecimalArray;
+  patmi: DecimalArray;         // profit after tax & zakat
+  detail: Record<string, unknown>;
+};
+
 // Small helpers used later
 export function normalizePhasing(phasing: number[]): number[] {
   if (!phasing?.length) return [];
