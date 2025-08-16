@@ -8,6 +8,8 @@ import { assembleCash } from "./cash";
 import { buildProjectProgress, buildAllowedReleaseSeries } from "./escrow";
 import { computeDepreciation } from "./depreciation";
 import { computeVAT } from "./tax";
+import { computeCorpTax } from "./corpTax";
+import { computeZakat } from "./zakat";
 
 export type DecimalArray = Decimal[];
 
@@ -136,8 +138,29 @@ export function runModel(rawInputs: unknown): EngineOutput {
   // Depreciation (simple total-capex proxy for Phase 1 VAT/Dep)
   const dep = computeDepreciation(inputs, costs.capex);
 
-  // continue with financing & cash
-  const fin  = computeFinancing(inputs, costs.capex);
+  // Financing (needed for corp tax interest calculation)
+  const fin = computeFinancing(inputs, costs.capex);
+
+  // Corporate Tax
+  const corp = computeCorpTax({
+    revenue_sales: revenue.recognized_sales,
+    revenue_rent:  revenue.rev_rent,
+    opex: costs.opex,
+    depreciation_total: dep.total,
+    interest: fin.interest,
+    corp_tax_rate: inputs.tax?.corp_tax_enabled ? (inputs.tax?.corp_tax_rate ?? 0) : 0,
+    interest_cap_pct_ebitda: inputs.tax?.interest_cap_pct_ebitda ?? 1,
+    allow_nol_carryforward: inputs.tax?.allow_nol_carryforward ?? true
+  });
+
+  // Zakat
+  const zak = computeZakat({
+    method: "nbv",
+    rate_annual: inputs.tax?.zakat_enabled ? 0.025 : 0, // 2.5% standard zakat rate
+    nbv: dep.nbv
+  });
+
+  // Cash flow assembly
   const cashBase = assembleCash(
     revenue.recognized_sales, // use recognized sales in cash now
     revenue.rev_rent,
@@ -148,15 +171,15 @@ export function runModel(rawInputs: unknown): EngineOutput {
 
   const cash = {
     project_before_fin: cashBase.project_before_fin,
-    project: cashBase.project.map((v, t) => v.minus(vat.net[t])), // pay VAT net
-    equity_cf: cashBase.equity_cf.map((v, t) => v.minus(vat.net[t])) // placeholder until waterfall
+    project: cashBase.project.map((v, t) => v.minus(vat.net[t]).minus(corp.tax[t]).minus(zak.zakat[t])), // pay VAT net + corp tax + zakat
+    equity_cf: cashBase.equity_cf.map((v, t) => v.minus(vat.net[t]).minus(corp.tax[t]).minus(zak.zakat[t])) // placeholder until waterfall
   };
 
   return {
     revenue,
     costs,
     financing: fin,
-    tax: { vat_net: vat.net, corp: zeros(T), zakat: zeros(T) },
+    tax: { vat_net: vat.net, corp: corp.tax, zakat: zak.zakat },
     depreciation: {
       total: dep.total,
       nbv: dep.nbv,
