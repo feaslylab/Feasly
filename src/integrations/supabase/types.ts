@@ -1702,30 +1702,7 @@ export type Database = {
       }
     }
     Views: {
-      safe_profiles: {
-        Row: {
-          avatar_url: string | null
-          created_at: string | null
-          full_name: string | null
-          updated_at: string | null
-          user_id: string | null
-        }
-        Insert: {
-          avatar_url?: string | null
-          created_at?: string | null
-          full_name?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          avatar_url?: string | null
-          created_at?: string | null
-          full_name?: string | null
-          updated_at?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       cleanup_expired_invitations: {
@@ -1742,17 +1719,6 @@ export type Database = {
           avatar_url: string
           created_at: string
           display_name: string
-          user_id: string
-        }[]
-      }
-      get_user_profile_safe: {
-        Args: { target_user_id: string }
-        Returns: {
-          avatar_url: string
-          created_at: string
-          email: string
-          full_name: string
-          updated_at: string
           user_id: string
         }[]
       }
