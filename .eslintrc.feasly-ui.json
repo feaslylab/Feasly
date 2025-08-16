@@ -1,0 +1,16 @@
+{
+  "overrides": [
+    {
+      "files": ["src/**/*.{ts,tsx}"],
+      "rules": {
+        "no-restricted-syntax": [
+          "warn",
+          {
+            "selector": "CallExpression[callee.name=/^(Math|IRR|NPV|PMT|XIRR|XNPV)$/]",
+            "message": "Business calculations must live in @feasly/feasly-engine. Use selectors from EngineContext."
+          }
+        ]
+      }
+    }
+  ]
+}

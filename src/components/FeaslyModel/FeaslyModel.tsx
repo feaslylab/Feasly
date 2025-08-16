@@ -43,6 +43,7 @@ import { useFeaslyVersions } from "@/hooks/useFeaslyVersions";
 import { useExportData } from "@/hooks/useExportData";
 import { ComplianceStatusPanel } from "./ComplianceStatusPanel";
 import { FeaslyModelV2 } from "./FeaslyModelV2";
+import { RevenueHeadline } from "@/components/engine/RevenueHeadline";
 
 // Enable v2 by default
 const isV2Enabled = true;
@@ -271,6 +272,9 @@ export default function FeaslyModel() {
                 {/* Results & Insights - Always Visible */}
                 <div className="space-y-4 sm:space-y-6">
                   <h2 className="feasly-title">🎯 Results & Insights</h2>
+                  
+                  {/* Revenue Totals from Engine */}
+                  <RevenueHeadline />
                   
                   {/* KPI Results */}
                   <KPIResults />
