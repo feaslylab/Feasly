@@ -6,7 +6,7 @@ import {
 } from "recharts";
 import { format } from "date-fns";
 import { chartHelpers } from "@/theme/chartPalette";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface Project {
   id: string;

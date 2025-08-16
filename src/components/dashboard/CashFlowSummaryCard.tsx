@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 import { LineChart, Line, ResponsiveContainer, Tooltip } from 'recharts';
-import { useTheme } from 'next-themes';
+import { useTheme } from '@/contexts/ThemeContext';
 import { getCachedScenarioResult } from '@/services/scenario';
 import { useEffect, useState } from 'react';
 

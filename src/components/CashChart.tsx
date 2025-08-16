@@ -6,7 +6,7 @@ import { useCashSeries, CashPoint } from "@/hooks/useCashSeries";
 import { Button } from "@/components/ui/button";
 import { csvFormat } from 'd3-dsv';
 import { chartHelpers } from "@/theme/chartPalette";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/contexts/ThemeContext";
 import { ChartErrorBoundary } from "@/components/charts/ChartErrorBoundary";
 
 function exportCsv(rows: CashPoint[]) {
@@ -27,7 +27,7 @@ function toRows(cash: number[]) {
 }
 
 export default function CashChart({ data }: { data?: number[] }) {
-  const { theme } = useTheme();
+  const { actualTheme } = useTheme();
   let rows: CashPoint[] = [];
   
   try {
@@ -44,7 +44,7 @@ export default function CashChart({ data }: { data?: number[] }) {
   }
   
   // Add safety check for theme context
-  if (!theme) {
+  if (!actualTheme) {
     return <div className="text-sm text-muted-foreground p-4">Loading chart...</div>;
   }
 
@@ -56,7 +56,7 @@ export default function CashChart({ data }: { data?: number[] }) {
   // Get theme-aware colors from our chart palette - with fallback
   let colors;
   try {
-    colors = chartHelpers.getCashFlowColors(theme === 'dark' ? 'dark' : 'light');
+    colors = chartHelpers.getCashFlowColors(actualTheme);
   } catch (error) {
     console.error('Error getting chart colors:', error);
     // Fallback colors

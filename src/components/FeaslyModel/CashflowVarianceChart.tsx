@@ -28,7 +28,7 @@ const metricLabels = {
 
 // Import chart colors from palette
 import { chartHelpers, CHART_CATEGORIES } from "@/theme/chartPalette";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/contexts/ThemeContext";
 
 // Use theme-aware chart colors
 const getScenarioColors = (theme: 'light' | 'dark' = 'light') => {

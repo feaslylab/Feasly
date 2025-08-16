@@ -1,6 +1,6 @@
 
 import { ComposedChart, Area, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { useTheme } from 'next-themes';
+import { useTheme } from '@/contexts/ThemeContext';
 import { ChartErrorBoundary } from "@/components/charts/ChartErrorBoundary";
 
 interface CumulativeChartProps {

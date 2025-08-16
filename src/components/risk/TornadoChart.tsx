@@ -1,6 +1,6 @@
 
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { useTheme } from 'next-themes';
+import { useTheme } from '@/contexts/ThemeContext';
 import { ChartErrorBoundary } from "@/components/charts/ChartErrorBoundary";
 
 interface TornadoChartProps {

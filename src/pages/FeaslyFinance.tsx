@@ -15,7 +15,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, L
 import { DollarSign, PieChart as PieChartIcon, CreditCard, TrendingUp, Info } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { chartHelpers } from "@/theme/chartPalette";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/contexts/ThemeContext";
 
 // Form schema
 const financeSchema = z.object({

@@ -1,6 +1,6 @@
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, BarChart, Bar, ComposedChart } from 'recharts';
-import { useTheme } from 'next-themes';
+import { useTheme } from '@/contexts/ThemeContext';
 import { ChartErrorBoundary } from "@/components/charts/ChartErrorBoundary";
 
 interface CashFlowChartProps {
@@ -9,7 +9,7 @@ interface CashFlowChartProps {
 }
 
 export function CashFlowChart({ cashflow, isLoading }: CashFlowChartProps) {
-  const { theme } = useTheme();
+  const { actualTheme } = useTheme();
   
   if (isLoading) {
     return (
@@ -43,10 +43,10 @@ export function CashFlowChart({ cashflow, isLoading }: CashFlowChartProps) {
   });
 
   const colors = {
-    primary: theme === 'dark' ? 'hsl(var(--primary))' : 'hsl(var(--primary))',
-    success: theme === 'dark' ? 'hsl(var(--chart-2))' : 'hsl(var(--chart-2))',
-    destructive: theme === 'dark' ? 'hsl(var(--destructive))' : 'hsl(var(--destructive))',
-    muted: theme === 'dark' ? 'hsl(var(--muted-foreground))' : 'hsl(var(--muted-foreground))',
+    primary: 'hsl(var(--primary))',
+    success: 'hsl(var(--chart-2))',
+    destructive: 'hsl(var(--destructive))',
+    muted: 'hsl(var(--muted-foreground))',
   };
 
   const formatCurrency = (value: number) => {
@@ -80,9 +80,9 @@ export function CashFlowChart({ cashflow, isLoading }: CashFlowChartProps) {
               />
               <Tooltip 
                 formatter={(value: number) => [formatCurrency(value), 'Cumulative']}
-                labelStyle={{ color: theme === 'dark' ? '#fff' : '#000' }}
+                labelStyle={{ color: 'hsl(var(--foreground))' }}
                 contentStyle={{ 
-                  backgroundColor: theme === 'dark' ? 'hsl(var(--background))' : '#fff',
+                  backgroundColor: 'hsl(var(--background))',
                   border: `1px solid hsl(var(--border))`,
                   borderRadius: '6px'
                 }}
@@ -124,9 +124,9 @@ export function CashFlowChart({ cashflow, isLoading }: CashFlowChartProps) {
                   const label = name === 'inflow' ? 'Inflow' : name === 'outflow' ? 'Outflow' : 'Net Flow';
                   return [formatCurrency(value), label];
                 }}
-                labelStyle={{ color: theme === 'dark' ? '#fff' : '#000' }}
+                labelStyle={{ color: 'hsl(var(--foreground))' }}
                 contentStyle={{ 
-                  backgroundColor: theme === 'dark' ? 'hsl(var(--background))' : '#fff',
+                  backgroundColor: 'hsl(var(--background))',
                   border: `1px solid hsl(var(--border))`,
                   borderRadius: '6px'
                 }}
