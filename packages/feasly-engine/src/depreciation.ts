@@ -27,7 +27,7 @@ function straightLineSeries(
   let basis = new Decimal(0);
   for (let t = 0; t <= Math.min(startMonth, T - 1); t++) basis = basis.add(base[t]);
 
-  const depBase = basis.minus(salvage).max(0);
+  const depBase = Decimal.max(basis.minus(salvage), new Decimal(0));
   const perM = lifeM > 0 ? depBase.div(lifeM) : new Decimal(0);
   const out = zeros(T);
   for (let m = startMonth; m < Math.min(startMonth + lifeM, T); m++) {
@@ -77,7 +77,7 @@ export function computeDepreciation(inputs: ProjectInputs, capex: Decimal[]): De
   for (let t = 0; t < T; t++) {
     cumCapex = cumCapex.add(capex[t]);
     cumDep = cumDep.add(total[t]);
-    nbv[t] = cumCapex.minus(cumDep).max(0);
+    nbv[t] = Decimal.max(cumCapex.minus(cumDep), new Decimal(0));
   }
 
   return { perItem, total, nbv };

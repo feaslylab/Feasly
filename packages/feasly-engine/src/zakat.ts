@@ -27,7 +27,7 @@ export function computeZakat(params: {
   if (params.method === "equity_in" && params.equity_in) {
     for (let t=0;t<T;t++) base[t] = params.equity_in[t];
   } else if (params.method === "nbv" && params.nbv) {
-    for (let t=0;t<T;t++) base[t] = params.nbv[t].max(0);
+    for (let t=0;t<T;t++) base[t] = Decimal.max(params.nbv[t], new Decimal(0));
   }
 
   const r_m = params.rate_annual / 12;

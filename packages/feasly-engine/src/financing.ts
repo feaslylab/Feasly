@@ -87,13 +87,13 @@ function trancheSchedule(
         const payment = pmtMonthly(rate_m, tenor_m, balanceAtStart(draws, interest, t0a)); // helper below
         // Payment first covers interest then principal
         const interestPortion = Decimal.min(payment, bal.mul(rate_m)); // approximate current-period interest
-        const principalPortion = payment.minus(interestPortion).max(0);
+        const principalPortion = Decimal.max(payment.minus(interestPortion), new Decimal(0));
         principal[t] = principalPortion;
         bal = bal.minus(principalPortion);
       }
     }
 
-    balance[t] = bal.max(0);
+    balance[t] = Decimal.max(bal, new Decimal(0));
   }
 
   return { interest, principal, balance };

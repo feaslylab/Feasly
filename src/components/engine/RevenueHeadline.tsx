@@ -1,17 +1,20 @@
-import { useRevenueTotals } from "@/lib/engine/EngineContext";
-import Decimal from "decimal.js";
+import { useEngineNumbers } from "@/lib/engine/EngineContext";
+import { SafeChart } from "@/components/common/SafeChart";
 
 export function RevenueHeadline() {
-  const { rev_sales, rev_rent } = useRevenueTotals();
+  const { revenue } = useEngineNumbers();
+  const { rev_sales, rev_rent } = revenue;
 
-  const sum = (arr: any[]) =>
-    arr.reduce((a: Decimal, b: Decimal) => a.plus(b), new Decimal(0));
+  const sum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
 
-  const totalSales = sum(rev_sales).toNumber();
-  const totalRent  = sum(rev_rent).toNumber();
+  const totalSales = sum(rev_sales);
+  const totalRent = sum(rev_rent);
+
+  const hasData = (rev_sales?.length ?? 0) > 0 || (rev_rent?.length ?? 0) > 0;
 
   return (
-    <div className="flex gap-6 p-4 bg-card rounded-lg border">
+    <SafeChart ready={hasData}>
+      <div className="flex gap-6 p-4 bg-card rounded-lg border">
       <div className="text-sm">
         <span className="text-muted-foreground">Total Sales:</span>
         <span className="ml-2 font-semibold">{totalSales.toLocaleString()}</span>
@@ -21,5 +24,6 @@ export function RevenueHeadline() {
         <span className="ml-2 font-semibold">{totalRent.toLocaleString()}</span>
       </div>
     </div>
+    </SafeChart>
   );
 }

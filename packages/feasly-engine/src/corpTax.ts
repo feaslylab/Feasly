@@ -46,8 +46,8 @@ export function computeCorpTax(params: {
 
     // interest limitation: cap as % of EBITDA (approx: use EBIT here for simplicity)
     const cap = ebit_t.mul(params.interest_cap_pct_ebitda);
-    const allowedInterest = Decimal.min(params.interest[t], cap.max(0));
-    const disallowedAddBack = params.interest[t].minus(allowedInterest).max(0);
+    const allowedInterest = Decimal.min(params.interest[t], Decimal.max(cap, new Decimal(0)));
+    const disallowedAddBack = Decimal.max(params.interest[t].minus(allowedInterest), new Decimal(0));
 
     const pbt_t = ebit_t.minus(allowedInterest); // add-back is in taxable adjustment below
     pbt[t] = pbt_t;
@@ -76,7 +76,7 @@ export function computeCorpTax(params: {
     nol[t] = nol_cf;
 
     const tax_t = taxBase.mul(params.corp_tax_rate);
-    tax[t] = tax_t.max(0);
+    tax[t] = Decimal.max(tax_t, new Decimal(0));
   }
 
   return {

@@ -2,6 +2,10 @@
 import React, { createContext, useContext, useMemo } from "react";
 import { runModel, ProjectInputs } from "../../../packages/feasly-engine/src";
 import { mapFormToProjectInputs } from "@/lib/mapFormToProjectInputs";
+import {
+  numberifyRevenue, numberifyCosts, numberifyFin,
+  numberifyTax, numberifyDep, numberifyCash
+} from "@/lib/engine/numberify";
 
 type EngineContextValue = {
   inputs: ProjectInputs;
@@ -37,4 +41,22 @@ export function useEngine() {
 export function useRevenueTotals() {
   const { output } = useEngine();
   return output.revenue;
+}
+
+export function useEngineNumbers() {
+  const { output } = useEngine();
+  // Create a derived, memoized "numbers only" snapshot for charts/UI
+  const num = useMemo(() => ({
+    revenue: numberifyRevenue(output.revenue),
+    costs: numberifyCosts(output.costs),
+    financing: numberifyFin(output.financing ?? {}),
+    tax: numberifyTax(output.tax ?? {}),
+    depreciation: numberifyDep(output.depreciation ?? {}),
+    cash: numberifyCash(output.cash ?? {}),
+    time: {
+      df: output.time?.df ?? [],
+      dt: output.time?.dt ?? []
+    }
+  }), [output]);
+  return num;
 }
