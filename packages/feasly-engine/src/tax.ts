@@ -19,6 +19,7 @@ export function computeVAT(
   billings_total: Decimal[],
   collections: Decimal[],
   rev_rent: Decimal[],
+  rev_cam: Decimal[],
   capex: Decimal[],
   opex: Decimal[]
 ): VATBlock {
@@ -35,34 +36,69 @@ export function computeVAT(
 
   const vatRate = new Decimal(inputs.tax.vat_rate ?? 0);
   const timing = inputs.tax.vat_timing ?? "invoice";
+  const inputRecoveryMethod = inputs.tax.input_recovery_method ?? "fixed_share";
+  const fixedRecoveryShare = new Decimal(inputs.tax.input_recovery_fixed_share ?? 0.5);
+  const rounding = inputs.tax.rounding ?? "period";
+  const decimals = inputs.tax.decimals ?? 2;
   
   const output = zeros(T);
   const input = zeros(T);
 
-  // Build output VAT base based on timing and VAT classes
-  // For now, apply standard rate to all billings/collections (per-UT class refinement later)
-  for (let t = 0; t < T; t++) {
-    let salesBase = new Decimal(0);
-    let rentBase = new Decimal(0);
+  // Track taxable vs total output bases for proportional recovery
+  let totalTaxableOutput = new Decimal(0);
+  let totalOutput = new Decimal(0);
 
-    if (timing === "invoice") {
-      // Use billings for invoice timing
-      salesBase = billings_total[t];
-    } else {
-      // Use collections for cash timing
-      salesBase = collections[t];
+  // Build output VAT base respecting timing and VAT classes
+  for (let t = 0; t < T; t++) {
+    let outputBase = new Decimal(0);
+    let taxableBase = new Decimal(0);
+
+    // Sales base (respects timing)
+    const salesBase = timing === "invoice" ? billings_total[t] : collections[t];
+    
+    // For now, treat all sales as standard-rated (TODO: per-UT class filtering)
+    outputBase = outputBase.add(salesBase);
+    taxableBase = taxableBase.add(salesBase);
+    
+    // Add rent revenue (always cash timing, treat as standard-rated)
+    outputBase = outputBase.add(rev_rent[t]);
+    taxableBase = taxableBase.add(rev_rent[t]);
+    
+    // Add CAM revenue if enabled (standard-rated)
+    outputBase = outputBase.add(rev_cam[t]);
+    taxableBase = taxableBase.add(rev_cam[t]);
+
+    // Apply VAT rate to taxable outputs
+    let vatOutput = taxableBase.mul(vatRate);
+    
+    // Apply rounding if enabled
+    if (rounding === "period") {
+      vatOutput = new Decimal(vatOutput.toFixed(decimals));
     }
     
-    // Rent is always immediate cash (occupancy-based)
-    rentBase = rev_rent[t];
+    output[t] = vatOutput;
+    
+    // Track totals for input recovery calculation
+    totalTaxableOutput = totalTaxableOutput.add(taxableBase);
+    totalOutput = totalOutput.add(outputBase);
 
-    // Apply VAT rate to standard-rated outputs (simplified: treat all as standard for now)
-    // TODO: Implement per-UT VAT class filtering
-    output[t] = salesBase.add(rentBase).mul(vatRate);
-
-    // Input VAT: eligible share of costs (timing: cash for now)
-    const inputBase = capex[t].add(opex[t]).mul(0.5); // 50% eligible assumption for Phase 1
-    input[t] = inputBase.mul(vatRate);
+    // Input VAT calculation
+    const totalCosts = capex[t].add(opex[t]);
+    let inputRecoveryRatio = fixedRecoveryShare;
+    
+    if (inputRecoveryMethod === "proportional_to_taxable_outputs" && !totalOutput.isZero()) {
+      inputRecoveryRatio = totalTaxableOutput.div(totalOutput);
+    }
+    
+    const inputBase = totalCosts.mul(inputRecoveryRatio);
+    let vatInput = inputBase.mul(vatRate);
+    
+    // Apply rounding if enabled
+    if (rounding === "period") {
+      vatInput = new Decimal(vatInput.toFixed(decimals));
+    }
+    
+    input[t] = vatInput;
   }
 
   // Net VAT with carryforward logic
@@ -80,7 +116,14 @@ export function computeVAT(
       carryBalance = afterCarry;
     } else {
       // Pay the net VAT
-      net[t] = afterCarry;
+      let netPayment = afterCarry;
+      
+      // Apply rounding if enabled
+      if (rounding === "period") {
+        netPayment = new Decimal(netPayment.toFixed(decimals));
+      }
+      
+      net[t] = netPayment;
       carryBalance = new Decimal(0);
     }
     
@@ -95,6 +138,12 @@ export function computeVAT(
     detail: {
       timing,
       rate: vatRate.toNumber(),
+      input_recovery_method: inputRecoveryMethod,
+      input_recovery_ratio: inputRecoveryMethod === "proportional_to_taxable_outputs" 
+        ? (totalOutput.isZero() ? 0 : totalTaxableOutput.div(totalOutput).toNumber())
+        : fixedRecoveryShare.toNumber(),
+      rounding,
+      decimals,
       enabled: true
     }
   };
