@@ -1,6 +1,7 @@
 import Decimal from "decimal.js";
 import { ProjectInputs } from "./types";
 import { dtYears, discountFactors } from "./time";
+import { computeRevenue } from "./revenue";
 
 export type DecimalArray = Decimal[];
 
@@ -18,11 +19,14 @@ function zeros(n:number): Decimal[] { return Array.from({length:n}, () => new De
 export function runModel(rawInputs: unknown): EngineOutput {
   const inputs = ProjectInputs.parse(rawInputs);
   const T = inputs.project.periods;
+
   const dt = dtYears(T);
   const df = discountFactors(T);
 
+  const revenue = computeRevenue(inputs);
+
   return {
-    revenue: { rev_sales: zeros(T), rev_rent: zeros(T), vat_output: zeros(T), billings_total: zeros(T), detail:{} },
+    revenue,
     costs:   { capex: zeros(T), opex: zeros(T), vat_input: zeros(T), detail:{} },
     financing: {},
     tax: { vat_net: zeros(T), corp: zeros(T), zakat: zeros(T) },
