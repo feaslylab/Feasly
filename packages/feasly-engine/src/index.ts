@@ -6,6 +6,8 @@ import { computeCosts } from "./costs";
 import { computeFinancing } from "./financing";
 import { assembleCash } from "./cash";
 import { buildProjectProgress, buildAllowedReleaseSeries } from "./escrow";
+import { computeDepreciation } from "./depreciation";
+import { computeVAT } from "./tax";
 
 export type DecimalArray = Decimal[];
 
@@ -14,6 +16,7 @@ export type EngineOutput = {
   costs:   { capex: DecimalArray; opex: DecimalArray; vat_input: DecimalArray; detail: Record<string, unknown>; };
   financing: { draws: DecimalArray; interest: DecimalArray; principal: DecimalArray; balance: DecimalArray; detail: Record<string, unknown>; };
   tax: { vat_net: DecimalArray; corp: DecimalArray; zakat: DecimalArray; };
+  depreciation: { total: DecimalArray; nbv: DecimalArray; detail: Record<string, unknown>; };
   cash: { project_before_fin: DecimalArray; project: DecimalArray; equity_cf: DecimalArray; };
   time: { df: number[]; dt: number[]; };
 };
@@ -27,6 +30,7 @@ export function runModel(rawInputs: unknown): EngineOutput {
   const dt = dtYears(T);
   const df = discountFactors(T);
 
+  // blocks
   const revenue = computeRevenue(inputs);
   const costs   = computeCosts(inputs);
 
@@ -126,9 +130,15 @@ export function runModel(rawInputs: unknown): EngineOutput {
   revenue.recognized_sales = recognized_sales;
   revenue.rev_sales = recognized_sales; // keep legacy field equal to recognized
 
+  // VAT (based on recognized sales & rent, and input eligibility proxy)
+  const vat = computeVAT(inputs, revenue.recognized_sales, revenue.rev_rent, costs.capex, costs.opex);
+
+  // Depreciation (simple total-capex proxy for Phase 1 VAT/Dep)
+  const dep = computeDepreciation(inputs, costs.capex);
+
   // continue with financing & cash
   const fin  = computeFinancing(inputs, costs.capex);
-  const cash = assembleCash(
+  const cashBase = assembleCash(
     revenue.recognized_sales, // use recognized sales in cash now
     revenue.rev_rent,
     costs.capex,
@@ -136,11 +146,22 @@ export function runModel(rawInputs: unknown): EngineOutput {
     fin
   );
 
+  const cash = {
+    project_before_fin: cashBase.project_before_fin,
+    project: cashBase.project.map((v, t) => v.minus(vat.net[t])), // pay VAT net
+    equity_cf: cashBase.equity_cf.map((v, t) => v.minus(vat.net[t])) // placeholder until waterfall
+  };
+
   return {
     revenue,
     costs,
     financing: fin,
-    tax: { vat_net: zeros(T), corp: zeros(T), zakat: zeros(T) },
+    tax: { vat_net: vat.net, corp: zeros(T), zakat: zeros(T) },
+    depreciation: {
+      total: dep.total,
+      nbv: dep.nbv,
+      detail: {} // (optional) expose perItem later if you want; we keep output lean now
+    },
     cash,
     time: { df, dt }
   };
