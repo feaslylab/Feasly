@@ -30,6 +30,9 @@ export default function ReconciliationCard() {
     : 0;
   const tiePct = avgAssets > 0 ? (maxAbsImbalance / avgAssets) * 100 : 0;
 
+  const rollforward = bs?.detail?.retained_earnings_rollforward;
+  const tieOutOK = bs?.detail?.tie_out_ok;
+
   let status: "ok" | "warn" | "bad" = "ok";
   if (tiePct >= 0.1) status = "bad";
   else if (tiePct >= 0.01) status = "warn";
@@ -39,13 +42,17 @@ export default function ReconciliationCard() {
       : status === "warn" ? "bg-amber-100 text-amber-800"
       : "bg-red-100 text-red-800";
 
+  const tieMsg = rollforward && tieOutOK
+    ? `BS ties without plug ✅ (max error ${fmt(tiePct)}%)`
+    : `Tie-out max error: ${fmt(tiePct)}%`;
+
   return (
     <div className="rounded-2xl border p-4 md:p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">Reconciliation</h3>
         <div className="flex items-center gap-2">
           <span className={`px-2 py-1 rounded-full text-xs ${statusClasses}`}>
-            Tie-out max error: {fmt(tiePct)}%
+            {tieMsg}
           </span>
           <span
             className={`px-2 py-1 rounded-full text-xs ${

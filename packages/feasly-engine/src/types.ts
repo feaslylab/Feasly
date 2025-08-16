@@ -186,12 +186,15 @@ export type BalanceSheetBlock = {
   vat_liability: DecimalArray;       // VAT payable (net after carry > 0)
   // Equity
   paid_in_equity: DecimalArray;      // cumulative equity injections (+)
-  retained_earnings: DecimalArray;   // plug so Assets = Liab + Equity
-  // Diagnostics
+  retained_earnings: DecimalArray;   // computed rollforward of PATMI
+  // Totals
   assets_total: DecimalArray;
   liab_equity_total: DecimalArray;
-  imbalance: DecimalArray;           // assets_total - liab_equity_total
-  detail: Record<string, unknown>;
+  imbalance: DecimalArray;           // diagnostic only
+  detail: {
+    tie_out_ok: boolean;
+    retained_earnings_rollforward: boolean;
+  };
 };
 
 export type ProfitAndLossBlock = {

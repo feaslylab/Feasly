@@ -311,9 +311,11 @@ export function runModel(rawInputs: unknown): EngineOutput {
       vat_output: vat.output ?? zeros(T),
       vat_input:  vat.input  ?? zeros(T),
       vat_net:    vat.net,
-      vat_carry:  vat.carry
+      vat_carry:  vat.carry,
+      carry_vat:  vat.carry
     },
-    cash
+    cash,
+    pnl
   });
 
   // Basic tie-out diagnostic
