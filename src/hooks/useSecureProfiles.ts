@@ -17,25 +17,26 @@ export const useTeamMemberInfo = (userId: string | null) => {
     queryFn: async (): Promise<SafeTeamMemberInfo | null> => {
       if (!userId || !user?.id) return null;
 
-      // SECURITY FIX: Explicitly exclude email column to prevent harvesting
-      // Only select safe profile fields for team members
+      // SECURITY FIX: Use secure function instead of direct table query
+      // This prevents email exposure through shared team/organization access
       const { data, error } = await supabase
-        .from('profiles')
-        .select('user_id, full_name, avatar_url, created_at')
-        .eq('user_id', userId)
-        .single();
+        .rpc('get_safe_team_member_info', { target_user_id: userId });
 
       if (error) {
         console.error('Error fetching team member info:', error);
         return null;
       }
 
-      return data ? {
-        user_id: data.user_id,
-        display_name: data.full_name || '',
-        avatar_url: data.avatar_url,
-        created_at: data.created_at
-      } : null;
+      // Return first result since RPC returns an array
+      const profile = data?.[0];
+      if (!profile) return null;
+
+      return {
+        user_id: profile.user_id,
+        display_name: profile.display_name,
+        avatar_url: profile.avatar_url,
+        created_at: profile.created_at
+      };
     },
     enabled: !!userId && !!user?.id
   });
