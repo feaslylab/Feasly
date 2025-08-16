@@ -1,0 +1,160 @@
+import { z } from "zod";
+
+export const Periodicity = z.enum(["monthly"]);
+export type Periodicity = z.infer<typeof Periodicity>;
+
+export const RevenuePolicy = z.enum(["handover","poc_cost","poc_physical","billings_capped"]);
+export type RevenuePolicy = z.infer<typeof RevenuePolicy>;
+
+export const CurveMeaning = z.enum(["sell_through","occupancy"]);
+export type CurveMeaning = z.infer<typeof CurveMeaning>;
+
+export const VATClass = z.enum(["standard","zero","exempt","out_of_scope"]);
+export type VATClass = z.infer<typeof VATClass>;
+
+export const AmortType = z.enum(["bullet","annuity","custom"]);
+export type AmortType = z.infer<typeof AmortType>;
+
+export const IndexBucket = z.object({
+  key: z.string(),
+  rate_nominal_pa: z.number().default(0),
+  frequency: z.enum(["annual"]).default("annual"),
+  cap_pct: z.number().optional(),
+  floor_pct: z.number().optional()
+});
+export type IndexBucket = z.infer<typeof IndexBucket>;
+
+export const Curve = z.object({
+  meaning: CurveMeaning,
+  values: z.array(z.number())
+});
+export type Curve = z.infer<typeof Curve>;
+
+export const UnitType = z.object({
+  key: z.string(),
+  category: z.enum(["residential","retail","office","land","other"]).default("other"),
+  count: z.number().int().nonnegative().default(0),
+  sellable_area_sqm: z.number().nonnegative().optional(),
+  delivery_month: z.number().int().nonnegative().optional(),
+  initial_price_sqm_sale: z.number().nonnegative().optional(),
+  initial_rent_sqm_m: z.number().nonnegative().optional(),
+  index_bucket_price: z.string().optional(),
+  index_bucket_rent: z.string().optional(),
+  revenue_policy: RevenuePolicy.default("handover"),
+  curve: Curve.optional(),
+  vat_class_output: VATClass.default("out_of_scope")
+});
+export type UnitType = z.infer<typeof UnitType>;
+
+export const DepreciationPolicy = z.object({
+  method: z.enum(["none","straight_line"]).default("none"),
+  useful_life_months: z.number().int().positive().optional(),
+  start_month: z.number().int().nonnegative().optional(),
+  salvage_value: z.number().nonnegative().optional()
+});
+export type DepreciationPolicy = z.infer<typeof DepreciationPolicy>;
+
+export const CostItem = z.object({
+  key: z.string(),
+  base_amount: z.number().nonnegative(),
+  phasing: z.array(z.number()),
+  is_opex: z.boolean().default(false),
+  index_bucket: z.string().optional(),
+  vat_input_eligible: z.boolean().default(false),
+  depreciation: DepreciationPolicy.optional()
+});
+export type CostItem = z.infer<typeof CostItem>;
+
+export const DebtTranche = z.object({
+  key: z.string(),
+  limit_ltc: z.number().nonnegative().optional(),
+  limit_ltv: z.number().nonnegative().optional(),
+  tenor_months: z.number().int().positive(),
+  amort_type: z.enum(["bullet","annuity","custom"]).default("bullet"),
+  fee_upfront_pct: z.number().nonnegative().default(0),
+  fee_commitment_pct_pa: z.number().nonnegative().default(0),
+  dsra_months: z.number().int().nonnegative().default(0),
+  covenants: z.object({
+    dscr_min: z.number().nonnegative().optional(),
+    icr_min: z.number().nonnegative().optional()
+  }).optional()
+});
+export type DebtTranche = z.infer<typeof DebtTranche>;
+
+export const TaxBlock = z.object({
+  vat_enabled: z.boolean().default(false),
+  vat_rate: z.number().nonnegative().default(0),
+  corp_tax_enabled: z.boolean().default(false),
+  corp_tax_rate: z.number().nonnegative().default(0),
+  zakat_enabled: z.boolean().default(false),
+  interest_cap_pct_ebitda: z.number().nonnegative().default(1),
+  allow_nol_carryforward: z.boolean().default(true),
+  vat_ruleset: z.string().default("UAE_2025")
+});
+export type TaxBlock = z.infer<typeof TaxBlock>;
+
+export const EscrowBlock = z.object({
+  wafi_enabled: z.boolean().default(false),
+  collection_cap: z.object({
+    alpha: z.number().nonnegative().default(1),
+    beta: z.number().nonnegative().default(1)
+  }).default({ alpha:1, beta:1 }),
+  release_rules: z.enum(["alpha_beta","milestones"]).default("alpha_beta"),
+  milestones: z.array(z.object({
+    month: z.number().int().nonnegative(),
+    pct_cum_release: z.number().min(0).max(1)
+  })).default([])
+});
+export type EscrowBlock = z.infer<typeof EscrowBlock>;
+
+export const ValuationBlock = z.object({
+  selling_cost_pct: z.number().min(0).default(0),
+  cap_rate_pa_income: z.number().min(0).default(0),
+  stabilize_month: z.number().int().nonnegative().default(24)
+});
+export type ValuationBlock = z.infer<typeof ValuationBlock>;
+
+export const WaterfallBlock = z.object({
+  enabled: z.boolean().default(false),
+  pref_rate_pa: z.number().min(0).default(0.08),
+  promote_split: z.object({ lp: z.number(), gp: z.number() }).default({ lp:0.8, gp:0.2 }),
+  mode: z.enum(["pref_rate"]).default("pref_rate")
+});
+export type WaterfallBlock = z.infer<typeof WaterfallBlock>;
+
+export const Plot = z.object({
+  id: z.string(),
+  use: z.enum(["residential","retail","office","land","other"]).default("other"),
+  gfa_sqm: z.number().nonnegative().default(0),
+  phaseCurve: z.array(z.number()).optional(),
+  mapToUnitTypes: z.array(z.string()).default([])
+});
+export type Plot = z.infer<typeof Plot>;
+
+export const ProjectInputs = z.object({
+  project: z.object({
+    start_date: z.string(),
+    periods: z.number().int().positive(),
+    periodicity: Periodicity.default("monthly")
+  }),
+  engineMode: z.enum(["excel_parity","feasly_enhanced"]).default("excel_parity"),
+  index_buckets: z.array(IndexBucket).default([]),
+  unit_types: z.array(UnitType).default([]),
+  cost_items: z.array(CostItem).default([]),
+  debt: z.array(DebtTranche).default([]),
+  tax: TaxBlock.default({}),
+  escrow: EscrowBlock.default({}),
+  valuation: ValuationBlock.default({}),
+  waterfall: WaterfallBlock.default({}),
+  plots: z.array(Plot).default([])
+});
+export type ProjectInputs = z.infer<typeof ProjectInputs>;
+
+// Small helpers used later
+export function normalizePhasing(phasing: number[]): number[] {
+  if (!phasing?.length) return [];
+  const sum = phasing.reduce((a,b)=>a+(b||0),0);
+  if (sum === 0) return phasing.map(()=>0);
+  return phasing.map(x => (x||0)/sum);
+}
+export const clamp01 = (x:number) => Math.max(0, Math.min(1, x));

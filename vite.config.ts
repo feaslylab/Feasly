@@ -78,6 +78,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
       "feasly-engine": path.resolve(__dirname, "./packages/feasly-engine/src"),
+      "@feasly/feasly-engine": path.resolve(__dirname, "./packages/feasly-engine/src"),
     },
   },
   build: {
