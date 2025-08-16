@@ -85,6 +85,10 @@ export const DebtTranche = z.object({
   dsra_months: z.number().int().nonnegative().default(0),
   dsra_on: z.enum(["interest","interest_plus_fees"]).default("interest"),
   draw_priority: z.number().int().default(1), // order tranches for funding
+  covenants: z.object({
+    dscr_min: z.number().nonnegative().optional(), // e.g., 1.05
+    icr_min:  z.number().nonnegative().optional()  // e.g., 2.00
+  }).optional()
 });
 export type DebtTranche = z.infer<typeof DebtTranche>;
 
@@ -216,6 +220,28 @@ export type CashFlowBlock = {
   from_financing: DecimalArray;     // debt draws, repayments, equity, fees, DSRA flows
   net_change: DecimalArray;         // sum of above
   cash_closing: DecimalArray;       // reconcile to balance_sheet.cash
+  detail: Record<string, unknown>;
+};
+
+export type CovenantSeries = {
+  dscr: DecimalArray; // CFADS / DebtService
+  icr:  DecimalArray; // EBIT / Interest
+  dscr_breach: boolean[]; // per-period
+  icr_breach:  boolean[];
+  detail: Record<string, unknown>;        // extra traces if needed
+};
+
+export type CovenantsBlock = {
+  // Portfolio-level (all tranches aggregated)
+  portfolio: CovenantSeries;
+  // Per-tranche keyed series
+  by_tranche: Record<string, CovenantSeries>;
+  // Rollup diagnostics
+  breaches_any: boolean[];
+  breaches_summary: {
+    total_breach_periods: number;
+    first_breach_index: number | null;
+  };
   detail: Record<string, unknown>;
 };
 

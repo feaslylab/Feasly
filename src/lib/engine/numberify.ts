@@ -126,3 +126,25 @@ export function numberifyCashFlow(cf: any) {
     cash_closing: num(cf.cash_closing ?? []),
   };
 }
+
+export function numberifyCovenants(c: any) {
+  const num = (a: unknown[]) => (a ?? []).map(toNum);
+  const numSeries = (s:any)=>({
+    ...s,
+    dscr: num(s?.dscr ?? []),
+    icr: num(s?.icr ?? []),
+    dscr_breach: (s?.dscr_breach ?? []).map(Boolean),
+    icr_breach:  (s?.icr_breach  ?? []).map(Boolean),
+  });
+  const byTr: Record<string, any> = {};
+  for (const k of Object.keys(c?.by_tranche ?? {})) {
+    byTr[k] = numSeries(c.by_tranche[k]);
+  }
+  return {
+    ...c,
+    portfolio: numSeries(c.portfolio ?? {}),
+    by_tranche: byTr,
+    breaches_any: (c?.breaches_any ?? []).map(Boolean),
+    breaches_summary: c?.breaches_summary ?? {},
+  };
+}

@@ -14,6 +14,7 @@ import { computeCAM } from "./cam";
 import { computeBalanceSheet } from "./balanceSheet";
 import { computePnL } from "./pnl";
 import { computeCashFlow } from "./computeCashFlow";
+import { computeCovenants } from "./computeCovenants";
 
 export type DecimalArray = Decimal[];
 
@@ -76,6 +77,7 @@ export type EngineOutput = {
     cash_closing: DecimalArray;       // reconcile to balance_sheet.cash
     detail: Record<string, unknown>;
   };
+  covenants: import("./types").CovenantsBlock;
   time: { df: number[]; dt: number[]; };
 };
 
@@ -340,6 +342,15 @@ export function runModel(rawInputs: unknown): EngineOutput {
     cash
   });
 
+  // Covenant computation
+  const covenants = computeCovenants({
+    T,
+    inputs,
+    financing: { interest: fin.interest, principal: fin.principal, fees_ongoing: fin.fees_ongoing, detail: fin.detail },
+    pnl: { ebit: pnl.ebit, interest: pnl.interest },
+    cf: { from_operations: cf.from_operations }
+  });
+
   // Basic tie-out diagnostic
   const tieOK = bs.imbalance.every(x => x.abs().lt(0.01));
   console.log(`🧮 Balance Sheet ties: ${tieOK}`);
@@ -379,6 +390,7 @@ export function runModel(rawInputs: unknown): EngineOutput {
     balance_sheet: bs,
     profit_and_loss: pnl,
     cash_flow: cf,
+    covenants,
     time: { df, dt }
   };
 }
