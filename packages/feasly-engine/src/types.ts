@@ -87,7 +87,13 @@ export const DebtTranche = z.object({
   draw_priority: z.number().int().default(1), // order tranches for funding
   covenants: z.object({
     dscr_min: z.number().nonnegative().optional(), // e.g., 1.05
-    icr_min:  z.number().nonnegative().optional()  // e.g., 2.00
+    icr_min:  z.number().nonnegative().optional(), // e.g., 2.00
+    /** Which basis to test portfolio breach on */
+    test_basis: z.enum(["point","ltm","both"]).default("point").optional(),
+    /** Grace periods (months) before we call a breach persistent */
+    grace_period_m: z.number().int().nonnegative().default(0).optional(),
+    /** Whether "Strict DSCR" should include ongoing fees in Debt Service */
+    strict_dscr: z.boolean().default(false).optional()
   }).optional()
 });
 export type DebtTranche = z.infer<typeof DebtTranche>;
@@ -224,11 +230,18 @@ export type CashFlowBlock = {
 };
 
 export type CovenantSeries = {
-  dscr: DecimalArray; // CFADS / DebtService
-  icr:  DecimalArray; // EBIT / Interest
-  dscr_breach: boolean[]; // per-period
-  icr_breach:  boolean[];
-  detail: Record<string, unknown>;        // extra traces if needed
+  dscr: DecimalArray;              // Classic DSCR (CFADS / (Int+Prin))
+  dscr_strict: DecimalArray;       // Strict DSCR (CFADS / (Int+Prin+Ongoing Fees))
+  icr: DecimalArray;               // EBIT / Interest
+  dscr_ltm: DecimalArray;          // 12M rolling DSCR (classic)
+  dscr_strict_ltm: DecimalArray;   // 12M rolling DSCR (strict)
+  icr_ltm: DecimalArray;           // 12M rolling ICR
+  dscr_breach: boolean[];
+  icr_breach: boolean[];
+  dscr_headroom: DecimalArray;       // DSCR - dscr_min (classic)
+  icr_headroom: DecimalArray;        // ICR - icr_min
+  dscr_strict_headroom: DecimalArray;// Strict DSCR - dscr_min
+  detail: Record<string, unknown>;
 };
 
 export type CovenantsBlock = {
@@ -237,12 +250,18 @@ export type CovenantsBlock = {
   // Per-tranche keyed series
   by_tranche: Record<string, CovenantSeries>;
   // Rollup diagnostics
-  breaches_any: boolean[];
+  breaches_any: boolean[];  // portfolio level (basis + grace applied)
   breaches_summary: {
     total_breach_periods: number;
     first_breach_index: number | null;
   };
-  detail: Record<string, unknown>;
+  detail: {
+    test_basis: "point" | "ltm" | "both";
+    grace_period_m: number;
+    dscr_threshold?: number | null;
+    icr_threshold?: number | null;
+    notes?: string;
+  };
 };
 
 // Small helpers used later

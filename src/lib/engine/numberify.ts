@@ -128,14 +128,23 @@ export function numberifyCashFlow(cf: any) {
 }
 
 export function numberifyCovenants(c: any) {
-  const num = (a: unknown[]) => (a ?? []).map(toNum);
+  const toN = (x:any)=> typeof x === "number" ? x : (x?.toNumber?.() ?? (isFinite(x) ? Number(x) : x));
+  const num = (a: unknown[]) => (a ?? []).map(toN);
   const numSeries = (s:any)=>({
     ...s,
     dscr: num(s?.dscr ?? []),
+    dscr_strict: num(s?.dscr_strict ?? []),
     icr: num(s?.icr ?? []),
+    dscr_ltm: num(s?.dscr_ltm ?? []),
+    dscr_strict_ltm: num(s?.dscr_strict_ltm ?? []),
+    icr_ltm: num(s?.icr_ltm ?? []),
     dscr_breach: (s?.dscr_breach ?? []).map(Boolean),
     icr_breach:  (s?.icr_breach  ?? []).map(Boolean),
+    dscr_headroom: num(s?.dscr_headroom ?? []),
+    icr_headroom:  num(s?.icr_headroom  ?? []),
+    dscr_strict_headroom: num(s?.dscr_strict_headroom ?? []),
   });
+
   const byTr: Record<string, any> = {};
   for (const k of Object.keys(c?.by_tranche ?? {})) {
     byTr[k] = numSeries(c.by_tranche[k]);
@@ -146,5 +155,6 @@ export function numberifyCovenants(c: any) {
     by_tranche: byTr,
     breaches_any: (c?.breaches_any ?? []).map(Boolean),
     breaches_summary: c?.breaches_summary ?? {},
+    detail: c?.detail ?? {}
   };
 }

@@ -1,17 +1,31 @@
 import Decimal from "decimal.js";
 import { CovenantsBlock, ProjectInputs } from "./types";
 
-const z = (T:number)=>Array.from({length:T},()=>new Decimal(0));
+const z = (T:number)=> Array.from({length:T}, ()=> new Decimal(0));
+const W = 12; // LTM window size
 
-/**
- * Definitions
- * - CFADS (proxy): cash_flow.from_operations[t]
- *   (PATMI + dep + WC adj; already indirect ops CF).
- * - Debt Service: interest + principal (exclude fees for classic DSCR).
- *   (We'll also compute a "strict" version incl. ongoing fees for diagnostics.)
- * - EBIT: from profit_and_loss.ebit[t].
- * - Interest: financing.interest[t] (cash interest).
- */
+function rollingRatio(
+  num: Decimal[], den: Decimal[], window = W
+): Decimal[] {
+  const T = num.length;
+  const out = z(T);
+  let sumN = new Decimal(0), sumD = new Decimal(0);
+  for (let t=0; t<T; t++){
+    sumN = sumN.add(num[t] ?? 0);
+    sumD = sumD.add(den[t] ?? 0);
+    if (t >= window){
+      sumN = sumN.sub(num[t-window] ?? 0);
+      sumD = sumD.sub(den[t-window] ?? 0);
+    }
+    if (t >= window-1) {
+      out[t] = sumD.isZero() ? new Decimal(Infinity) : sumN.div(sumD);
+    } else {
+      out[t] = new Decimal(NaN); // not enough history
+    }
+  }
+  return out;
+}
+
 export function computeCovenants(params: {
   T: number;
   inputs: ProjectInputs;
@@ -19,105 +33,173 @@ export function computeCovenants(params: {
     interest: Decimal[];
     principal: Decimal[];
     fees_ongoing: Decimal[];
-    detail: Record<string, unknown>; // contains tranche schedules if needed
+    detail: Record<string, unknown>;
   };
   pnl: {
     ebit: Decimal[];
-    interest: Decimal[];
+    interest: Decimal[]; // same as financing.interest but kept for clarity
   };
   cf: {
-    from_operations: Decimal[];
+    from_operations: Decimal[]; // CFADS proxy
   };
 }): CovenantsBlock {
   const { T, inputs, financing, pnl, cf } = params;
+  const cfads = cf.from_operations;
+  const interest = financing.interest;
+  const principal = financing.principal;
+  const fees = financing.fees_ongoing;
+  const ebit = pnl.ebit;
 
-  // Portfolio
-  const dscr = z(T);
-  const icr  = z(T);
-  const dscr_breach: boolean[] = Array(T).fill(false);
-  const icr_breach:  boolean[] = Array(T).fill(false);
-
-  // Helpers
-  const debtService = (t:number) =>
-    (financing.interest[t] || new Decimal(0)).add(financing.principal[t] || new Decimal(0));
-  const ebit = (t:number) => pnl.ebit[t] || new Decimal(0);
-  const interestOnly = (t:number) => financing.interest[t] || new Decimal(0);
-  const cfads = (t:number) => cf.from_operations[t] || new Decimal(0);
-
-  // Portfolio thresholds: if multiple tranches have thresholds, use the MIN of each metric as portfolio covenant
-  const minDSCR = inputs.debt?.reduce((m,tr)=> Math.min(m, tr.covenants?.dscr_min ?? Infinity), Infinity);
-  const minICR  = inputs.debt?.reduce((m,tr)=> Math.min(m, tr.covenants?.icr_min  ?? Infinity), Infinity);
+  // Portfolio thresholds (min across tranches that define one)
+  const minDSCR = inputs.debt?.reduce((m,tr)=>Math.min(m, tr.covenants?.dscr_min ?? Infinity), Infinity) ?? Infinity;
+  const minICR  = inputs.debt?.reduce((m,tr)=>Math.min(m, tr.covenants?.icr_min  ?? Infinity), Infinity) ?? Infinity;
   const dscrMin = Number.isFinite(minDSCR) ? new Decimal(minDSCR) : null;
   const icrMin  = Number.isFinite(minICR)  ? new Decimal(minICR)  : null;
 
-  for (let t=0; t<T; t++) {
-    const ds  = debtService(t);
-    const cfv = cfads(t);
-    dscr[t] = ds.isZero() ? new Decimal(Infinity) : cfv.div(ds);
+  // Portfolio test basis + grace: choose most lenient grace for portfolio (max)
+  // and "most-demanding" basis if mixed (both).
+  const allBasis = (inputs.debt ?? [])
+    .map(d => d.covenants?.test_basis ?? "point");
+  const basis: "point"|"ltm"|"both" = allBasis.includes("both")
+    ? "both"
+    : allBasis.includes("ltm")
+      ? (allBasis.includes("point") ? "both" : "ltm")
+      : "point";
 
-    const intv = interestOnly(t);
-    const e    = ebit(t);
-    icr[t] = intv.isZero() ? new Decimal(Infinity) : e.div(intv);
+  const grace = Math.max(0, ...(inputs.debt ?? [])
+    .map(d => d.covenants?.grace_period_m ?? 0));
 
-    dscr_breach[t] = !!(dscrMin && dscr[t].lt(dscrMin));
-    icr_breach[t]  = !!(icrMin  && icr[t].lt(icrMin));
-  }
+  // Whether any tranche wants strict DSCR; portfolio exposes both series anyway
+  const anyStrict = (inputs.debt ?? [])
+    .some(d => d.covenants?.strict_dscr);
 
-  // Per-tranche: if you have per-tranche interest/principal in financing.detail.tranches[]
-  const by_tranche: Record<string, any> = {};
-  const trDetail = (financing.detail?.tranches as Array<any>) || [];
-  for (const tr of trDetail) {
-    const k = tr.key as string;
-    const dscr_t = z(T);
-    const icr_t  = z(T);
-    const dscr_b: boolean[] = Array(T).fill(false);
-    const icr_b:  boolean[] = Array(T).fill(false);
+  // Classic DSCR/Strict DSCR/ICR
+  const debtSvcClassic = Array.from({length:T}, (_,t)=>
+    (interest[t]||new Decimal(0)).add(principal[t]||new Decimal(0)));
+  const debtSvcStrict = Array.from({length:T}, (_,t)=>
+    debtSvcClassic[t].add(fees[t] || new Decimal(0)));
 
-    // series are numbers in detail; wrap with Decimal
-    const i = (tr.interest || []).map((x:number)=> new Decimal(x));
-    const p = (tr.principal|| []).map((x:number)=> new Decimal(x));
+  const dscr = Array.from({length:T}, (_,t)=>{
+    const den = debtSvcClassic[t] ?? new Decimal(0);
+    return den.isZero() ? new Decimal(Infinity) : (cfads[t]||new Decimal(0)).div(den);
+  });
+  const dscr_strict = Array.from({length:T}, (_,t)=>{
+    const den = debtSvcStrict[t] ?? new Decimal(0);
+    return den.isZero() ? new Decimal(Infinity) : (cfads[t]||new Decimal(0)).div(den);
+  });
+  const icr = Array.from({length:T}, (_,t)=>{
+    const den = (interest[t]||new Decimal(0));
+    return den.isZero() ? new Decimal(Infinity) : (ebit[t]||new Decimal(0)).div(den);
+  });
 
-    const dscrMinTr = inputs.debt?.find(d=>d.key===k)?.covenants?.dscr_min ?? null;
-    const icrMinTr  = inputs.debt?.find(d=>d.key===k)?.covenants?.icr_min  ?? null;
-    const dMin = dscrMinTr != null ? new Decimal(dscrMinTr) : null;
-    const iMin = icrMinTr  != null ? new Decimal(icrMinTr)  : null;
+  // LTM variants (NaN until enough history)
+  const dscr_ltm        = rollingRatio(cfads, debtSvcClassic, W);
+  const dscr_strict_ltm = rollingRatio(cfads, debtSvcStrict, W);
+  const icr_ltm         = rollingRatio(ebit,  interest,       W);
 
-    for (let t=0; t<T; t++) {
-      const ds = (i[t] || new Decimal(0)).add(p[t] || new Decimal(0));
-      const cfv = cfads(t);
-      dscr_t[t] = ds.isZero() ? new Decimal(Infinity) : cfv.div(ds);
+  // Headroom
+  const dscr_headroom        = dscr.map(v => dscrMin ? v.sub(dscrMin) : new Decimal(NaN));
+  const dscr_strict_headroom = dscr_strict.map(v => dscrMin ? v.sub(dscrMin) : new Decimal(NaN));
+  const icr_headroom         = icr.map(v => icrMin ? v.sub(icrMin) : new Decimal(NaN));
 
-      const intv = i[t] || new Decimal(0);
-      icr_t[t] = intv.isZero() ? new Decimal(Infinity) : ebit(t).div(intv);
+  // Point-in-time breaches (classic)
+  const dscr_breach_pt = dscr.map(v => dscrMin ? v.lt(dscrMin) : false);
+  const icr_breach_pt  = icr.map(v => icrMin  ? v.lt(icrMin)   : false);
 
-      dscr_b[t] = !!(dMin && dscr_t[t].lt(dMin));
-      icr_b[t]  = !!(iMin  && icr_t[t].lt(iMin));
+  // LTM breaches (classic)
+  const dscr_breach_ltm = dscr_ltm.map(v => (dscrMin && v.isFinite()) ? v.lt(dscrMin) : false);
+  const icr_breach_ltm  = icr_ltm.map(v  => (icrMin  && v.isFinite()) ? v.lt(icrMin)  : false);
+
+  // Combine breaches by basis
+  const combineByBasis = (pt: boolean[], ltm: boolean[])=>{
+    if (basis === "point") return pt;
+    if (basis === "ltm")   return ltm;
+    return pt.map((b,i)=> b || ltm[i]); // both
+  };
+  const dscr_breach = combineByBasis(dscr_breach_pt, dscr_breach_ltm);
+  const icr_breach  = combineByBasis(icr_breach_pt,  icr_breach_ltm);
+
+  // Grace logic on portfolio: a breach only "counts" if consecutive streak >= grace
+  const breaches_any_raw = dscr_breach.map((b,i)=> b || icr_breach[i]);
+  const breaches_any = (() => {
+    if (!grace) return breaches_any_raw.slice();
+    const out = Array(T).fill(false);
+    let streak = 0;
+    for (let t=0; t<T; t++){
+      if (breaches_any_raw[t]) {
+        streak += 1;
+      } else {
+        streak = 0;
+      }
+      out[t] = streak >= grace;
     }
+    return out;
+  })();
+
+  const total_breach_periods = breaches_any.reduce((a,b)=> a+(b?1:0), 0);
+  const first_breach_index = breaches_any.findIndex(Boolean);
+  const fbi = first_breach_index >= 0 ? first_breach_index : null;
+
+  // Per-tranche series (classic only for simplicity; you can extend similarly)
+  const by_tranche: Record<string, any> = {};
+  const trList = (financing.detail?.tranches as any[]) ?? [];
+  for (const tr of trList) {
+    const k = tr.key as string;
+    const i = (tr.interest  ?? []).map((x:number)=> new Decimal(x));
+    const p = (tr.principal ?? []).map((x:number)=> new Decimal(x));
+    const svcClassic = i.map((iv:Decimal,idx:number)=> iv.add(p[idx] || new Decimal(0)));
+    const dscr_tr = svcClassic.map((den:Decimal, t:number)=>
+      den.isZero() ? new Decimal(Infinity) : (cfads[t]||new Decimal(0)).div(den)
+    );
+    const ebitDen = i;
+    const icr_tr  = ebitDen.map((den:Decimal, t:number)=>
+      den.isZero() ? new Decimal(Infinity) : (ebit[t]||new Decimal(0)).div(den)
+    );
+    const trCfg = (inputs.debt ?? []).find(d=>d.key===k)?.covenants ?? {};
+    const trD = (trCfg.dscr_min != null) ? new Decimal(trCfg.dscr_min) : null;
+    const trI = (trCfg.icr_min  != null) ? new Decimal(trCfg.icr_min)  : null;
+
+    const dscr_b = dscr_tr.map(v => trD ? v.lt(trD) : false);
+    const icr_b  = icr_tr.map(v => trI ? v.lt(trI)  : false);
 
     by_tranche[k] = {
-      dscr: dscr_t,
-      icr: icr_t,
+      dscr: dscr_tr,
+      dscr_strict: z(T),            // optional per-tranche strict; left empty for now
+      icr: icr_tr,
+      dscr_ltm: rollingRatio(cfads, svcClassic, W),
+      dscr_strict_ltm: z(T),        // optional per-tranche strict LTM
+      icr_ltm: rollingRatio(ebit, i, W),
       dscr_breach: dscr_b,
       icr_breach: icr_b,
+      dscr_headroom: dscr_tr.map(v => trD ? v.sub(trD) : new Decimal(NaN)),
+      icr_headroom:  icr_tr.map(v => trI ? v.sub(trI) : new Decimal(NaN)),
+      dscr_strict_headroom: z(T),
       detail: {}
     };
   }
 
-  // Rollup diagnostics
-  const breaches_any = Array.from({length:T}, (_,t)=> dscr_breach[t] || icr_breach[t]);
-  const total_breach_periods = breaches_any.reduce((a,b)=> a + (b?1:0), 0);
-  const first_breach_index = breaches_any.findIndex(b=>b) ?? -1;
-
   return {
-    portfolio: { dscr, icr, dscr_breach, icr_breach, detail: {} },
+    portfolio: {
+      dscr, dscr_strict, icr,
+      dscr_ltm, dscr_strict_ltm, icr_ltm,
+      dscr_breach, icr_breach,
+      dscr_headroom, icr_headroom, dscr_strict_headroom,
+      detail: {
+        any_strict_requested: anyStrict
+      }
+    },
     by_tranche,
     breaches_any,
     breaches_summary: {
       total_breach_periods,
-      first_breach_index: first_breach_index >= 0 ? first_breach_index : null
+      first_breach_index: fbi
     },
     detail: {
-      notes: "DSCR based on CFADS=operating cash flow; DebtService=interest+principal. ICR=EBIT/Interest."
+      test_basis: basis,
+      grace_period_m: grace,
+      dscr_threshold: dscrMin?.toNumber() ?? null,
+      icr_threshold: icrMin?.toNumber() ?? null,
+      notes: "DSCR classic = CFADS/(Int+Prin), strict adds ongoing fees; LTM sums 12-month numerators/denominators."
     }
   };
 }
