@@ -53,10 +53,12 @@ function resampleToT(a: number[], T: number): number[] {
 }
 
 export type RevenueBlock = {
-  rev_sales: Decimal[];
+  rev_sales: Decimal[];          // keep for backward-compat: will equal recognized_sales
   rev_rent: Decimal[];
-  vat_output: Decimal[];    // placeholder (0s) until VAT module
-  billings_total: Decimal[]; // placeholder; we'll populate in recognition/billings phase
+  vat_output: Decimal[];         // placeholder (0s) until VAT module
+  billings_total: Decimal[];     // gross billings for sales (no cap)
+  recognized_sales: Decimal[];   // recognized revenue after policy + escrow cap
+  allowed_release: Decimal[];    // per-period allowed release (when escrow enabled)
   detail: Record<string, unknown>;
 };
 
@@ -66,6 +68,9 @@ export function computeRevenue(inputs: ProjectInputs): RevenueBlock {
 
   const rev_sales = Array.from({ length: T }, () => new Decimal(0));
   const rev_rent  = Array.from({ length: T }, () => new Decimal(0));
+  const billings_total = Array.from({ length: T }, () => new Decimal(0));
+  const recognized_sales = Array.from({ length: T }, () => new Decimal(0));
+  const allowed_release = Array.from({ length: T }, () => new Decimal(0));
 
   const detail: Record<string, unknown> = { unit_types: [] as any[] };
 
@@ -110,8 +115,9 @@ export function computeRevenue(inputs: ProjectInputs): RevenueBlock {
 
     // accumulate into totals
     for (let t = 0; t < T; t++) {
-      rev_sales[t] = rev_sales[t].add(ut_rev_sales[t]);
+      rev_sales[t] = rev_sales[t].add(ut_rev_sales[t]); // legacy
       rev_rent[t]  = rev_rent[t].add(ut_rev_rent[t]);
+      billings_total[t] = billings_total[t].add(ut_rev_sales[t]); // treat only sales as billings
     }
 
     (detail.unit_types as any[]).push({
@@ -129,10 +135,12 @@ export function computeRevenue(inputs: ProjectInputs): RevenueBlock {
   const zeros = (n:number) => Array.from({length:n}, () => new Decimal(0));
 
   return {
-    rev_sales,
+    rev_sales,          // legacy
     rev_rent,
     vat_output: zeros(T),
-    billings_total: zeros(T),
+    billings_total,
+    recognized_sales,   // zeros here; we'll fill in index.ts
+    allowed_release,    // zeros here; we'll fill in index.ts
     detail
   };
 }
