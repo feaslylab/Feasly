@@ -10,12 +10,13 @@ import { computeDepreciation } from "./depreciation";
 import { computeVAT } from "./tax";
 import { computeCorpTax } from "./corpTax";
 import { computeZakat } from "./zakat";
+import { computeCAM } from "./cam";
 
 export type DecimalArray = Decimal[];
 
 export type EngineOutput = {
-  revenue: { rev_sales: DecimalArray; rev_rent: DecimalArray; vat_output: DecimalArray; billings_total: DecimalArray; recognized_sales: DecimalArray; allowed_release: DecimalArray; detail: Record<string, unknown>; };
-  costs:   { capex: DecimalArray; opex: DecimalArray; vat_input: DecimalArray; detail: Record<string, unknown>; };
+  revenue: { rev_sales: DecimalArray; rev_rent: DecimalArray; rev_cam: DecimalArray; vat_output: DecimalArray; billings_total: DecimalArray; recognized_sales: DecimalArray; allowed_release: DecimalArray; detail: Record<string, unknown>; };
+  costs:   { capex: DecimalArray; opex: DecimalArray; opex_net_of_cam: DecimalArray; vat_input: DecimalArray; detail: Record<string, unknown>; };
   financing: { 
     draws: DecimalArray; interest: DecimalArray; principal: DecimalArray; balance: DecimalArray; 
     fees_upfront: DecimalArray; fees_ongoing: DecimalArray; 
@@ -132,10 +133,29 @@ export function runModel(rawInputs: unknown): EngineOutput {
     cumRec = cumRec.add(take);
   }
 
+  // CAM (Common Area Maintenance) recoveries - compute before updating revenue
+  const utOcc = inputs.unit_types
+    .filter(ut => (ut.curve?.meaning ?? "sell_through") === "occupancy")
+    .map(ut => ({
+      key: ut.key, 
+      plot_key: ut.plot_key, 
+      category: ut.category ?? "",
+      area_sqm: ut.sellable_area_sqm ?? 0,
+      occupancy: (ut.curve?.values ?? Array(T).fill(0)).slice(0, T)
+    }));
+
+  const cam = computeCAM({
+    inputs, T,
+    opexSeries: costs.opex,
+    costItemsDetail: (costs.detail.items as any[]) ?? [],
+    unitTypes: utOcc
+  });
+
   // write back into revenue block
   revenue.allowed_release = allowed_release_series;
   revenue.recognized_sales = recognized_sales;
   revenue.rev_sales = recognized_sales; // keep legacy field equal to recognized
+  (revenue as any).rev_cam = cam.cam_revenue;
 
   // VAT (based on recognized sales & rent, and input eligibility proxy)
   const vat = computeVAT(inputs, revenue.recognized_sales, revenue.rev_rent, costs.capex, costs.opex);
@@ -165,41 +185,57 @@ export function runModel(rawInputs: unknown): EngineOutput {
     nbv: dep.nbv
   });
 
-  // Cash flow assembly
-  const cashBase = assembleCash(
-    revenue.recognized_sales, // use recognized sales in cash now
-    revenue.rev_rent,
-    costs.capex,
-    costs.opex,
-    fin
-  );
+  // Update costs with CAM net
+  (costs as any).opex_net_of_cam = cam.opex_net_of_cam;
 
-  // Rebuild cash subtracting VAT + corp + zakat + financing fees + DSRA
+  // Cash flow assembly - include CAM revenue
+  const project_before_fin = zeros(T);
+  
+  // Calculate project_before_fin = revenue - costs
+  for (let t = 0; t < T; t++) {
+    const totalRevenue = revenue.recognized_sales[t]
+      .add(revenue.rev_rent[t])
+      .add(cam.cam_revenue[t]);
+    const totalCosts = costs.capex[t].add(costs.opex[t]);
+    project_before_fin[t] = totalRevenue.minus(totalCosts);
+  }
+
+  // Project cash flow: project_before_fin + draws - interest - principal - fees - DSRA + VAT/taxes
+  const project = zeros(T);
+  const equity_cf = zeros(T);
+  
+  for (let t = 0; t < T; t++) {
+    const projectFlow = project_before_fin[t]
+      .add(fin.draws[t])
+      .minus(fin.interest[t])
+      .minus(fin.principal[t])
+      .minus(fin.fees_upfront[t])
+      .minus(fin.fees_ongoing[t])
+      .minus(fin.dsra_funding[t])
+      .add(fin.dsra_release[t])
+      .minus(vat.net[t])
+      .minus(corp.tax[t])
+      .minus(zak.zakat[t]);
+    
+    project[t] = projectFlow;
+    equity_cf[t] = projectFlow.minus(fin.draws[t]); // equity perspective
+  }
+
   const cash = {
-    project_before_fin: cashBase.project_before_fin,
-    project: cashBase.project.map((v, t) => 
-      v.minus(vat.net[t])
-       .minus(corp.tax[t])
-       .minus(zak.zakat[t])
-       .minus(fin.fees_upfront[t])
-       .minus(fin.fees_ongoing[t])
-       .minus(fin.dsra_funding[t])
-       .add(fin.dsra_release[t])
-    ),
-    equity_cf: cashBase.equity_cf.map((v, t) => 
-      v.minus(vat.net[t])
-       .minus(corp.tax[t])
-       .minus(zak.zakat[t])
-       .minus(fin.fees_upfront[t])
-       .minus(fin.fees_ongoing[t])
-       .minus(fin.dsra_funding[t])
-       .add(fin.dsra_release[t])
-    )
+    project_before_fin,
+    project,
+    equity_cf
   };
 
   return {
-    revenue,
-    costs,
+    revenue: {
+      ...revenue,
+      rev_cam: cam.cam_revenue
+    },
+    costs: {
+      ...costs,
+      opex_net_of_cam: cam.opex_net_of_cam
+    },
     financing: fin,
     tax: { vat_net: vat.net, corp: corp.tax, zakat: zak.zakat },
     depreciation: {

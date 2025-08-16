@@ -16,6 +16,7 @@ export function numberifyRevenue(rev: any) {
     ...rev,
     rev_sales: numArr(rev.rev_sales),
     rev_rent: numArr(rev.rev_rent),
+    rev_cam: numArr(rev.rev_cam ?? []),
     vat_output: numArr(rev.vat_output),
     billings_total: numArr(rev.billings_total),
     recognized_sales: numArr(rev.recognized_sales ?? rev.rev_sales),
@@ -28,6 +29,7 @@ export function numberifyCosts(c: any) {
     ...c,
     capex: numArr(c.capex),
     opex: numArr(c.opex),
+    opex_net_of_cam: numArr(c.opex_net_of_cam ?? c.opex),
     vat_input: numArr(c.vat_input),
   };
 }

@@ -42,7 +42,8 @@ export const UnitType = z.object({
   index_bucket_rent: z.string().optional(),
   revenue_policy: RevenuePolicy.default("handover"),
   curve: Curve.optional(),
-  vat_class_output: VATClass.default("out_of_scope")
+  vat_class_output: VATClass.default("out_of_scope"),
+  plot_key: z.string().optional()
 });
 export type UnitType = z.infer<typeof UnitType>;
 
@@ -61,7 +62,9 @@ export const CostItem = z.object({
   is_opex: z.boolean().default(false),
   index_bucket: z.string().optional(),
   vat_input_eligible: z.boolean().default(false),
-  depreciation: DepreciationPolicy.optional()
+  depreciation: DepreciationPolicy.optional(),
+  plot_key: z.string().optional(),
+  recoverable: z.boolean().default(false)
 });
 export type CostItem = z.infer<typeof CostItem>;
 
@@ -125,13 +128,21 @@ export const WaterfallBlock = z.object({
 export type WaterfallBlock = z.infer<typeof WaterfallBlock>;
 
 export const Plot = z.object({
-  id: z.string(),
-  use: z.enum(["residential","retail","office","land","other"]).default("other"),
-  gfa_sqm: z.number().nonnegative().default(0),
-  phaseCurve: z.array(z.number()).optional(),
-  mapToUnitTypes: z.array(z.string()).default([])
+  key: z.string(),
+  name: z.string().optional(),
+  land_cost_base: z.number().nonnegative().default(0),
+  land_phasing: z.array(z.number()).optional(),
 });
 export type Plot = z.infer<typeof Plot>;
+
+export const CAMConfig = z.object({
+  enabled: z.boolean().default(false),
+  basis: z.enum(["recoverable_opex_share","per_sqm"]).default("recoverable_opex_share"),
+  admin_fee_pct: z.number().nonnegative().default(0),
+  gross_up_threshold: z.number().min(0).max(1).default(0.95),
+  billable_categories: z.array(z.string()).default(["retail","office","industrial"]),
+});
+export type CAMConfig = z.infer<typeof CAMConfig>;
 
 export const ProjectInputs = z.object({
   project: z.object({
@@ -148,7 +159,8 @@ export const ProjectInputs = z.object({
   escrow: EscrowBlock.default({}),
   valuation: ValuationBlock.default({}),
   waterfall: WaterfallBlock.default({}),
-  plots: z.array(Plot).default([])
+  plots: z.array(Plot).default([]),
+  cam: CAMConfig.default({})
 });
 export type ProjectInputs = z.infer<typeof ProjectInputs>;
 
