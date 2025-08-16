@@ -1713,6 +1713,26 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      get_organization_members_safe: {
+        Args: { org_id: string }
+        Returns: {
+          avatar_url: string
+          created_at: string
+          display_name: string
+          role: string
+          user_id: string
+        }[]
+      }
+      get_project_team_members: {
+        Args: { project_id_param: string }
+        Returns: {
+          avatar_url: string
+          created_at: string
+          display_name: string
+          role: string
+          user_id: string
+        }[]
+      }
       get_safe_team_member_info: {
         Args: { target_user_id: string }
         Returns: {
