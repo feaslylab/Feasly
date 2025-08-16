@@ -15,6 +15,7 @@ import { computeBalanceSheet } from "./balanceSheet";
 import { computePnL } from "./pnl";
 import { computeCashFlow } from "./computeCashFlow";
 import { computeCovenants } from "./computeCovenants";
+import { computeWaterfall } from "./computeWaterfall";
 
 export type DecimalArray = Decimal[];
 
@@ -78,6 +79,7 @@ export type EngineOutput = {
     detail: Record<string, unknown>;
   };
   covenants: import("./types").CovenantsBlock;
+  waterfall: import("./types").ReturnsBlock;
   time: { df: number[]; dt: number[]; };
 };
 
@@ -351,9 +353,25 @@ export function runModel(rawInputs: unknown): EngineOutput {
     cf: { from_operations: cf.from_operations }
   });
 
+  // Waterfall computation
+  const waterfall = computeWaterfall({
+    T,
+    inputs,
+    equity_cf: cash.equity_cf
+  });
+
   // Basic tie-out diagnostic
   const tieOK = bs.imbalance.every(x => x.abs().lt(0.01));
   console.log(`🧮 Balance Sheet ties: ${tieOK}`);
+
+  // Waterfall reconciliation check
+  const waterfallReconciles = waterfall.lp_distributions.every((lp, t) => {
+    const gp = waterfall.gp_distributions[t] || 0;
+    const total = lp + gp;
+    const dce = Math.max(0, cash.equity_cf[t]?.toNumber() || 0);
+    return Math.abs(total - dce) < 0.01;
+  });
+  console.log(`💧 Waterfall reconciles: ${waterfallReconciles}`);
 
   return {
     revenue: {
@@ -391,6 +409,7 @@ export function runModel(rawInputs: unknown): EngineOutput {
     profit_and_loss: pnl,
     cash_flow: cf,
     covenants,
+    waterfall,
     time: { df, dt }
   };
 }

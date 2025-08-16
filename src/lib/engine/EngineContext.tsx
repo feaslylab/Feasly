@@ -4,7 +4,7 @@ import { runModel, ProjectInputs } from "../../../packages/feasly-engine/src";
 import { mapFormToProjectInputs } from "@/lib/mapFormToProjectInputs";
 import {
   numberifyRevenue, numberifyCosts, numberifyFin,
-  numberifyTax, numberifyDep, numberifyCash, numberifyBalanceSheet, numberifyPnL, numberifyCashFlow, numberifyCovenants
+  numberifyTax, numberifyDep, numberifyCash, numberifyBalanceSheet, numberifyPnL, numberifyCashFlow, numberifyCovenants, numberifyWaterfall
 } from "@/lib/engine/numberify";
 
 type EngineContextValue = {
@@ -57,6 +57,7 @@ export function useEngineNumbers() {
     profit_and_loss: numberifyPnL(output.profit_and_loss ?? {}),
     cash_flow: numberifyCashFlow(output.cash_flow ?? {}),
     covenants: numberifyCovenants(output.covenants ?? {}),
+    waterfall: numberifyWaterfall(output.waterfall ?? {}),
     time: {
       df: output.time?.df ?? [],
       dt: output.time?.dt ?? []

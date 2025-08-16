@@ -136,6 +136,88 @@ export const ValuationBlock = z.object({
 });
 export type ValuationBlock = z.infer<typeof ValuationBlock>;
 
+export const PreferredReturn = z.object({
+  type: z.enum(["rate_pa", "irr_clock"]).default("rate_pa"),
+  rate_pa: z.number().nonnegative().default(0), // used if type="rate_pa"
+  compounding: z.enum(["monthly","quarterly","annual"]).default("monthly"),
+});
+export type PreferredReturn = z.infer<typeof PreferredReturn>;
+
+export const HurdleStep = z.object({
+  key: z.string(),
+  trigger: z.object({
+    // either an IRR trigger or MOIC trigger (choose one per step)
+    irr_threshold: z.number().nonnegative().optional(),
+    moic_threshold: z.number().nonnegative().optional(),
+  }),
+  split_after_catchup: z.object({
+    lp: z.number().min(0).max(1),
+    gp: z.number().min(0).max(1),
+  }),
+  // optional full catch-up tier before split begins
+  catchup: z.object({
+    enabled: z.boolean().default(false),
+    gp_target_share_of_profits: z.number().min(0).max(1).default(0.2),
+  }).default({ enabled: false, gp_target_share_of_profits: 0.2 }),
+});
+export type HurdleStep = z.infer<typeof HurdleStep>;
+
+export const EquityTranche = z.object({
+  key: z.string(),
+  role: z.enum(["lp","gp"]).default("lp"),
+  commitment: z.number().nonnegative().default(0),
+  pr: PreferredReturn.default({}),
+  // Optional overrides per tranche for tiers (otherwise use global waterfall)
+  overrides: z.object({
+    hurdles: z.array(HurdleStep).optional(),
+  }).optional(),
+});
+export type EquityTranche = z.infer<typeof EquityTranche>;
+
+export const WaterfallConfig = z.object({
+  mode: z.enum(["european","american"]).default("european"),
+  // Global waterfall (used if tranche overrides absent)
+  hurdles: z.array(HurdleStep).default([
+    // Default: ROC + PR (implicit) then a single 80/20 promote
+    { key:"tier_80_20", trigger:{ irr_threshold: 0.0 }, split_after_catchup:{ lp:0.8, gp:0.2 }, catchup:{enabled:false, gp_target_share_of_profits:0.2} }
+  ]),
+  // Whether PR is accrued project-wide by tranche or strictly per-contribution lot
+  accrual_lot_level: z.boolean().default(true),
+});
+export type WaterfallConfig = z.infer<typeof WaterfallConfig>;
+
+export const ReturnsBlock = z.object({
+  // Aggregates
+  lp_distributions: z.array(z.number()).default([]),
+  gp_distributions: z.array(z.number()).default([]),
+  carry_paid: z.array(z.number()).default([]),
+  // Metrics (project total)
+  lp: z.object({ irr_pa: z.number().nullable(), moic: z.number().nullable(), dpi: z.number().nullable(), tvpi: z.number().nullable() }).default({irr_pa:null, moic:null, dpi:null, tvpi:null}),
+  gp: z.object({ irr_pa: z.number().nullable(), moic: z.number().nullable(), dpi: z.number().nullable(), tvpi: z.number().nullable() }).default({irr_pa:null, moic:null, dpi:null, tvpi:null}),
+  // Capital accounts (per tranche)
+  capital_accounts: z.record(z.object({
+    contributed: z.array(z.number()).default([]),
+    returned_capital: z.array(z.number()).default([]),
+    pr_accrued: z.array(z.number()).default([]),
+    pr_paid: z.array(z.number()).default([]),
+    profit_distributions: z.array(z.number()).default([]), // includes catch-up + promote
+    ending_unreturned_capital: z.array(z.number()).default([]),
+  })).default({}),
+  // Full audit (period × tier allocations)
+  audit: z.object({
+    tiers: z.array(z.object({
+      key: z.string(),
+      allocations: z.array(z.object({
+        period: z.number(),
+        lp: z.number(),
+        gp: z.number(),
+      })).default([]),
+    })).default([]),
+  }).default({ tiers: [] }),
+  detail: z.record(z.any()).default({}),
+});
+export type ReturnsBlock = z.infer<typeof ReturnsBlock>;
+
 export const WaterfallBlock = z.object({
   enabled: z.boolean().default(false),
   pref_rate_pa: z.number().min(0).default(0.08),
@@ -176,6 +258,8 @@ export const ProjectInputs = z.object({
   escrow: EscrowBlock.default({}),
   valuation: ValuationBlock.default({}),
   waterfall: WaterfallBlock.default({}),
+  equity: z.array(EquityTranche).default([]),
+  waterfall_config: WaterfallConfig.default({}),
   plots: z.array(Plot).default([]),
   cam: CAMConfig.default({}),
   collections_default: Curve.optional()

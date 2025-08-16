@@ -158,3 +158,53 @@ export function numberifyCovenants(c: any) {
     detail: c?.detail ?? {}
   };
 }
+
+export function numberifyWaterfall(w: any) {
+  const num = (a: unknown[]) => (a ?? []).map(toNum);
+  const capitalAccounts: Record<string, any> = {};
+  
+  for (const [key, account] of Object.entries(w?.capital_accounts ?? {})) {
+    const acc = account as any;
+    capitalAccounts[key] = {
+      contributed: num(acc?.contributed ?? []),
+      returned_capital: num(acc?.returned_capital ?? []),
+      pr_accrued: num(acc?.pr_accrued ?? []),
+      pr_paid: num(acc?.pr_paid ?? []),
+      profit_distributions: num(acc?.profit_distributions ?? []),
+      ending_unreturned_capital: num(acc?.ending_unreturned_capital ?? []),
+    };
+  }
+  
+  const auditTiers = (w?.audit?.tiers ?? []).map((tier: any) => ({
+    ...tier,
+    allocations: (tier?.allocations ?? []).map((alloc: any) => ({
+      period: alloc?.period ?? 0,
+      lp: toNum(alloc?.lp ?? 0),
+      gp: toNum(alloc?.gp ?? 0),
+    }))
+  }));
+  
+  return {
+    ...w,
+    lp_distributions: num(w?.lp_distributions ?? []),
+    gp_distributions: num(w?.gp_distributions ?? []),
+    carry_paid: num(w?.carry_paid ?? []),
+    lp: {
+      irr_pa: w?.lp?.irr_pa != null ? toNum(w.lp.irr_pa) : null,
+      moic: w?.lp?.moic != null ? toNum(w.lp.moic) : null,
+      dpi: w?.lp?.dpi != null ? toNum(w.lp.dpi) : null,
+      tvpi: w?.lp?.tvpi != null ? toNum(w.lp.tvpi) : null,
+    },
+    gp: {
+      irr_pa: w?.gp?.irr_pa != null ? toNum(w.gp.irr_pa) : null,
+      moic: w?.gp?.moic != null ? toNum(w.gp.moic) : null,
+      dpi: w?.gp?.dpi != null ? toNum(w.gp.dpi) : null,
+      tvpi: w?.gp?.tvpi != null ? toNum(w.gp.tvpi) : null,
+    },
+    capital_accounts: capitalAccounts,
+    audit: {
+      tiers: auditTiers
+    },
+    detail: w?.detail ?? {}
+  };
+}

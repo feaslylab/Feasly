@@ -39,6 +39,7 @@ import { useSelectionStore } from '@/state/selectionStore';
 import ReconciliationCard from '@/components/recon/ReconciliationCard';
 import { CashFlowCard } from '@/components/recon/CashFlowCard';
 import { CovenantsCard } from '@/components/covenants/CovenantsCard';
+import { WaterfallCard } from '@/components/waterfall/WaterfallCard';
 
 interface FormContentProps {
   projectId: string;
@@ -561,6 +562,7 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               <ReconciliationCard />
               <CashFlowCard />
               <CovenantsCard />
+              <WaterfallCard />
               <KPIResults />
             </SectionPanel>
 
