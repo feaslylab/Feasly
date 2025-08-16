@@ -15,7 +15,12 @@ import { computeCAM } from "./cam";
 export type DecimalArray = Decimal[];
 
 export type EngineOutput = {
-  revenue: { rev_sales: DecimalArray; rev_rent: DecimalArray; rev_cam: DecimalArray; vat_output: DecimalArray; billings_total: DecimalArray; recognized_sales: DecimalArray; allowed_release: DecimalArray; detail: Record<string, unknown>; };
+  revenue: { 
+    rev_sales: DecimalArray; rev_rent: DecimalArray; rev_cam: DecimalArray; 
+    vat_output: DecimalArray; billings_total: DecimalArray; recognized_sales: DecimalArray; 
+    allowed_release: DecimalArray; collections: DecimalArray; accounts_receivable: DecimalArray;
+    detail: Record<string, unknown>; 
+  };
   costs:   { capex: DecimalArray; opex: DecimalArray; opex_net_of_cam: DecimalArray; vat_input: DecimalArray; detail: Record<string, unknown>; };
   financing: { 
     draws: DecimalArray; interest: DecimalArray; principal: DecimalArray; balance: DecimalArray; 
@@ -120,10 +125,22 @@ export function runModel(rawInputs: unknown): EngineOutput {
     }
   }
 
-  // 4) Apply escrow cap: cumulative recognized ≤ cumulative allowed_release
+  // 4) Apply escrow cap to collections: cumulative collections ≤ cumulative allowed_release
+  let cumColl = new Decimal(0);
+  let cumAllow = new Decimal(0);
+  for (let t=0;t<T;t++){
+    const allowed = allowed_release_series[t];
+    cumAllow = cumAllow.add(allowed);
+    const room = Decimal.max(new Decimal(0), cumAllow.minus(cumColl));
+    const take = Decimal.min(room, revenue.collections[t]);
+    revenue.collections[t] = take;
+    cumColl = cumColl.add(take);
+  }
+
+  // 5) Apply escrow cap to recognition: cumulative recognized ≤ cumulative allowed_release
   const recognized_sales = zeros(T);
   let cumRec = new Decimal(0);
-  let cumAllow = new Decimal(0);
+  cumAllow = new Decimal(0); // reset
   for (let t=0;t<T;t++){
     const allowed = allowed_release_series[t];
     cumAllow = cumAllow.add(allowed);
@@ -188,16 +205,17 @@ export function runModel(rawInputs: unknown): EngineOutput {
   // Update costs with CAM net
   (costs as any).opex_net_of_cam = cam.opex_net_of_cam;
 
-  // Cash flow assembly - include CAM revenue
+  // Cash flow assembly - use collections for sales cash, not recognized revenue
   const project_before_fin = zeros(T);
   
-  // Calculate project_before_fin = revenue - costs
+  // Calculate project_before_fin = cash revenue - costs
   for (let t = 0; t < T; t++) {
-    const totalRevenue = revenue.recognized_sales[t]
-      .add(revenue.rev_rent[t])
-      .add(cam.cam_revenue[t]);
+    const salesCash = revenue.collections[t];      // collections from sales (cash)
+    const rentCash = revenue.rev_rent[t];          // rent is immediate cash
+    const camCash = cam.cam_revenue[t];            // CAM is cash
+    const totalCashRevenue = salesCash.add(rentCash).add(camCash);
     const totalCosts = costs.capex[t].add(costs.opex[t]);
-    project_before_fin[t] = totalRevenue.minus(totalCosts);
+    project_before_fin[t] = totalCashRevenue.minus(totalCosts);
   }
 
   // Project cash flow: project_before_fin + draws - interest - principal - fees - DSRA + VAT/taxes
@@ -230,7 +248,9 @@ export function runModel(rawInputs: unknown): EngineOutput {
   return {
     revenue: {
       ...revenue,
-      rev_cam: cam.cam_revenue
+      rev_cam: cam.cam_revenue,
+      collections: revenue.collections,
+      accounts_receivable: revenue.accounts_receivable
     },
     costs: {
       ...costs,

@@ -59,6 +59,8 @@ export type RevenueBlock = {
   billings_total: Decimal[];     // gross billings for sales (no cap)
   recognized_sales: Decimal[];   // recognized revenue after policy + escrow cap
   allowed_release: Decimal[];    // per-period allowed release (when escrow enabled)
+  collections: Decimal[];        // cash collections from sales
+  accounts_receivable: Decimal[]; // AR balance
   detail: Record<string, unknown>;
 };
 
@@ -71,6 +73,9 @@ export function computeRevenue(inputs: ProjectInputs): RevenueBlock {
   const billings_total = Array.from({ length: T }, () => new Decimal(0));
   const recognized_sales = Array.from({ length: T }, () => new Decimal(0));
   const allowed_release = Array.from({ length: T }, () => new Decimal(0));
+  const collections_planned = Array.from({ length: T }, () => new Decimal(0));
+  const collections = Array.from({ length: T }, () => new Decimal(0));
+  const accounts_receivable = Array.from({ length: T }, () => new Decimal(0));
 
   const detail: Record<string, unknown> = { unit_types: [] as any[] };
 
@@ -91,6 +96,10 @@ export function computeRevenue(inputs: ProjectInputs): RevenueBlock {
     const meaning = (ut.curve?.meaning ?? "sell_through") as "sell_through" | "occupancy";
     const curve   = normalizeCurve(ut.curve?.values, T, meaning);
 
+    // collection curve for sell-through products
+    const collectionCurveVals = ut.collection_curve?.values ?? inputs.collections_default?.values ?? [1]; // default: immediate
+    const collectionCurve = normalizeCurve(collectionCurveVals, T, "sell_through"); // normalize as shares
+
     // sales recognition (for now: "handover" or "sell_through" proxy), rent via occupancy
     const ut_rev_sales: Decimal[] = [];
     const ut_rev_rent: Decimal[]  = [];
@@ -105,6 +114,12 @@ export function computeRevenue(inputs: ProjectInputs): RevenueBlock {
         const sales_t = area.mul(count).mul(p_t).mul(curve[t]);
         ut_rev_sales.push(sales_t);
         ut_rev_rent.push(new Decimal(0));
+        
+        // Collections: total contract value * collection curve
+        const totalContractValue = area.mul(count).mul(p_t);
+        const collection_t = totalContractValue.mul(collectionCurve[t]);
+        collections_planned[t] = collections_planned[t].add(collection_t);
+        
       } else {
         // occupancy: rent revenue per month: area * rent/sqm * occupancy
         const rent_t = area.mul(r_t).mul(curve[t]);
@@ -131,6 +146,19 @@ export function computeRevenue(inputs: ProjectInputs): RevenueBlock {
     });
   }
 
+  // Apply escrow cap to collections: cumulative collections ≤ cumulative allowed_release
+  // Note: allowed_release will be filled in index.ts, so for now we'll copy planned collections
+  for (let t = 0; t < T; t++) {
+    collections[t] = collections_planned[t]; // will be capped in index.ts
+  }
+
+  // Compute AR rollforward: AR[t] = AR[t-1] + billings[t] - collections[t]
+  let ar = new Decimal(0);
+  for (let t = 0; t < T; t++) {
+    ar = ar.add(billings_total[t]).minus(collections[t]);
+    accounts_receivable[t] = Decimal.max(ar, 0);
+  }
+
   // Placeholders until later phases fill these in
   const zeros = (n:number) => Array.from({length:n}, () => new Decimal(0));
 
@@ -141,6 +169,8 @@ export function computeRevenue(inputs: ProjectInputs): RevenueBlock {
     billings_total,
     recognized_sales,   // zeros here; we'll fill in index.ts
     allowed_release,    // zeros here; we'll fill in index.ts
+    collections,
+    accounts_receivable,
     detail
   };
 }

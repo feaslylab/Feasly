@@ -21,6 +21,8 @@ export function numberifyRevenue(rev: any) {
     billings_total: numArr(rev.billings_total),
     recognized_sales: numArr(rev.recognized_sales ?? rev.rev_sales),
     allowed_release: numArr(rev.allowed_release ?? []),
+    collections: numArr(rev.collections ?? []),
+    accounts_receivable: numArr(rev.accounts_receivable ?? []),
   };
 }
 

@@ -43,7 +43,8 @@ export const UnitType = z.object({
   revenue_policy: RevenuePolicy.default("handover"),
   curve: Curve.optional(),
   vat_class_output: VATClass.default("out_of_scope"),
-  plot_key: z.string().optional()
+  plot_key: z.string().optional(),
+  collection_curve: Curve.optional()
 });
 export type UnitType = z.infer<typeof UnitType>;
 
@@ -160,7 +161,8 @@ export const ProjectInputs = z.object({
   valuation: ValuationBlock.default({}),
   waterfall: WaterfallBlock.default({}),
   plots: z.array(Plot).default([]),
-  cam: CAMConfig.default({})
+  cam: CAMConfig.default({}),
+  collections_default: Curve.optional()
 });
 export type ProjectInputs = z.infer<typeof ProjectInputs>;
 

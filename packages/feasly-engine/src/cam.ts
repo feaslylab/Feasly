@@ -38,7 +38,7 @@ export function computeCAM(params:{
     if (ut.category && !billableCats.has(ut.category)) continue;
     const area = new Decimal(ut.area_sqm||0); const pk = ut.plot_key ?? "_unassigned";
     const arr = oz(pk);
-    for (let t=0;t<T;t++){ const occ = new Decimal(ut.occupancy[t]||0).clamp(0,1); const occArea=area.mul(occ); arr[t]=arr[t].add(occArea); totOcc[t]=totOcc[t].add(occArea); totGFA[t]=totGFA[t].add(area); }
+    for (let t=0;t<T;t++){ const v = new Decimal(ut.occupancy[t] ?? 0); const occ = Decimal.max(Decimal.min(v, 1), 0); const occArea=area.mul(occ); arr[t]=arr[t].add(occArea); totOcc[t]=totOcc[t].add(occArea); totGFA[t]=totGFA[t].add(area); }
   }
 
   // Bill CAM with gross-up & admin fee
