@@ -23,7 +23,20 @@ serve(async (req: Request) => {
   try {
     console.log('Email worker function triggered')
 
-    // Get unsent emails from queue
+    // Add audit logging for worker execution
+    const { error: auditError } = await supabase
+      .from('email_queue_audit')
+      .insert({
+        action: 'worker_started',
+        accessed_by: 'send_email_worker',
+        details: { timestamp: new Date().toISOString(), function: 'scheduled_worker' }
+      })
+
+    if (auditError) {
+      console.error('Error logging worker start:', auditError)
+    }
+
+    // Get unsent emails from queue - Service Role bypasses RLS which is intended for this worker
     const { data: emailQueue, error: queueError } = await supabase
       .from('email_queue')
       .select('*')
@@ -96,7 +109,7 @@ serve(async (req: Request) => {
           continue
         }
 
-        // Mark email as sent and log it
+        // Mark email as sent and log the processing
         const { error: updateError } = await supabase
           .from('email_queue')
           .update({ sent: true })
@@ -105,6 +118,21 @@ serve(async (req: Request) => {
         if (updateError) {
           console.error(`Error updating email status for ${email.id}:`, updateError)
         }
+
+        // Add audit log for processed email
+        await supabase
+          .from('email_queue_audit')
+          .insert({
+            action: 'email_processed',
+            email_queue_id: email.id,
+            user_id: email.user_id,
+            accessed_by: 'send_email_worker',
+            details: { 
+              resend_id: emailResponse.data?.id,
+              timestamp: new Date().toISOString(),
+              status: 'sent'
+            }
+          })
 
         // Log the sent email
         const { error: logError } = await supabase
@@ -143,6 +171,21 @@ serve(async (req: Request) => {
             error_message: emailError.message,
             sent_at: new Date().toISOString()
           })
+
+        // Add audit log for failed email
+        await supabase
+          .from('email_queue_audit')
+          .insert({
+            action: 'email_failed',
+            email_queue_id: email.id,
+            user_id: email.user_id,
+            accessed_by: 'send_email_worker',
+            details: { 
+              error: emailError.message,
+              timestamp: new Date().toISOString(),
+              status: 'failed'
+            }
+          })
       }
     }
 
@@ -152,6 +195,18 @@ serve(async (req: Request) => {
       sent: sentCount,
       errors: errorCount
     }
+
+    // Log worker completion
+    await supabase
+      .from('email_queue_audit')
+      .insert({
+        action: 'worker_completed',
+        accessed_by: 'send_email_worker',
+        details: { 
+          ...result,
+          timestamp: new Date().toISOString()
+        }
+      })
 
     console.log('Email worker result:', result)
 

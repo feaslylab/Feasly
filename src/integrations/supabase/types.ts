@@ -196,6 +196,36 @@ export type Database = {
         }
         Relationships: []
       }
+      email_queue_audit: {
+        Row: {
+          accessed_at: string | null
+          accessed_by: string | null
+          action: string
+          details: Json | null
+          email_queue_id: string | null
+          id: string
+          user_id: string | null
+        }
+        Insert: {
+          accessed_at?: string | null
+          accessed_by?: string | null
+          action: string
+          details?: Json | null
+          email_queue_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Update: {
+          accessed_at?: string | null
+          accessed_by?: string | null
+          action?: string
+          details?: Json | null
+          email_queue_id?: string | null
+          id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       escrow_releases: {
         Row: {
           construction_progress_percent: number | null
@@ -1755,6 +1785,15 @@ export type Database = {
           created_at: string
           display_name: string
           user_id: string
+        }[]
+      }
+      get_user_email_queue: {
+        Args: { target_user_id?: string }
+        Returns: {
+          created_at: string
+          id: string
+          sent: boolean
+          subject: string
         }[]
       }
       is_organization_admin: {
