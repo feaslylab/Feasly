@@ -1,241 +1,246 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Download, AlertTriangle, Info } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useTheme } from '@/contexts/ThemeContext';
+import React, { useMemo } from 'react';
+import { useTheme } from 'next-themes';
+import { useEngineNumbers, useEngine } from '@/lib/engine/EngineContext';
+import { fmtAED, fmtPct, safeNum, sum, approxEq } from '@/lib/format';
 
-interface WaterfallCardProps {
-  equity?: {
-    calls_total: number[];
-    dists_total: number[];
-    gp_promote: number[];
-    gp_clawback: number[];
-    kpis: {
-      irr_pa: number | null;
-      tvpi: number;
-      dpi: number;
-      rvpi: number;
-      moic: number;
-      by_investor: Record<string, any>;
-    };
-    dists_by_investor: Record<string, number[]>;
-  };
-}
+type ByStrNum = Record<string, number>;
+type ByStrArr = Record<string, number[]>;
 
-export function WaterfallCard({ equity }: WaterfallCardProps) {
+export default function WaterfallCard() {
   const { theme } = useTheme();
+  const data = useEngineNumbers();
+  const { inputs } = useEngine();
 
-  if (!equity) {
+  if (!data?.equity) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Equity Waterfall</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-muted-foreground">No equity data available</div>
-        </CardContent>
-      </Card>
+      <div className="rounded-2xl border p-4">
+        <div className="font-semibold">Equity Waterfall</div>
+        <div className="text-sm text-muted-foreground mt-2">No equity data available</div>
+      </div>
     );
   }
 
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'AED',
-      notation: 'compact',
-      maximumFractionDigits: 1
-    }).format(value);
-  };
+  const { equity } = data;
+  const T = equity.calls_total?.length ?? 0;
+  const last = Math.max(0, T - 1);
 
-  const formatPercent = (value: number | null) => {
-    if (value === null) return 'N/A';
-    return `${(value * 100).toFixed(1)}%`;
-  };
-
-  // Create chart data for last 12 periods
-  const T = equity.calls_total.length;
-  const startPeriod = Math.max(0, T - 12);
-  const chartData = [];
-  
-  for (let t = startPeriod; t < T; t++) {
-    chartData.push({
-      period: `M${t + 1}`,
-      calls: equity.calls_total[t] || 0,
-      distributions: equity.dists_total[t] || 0,
-      gp_promote: equity.gp_promote[t] || 0,
-    });
+  // ----- Dev-only reconciliation: sum investor dists == total dists -----
+  if (process.env.NODE_ENV !== 'production' && T > 0) {
+    try {
+      for (let t = 0; t < T; t++) {
+        const total = safeNum(equity.dists_total[t]);
+        const invSum = Object.values(equity.dists_by_investor as ByStrArr)
+          .reduce((s, arr) => s + safeNum(arr?.[t]), 0);
+        if (!approxEq(invSum, total, 1e-6)) {
+          // do not throw; warn only
+          // eslint-disable-next-line no-console
+          console.warn('[WaterfallCard] Totals mismatch @t=', t, { invSum, total });
+        }
+      }
+    } catch {
+      // ignore any runtime issues in dev-only check
+    }
   }
 
-  const lastPeriod = T - 1;
-  const hasClawback = equity.gp_clawback[lastPeriod] > 0;
+  // ----- Build investor->class mapping from inputs (if available) -----
+  const investorToClass: Record<string, string> = useMemo(() => {
+    const map: Record<string, string> = {};
+    const investors = inputs?.equity?.investors ?? [];
+    investors.forEach((inv: any) => { 
+      if (inv?.key && inv?.class_key) map[inv.key] = inv.class_key; 
+    });
+    return map;
+  }, [inputs]);
 
-  const downloadCSV = () => {
-    const headers = ['Period', 'Capital Calls', 'Distributions', 'GP Promote'];
-    const investors = Object.keys(equity.dists_by_investor);
-    investors.forEach(inv => headers.push(`${inv} Distributions`));
+  // ----- Derive per-class unreturned capital sums -----
+  const byClassUnreturned: ByStrNum = useMemo(() => {
+    const m: ByStrNum = {};
+    const unret = equity.detail?.investor_ledgers?.unreturned_capital ?? {};
+    Object.entries(unret).forEach(([invKey, amt]) => {
+      const clsKey = investorToClass[invKey] ?? '__unknown__';
+      m[clsKey] = safeNum(m[clsKey]) + safeNum(amt);
+    });
 
-    const rows = [headers.join(',')];
-    
-    for (let t = 0; t < T; t++) {
-      const row = [
-        `M${t + 1}`,
-        equity.calls_total[t] || 0,
-        equity.dists_total[t] || 0,
-        equity.gp_promote[t] || 0,
-      ];
-      
-      investors.forEach(inv => {
-        row.push(equity.dists_by_investor[inv][t] || 0);
-      });
-      
-      rows.push(row.join(','));
+    // Ensure we have keys found in pref_balance too (even if no investors mapped)
+    const pref = equity.detail?.class_ledgers?.pref_balance ?? {};
+    Object.keys(pref).forEach((clsKey) => {
+      if (!(clsKey in m)) m[clsKey] = 0;
+    });
+
+    return m;
+  }, [equity, investorToClass]);
+
+  // ----- Read class pref balances -----
+  const prefBalance: ByStrNum = equity.detail?.class_ledgers?.pref_balance ?? {};
+  const classKeys: string[] = useMemo(() => {
+    const keys = new Set<string>([
+      ...Object.keys(prefBalance ?? {}),
+      ...Object.keys(byClassUnreturned ?? {}),
+    ]);
+    // remove the synthetic key if present
+    keys.delete('__unknown__');
+    return Array.from(keys);
+  }, [prefBalance, byClassUnreturned]);
+
+  // ----- Baseline chip state per class -----
+  type BaselineState = 'not_met' | 'roc' | 'roc_pref';
+  const classBaseline: Record<string, BaselineState> = useMemo(() => {
+    const out: Record<string, BaselineState> = {};
+    for (const cls of classKeys) {
+      const unret = safeNum(byClassUnreturned[cls]);
+      const pref = safeNum(prefBalance[cls]);
+      if (unret <= 1e-9 && pref <= 1e-9) out[cls] = 'roc_pref';
+      else if (unret <= 1e-9) out[cls] = 'roc';
+      else out[cls] = 'not_met';
     }
+    return out;
+  }, [classKeys, byClassUnreturned, prefBalance]);
 
-    const csv = rows.join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+  // ----- Clawback banner state -----
+  const finalClawback = safeNum(equity.gp_clawback?.[last]);
+
+  // ----- KPI values (safe) -----
+  const k = equity.kpis ?? { irr_pa: null, tvpi: 0, dpi: 0, rvpi: 0, moic: 0 };
+  const kIrr = k.irr_pa;
+  const kTvpi = safeNum(k.tvpi);
+  const kDpi = safeNum(k.dpi);
+  const kRvpi = safeNum(k.rvpi);
+  const kMoic = safeNum(k.moic);
+
+  // ----- Totals for summary -----
+  const totalCalled = sum(equity.calls_total);
+  const totalDist = sum(equity.dists_total);
+  const totalPromote = sum(equity.gp_promote);
+
+  // ----- CSV export (extend with class baseline & cumulatives) -----
+  const downloadCSV = () => {
+    const lines: string[] = [];
+    // Section 1: per-period summary (existing)
+    lines.push('Period,Capital Calls,Distributions,GP Promote');
+    for (let t = 0; t < T; t++) {
+      lines.push([
+        `M${t + 1}`,
+        safeNum(equity.calls_total?.[t]),
+        safeNum(equity.dists_total?.[t]),
+        safeNum(equity.gp_promote?.[t]),
+      ].join(','));
+    }
+    lines.push(''); lines.push('');
+
+    // Section 2: Class Pref & Baseline Snapshot
+    lines.push('Class Pref & Baseline Snapshot');
+    lines.push('Class,Pref_Balance,Baseline_Status');
+    classKeys.forEach((cls) => {
+      const state = classBaseline[cls] === 'roc_pref'
+        ? 'ROC+Pref'
+        : classBaseline[cls] === 'roc'
+          ? 'ROC'
+          : 'NotMet';
+      lines.push([cls, safeNum(prefBalance[cls]), state].join(','));
+    });
+    lines.push(''); lines.push('');
+
+    // Section 3: Class Cumulatives (A/G/Promote)
+    const cumul = equity.detail?.class_ledgers ?? {};
+    const A = (cumul.excess_distributions_cum ?? {}) as ByStrNum;
+    const G = (cumul.gp_catchup_cum ?? {}) as ByStrNum;
+    const P = (cumul.gp_promote_cum ?? {}) as ByStrNum;
+    lines.push('Class Cumulatives');
+    lines.push('Class,Excess_Distributions_A,GP_Catchup_G,GP_Promote_Cum');
+    classKeys.forEach((cls) => {
+      lines.push([cls, safeNum(A[cls]), safeNum(G[cls]), safeNum(P[cls])].join(','));
+    });
+
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = 'equity-waterfall.csv';
-    a.click();
+    a.href = url; a.download = 'equity-waterfall.csv'; a.click();
     URL.revokeObjectURL(url);
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Equity Waterfall</CardTitle>
-        <div className="flex gap-2">
-          {hasClawback && (
-            <Badge variant="destructive" className="flex items-center gap-1">
-              <AlertTriangle className="h-3 w-3" />
-              GP Clawback Outstanding
-            </Badge>
-          )}
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={downloadCSV}
-            className="flex items-center gap-1"
-          >
-            <Download className="h-3 w-3" />
-            Export CSV
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* KPI Summary */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="text-center">
-            <div className="text-sm text-muted-foreground">Portfolio IRR</div>
-            <div className="text-lg font-bold text-primary">
-              {formatPercent(equity.kpis.irr_pa)}
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm text-muted-foreground">TVPI</div>
-            <div className="text-lg font-bold text-primary">
-              {equity.kpis.tvpi.toFixed(2)}x
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm text-muted-foreground">DPI</div>
-            <div className="text-lg font-bold text-primary">
-              {equity.kpis.dpi.toFixed(2)}x
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm text-muted-foreground">RVPI</div>
-            <div className="text-lg font-bold text-primary">
-              {equity.kpis.rvpi.toFixed(2)}x
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm text-muted-foreground">MOIC</div>
-            <div className="text-lg font-bold text-primary">
-              {equity.kpis.moic.toFixed(2)}x
-            </div>
-          </div>
-        </div>
-
-        {/* Waterfall Chart */}
+    <div className="rounded-2xl border p-4 space-y-4">
+      <div className="flex items-start justify-between">
         <div>
-          <h4 className="text-sm font-medium text-muted-foreground mb-3">
-            Capital Calls vs Distributions (Last 12 Periods)
-          </h4>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" opacity={0.3} />
-              <XAxis 
-                dataKey="period" 
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={12}
-              />
-              <YAxis 
-                stroke="hsl(var(--muted-foreground))"
-                fontSize={12}
-                tickFormatter={formatCurrency}
-              />
-              <Tooltip 
-                formatter={(value: number, name: string) => [formatCurrency(value), name]}
-                contentStyle={{ 
-                  backgroundColor: theme === 'dark' ? 'hsl(var(--background))' : '#fff',
-                  border: `1px solid hsl(var(--border))`,
-                  borderRadius: '6px'
-                }}
-              />
-              <Bar 
-                dataKey="calls" 
-                fill="hsl(var(--chart-1))"
-                name="Capital Calls"
-              />
-              <Bar 
-                dataKey="distributions" 
-                fill="hsl(var(--chart-2))"
-                name="Distributions"
-              />
-              <Bar 
-                dataKey="gp_promote" 
-                fill="hsl(var(--chart-3))"
-                name="GP Promote"
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Distribution Summary */}
-        <div className="grid grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg">
-          <div className="text-center">
-            <div className="text-sm text-muted-foreground">Total Called</div>
-            <div className="text-lg font-bold">
-              {formatCurrency(equity.calls_total.reduce((sum, call) => sum + call, 0))}
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm text-muted-foreground">Total Distributed</div>
-            <div className="text-lg font-bold">
-              {formatCurrency(equity.dists_total.reduce((sum, dist) => sum + dist, 0))}
-            </div>
-          </div>
-          <div className="text-center">
-            <div className="text-sm text-muted-foreground">GP Promote</div>
-            <div className="text-lg font-bold">
-              {formatCurrency(equity.gp_promote.reduce((sum, promote) => sum + promote, 0))}
-            </div>
+          <div className="font-semibold">Equity Waterfall</div>
+          {/* Baseline chips */}
+          <div className="flex flex-wrap gap-2 mt-2">
+            {classKeys.map((cls) => {
+              const state = classBaseline[cls];
+              const text = state === 'roc_pref'
+                ? 'Baseline: ROC+Pref met'
+                : state === 'roc'
+                  ? 'Baseline: ROC met'
+                  : 'Baseline: Not met';
+              const clsName = inputs?.equity?.classes?.find?.((c: any) => c?.key === cls)?.key ?? cls;
+              const badge =
+                state === 'roc_pref' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                state === 'roc' ? 'bg-amber-50 text-amber-700 border-amber-200' :
+                'bg-gray-50 text-gray-700 border-gray-200';
+              return (
+                <span key={cls} className={`inline-flex items-center text-xs px-2 py-1 rounded-full border ${badge}`}>
+                  <span className="font-medium mr-1">{clsName}:</span> {text}
+                </span>
+              );
+            })}
           </div>
         </div>
 
-        {/* Warnings */}
-        {hasClawback && (
-          <div className="flex items-center gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-            <AlertTriangle className="h-4 w-4 text-destructive" />
-            <span className="text-sm text-destructive">
-              GP clawback of {formatCurrency(equity.gp_clawback[lastPeriod])} outstanding
-            </span>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        <div className="flex items-center gap-2">
+          {/* Clawback banner if any (final period) */}
+          {finalClawback > 0 && (
+            <div className="text-xs px-2 py-1 rounded-md border bg-red-50 text-red-700 border-red-200">
+              GP Clawback Outstanding: <span className="font-medium">{fmtAED(finalClawback)}</span>
+            </div>
+          )}
+          <button
+            onClick={downloadCSV}
+            className="text-xs px-2 py-1 rounded-md border hover:bg-accent"
+          >
+            Export CSV
+          </button>
+        </div>
+      </div>
+
+      {/* KPI Summary */}
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">Portfolio IRR</div>
+          <div className="font-semibold">{fmtPct(kIrr)}</div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">TVPI</div>
+          <div className="font-semibold">{kTvpi.toFixed(2)}x</div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">DPI</div>
+          <div className={`font-semibold ${kDpi >= 1 ? 'text-emerald-600' : 'text-amber-600'}`}>{kDpi.toFixed(2)}x</div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">RVPI</div>
+          <div className="font-semibold">{kRvpi.toFixed(2)}x</div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">MOIC</div>
+          <div className="font-semibold">{kMoic.toFixed(2)}x</div>
+        </div>
+      </div>
+
+      {/* Distribution Totals */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">Total Called</div>
+          <div className="font-semibold">{fmtAED(totalCalled)}</div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">Total Distributed</div>
+          <div className="font-semibold">{fmtAED(totalDist)}</div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">GP Promote</div>
+          <div className="font-semibold">{fmtAED(totalPromote)}</div>
+        </div>
+      </div>
+    </div>
   );
 }

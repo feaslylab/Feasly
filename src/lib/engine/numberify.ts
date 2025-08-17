@@ -221,3 +221,88 @@ export function numberifyWaterfall(w: any) {
     detail: w?.detail ?? {}
   };
 }
+
+export function numberifyEquity(equity: any) {
+  const num = (a: unknown[]) => (a ?? []).map(toNum);
+  
+  // Handle KPIs by investor
+  const by_investor: Record<string, any> = {};
+  if (equity?.kpis?.by_investor) {
+    Object.entries(equity.kpis.by_investor).forEach(([key, kpi]: [string, any]) => {
+      by_investor[key] = {
+        irr_pa: kpi?.irr_pa != null ? toNum(kpi.irr_pa) : null,
+        tvpi: toNum(kpi?.tvpi ?? 0),
+        dpi: toNum(kpi?.dpi ?? 0),
+        rvpi: toNum(kpi?.rvpi ?? 0),
+        moic: toNum(kpi?.moic ?? 0),
+        contributed: toNum(kpi?.contributed ?? 0),
+        distributed: toNum(kpi?.distributed ?? 0),
+        nav: toNum(kpi?.nav ?? 0),
+      };
+    });
+  }
+
+  // Handle calls and distributions by investor
+  const calls_by_investor: Record<string, number[]> = {};
+  const dists_by_investor: Record<string, number[]> = {};
+  
+  if (equity?.calls_by_investor) {
+    Object.entries(equity.calls_by_investor).forEach(([key, arr]: [string, any]) => {
+      calls_by_investor[key] = num(arr);
+    });
+  }
+  
+  if (equity?.dists_by_investor) {
+    Object.entries(equity.dists_by_investor).forEach(([key, arr]: [string, any]) => {
+      dists_by_investor[key] = num(arr);
+    });
+  }
+
+  // Handle detail ledgers
+  const detail = equity?.detail ?? {};
+  const class_ledgers = detail?.class_ledgers ?? {};
+  const investor_ledgers = detail?.investor_ledgers ?? {};
+
+  // Convert class ledger records
+  const numRecord = (rec: Record<string, any>) => {
+    const result: Record<string, number> = {};
+    Object.entries(rec).forEach(([key, val]) => {
+      result[key] = toNum(val);
+    });
+    return result;
+  };
+
+  return {
+    ...equity,
+    calls_total: num(equity?.calls_total ?? []),
+    dists_total: num(equity?.dists_total ?? []),
+    gp_promote: num(equity?.gp_promote ?? []),
+    gp_clawback: num(equity?.gp_clawback ?? []),
+    calls_by_investor,
+    dists_by_investor,
+    kpis: {
+      ...equity?.kpis,
+      irr_pa: equity?.kpis?.irr_pa != null ? toNum(equity.kpis.irr_pa) : null,
+      tvpi: toNum(equity?.kpis?.tvpi ?? 0),
+      dpi: toNum(equity?.kpis?.dpi ?? 0),
+      rvpi: toNum(equity?.kpis?.rvpi ?? 0),
+      moic: toNum(equity?.kpis?.moic ?? 0),
+      by_investor,
+    },
+    detail: {
+      ...detail,
+      class_ledgers: {
+        ...class_ledgers,
+        pref_balance: numRecord(class_ledgers?.pref_balance ?? {}),
+        excess_distributions_cum: numRecord(class_ledgers?.excess_distributions_cum ?? {}),
+        gp_catchup_cum: numRecord(class_ledgers?.gp_catchup_cum ?? {}),
+        gp_promote_cum: numRecord(class_ledgers?.gp_promote_cum ?? {}),
+        debug: class_ledgers?.debug ?? {},
+      },
+      investor_ledgers: {
+        ...investor_ledgers,
+        unreturned_capital: numRecord(investor_ledgers?.unreturned_capital ?? {}),
+      },
+    },
+  };
+}

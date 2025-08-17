@@ -1,5 +1,6 @@
 import React from "react";
 import { useEngineNumbers } from "@/lib/engine/EngineContext";
+import { fmtAED, safeNum } from "@/lib/format";
 
 const fmt = (n: number) => {
   if (n === Infinity) return "∞";
