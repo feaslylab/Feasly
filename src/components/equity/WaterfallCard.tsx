@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import { useEngineNumbers, useEngine } from '@/lib/engine/EngineContext';
 import { fmtAED, fmtPct, safeNum, sum, approxEq } from '@/lib/format';
+import { FLAGS } from '@/lib/flags';
 import CatchUpEventsPanel from '@/components/waterfall-debug/CatchUpEventsPanel';
 import TierBoundaryDrawer from '@/components/waterfall-debug/TierBoundaryDrawer';
 
@@ -275,10 +276,12 @@ export default function WaterfallCard() {
       </div>
 
       {/* --- 10B Debug Panels (compact) --- */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <CatchUpEventsPanel />
-        <TierBoundaryDrawer />
-      </div>
+      {FLAGS.showWaterfallDebug && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+          <CatchUpEventsPanel />
+          <TierBoundaryDrawer />
+        </div>
+      )}
     </div>
   );
 }

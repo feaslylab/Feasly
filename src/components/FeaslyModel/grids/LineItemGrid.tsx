@@ -541,7 +541,7 @@ function GridRow<T extends LineItemBase>({
                   field: String(column.key),
                   before: item[column.key],
                   after: newValue,
-                  user: 'Me', // TODO: currentUser.id
+                  user: 'You', // TODO[tracked]: Replace with actual user from auth context
                 });
                 
                 onStateChange(prev => ({

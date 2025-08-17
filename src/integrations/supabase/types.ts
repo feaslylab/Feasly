@@ -1796,6 +1796,10 @@ export type Database = {
           subject: string
         }[]
       }
+      is_authenticated_user: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       is_organization_admin: {
         Args: { org_id: string; user_id: string }
         Returns: boolean
