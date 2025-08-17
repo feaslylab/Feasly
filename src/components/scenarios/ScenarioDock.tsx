@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScenarioBar } from './ScenarioBar';
@@ -7,7 +8,6 @@ import { ScenarioCompare } from './ScenarioCompare';
 import { type ScenarioId } from '@/lib/scenarios';
 import { parseShareURL } from '@/lib/scenarios/share';
 import { useToast } from '@/hooks/use-toast';
-import { useEngine } from '@/lib/engine/EngineContext';
 
 interface ScenarioDockProps {
   currentInputs?: any;
@@ -30,10 +30,19 @@ interface ScenarioDockProps {
 }
 
 export function ScenarioDock({ currentInputs, currentResults, onInputsChange }: ScenarioDockProps) {
+  const [searchParams] = useSearchParams();
   const [selectedIds, setSelectedIds] = useState<ScenarioId[]>([]);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const { toast } = useToast();
+
+  // Auto-open if baseline scenario is specified
+  useEffect(() => {
+    const scenario = searchParams.get('scenario');
+    if (scenario === 'baseline') {
+      setIsCompareOpen(false); // Keep it in list mode but ensure it's "open"
+    }
+  }, [searchParams]);
 
   // Auto-detect share tokens on load (deep-link)
   useEffect(() => {

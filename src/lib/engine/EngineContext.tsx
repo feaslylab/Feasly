@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 import { runModel, ProjectInputs } from "../../../packages/feasly-engine/src";
 import { mapFormToProjectInputs } from "@/lib/mapFormToProjectInputs";
 import {
@@ -10,6 +10,7 @@ import {
 type EngineContextValue = {
   inputs: ProjectInputs;
   output: ReturnType<typeof runModel>;
+  setInputs: (inputs: any) => void;
 };
 
 const EngineContext = createContext<EngineContextValue | null>(null);
@@ -18,14 +19,16 @@ export function EngineProvider({
   formState,
   children,
 }: { formState: any; children: React.ReactNode }) {
+  const [currentFormState, setCurrentFormState] = useState(formState);
+  
   // memoize inputs so we don't thrash re-computation
-  const inputs = useMemo(() => mapFormToProjectInputs(formState), [formState]);
+  const inputs = useMemo(() => mapFormToProjectInputs(currentFormState), [currentFormState]);
 
   // compute once per inputs change
   const output = useMemo(() => runModel(inputs), [inputs]);
 
   return (
-    <EngineContext.Provider value={{ inputs, output }}>
+    <EngineContext.Provider value={{ inputs, output, setInputs: setCurrentFormState }}>
       {children}
     </EngineContext.Provider>
   );

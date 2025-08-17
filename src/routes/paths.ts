@@ -3,7 +3,7 @@ export const PATHS = {
   dashboard: '/dashboard',
   projects: '/projects',
   projectsNew: '/projects/new',
-  model: '/feasly-model',
+  model: '/model',
   auth: '/auth',
   resetPassword: '/reset-password',
   welcome: '/welcome',

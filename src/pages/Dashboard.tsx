@@ -49,6 +49,7 @@ import {
   FolderOpen
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { PATHS } from "@/routes/paths";
 
 interface Project {
   id: string;
