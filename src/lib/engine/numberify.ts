@@ -115,7 +115,6 @@ export function numberifyBalanceSheet(bs: any) {
 export function numberifyPnL(p: any) {
   const num = (a: unknown[]) => (a ?? []).map(toNum);
   return {
-    ...p,
     revenue: num(p.revenue ?? []),
     opex: num(p.opex ?? []),
     depreciation: num(p.depreciation ?? []),

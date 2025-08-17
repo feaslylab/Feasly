@@ -161,9 +161,9 @@ export default function FeaslyInsights() {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        return parsed.map((p: any) => ({
-          ...p,
-          createdAt: new Date(p.createdAt)
+        return parsed.map((proj: any) => ({
+          ...proj,
+          createdAt: new Date(proj.createdAt)
         }));
       } catch (e) {
         console.warn('Failed to parse stored projects, using dummy data');

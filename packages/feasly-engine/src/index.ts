@@ -16,6 +16,7 @@ import { computePnL } from "./pnl";
 import { computeCashFlow } from "./computeCashFlow";
 import { computeCovenants } from "./computeCovenants";
 import { computeWaterfall } from "./computeWaterfall";
+import { computeEquityWaterfall } from "./computeEquityWaterfall";
 
 export type DecimalArray = Decimal[];
 
@@ -80,6 +81,7 @@ export type EngineOutput = {
   };
   covenants: import("./types").CovenantsBlock;
   waterfall: import("./types").ReturnsBlock;
+  equity?: any; // NEW: precise equity waterfall
   time: { df: number[]; dt: number[]; };
 };
 
@@ -361,6 +363,14 @@ export function runModel(rawInputs: unknown): EngineOutput {
     equity_cf: cash.equity_cf
   });
 
+  // NEW: compute precise equity waterfall (Phase 9)
+  const equity = computeEquityWaterfall({
+    T,
+    inputs,
+    balance_sheet: { nbv: dep.nbv },
+    cash: { project: cash.project }
+  });
+
   // Basic tie-out diagnostic
   const tieOK = bs.imbalance.every(x => x.abs().lt(0.01));
   console.log(`🧮 Balance Sheet ties: ${tieOK}`);
@@ -410,7 +420,8 @@ export function runModel(rawInputs: unknown): EngineOutput {
     profit_and_loss: pnl,
     cash_flow: cf,
     covenants,
-    waterfall,
+    waterfall, // legacy
+    equity,    // NEW (exact Phase 9 solver output)
     time: { df, dt }
   };
 }

@@ -574,6 +574,15 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
                 <Suspense fallback={<div className="text-sm text-muted-foreground">Loading financing...</div>}>
                   <FinancingCard />
                 </Suspense>
+                <Suspense fallback={<div className="text-sm text-muted-foreground">Loading equity waterfall...</div>}>
+                  <EquityWaterfallCard />
+                </Suspense>
+                <Suspense fallback={<div className="text-sm text-muted-foreground">Loading cap table...</div>}>
+                  <CapTableCard />
+                </Suspense>
+                <Suspense fallback={<div className="text-sm text-muted-foreground">Loading equity flows...</div>}>
+                  <EquityFlowsCard />
+                </Suspense>
                 <KPIResults />
               </div>
             </SectionPanel>

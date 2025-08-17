@@ -406,7 +406,7 @@ export function computeEquityWaterfall(params: EquityParams) {
   // Process each period
   for (let t = 0; t < T; t++) {
     // 1. Capital calls (if project cash < 0)
-    const need = cash.project[t].negated().max(0);
+    const need = Decimal.max(0, cash.project[t].negated());
     
     if (need.gt(0)) {
       const total_commitment = equity.investors.reduce((sum, inv) => 
@@ -457,7 +457,7 @@ export function computeEquityWaterfall(params: EquityParams) {
     }
 
     // 3. Distribution frequency handling
-    const positive_cash = cash.project[t].max(0);
+    const positive_cash = Decimal.max(0, cash.project[t]);
     
     if (equity.distribution_frequency === "quarterly") {
       dist_accumulator = dist_accumulator.add(positive_cash);
