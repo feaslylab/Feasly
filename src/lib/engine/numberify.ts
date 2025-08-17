@@ -297,7 +297,28 @@ export function numberifyEquity(equity: any) {
         excess_distributions_cum: numRecord(class_ledgers?.excess_distributions_cum ?? {}),
         gp_catchup_cum: numRecord(class_ledgers?.gp_catchup_cum ?? {}),
         gp_promote_cum: numRecord(class_ledgers?.gp_promote_cum ?? {}),
-        debug: class_ledgers?.debug ?? {},
+        debug: (() => {
+          const debugIn = class_ledgers?.debug ?? {};
+          const debugOut: Record<string, { catchup?: any[]; tiers?: any[] }> = {};
+          Object.entries(debugIn).forEach(([cls, payload]: any) => {
+            const cu = Array.isArray(payload?.catchup) ? payload.catchup.map((e: any) => ({
+              t: Number(e?.t ?? 0),
+              A: Number(e?.A ?? 0),
+              G: Number(e?.G ?? 0),
+              Y: Number(e?.Y ?? 0),
+            })) : [];
+            const tr = Array.isArray(payload?.tiers) ? payload.tiers.map((e: any) => ({
+              t: Number(e?.t ?? 0),
+              tierIdx: Number(e?.tierIdx ?? 0),
+              x: Number(e?.x ?? 0),
+              split_lp: Number(e?.split_lp ?? 0),
+              split_gp: Number(e?.split_gp ?? 0),
+              r_target_m: Number(e?.r_target_m ?? 0),
+            })) : [];
+            debugOut[cls] = { catchup: cu, tiers: tr };
+          });
+          return debugOut;
+        })(),
       },
       investor_ledgers: {
         ...investor_ledgers,

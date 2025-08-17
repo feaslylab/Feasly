@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import { useEngineNumbers, useEngine } from '@/lib/engine/EngineContext';
 import { fmtAED, fmtPct, safeNum, sum, approxEq } from '@/lib/format';
+import CatchUpEventsPanel from '@/components/waterfall-debug/CatchUpEventsPanel';
+import TierBoundaryDrawer from '@/components/waterfall-debug/TierBoundaryDrawer';
 
 type ByStrNum = Record<string, number>;
 type ByStrArr = Record<string, number[]>;
@@ -151,6 +153,36 @@ export default function WaterfallCard() {
       lines.push([cls, safeNum(A[cls]), safeNum(G[cls]), safeNum(P[cls])].join(','));
     });
 
+    // Section 4: Catch-up Events (A/G/Y)
+    const dbg = equity.detail?.class_ledgers?.debug ?? {};
+    lines.push('');
+    lines.push('');
+    lines.push('Catch-up Events (per row: period, class, A, G, Y)');
+    lines.push('Period,Class,Excess_A,GP_G_cum,Catchup_Y');
+    Object.entries(dbg).forEach(([cls, payload]: any) => {
+      (payload?.catchup ?? []).forEach((e: any) => {
+        const t = Number(e?.t ?? 0);
+        lines.push([`M${t+1}`, cls, safeNum(e?.A), safeNum(e?.G), safeNum(e?.Y)].join(','));
+      });
+    });
+
+    // Section 5: Tier Boundaries
+    lines.push('');
+    lines.push('Tier Boundary Allocations (x at boundary)');
+    lines.push('Period,Class,TierIdx,Allocated_x,Split_LP,Split_GP,r_target_monthly');
+    Object.entries(dbg).forEach(([cls, payload]: any) => {
+      (payload?.tiers ?? []).forEach((e: any) => {
+        const t = Number(e?.t ?? 0);
+        lines.push([
+          `M${t+1}`, cls, Number(e?.tierIdx ?? 0),
+          safeNum(e?.x),
+          safeNum(e?.split_lp),
+          safeNum(e?.split_gp),
+          safeNum(e?.r_target_m),
+        ].join(','));
+      });
+    });
+
     const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -240,6 +272,12 @@ export default function WaterfallCard() {
           <div className="text-xs text-muted-foreground">GP Promote</div>
           <div className="font-semibold">{fmtAED(totalPromote)}</div>
         </div>
+      </div>
+
+      {/* --- 10B Debug Panels (compact) --- */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <CatchUpEventsPanel />
+        <TierBoundaryDrawer />
       </div>
     </div>
   );
