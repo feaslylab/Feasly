@@ -3,7 +3,7 @@ import { ProjectInputs } from "./types";
 import { dtYears, discountFactors } from "./time";
 import { computeRevenue } from "./revenue";
 import { computeCosts } from "./costs";
-import { computeFinancing } from "./financing";
+import { computeDebt } from "./computeDebt";
 import { assembleCash } from "./cash";
 import { buildProjectProgress, buildAllowedReleaseSeries } from "./escrow";
 import { computeDepreciation } from "./depreciation";
@@ -29,7 +29,7 @@ export type EngineOutput = {
   costs:   { capex: DecimalArray; opex: DecimalArray; opex_net_of_cam: DecimalArray; vat_input: DecimalArray; detail: Record<string, unknown>; };
   financing: { 
     draws: DecimalArray; interest: DecimalArray; principal: DecimalArray; balance: DecimalArray; 
-    fees_upfront: DecimalArray; fees_ongoing: DecimalArray; 
+    fees_upfront: DecimalArray; fees_commitment: DecimalArray; fees_ongoing: DecimalArray; 
     dsra_balance: DecimalArray; dsra_funding: DecimalArray; dsra_release: DecimalArray;
     detail: Record<string, unknown>; 
   };
@@ -237,7 +237,7 @@ export function runModel(rawInputs: unknown): EngineOutput {
   const dep = computeDepreciation(inputs, costs.capex, costs.detail.items);
 
   // Financing (needed for corp tax interest calculation)
-  const fin = computeFinancing(inputs, costs.capex);
+  const fin = computeDebt({ T, inputs, costs });
 
   // Corporate Tax
   const corp = computeCorpTax({
@@ -284,6 +284,7 @@ export function runModel(rawInputs: unknown): EngineOutput {
       .minus(fin.interest[t])
       .minus(fin.principal[t])
       .minus(fin.fees_upfront[t])
+      .minus(fin.fees_commitment[t])
       .minus(fin.fees_ongoing[t])
       .minus(fin.dsra_funding[t])
       .add(fin.dsra_release[t])

@@ -37,6 +37,14 @@ export function numberifyCosts(c: any) {
 }
 
 export function numberifyFin(fin: any) {
+  const detailTranches = (fin?.detail?.tranches ?? []).map((tr: any) => ({
+    ...tr,
+    draws: numArr(tr?.draws ?? []),
+    interest: numArr(tr?.interest ?? []),
+    principal: numArr(tr?.principal ?? []),
+    balance: numArr(tr?.balance ?? [])
+  }));
+
   return {
     ...fin,
     draws: numArr(fin.draws ?? []),
@@ -44,10 +52,15 @@ export function numberifyFin(fin: any) {
     principal: numArr(fin.principal ?? []),
     balance: numArr(fin.balance ?? []),
     fees_upfront: numArr(fin.fees_upfront ?? []),
+    fees_commitment: numArr(fin.fees_commitment ?? []),
     fees_ongoing: numArr(fin.fees_ongoing ?? []),
     dsra_balance: numArr(fin.dsra_balance ?? []),
     dsra_funding: numArr(fin.dsra_funding ?? []),
     dsra_release: numArr(fin.dsra_release ?? []),
+    detail: {
+      ...fin?.detail,
+      tranches: detailTranches
+    }
   };
 }
 

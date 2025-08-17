@@ -75,16 +75,17 @@ export const DebtTranche = z.object({
   limit_ltc: z.number().nonnegative().optional(),
   limit_ltv: z.number().nonnegative().optional(),
   tenor_months: z.number().int().positive(),
-  amort_type: z.enum(["bullet", "annuity"]).default("bullet"),
+  amort_type: z.enum(["bullet", "annuity", "straight"]).default("bullet"),
   fee_commitment_pct_pa: z.number().nonnegative().default(0),
-  nominal_rate_pa: z.number().nonnegative().default(0.08), // required explicit rate
+  upfront_fee_pct: z.number().nonnegative().default(0),
+  ongoing_fee_pct_pa: z.number().nonnegative().default(0),
+  commitment_fee_pct_pa: z.number().nonnegative().default(0),
+  nominal_rate_pa: z.number().nonnegative().default(0.08),
   availability_start_m: z.number().int().nonnegative().default(0),
-  availability_end_m: z.number().int().nonnegative().default(0), // inclusive window
-  upfront_fee_pct: z.number().nonnegative().default(0),           // on drawn
-  ongoing_fee_pct_pa: z.number().nonnegative().default(0),        // commitment/line fee on undrawn
-  dsra_months: z.number().int().nonnegative().default(0),
-  dsra_on: z.enum(["interest","interest_plus_fees"]).default("interest"),
-  draw_priority: z.number().int().default(1), // order tranches for funding
+  availability_end_m: z.number().int().nonnegative().default(999),
+  draw_priority: z.number().int().default(1),
+  dsra_months: z.number().nonnegative().default(0),
+  prepayment_allowed: z.boolean().default(false),
   covenants: z.object({
     dscr_min: z.number().nonnegative().optional(), // e.g., 1.05
     icr_min:  z.number().nonnegative().optional(), // e.g., 2.00
