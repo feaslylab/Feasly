@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { ScenarioCompare } from '../ScenarioCompare';
 import * as scenarios from '@/lib/scenarios';
 
@@ -76,10 +76,10 @@ describe('ScenarioCompare', () => {
       items: [],
     });
 
-    render(<ScenarioCompare selectedIds={[]} />);
+    const { getByText } = render(<ScenarioCompare selectedIds={[]} />);
     
-    expect(screen.getByText('No scenarios selected')).toBeInTheDocument();
-    expect(screen.getByText('Select 1-3 scenarios from the list to compare them.')).toBeInTheDocument();
+    expect(getByText('No scenarios selected')).toBeInTheDocument();
+    expect(getByText('Select 1-3 scenarios from the list to compare them.')).toBeInTheDocument();
   });
 
   it('renders KPI comparison table with scenarios and deltas', () => {
@@ -105,14 +105,14 @@ describe('ScenarioCompare', () => {
       },
     });
 
-    render(<ScenarioCompare selectedIds={['scenario-1', 'scenario-2']} />);
+    const { getByText } = render(<ScenarioCompare selectedIds={['scenario-1', 'scenario-2']} />);
     
-    expect(screen.getByText('Comparing 2 scenarios')).toBeInTheDocument();
-    expect(screen.getByText('Key Performance Indicators')).toBeInTheDocument();
-    expect(screen.getByText('Base Case')).toBeInTheDocument();
-    expect(screen.getByText('Optimistic Case')).toBeInTheDocument();
-    expect(screen.getByText('(Baseline)')).toBeInTheDocument();
-    expect(screen.getByText('Δ vs Baseline')).toBeInTheDocument();
+    expect(getByText('Comparing 2 scenarios')).toBeInTheDocument();
+    expect(getByText('Key Performance Indicators')).toBeInTheDocument();
+    expect(getByText('Base Case')).toBeInTheDocument();
+    expect(getByText('Optimistic Case')).toBeInTheDocument();
+    expect(getByText('(Baseline)')).toBeInTheDocument();
+    expect(getByText('Δ vs Baseline')).toBeInTheDocument();
   });
 
   it('handles null IRR values gracefully', () => {
@@ -126,9 +126,9 @@ describe('ScenarioCompare', () => {
       items: [scenarioWithNullIRR],
     });
 
-    render(<ScenarioCompare selectedIds={['scenario-1']} />);
+    const { getByText } = render(<ScenarioCompare selectedIds={['scenario-1']} />);
     
-    expect(screen.getByText('N/A')).toBeInTheDocument();
+    expect(getByText('N/A')).toBeInTheDocument();
   });
 
   it('exports CSV when export button clicked', () => {
@@ -153,9 +153,9 @@ describe('ScenarioCompare', () => {
     vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockLink as any);
     vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockLink as any);
 
-    render(<ScenarioCompare selectedIds={['scenario-1', 'scenario-2']} />);
+    const { getByText } = render(<ScenarioCompare selectedIds={['scenario-1', 'scenario-2']} />);
     
-    const exportButton = screen.getByText('Export CSV');
+    const exportButton = getByText('Export CSV');
     exportButton.click();
     
     expect(scenarios.exportComparisonCSV).toHaveBeenCalledWith([mockScenario1, mockScenario2]);
@@ -168,10 +168,10 @@ describe('ScenarioCompare', () => {
       items: [mockScenario1, mockScenario2],
     });
 
-    render(<ScenarioCompare selectedIds={['scenario-1', 'scenario-2']} />);
+    const { getByText } = render(<ScenarioCompare selectedIds={['scenario-1', 'scenario-2']} />);
     
-    expect(screen.getByText('(Conservative)')).toBeInTheDocument();
-    expect(screen.getByText('(Aggressive)')).toBeInTheDocument();
+    expect(getByText('(Conservative)')).toBeInTheDocument();
+    expect(getByText('(Aggressive)')).toBeInTheDocument();
   });
 
   it('uses pinned scenario as baseline', () => {
@@ -181,10 +181,10 @@ describe('ScenarioCompare', () => {
       items: [mockScenario1, mockScenario2],
     });
 
-    render(<ScenarioCompare selectedIds={['scenario-2']} />);
+    const { getByText } = render(<ScenarioCompare selectedIds={['scenario-2']} />);
     
     // Should include pinned scenario as baseline
-    expect(screen.getByText('Base Case')).toBeInTheDocument();
-    expect(screen.getByText('Optimistic Case')).toBeInTheDocument();
+    expect(getByText('Base Case')).toBeInTheDocument();
+    expect(getByText('Optimistic Case')).toBeInTheDocument();
   });
 });
