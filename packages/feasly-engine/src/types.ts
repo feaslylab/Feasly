@@ -163,6 +163,54 @@ export const HurdleStep = z.object({
 });
 export type HurdleStep = z.infer<typeof HurdleStep>;
 
+export const EquityClass = z.object({
+  key: z.string(),
+  seniority: z.number().int().default(1), // Lower = more senior
+  pref_rate_pa: z.number().nonnegative().default(0.08),
+  pref_compounding: z.enum(["simple", "compound"]).default("simple"),
+  distribution_frequency: z.enum(["monthly", "quarterly"]).default("monthly"),
+  
+  // Catch-up configuration (exact formula implementation)
+  catchup: z.object({
+    enabled: z.boolean().default(false),
+    // Target GP share of the "excess pool" once catch-up is completed (e.g., 0.20 for 20%)
+    target_gp_share: z.number().min(0).max(1).default(0.20),
+    // Defines what counts toward the excess pool baseline
+    //  - "over_roc"               => excess starts after ROC only
+    //  - "over_roc_and_pref"      => excess starts after ROC + Pref (default)
+    basis: z.enum(["over_roc", "over_roc_and_pref"]).default("over_roc_and_pref")
+  }).optional(),
+
+  // Tier configuration with IRR hurdles
+  tiers: z.array(z.object({
+    // Annual hurdle; convert to monthly internally
+    irr_hurdle_pa: z.number().nonnegative(),
+    split_lp: z.number().min(0).max(1),
+    split_gp: z.number().min(0).max(1),
+    // Hurdle basis kept simple: LP class-level IRR
+    hurdle_basis: z.enum(["lp_class_irr"]).default("lp_class_irr"),
+  })).default([]),
+});
+export type EquityClass = z.infer<typeof EquityClass>;
+
+export const EquityInvestor = z.object({
+  key: z.string(),
+  class_key: z.string(),
+  role: z.enum(["lp", "gp"]).default("lp"),
+  commitment: z.number().nonnegative().default(0),
+  fixed_share: z.number().min(0).max(1).optional(), // For fixed_shares call order
+});
+export type EquityInvestor = z.infer<typeof EquityInvestor>;
+
+export const EquityBlock = z.object({
+  enabled: z.boolean().default(false),
+  call_order: z.enum(["pro_rata_commitment", "fixed_shares"]).default("pro_rata_commitment"),
+  distribution_frequency: z.enum(["monthly", "quarterly"]).default("monthly"),
+  classes: z.array(EquityClass).default([]),
+  investors: z.array(EquityInvestor).default([]),
+});
+export type EquityBlock = z.infer<typeof EquityBlock>;
+
 export const EquityTranche = z.object({
   key: z.string(),
   role: z.enum(["lp","gp"]).default("lp"),
@@ -259,7 +307,8 @@ export const ProjectInputs = z.object({
   escrow: EscrowBlock.default({}),
   valuation: ValuationBlock.default({}),
   waterfall: WaterfallBlock.default({}),
-  equity: z.array(EquityTranche).default([]),
+  equity: EquityBlock.default({}),
+  equity_tranches: z.array(EquityTranche).default([]), // Legacy field for compatibility
   waterfall_config: WaterfallConfig.default({}),
   plots: z.array(Plot).default([]),
   cam: CAMConfig.default({}),
