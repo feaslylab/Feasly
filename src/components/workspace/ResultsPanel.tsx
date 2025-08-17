@@ -1,173 +1,86 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { TrendingUp, DollarSign, BarChart3, PieChart } from 'lucide-react';
+import { useEngineNumbers } from '@/lib/engine/EngineContext';
+
+const pct = (v: number | null | undefined) =>
+  v == null ? 'N/A' : `${(v * 100).toFixed(1)}%`;
+const mult = (v: number | null | undefined) =>
+  v == null ? 'N/A' : `${v.toFixed(2)}×`;
+const fmtAED = (v: number) => `AED ${v.toLocaleString()}`;
+
+function Sparkline({ data }: { data: number[] }) {
+  if (!data?.length) return null;
+  const w = 160;
+  const h = 40;
+  const max = Math.max(...data, 1);
+  const step = w / Math.max(1, data.length - 1);
+  const points = data
+    .map((v, i) => `${i * step},${h - (Math.max(0, v) / max) * (h - 2) - 1}`)
+    .join(' ');
+  return (
+    <svg width={w} height={h} className="text-primary">
+      <polyline fill="none" stroke="currentColor" strokeWidth="2" points={points} />
+    </svg>
+  );
+}
 
 export default function ResultsPanel() {
+  const numbers = useEngineNumbers();
+  const eq = numbers?.equity ?? null;
+
+  const irr = eq?.kpis?.irr_pa ?? null;
+  const tvpi = eq?.kpis?.tvpi ?? null;
+  const dpi = eq?.kpis?.dpi ?? null;
+  const rvpi = eq?.kpis?.rvpi ?? null;
+  const moic = eq?.kpis?.moic ?? null;
+
+  const T = eq?.calls_total?.length ?? 0;
+  const last = Math.max(0, T - 1);
+  const claw = Number(eq?.gp_clawback?.[last] ?? 0);
+
+  const dists = Array.isArray(eq?.dists_total) ? eq!.dists_total.map(Number) : [];
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Results</h2>
-        <p className="text-muted-foreground">
-          Financial projections and key performance indicators
-        </p>
+        <h2 className="text-lg font-semibold">Results</h2>
+        <p className="text-sm text-muted-foreground">Financial projections and KPIs.</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">NPV</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">AED 0</div>
-            <p className="text-xs text-muted-foreground">
-              Net present value
-            </p>
-          </CardContent>
-        </Card>
+      {claw > 0 && (
+        <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm">
+          GP Clawback outstanding at end: <span className="font-semibold">{fmtAED(claw)}</span>
+        </div>
+      )}
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">IRR</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--%</div>
-            <p className="text-xs text-muted-foreground">
-              Internal rate of return
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Profit</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">AED 0</div>
-            <p className="text-xs text-muted-foreground">
-              Total profit
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">ROI</CardTitle>
-            <PieChart className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">--%</div>
-            <p className="text-xs text-muted-foreground">
-              Return on investment
-            </p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">IRR</div>
+          <div className="text-xl font-semibold">{pct(irr)}</div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">TVPI</div>
+          <div className="text-xl font-semibold">{mult(tvpi)}</div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">DPI</div>
+          <div className="text-xl font-semibold">{mult(dpi)}</div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">RVPI</div>
+          <div className="text-xl font-semibold">{mult(rvpi)}</div>
+        </div>
+        <div className="rounded-lg border p-3">
+          <div className="text-xs text-muted-foreground">MOIC</div>
+          <div className="text-xl font-semibold">{mult(moic)}</div>
+        </div>
       </div>
 
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="cashflow">Cash Flow</TabsTrigger>
-          <TabsTrigger value="financing">Financing</TabsTrigger>
-          <TabsTrigger value="returns">Returns</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Financial Overview</CardTitle>
-              <CardDescription>
-                Summary of key financial metrics
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center py-12 text-muted-foreground">
-                <div className="text-center">
-                  <BarChart3 className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                  <p>No calculation results available</p>
-                  <p className="text-sm mt-1">Run calculations to see results here</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="cashflow" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Cash Flow Analysis</CardTitle>
-              <CardDescription>
-                Monthly cash flow projections
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center py-12 text-muted-foreground">
-                <div className="text-center">
-                  <TrendingUp className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                  <p>No cash flow data available</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="financing" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Financing Structure</CardTitle>
-              <CardDescription>
-                Debt and equity analysis
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center py-12 text-muted-foreground">
-                <div className="text-center">
-                  <PieChart className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                  <p>No financing data available</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="returns" className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Return Analysis</CardTitle>
-              <CardDescription>
-                IRR and return metrics over time
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-center py-12 text-muted-foreground">
-                <div className="text-center">
-                  <DollarSign className="mx-auto h-12 w-12 mb-4 opacity-50" />
-                  <p>No return data available</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Calculation Status</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <Badge variant="outline">
-              No calculations run
-            </Badge>
-            <span className="text-sm text-muted-foreground">
-              Configure inputs and run calculations to see results
-            </span>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="rounded-lg border p-4">
+        <div className="text-sm font-medium mb-2">Distributions Timeline</div>
+        {dists.length ? (
+          <Sparkline data={dists} />
+        ) : (
+          <div className="text-sm text-muted-foreground">No distribution data yet.</div>
+        )}
+      </div>
     </div>
   );
 }
