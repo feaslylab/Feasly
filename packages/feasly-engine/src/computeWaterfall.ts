@@ -39,7 +39,7 @@ export function computeWaterfall(params: {
 }): ReturnsBlock {
   const { T, inputs, equity_cf } = params;
   
-  const equity = inputs.equity || [];
+  const equity = inputs.equity_tranches || [];
   const config = inputs.waterfall_config || { mode: "european", hurdles: [], accrual_lot_level: true };
   
   if (equity.length === 0) {
