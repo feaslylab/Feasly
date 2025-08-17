@@ -8,6 +8,7 @@ export const FLAGS = {
   // Feature flags that can be toggled in production
   showClawbackBanner: true,
   enableAdvancedFeatures: true,
+  enableScenarios: true, // on in both dev/prod
 } as const;
 
 // Type-safe flag checker
