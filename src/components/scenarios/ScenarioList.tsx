@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { Edit2, Copy, Trash2, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -53,11 +53,7 @@ export function ScenarioList({ selectedIds, onSelectionChange, refreshTrigger }:
   };
 
   // Load on mount and when refreshTrigger changes
-  useState(() => {
-    loadData();
-  });
-
-  useState(() => {
+  useEffect(() => {
     loadData();
   }, [refreshTrigger]);
 

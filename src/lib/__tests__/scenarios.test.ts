@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { 
   loadScenarios, 
   addSnapshot, 
@@ -14,10 +14,10 @@ import {
 
 // Mock localStorage
 const localStorageMock = {
-  getItem: vitest.fn(),
-  setItem: vitest.fn(),
-  removeItem: vitest.fn(),
-  clear: vitest.fn()
+  getItem: vi.fn(),
+  setItem: vi.fn(),
+  removeItem: vi.fn(),
+  clear: vi.fn()
 };
 global.localStorage = localStorageMock as any;
 

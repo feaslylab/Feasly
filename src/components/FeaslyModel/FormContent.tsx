@@ -44,6 +44,8 @@ import { FinancingCard } from '@/components/financing/FinancingCard';
 import EquityWaterfallCard from '@/components/equity/WaterfallCard';
 import CapTableCard from '@/components/equity/CapTableCard';
 import EquityFlowsCard from '@/components/equity/EquityFlowsCard';
+import { ScenarioDock } from '@/components/scenarios/ScenarioDock';
+import { FLAGS } from '@/lib/flags';
 
 interface FormContentProps {
   projectId: string;
@@ -584,6 +586,13 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
                   <EquityFlowsCard />
                 </Suspense>
                 <KPIResults />
+                
+                {/* Scenario Dock */}
+                {FLAGS.enableScenarios && (
+                  <Suspense fallback={<div className="text-sm text-muted-foreground">Loading scenarios...</div>}>
+                    <ScenarioDock />
+                  </Suspense>
+                )}
               </div>
             </SectionPanel>
 
