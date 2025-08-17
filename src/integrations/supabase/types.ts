@@ -580,21 +580,21 @@ export type Database = {
           id: string
           is_enabled: boolean | null
           module_name: string
-          user_id: string | null
+          user_id: string
         }
         Insert: {
           enabled_at?: string | null
           id?: string
           is_enabled?: boolean | null
           module_name: string
-          user_id?: string | null
+          user_id: string
         }
         Update: {
           enabled_at?: string | null
           id?: string
           is_enabled?: boolean | null
           module_name?: string
-          user_id?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -921,7 +921,7 @@ export type Database = {
       organizations: {
         Row: {
           created_at: string
-          created_by_user_id: string | null
+          created_by_user_id: string
           id: string
           name: string
           slug: string | null
@@ -929,7 +929,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          created_by_user_id?: string | null
+          created_by_user_id: string
           id?: string
           name: string
           slug?: string | null
@@ -937,7 +937,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          created_by_user_id?: string | null
+          created_by_user_id?: string
           id?: string
           name?: string
           slug?: string | null
@@ -1291,7 +1291,7 @@ export type Database = {
           unit_system: string | null
           updated_at: string | null
           use_segmented_revenue: boolean | null
-          user_id: string | null
+          user_id: string
           zakat_applicable: boolean | null
           zakat_calculation_method: string | null
           zakat_exclude_losses: boolean | null
@@ -1329,7 +1329,7 @@ export type Database = {
           unit_system?: string | null
           updated_at?: string | null
           use_segmented_revenue?: boolean | null
-          user_id?: string | null
+          user_id: string
           zakat_applicable?: boolean | null
           zakat_calculation_method?: string | null
           zakat_exclude_losses?: boolean | null
@@ -1367,7 +1367,7 @@ export type Database = {
           unit_system?: string | null
           updated_at?: string | null
           use_segmented_revenue?: boolean | null
-          user_id?: string | null
+          user_id?: string
           zakat_applicable?: boolean | null
           zakat_calculation_method?: string | null
           zakat_exclude_losses?: boolean | null
