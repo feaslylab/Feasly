@@ -41,6 +41,9 @@ import { CashFlowCard } from '@/components/recon/CashFlowCard';
 import { CovenantsCard } from '@/components/covenants/CovenantsCard';
 import { WaterfallCard } from '@/components/waterfall/WaterfallCard';
 import { FinancingCard } from '@/components/financing/FinancingCard';
+import { WaterfallCard as EquityWaterfallCard } from '@/components/equity/WaterfallCard';
+import { CapTableCard } from '@/components/equity/CapTableCard';
+import { EquityFlowsCard } from '@/components/equity/EquityFlowsCard';
 
 interface FormContentProps {
   projectId: string;
