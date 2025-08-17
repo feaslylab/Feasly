@@ -45,6 +45,7 @@ import EquityWaterfallCard from '@/components/equity/WaterfallCard';
 import CapTableCard from '@/components/equity/CapTableCard';
 import EquityFlowsCard from '@/components/equity/EquityFlowsCard';
 import { ScenarioDock } from '@/components/scenarios/ScenarioDock';
+import { ScenarioPresets } from '@/components/scenarios';
 import { FLAGS } from '@/lib/flags';
 
 interface FormContentProps {
@@ -591,6 +592,13 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
                 {FLAGS.enableScenarios && (
                   <Suspense fallback={<div className="text-sm text-muted-foreground">Loading scenarios...</div>}>
                     <ScenarioDock />
+                  </Suspense>
+                )}
+                
+                {/* Scenario Presets */}
+                {FLAGS.enableScenarios && (
+                  <Suspense fallback={<div className="text-sm text-muted-foreground">Loading presets...</div>}>
+                    <ScenarioPresets />
                   </Suspense>
                 )}
               </div>
