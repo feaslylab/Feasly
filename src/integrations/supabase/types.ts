@@ -1727,6 +1727,17 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_own_profile: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          avatar_url: string
+          created_at: string
+          email: string
+          full_name: string
+          updated_at: string
+          user_id: string
+        }[]
+      }
       get_project_team_members: {
         Args: { project_id_param: string }
         Returns: {
