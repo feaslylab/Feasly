@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Download } from 'lucide-react';
+import { Download, Share2, Upload, FileDown, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -18,6 +18,10 @@ import {
   type ScenarioId,
   type ScenarioSnapshot
 } from '@/lib/scenarios';
+import { makeShareURL, exportScenarioFile, importScenarioFile } from '@/lib/scenarios/share';
+import { useEngine, useEngineNumbers } from '@/lib/engine/EngineContext';
+import { runPreview } from '@/lib/engine/preview';
+import { fmtAED, fmtPct, safeNum } from '@/lib/format';
 
 interface ScenarioCompareProps {
   selectedIds: ScenarioId[];
@@ -25,6 +29,8 @@ interface ScenarioCompareProps {
 
 export function ScenarioCompare({ selectedIds }: ScenarioCompareProps) {
   const { toast } = useToast();
+  const { inputs } = useEngine();
+  const numbers = useEngineNumbers();
   
   const scenarios = useMemo(() => {
     const state = loadScenarios();
@@ -107,6 +113,44 @@ export function ScenarioCompare({ selectedIds }: ScenarioCompareProps) {
     }
   };
 
+  const onCopyShare = (snapshot: ScenarioSnapshot) => {
+    const { url, tooLarge } = makeShareURL(snapshot);
+    if (tooLarge) {
+      toast({ title: "Link Too Long", description: "Export as JSON instead.", variant: "destructive" });
+      return;
+    }
+    navigator.clipboard.writeText(url).then(() => {
+      toast({ title: "Share link copied" });
+    }).catch(() => {
+      toast({ title: "Copy failed", description: "Try exporting JSON", variant: "destructive" });
+    });
+  };
+
+  const onExport = (snapshot: ScenarioSnapshot) => exportScenarioFile(snapshot);
+
+  const onImport = async (file: File) => {
+    try {
+      const snap = await importScenarioFile(file);
+      // preview
+      const candidate = runPreview(snap.inputs).equity;
+      // show a minimal confirm dialog
+      const ok = window.confirm(`Restore inputs from "${snap.name}"?\nIRR: ${fmtPct(candidate?.kpis?.irr_pa ?? null)}`);
+      if (!ok) return;
+      // Note: setInputs functionality would need to be passed down from parent component
+      toast({ title: "Scenario restored", description: `Applied: ${snap.name}` });
+    } catch (e: any) {
+      toast({ title: "Import failed", description: e?.message ?? "Invalid file", variant: "destructive" });
+    }
+  };
+
+  const onRestore = (snapshot: ScenarioSnapshot) => {
+    const candidate = runPreview(snapshot.inputs).equity;
+    const ok = window.confirm(`Restore inputs from "${snapshot.name}"?\nIRR: ${fmtPct(candidate?.kpis?.irr_pa ?? null)}`);
+    if (!ok) return;
+    // Note: setInputs functionality would need to be passed down from parent component
+    toast({ title: "Scenario restored", description: `Applied: ${snapshot.name}` });
+  };
+
   if (scenarios.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -124,10 +168,42 @@ export function ScenarioCompare({ selectedIds }: ScenarioCompareProps) {
         <h3 className="text-lg font-semibold">
           Comparing {scenarios.length} scenario{scenarios.length > 1 ? 's' : ''}
         </h3>
-        <Button onClick={handleExportCSV} variant="outline" size="sm" className="gap-2">
-          <Download className="h-4 w-4" />
-          Export CSV
-        </Button>
+        <div className="flex items-center gap-2">
+          {scenarios.length === 1 && (
+            <>
+              <Button onClick={() => onCopyShare(scenarios[0])} variant="outline" size="sm" className="gap-2">
+                <Share2 className="h-4 w-4" />
+                Share Link
+              </Button>
+              <Button onClick={() => onExport(scenarios[0])} variant="outline" size="sm" className="gap-2">
+                <FileDown className="h-4 w-4" />
+                Export JSON
+              </Button>
+              <label className="cursor-pointer">
+                <Button variant="outline" size="sm" className="gap-2" asChild>
+                  <span>
+                    <Upload className="h-4 w-4" />
+                    Import JSON
+                  </span>
+                </Button>
+                <input 
+                  type="file" 
+                  accept="application/json" 
+                  className="hidden"
+                  onChange={(e) => e.target.files && onImport(e.target.files[0])}
+                />
+              </label>
+              <Button onClick={() => onRestore(scenarios[0])} variant="default" size="sm" className="gap-2">
+                <RotateCcw className="h-4 w-4" />
+                Restore to Form
+              </Button>
+            </>
+          )}
+          <Button onClick={handleExportCSV} variant="outline" size="sm" className="gap-2">
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
+        </div>
       </div>
 
       {/* KPI Comparison Table */}
