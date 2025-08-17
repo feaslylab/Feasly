@@ -8,11 +8,8 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { AnimatedBackground } from "@/components/marketing/AnimatedBackground";
 import { cn } from "@/lib/utils";
 
-interface AuthPageProps {
-  onSuccess: () => void;
-}
 
-export const AuthPage = ({ onSuccess }: AuthPageProps) => {
+export const AuthPage = () => {
   console.log('AuthPage component mounted');
   const [isLoginMode, setIsLoginMode] = useState(true);
 
@@ -72,11 +69,13 @@ export const AuthPage = ({ onSuccess }: AuthPageProps) => {
         }}
       >
         {isLoginMode ? (
-          <LoginForm onToggleMode={toggleMode} onSuccess={onSuccess} />
+          <LoginForm onToggleMode={toggleMode} onSuccess={() => {}} />
         ) : (
-          <SignUpForm onToggleMode={toggleMode} onSuccess={onSuccess} />
+          <SignUpForm onToggleMode={toggleMode} onSuccess={() => {}} />
         )}
       </motion.div>
     </div>
   );
 };
+
+export default AuthPage;
