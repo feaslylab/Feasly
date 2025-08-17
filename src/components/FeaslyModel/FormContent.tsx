@@ -40,6 +40,7 @@ import ReconciliationCard from '@/components/recon/ReconciliationCard';
 import { CashFlowCard } from '@/components/recon/CashFlowCard';
 import { CovenantsCard } from '@/components/covenants/CovenantsCard';
 import { WaterfallCard } from '@/components/waterfall/WaterfallCard';
+import { FinancingCard } from '@/components/financing/FinancingCard';
 
 interface FormContentProps {
   projectId: string;
