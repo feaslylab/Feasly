@@ -167,8 +167,8 @@ export const EquityClass = z.object({
   key: z.string(),
   seniority: z.number().int().default(1), // Lower = more senior
   pref_rate_pa: z.number().nonnegative().default(0.08),
-  pref_compounding: z.enum(["simple", "compound"]).default("simple"),
-  distribution_frequency: z.enum(["monthly", "quarterly"]).default("monthly"),
+  pref_compounding: z.enum(["simple", "compound", "compounded"]).default("simple"),
+  distribution_frequency: z.enum(["monthly", "quarterly"]).default("monthly"), // Reserved for future per-class frequency override
   
   // Catch-up configuration (exact formula implementation)
   catchup: z.object({

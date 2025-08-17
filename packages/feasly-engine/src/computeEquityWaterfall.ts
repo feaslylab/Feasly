@@ -1,7 +1,7 @@
 import Decimal from "decimal.js";
 import { ProjectInputs, EquityBlock, EquityClass, EquityInvestor } from "./types";
 
-const z = (T: number) => Array.from({ length: T }, () => new Decimal(0));
+const z = (n: number) => Array.from({ length: n }, () => new Decimal(0));
 
 interface EquityParams {
   T: number;
@@ -65,21 +65,17 @@ function solveIRR(cfs: Decimal[]): number | null {
 
   // Fallback to bisection method
   let lo = -0.9999, hi = 10;
-  const npvLo = npv(lo);
-  const npvHi = npv(hi);
-  
-  if (npvLo * npvHi > 0) return null; // No sign change
+  let flo = npv(lo), fhi = npv(hi);
+  if (flo * fhi > 0) return null; // No sign change
 
   for (let iter = 0; iter < 64; iter++) {
     const mid = (lo + hi) / 2;
-    const npvMid = npv(mid);
-    
-    if (Math.abs(npvMid) < 1e-8 || Math.abs(hi - lo) < 1e-10) return mid;
-    
-    if (npvMid * npvLo < 0) {
-      hi = mid;
+    const fmid = npv(mid);
+    if (Math.abs(fmid) < 1e-8 || Math.abs(hi - lo) < 1e-10) return mid;
+    if (flo * fmid < 0) {
+      hi = mid; fhi = fmid;
     } else {
-      lo = mid;
+      lo = mid; flo = fmid;
     }
   }
 
@@ -216,8 +212,11 @@ function allocateTierExact(params: {
   distsByInvestor: Record<string, Decimal[]>;
   investorDistributed: Record<string, Decimal>;
   gpPromote: Decimal[];
+  clsKey: string;
+  addExcess: (clsKey: string, lpAmt: Decimal, gpAmt: Decimal) => void;
+  gpPaidThisClass: (amt: Decimal) => void;
 }): Decimal {
-  const { remaining, splitLP, splitGP, rMonthly, t, lpCash, lpInvestors, gpInvestors, distsByInvestor, investorDistributed, gpPromote } = params;
+  const { remaining, splitLP, splitGP, rMonthly, t, lpCash, lpInvestors, gpInvestors, distsByInvestor, investorDistributed, gpPromote, clsKey, addExcess, gpPaidThisClass } = params;
   
   if (remaining.lte(0)) return remaining;
 
@@ -234,7 +233,10 @@ function allocateTierExact(params: {
   const irrAll = lpIrrWithTierX(lpCash, t, allLP);
   if (irrAll == null || irrAll <= rMonthly) {
     // allocate all remaining at this tier
-    allocateTierAmount(allLP, remaining.mul(normSplitGP), lpInvestors, gpInvestors, t, distsByInvestor, investorDistributed, lpCash, gpPromote);
+    const lpAmount = allLP;
+    const gpAmount = remaining.mul(normSplitGP);
+    allocateTierAmount(lpAmount, gpAmount, lpInvestors, gpInvestors, t, distsByInvestor, investorDistributed, lpCash, gpPromote, clsKey, addExcess);
+    gpPaidThisClass(gpAmount);
     return new Decimal(0);
   }
 
@@ -258,7 +260,8 @@ function allocateTierExact(params: {
   if (x.gt(0)) {
     const lpAmount = x.mul(normSplitLP);
     const gpAmount = x.mul(normSplitGP);
-    allocateTierAmount(lpAmount, gpAmount, lpInvestors, gpInvestors, t, distsByInvestor, investorDistributed, lpCash, gpPromote);
+    allocateTierAmount(lpAmount, gpAmount, lpInvestors, gpInvestors, t, distsByInvestor, investorDistributed, lpCash, gpPromote, clsKey, addExcess);
+    gpPaidThisClass(gpAmount);
     return remaining.sub(x);
   }
   
@@ -275,7 +278,9 @@ function allocateTierAmount(
   distsByInvestor: Record<string, Decimal[]>,
   investorDistributed: Record<string, Decimal>,
   lpCash: Decimal[],
-  gpPromote: Decimal[]
+  gpPromote: Decimal[],
+  clsKey: string,
+  addExcess: (clsKey: string, lpAmt: Decimal, gpAmt: Decimal) => void
 ) {
   // LP side - pro-rata by commitments
   if (lpInvestors.length > 0 && lpAmount.gt(0)) {
@@ -304,6 +309,9 @@ function allocateTierAmount(
     
     gpPromote[t] = gpPromote[t].add(gpAmount);
   }
+  
+  // Add to excess pool
+  addExcess(clsKey, lpAmount, gpAmount);
 }
 
 export function computeEquityWaterfall(params: EquityParams) {
@@ -358,9 +366,13 @@ export function computeEquityWaterfall(params: EquityParams) {
   const class_excess_distributions_cum: Record<string, Decimal> = {};
   const class_gp_catchup_cum: Record<string, Decimal> = {};
   const class_gp_promote_cum: Record<string, Decimal> = {};
+  const class_baseline_met: Record<string, boolean> = {};
   
   // LP class cashflows for IRR calculations
   const lp_class_cashflows: Record<string, Decimal[]> = {};
+  
+  // Debug tracking
+  const class_debug: Record<string, {catchup: any[], tiers: any[]}> = {};
 
   // Initialize all tracking
   for (const inv of equity.investors) {
@@ -374,11 +386,19 @@ export function computeEquityWaterfall(params: EquityParams) {
     class_excess_distributions_cum[cls.key] = new Decimal(0);
     class_gp_catchup_cum[cls.key] = new Decimal(0);
     class_gp_promote_cum[cls.key] = new Decimal(0);
+    class_baseline_met[cls.key] = false;
     lp_class_cashflows[cls.key] = z(T);
+    class_debug[cls.key] = { catchup: [], tiers: [] };
   }
 
   // Distribution accumulator for quarterly frequency
   let dist_accumulator = new Decimal(0);
+
+  // Helper function to add to excess pool
+  const addExcess = (clsKey: string, lpAmt: Decimal, gpAmt: Decimal) => {
+    if (!class_baseline_met[clsKey]) return;
+    class_excess_distributions_cum[clsKey] = class_excess_distributions_cum[clsKey].add(lpAmt).add(gpAmt);
+  };
 
   // Sort classes by seniority (lower number = more senior)
   const sortedClasses = [...equity.classes].sort((a, b) => a.seniority - b.seniority);
@@ -425,7 +445,8 @@ export function computeEquityWaterfall(params: EquityParams) {
         sum.add(unreturned_capital_by_investor[inv.key] || new Decimal(0)), new Decimal(0));
       
       if (unreturned_class_capital.gt(0)) {
-        const rate_m = cls.pref_compounding === "compound" 
+        const isCompound = cls.pref_compounding === "compound" || cls.pref_compounding === "compounded";
+        const rate_m = isCompound 
           ? rateMonthlyFromAnnual(new Decimal(cls.pref_rate_pa))
           : new Decimal(cls.pref_rate_pa).div(12);
         
@@ -459,6 +480,9 @@ export function computeEquityWaterfall(params: EquityParams) {
         const classInvestors = equity.investors.filter(inv => inv.class_key === cls.key);
         const lpInvestors = classInvestors.filter(inv => inv.role === "lp");
         const gpInvestors = classInvestors.filter(inv => inv.role === "gp");
+        
+        // Track GP promote for this class this period
+        let gpPaidThisClass = new Decimal(0);
 
         // Step A: Return of Capital
         remaining_cash = allocateROC({
@@ -483,6 +507,15 @@ export function computeEquityWaterfall(params: EquityParams) {
         });
         remaining_cash = prefResult.remaining;
         class_pref_balance[cls.key] = class_pref_balance[cls.key].minus(prefResult.prefPaid);
+        
+        // Check if baseline is met after ROC+Pref
+        const classUnret = classInvestors.reduce((s, inv) => s.add(unreturned_capital_by_investor[inv.key]||new Decimal(0)), new Decimal(0));
+        const needForBaseline = (cls.catchup?.basis === "over_roc")
+          ? classUnret
+          : classUnret.add(class_pref_balance[cls.key]);
+        if (!class_baseline_met[cls.key] && needForBaseline.lte(0)) {
+          class_baseline_met[cls.key] = true;
+        }
 
         // Step C: GP Catch-up (exact formula)
         if (cls.catchup?.enabled && remaining_cash.gt(0) && gpInvestors.length > 0) {
@@ -503,16 +536,30 @@ export function computeEquityWaterfall(params: EquityParams) {
           });
           
           remaining_cash = catchupResult.remaining;
-          class_gp_catchup_cum[cls.key] = class_gp_catchup_cum[cls.key].add(catchupResult.catchupPaid);
-          class_excess_distributions_cum[cls.key] = class_excess_distributions_cum[cls.key].add(catchupResult.catchupPaid);
+          const catchupPay = catchupResult.catchupPaid;
+          class_gp_catchup_cum[cls.key] = class_gp_catchup_cum[cls.key].add(catchupPay);
+          gpPaidThisClass = gpPaidThisClass.add(catchupPay);
+          addExcess(cls.key, new Decimal(0), catchupPay);
+          
+          // Debug tracking
+          if (catchupPay.gt(0)) {
+            class_debug[cls.key].catchup.push({ 
+              t, 
+              A: excessA.toNumber(), 
+              G: gpG.toNumber(), 
+              Y: catchupPay.toNumber() 
+            });
+          }
         }
 
         // Step D: Tiered splits with IRR hurdles
-        for (const tier of cls.tiers) {
+        for (let tierIdx = 0; tierIdx < cls.tiers.length; tierIdx++) {
           if (remaining_cash.lte(0)) break;
           
+          const tier = cls.tiers[tierIdx];
           const rMonthly = rateMonthlyFromAnnual(new Decimal(tier.irr_hurdle_pa)).toNumber();
           
+          const xBeforeAllocation = remaining_cash;
           remaining_cash = allocateTierExact({
             remaining: remaining_cash,
             splitLP: new Decimal(tier.split_lp),
@@ -524,29 +571,52 @@ export function computeEquityWaterfall(params: EquityParams) {
             gpInvestors,
             distsByInvestor: dists_by_investor,
             investorDistributed: investor_distributed,
-            gpPromote: gp_promote
+            gpPromote: gp_promote,
+            clsKey: cls.key,
+            addExcess,
+            gpPaidThisClass: (amt: Decimal) => { gpPaidThisClass = gpPaidThisClass.add(amt); }
           });
+          
+          const xAllocated = xBeforeAllocation.minus(remaining_cash);
+          if (xAllocated.gt(0)) {
+            class_debug[cls.key].tiers.push({ 
+              t, 
+              tierIdx, 
+              x: xAllocated.toNumber(), 
+              split_lp: tier.split_lp, 
+              split_gp: tier.split_gp, 
+              r_target_m: rMonthly 
+            });
+          }
         }
 
         // If cash remains after all tiers, allocate with last tier split (or default)
         if (remaining_cash.gt(0) && cls.tiers.length > 0) {
           const lastTier = cls.tiers[cls.tiers.length - 1];
+          const lpAmount = remaining_cash.mul(lastTier.split_lp);
+          const gpAmount = remaining_cash.mul(lastTier.split_gp);
+          
           allocateTierAmount(
-            remaining_cash.mul(lastTier.split_lp),
-            remaining_cash.mul(lastTier.split_gp),
+            lpAmount,
+            gpAmount,
             lpInvestors,
             gpInvestors,
             t,
             dists_by_investor,
             investor_distributed,
             lp_class_cashflows[cls.key],
-            gp_promote
+            gp_promote,
+            cls.key,
+            addExcess
           );
+          
+          gpPaidThisClass = gpPaidThisClass.add(gpAmount);
+          addExcess(cls.key, lpAmount, gpAmount);
           remaining_cash = new Decimal(0);
         }
 
-        // Update class promote cumulative
-        class_gp_promote_cum[cls.key] = class_gp_promote_cum[cls.key].add(gp_promote[t]);
+        // Update class promote cumulative (once per class per period)
+        class_gp_promote_cum[cls.key] = class_gp_promote_cum[cls.key].add(gpPaidThisClass);
       }
 
       // Update total distributions
@@ -637,7 +707,8 @@ export function computeEquityWaterfall(params: EquityParams) {
         pref_balance: Object.fromEntries(Object.entries(class_pref_balance).map(([k, v]) => [k, v.toNumber()])),
         excess_distributions_cum: Object.fromEntries(Object.entries(class_excess_distributions_cum).map(([k, v]) => [k, v.toNumber()])),
         gp_catchup_cum: Object.fromEntries(Object.entries(class_gp_catchup_cum).map(([k, v]) => [k, v.toNumber()])),
-        gp_promote_cum: Object.fromEntries(Object.entries(class_gp_promote_cum).map(([k, v]) => [k, v.toNumber()]))
+        gp_promote_cum: Object.fromEntries(Object.entries(class_gp_promote_cum).map(([k, v]) => [k, v.toNumber()])),
+        debug: class_debug
       },
       investor_ledgers: {
         contributed: Object.fromEntries(Object.entries(investor_contributed).map(([k, v]) => [k, v.toNumber()])),

@@ -413,3 +413,6 @@ export function runAllWaterfallTests() {
 if (typeof require !== 'undefined' && require.main === module) {
   runAllWaterfallTests();
 }
+
+// Also run immediately for testing
+runAllWaterfallTests();
