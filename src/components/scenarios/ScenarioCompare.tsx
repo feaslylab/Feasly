@@ -25,9 +25,10 @@ import { fmtAED, fmtPct, safeNum } from '@/lib/format';
 
 interface ScenarioCompareProps {
   selectedIds: ScenarioId[];
+  onInputsChange?: (inputs: any) => void;
 }
 
-export function ScenarioCompare({ selectedIds }: ScenarioCompareProps) {
+export function ScenarioCompare({ selectedIds, onInputsChange }: ScenarioCompareProps) {
   const { toast } = useToast();
   const { inputs } = useEngine();
   const numbers = useEngineNumbers();
@@ -136,10 +137,13 @@ export function ScenarioCompare({ selectedIds }: ScenarioCompareProps) {
       // show a minimal confirm dialog
       const ok = window.confirm(`Restore inputs from "${snap.name}"?\nIRR: ${fmtPct(candidate?.kpis?.irr_pa ?? null)}`);
       if (!ok) return;
-      // Note: setInputs functionality would need to be passed down from parent component
+      if (onInputsChange) {
+        onInputsChange(snap.inputs);
+      }
       toast({ title: "Scenario restored", description: `Applied: ${snap.name}` });
     } catch (e: any) {
-      toast({ title: "Import failed", description: e?.message ?? "Invalid file", variant: "destructive" });
+      const errorMsg = e?.message?.includes("Checksum") ? "Checksum mismatch or corrupt file" : e?.message ?? "Invalid file";
+      toast({ title: "Import failed", description: errorMsg, variant: "destructive" });
     }
   };
 
@@ -147,7 +151,9 @@ export function ScenarioCompare({ selectedIds }: ScenarioCompareProps) {
     const candidate = runPreview(snapshot.inputs).equity;
     const ok = window.confirm(`Restore inputs from "${snapshot.name}"?\nIRR: ${fmtPct(candidate?.kpis?.irr_pa ?? null)}`);
     if (!ok) return;
-    // Note: setInputs functionality would need to be passed down from parent component
+    if (onInputsChange) {
+      onInputsChange(snapshot.inputs);
+    }
     toast({ title: "Scenario restored", description: `Applied: ${snapshot.name}` });
   };
 

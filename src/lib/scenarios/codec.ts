@@ -26,9 +26,28 @@ export function fnv1aHex(str: string): string {
 
 // b64 encode/decode UTF-8 safely
 export function b64encodeUtf8(s: string): string {
-  return btoa(unescape(encodeURIComponent(s)));
+  // Browser
+  if (typeof window !== "undefined" && typeof window.btoa === "function") {
+    const bytes = new TextEncoder().encode(s);
+    let bin = "";
+    bytes.forEach(b => (bin += String.fromCharCode(b)));
+    return window.btoa(bin);
+  }
+  // Node / Vitest
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { Buffer } = require("buffer");
+  return Buffer.from(s, "utf8").toString("base64");
 }
 
 export function b64decodeUtf8(s: string): string {
-  return decodeURIComponent(escape(atob(s)));
+  // Browser
+  if (typeof window !== "undefined" && typeof window.atob === "function") {
+    const bin = window.atob(s);
+    const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+    return new TextDecoder().decode(bytes);
+  }
+  // Node / Vitest
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { Buffer } = require("buffer");
+  return Buffer.from(s, "base64").toString("utf8");
 }

@@ -7,6 +7,7 @@ import { ScenarioCompare } from './ScenarioCompare';
 import { type ScenarioId } from '@/lib/scenarios';
 import { parseShareURL } from '@/lib/scenarios/share';
 import { useToast } from '@/hooks/use-toast';
+import { useEngine } from '@/lib/engine/EngineContext';
 
 interface ScenarioDockProps {
   currentInputs?: any;
@@ -25,9 +26,10 @@ interface ScenarioDockProps {
       gp_promote?: number[];
     };
   };
+  onInputsChange?: (inputs: any) => void;
 }
 
-export function ScenarioDock({ currentInputs, currentResults }: ScenarioDockProps) {
+export function ScenarioDock({ currentInputs, currentResults, onInputsChange }: ScenarioDockProps) {
   const [selectedIds, setSelectedIds] = useState<ScenarioId[]>([]);
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -39,11 +41,13 @@ export function ScenarioDock({ currentInputs, currentResults }: ScenarioDockProp
     if (!snap) return;
     // optional: clear hash to avoid re-trigger
     history.replaceState(null, "", location.pathname + location.search);
-    const ok = window.confirm(`Load shared scenario "${snap.name}" into preview?`);
-    if (!ok) return;
-    // Note: Would need setInputs functionality from parent component
-    toast({ title: "Loaded shared scenario", description: snap.name });
-  }, [toast]);
+    if (window.confirm(`Load shared scenario "${snap.name}" into preview?`)) {
+      if (onInputsChange) {
+        onInputsChange(snap.inputs);
+      }
+      toast({ title: "Loaded shared scenario", description: snap.name });
+    }
+  }, [onInputsChange, toast]);
 
   const handleSnapshotSaved = () => {
     setRefreshTrigger(prev => prev + 1);
@@ -95,7 +99,7 @@ export function ScenarioDock({ currentInputs, currentResults }: ScenarioDockProp
           </TabsContent>
           
           <TabsContent value="compare" className="mt-4">
-            <ScenarioCompare selectedIds={selectedIds} />
+            <ScenarioCompare selectedIds={selectedIds} onInputsChange={onInputsChange} />
           </TabsContent>
         </Tabs>
       </CardContent>

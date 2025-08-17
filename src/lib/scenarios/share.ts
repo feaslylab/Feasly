@@ -35,7 +35,7 @@ export function decodeScenario(token: string): PortableScenario {
 
 export function makeShareURL(snapshot: ScenarioSnapshot): { url: string; tooLarge: boolean } {
   const token = encodeScenario(snapshot);
-  const base = `${location.origin}${location.pathname}`;
+  const base = `${location.origin}${location.pathname}${location.search}`;
   const url = `${base}#s=${token}`;
   return { url, tooLarge: url.length > SHARE_URL_MAX_LEN };
 }
