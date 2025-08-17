@@ -9,6 +9,7 @@ import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import RequireAuth from "@/routes/RequireAuth";
 import AppShell from "@/layouts/AppShell";
 import AuthLayout from "@/layouts/AuthLayout";
+import LandingRedirect from "@/routes/LandingRedirect";
 
 const Index = lazy(() => import("./pages/Index"));
 const NewProject = lazy(() => import("./pages/NewProject"));
@@ -41,7 +42,7 @@ const App = () => {
               
               {/* Private routes */}
               <Route element={<RequireAuth><AppShell /></RequireAuth>}>
-                <Route path="/" element={<Navigate to="/projects" replace />} />
+                <Route index element={<LandingRedirect />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/new" element={<NewProject />} />
                 <Route path="/feasly-model/:projectId/:scenarioId" element={<FeaslyModel />} />

@@ -10,6 +10,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { cn } from "@/lib/utils";
 import { useSidebarState } from "@/hooks/useSidebarState";
 import SidebarHeader from "./SidebarHeader";
+import { useViewMode } from '@/lib/view-mode';
+import { VIEW_CONFIG } from '@/lib/views/config';
 
 const navigation = [
   { nameKey: "dashboard", href: "/dashboard", icon: BarChart3 },
@@ -42,6 +44,8 @@ export const Sidebar = () => {
   const { isRTL } = useLanguage();
   const { t } = useTranslation(['common', 'auth']);
   const location = useLocation();
+  const { mode } = useViewMode();
+  const cfg = VIEW_CONFIG[mode];
   const { 
     isCollapsed, 
     isAutoHidden, 
@@ -51,6 +55,8 @@ export const Sidebar = () => {
     toggleSidebar, 
     isMobile 
   } = useSidebarState();
+  
+  const filteredNavigation = navigation.filter(item => !cfg.nav.hiddenRoutes.includes(item.href));
 
   // Reflect sidebar layout on the document for global spacing rules
   const expanded = shouldShowSidebar && !isCollapsed;
@@ -88,7 +94,7 @@ export const Sidebar = () => {
           
           {/* Mini Navigation */}
           <nav className="flex-1 py-4 px-2 overflow-y-auto space-y-2">
-            {navigation.map((item) => (
+            {filteredNavigation.map((item) => (
               <NavLink
                 key={item.nameKey}
                 to={item.href}
@@ -150,7 +156,7 @@ export const Sidebar = () => {
           "flex-1 pt-2 pb-4 space-y-2 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent",
           isCollapsed ? "px-3" : "px-4"
         )}>
-          {navigation.map((item) => (
+          {filteredNavigation.map((item) => (
             <NavLink
               key={item.nameKey}
               to={item.href}
