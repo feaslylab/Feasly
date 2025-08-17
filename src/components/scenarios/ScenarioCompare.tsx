@@ -14,6 +14,7 @@ import {
   loadScenarios,
   computeDeltas,
   exportComparisonCSV,
+  getPinned,
   type ScenarioId,
   type ScenarioSnapshot
 } from '@/lib/scenarios';
@@ -27,9 +28,17 @@ export function ScenarioCompare({ selectedIds }: ScenarioCompareProps) {
   
   const scenarios = useMemo(() => {
     const state = loadScenarios();
-    return selectedIds
+    let selected = selectedIds
       .map(id => state.items.find(item => item.id === id))
       .filter((item): item is ScenarioSnapshot => item !== undefined);
+    
+    // If there's a pinned baseline and it's not already selected, use it as baseline
+    const pinned = getPinned();
+    if (pinned && !selected.find(s => s.id === pinned.id) && selected.length > 0) {
+      selected = [pinned, ...selected];
+    }
+    
+    return selected;
   }, [selectedIds]);
 
   const deltas = useMemo(() => {
@@ -130,8 +139,13 @@ export function ScenarioCompare({ selectedIds }: ScenarioCompareProps) {
               <TableHead>Metric</TableHead>
               {scenarios.map((scenario, index) => (
                 <TableHead key={scenario.id} className="text-right">
-                  {scenario.name}
-                  {index === 0 && scenarios.length > 1 && (
+                  <div>
+                    {scenario.name}
+                    {scenario.label && (
+                      <div className="text-xs text-muted-foreground font-normal">({scenario.label})</div>
+                    )}
+                  </div>
+                  {(index === 0 && scenarios.length > 1) || scenario.pinned && (
                     <div className="text-xs text-muted-foreground font-normal">(Baseline)</div>
                   )}
                 </TableHead>

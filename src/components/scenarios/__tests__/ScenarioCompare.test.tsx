@@ -1,78 +1,190 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import { ScenarioCompare } from '../ScenarioCompare';
-import { type ScenarioSnapshot } from '@/lib/scenarios';
+import * as scenarios from '@/lib/scenarios';
 
-// Mock hooks
-vi.mock('@/hooks/use-toast', () => ({
-  useToast: () => ({
-    toast: vi.fn()
-  })
+// Mock the scenarios module
+vi.mock('@/lib/scenarios', () => ({
+  loadScenarios: vi.fn(),
+  computeDeltas: vi.fn(),
+  exportComparisonCSV: vi.fn(),
+  getPinned: vi.fn(),
 }));
 
-const mockSnapshot1: ScenarioSnapshot = {
-  id: 'test-1',
+// Mock toast hook
+vi.mock('@/hooks/use-toast', () => ({
+  useToast: () => ({
+    toast: vi.fn(),
+  }),
+}));
+
+const mockScenario1 = {
+  id: 'scenario-1',
   name: 'Base Case',
-  createdAt: '2023-01-01T00:00:00.000Z',
+  createdAt: '2024-01-01T00:00:00Z',
   inputs: {},
   summary: {
-    irr_pa: 15.5,
-    tvpi: 2.1,
+    irr_pa: 0.15,
+    tvpi: 2.5,
     dpi: 1.8,
-    rvpi: 0.3,
-    moic: 2.0,
-    gp_clawback_last: 1000000
+    rvpi: 0.7,
+    moic: 2.5,
+    gp_clawback_last: 100000,
   },
   traces: {
-    T: 3,
-    calls_total: [100, 200, 300],
-    dists_total: [50, 150, 250],
-    gp_promote: [10, 20, 30],
-    gp_clawback: [5, 15, 25]
-  }
+    T: 5,
+    calls_total: [100, 200, 300, 200, 100],
+    dists_total: [0, 50, 150, 400, 600],
+    gp_promote: [0, 5, 15, 40, 60],
+    gp_clawback: [0, 0, 0, 10, 20],
+  },
+  label: 'Conservative',
+  pinned: true,
 };
 
-const mockSnapshot2: ScenarioSnapshot = {
-  ...mockSnapshot1,
-  id: 'test-2',
+const mockScenario2 = {
+  id: 'scenario-2',
   name: 'Optimistic Case',
+  createdAt: '2024-01-02T00:00:00Z',
+  inputs: {},
   summary: {
-    irr_pa: 20.0,
-    tvpi: 2.5,
-    dpi: 2.0,
-    rvpi: 0.5,
-    moic: 2.2,
-    gp_clawback_last: 1200000
-  }
+    irr_pa: 0.18,
+    tvpi: 3.0,
+    dpi: 2.2,
+    rvpi: 0.8,
+    moic: 3.0,
+    gp_clawback_last: 120000,
+  },
+  traces: {
+    T: 5,
+    calls_total: [100, 200, 300, 200, 100],
+    dists_total: [0, 60, 180, 480, 720],
+    gp_promote: [0, 6, 18, 48, 72],
+    gp_clawback: [0, 0, 0, 12, 24],
+  },
+  label: 'Aggressive',
 };
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 
 describe('ScenarioCompare', () => {
-  it('renders empty state when no snapshots selected', () => {
-    const { getByText } = render(<ScenarioCompare selectedIds={[]} />);
-    expect(getByText(/select snapshots/i)).toBeInTheDocument();
+  it('renders empty state when no scenarios selected', () => {
+    vi.mocked(scenarios.loadScenarios).mockReturnValue({
+      version: 1,
+      items: [],
+    });
+
+    render(<ScenarioCompare selectedIds={[]} />);
+    
+    expect(screen.getByText('No scenarios selected')).toBeInTheDocument();
+    expect(screen.getByText('Select 1-3 scenarios from the list to compare them.')).toBeInTheDocument();
   });
 
-  it('renders single snapshot without deltas', () => {
-    const { getByText } = render(<ScenarioCompare selectedIds={['test-1']} />);
-    expect(getByText('Base Case')).toBeInTheDocument();
-    expect(getByText('15.5%')).toBeInTheDocument();
+  it('renders KPI comparison table with scenarios and deltas', () => {
+    vi.mocked(scenarios.loadScenarios).mockReturnValue({
+      version: 1,
+      items: [mockScenario1, mockScenario2],
+    });
+
+    vi.mocked(scenarios.computeDeltas).mockReturnValue({
+      kpi: {
+        irr_pa: 0.03,
+        tvpi: 0.5,
+        dpi: 0.4,
+        rvpi: 0.1,
+        moic: 0.5,
+        gp_clawback_last: 20000,
+      },
+      series: {
+        calls_total: [0, 0, 0, 0, 0],
+        dists_total: [0, 10, 30, 80, 120],
+        gp_promote: [0, 1, 3, 8, 12],
+        gp_clawback: [0, 0, 0, 2, 4],
+      },
+    });
+
+    render(<ScenarioCompare selectedIds={['scenario-1', 'scenario-2']} />);
+    
+    expect(screen.getByText('Comparing 2 scenarios')).toBeInTheDocument();
+    expect(screen.getByText('Key Performance Indicators')).toBeInTheDocument();
+    expect(screen.getByText('Base Case')).toBeInTheDocument();
+    expect(screen.getByText('Optimistic Case')).toBeInTheDocument();
+    expect(screen.getByText('(Baseline)')).toBeInTheDocument();
+    expect(screen.getByText('Δ vs Baseline')).toBeInTheDocument();
   });
 
-  it('renders comparison with deltas for multiple snapshots', () => {
-    const { getByText } = render(<ScenarioCompare selectedIds={['test-1', 'test-2']} />);
-    expect(getByText('Base Case')).toBeInTheDocument();
-    expect(getByText('Optimistic Case')).toBeInTheDocument();
-    // Should show delta indicators
-    expect(getByText('+4.5%')).toBeInTheDocument();
+  it('handles null IRR values gracefully', () => {
+    const scenarioWithNullIRR = {
+      ...mockScenario1,
+      summary: { ...mockScenario1.summary, irr_pa: null },
+    };
+
+    vi.mocked(scenarios.loadScenarios).mockReturnValue({
+      version: 1,
+      items: [scenarioWithNullIRR],
+    });
+
+    render(<ScenarioCompare selectedIds={['scenario-1']} />);
+    
+    expect(screen.getByText('N/A')).toBeInTheDocument();
   });
 
-  it('handles null IRR gracefully', () => {
-    const snapshotWithNullIRR = {
-      ...mockSnapshot1,
-      summary: { ...mockSnapshot1.summary, irr_pa: null }
+  it('exports CSV when export button clicked', () => {
+    vi.mocked(scenarios.loadScenarios).mockReturnValue({
+      version: 1,
+      items: [mockScenario1, mockScenario2],
+    });
+
+    vi.mocked(scenarios.exportComparisonCSV).mockReturnValue('csv,data\ntest,123');
+
+    // Mock URL.createObjectURL and other DOM APIs
+    global.URL.createObjectURL = vi.fn(() => 'mock-url');
+    global.URL.revokeObjectURL = vi.fn();
+    
+    const mockLink = {
+      href: '',
+      download: '',
+      click: vi.fn(),
     };
     
-    const { getByText } = render(<ScenarioCompare selectedIds={['test-1']} />);
-    expect(getByText('N/A')).toBeInTheDocument();
+    vi.spyOn(document, 'createElement').mockReturnValue(mockLink as any);
+    vi.spyOn(document.body, 'appendChild').mockImplementation(() => mockLink as any);
+    vi.spyOn(document.body, 'removeChild').mockImplementation(() => mockLink as any);
+
+    render(<ScenarioCompare selectedIds={['scenario-1', 'scenario-2']} />);
+    
+    const exportButton = screen.getByText('Export CSV');
+    exportButton.click();
+    
+    expect(scenarios.exportComparisonCSV).toHaveBeenCalledWith([mockScenario1, mockScenario2]);
+    expect(mockLink.click).toHaveBeenCalled();
+  });
+
+  it('shows scenario labels in headers', () => {
+    vi.mocked(scenarios.loadScenarios).mockReturnValue({
+      version: 1,
+      items: [mockScenario1, mockScenario2],
+    });
+
+    render(<ScenarioCompare selectedIds={['scenario-1', 'scenario-2']} />);
+    
+    expect(screen.getByText('(Conservative)')).toBeInTheDocument();
+    expect(screen.getByText('(Aggressive)')).toBeInTheDocument();
+  });
+
+  it('uses pinned scenario as baseline', () => {
+    vi.mocked(scenarios.getPinned).mockReturnValue(mockScenario1);
+    vi.mocked(scenarios.loadScenarios).mockReturnValue({
+      version: 1,
+      items: [mockScenario1, mockScenario2],
+    });
+
+    render(<ScenarioCompare selectedIds={['scenario-2']} />);
+    
+    // Should include pinned scenario as baseline
+    expect(screen.getByText('Base Case')).toBeInTheDocument();
+    expect(screen.getByText('Optimistic Case')).toBeInTheDocument();
   });
 });

@@ -22,8 +22,10 @@ export type ScenarioSnapshot = {
     gp_promote: number[];
     gp_clawback: number[];
   };
-  // Optional human notes
-  note?: string;
+  // Phase 12C additions
+  label?: string;          // short tag, e.g. "LP-friendly"
+  note?: string;           // free text (<= 200 chars)
+  pinned?: boolean;        // true = the baseline
 };
 
 export type ScenarioStateV1 = {
@@ -123,6 +125,28 @@ export function deleteSnapshot(id: ScenarioId): ScenarioStateV1 {
   return state;
 }
 
+export function updateSnapshot(id: ScenarioId, patch: Partial<ScenarioSnapshot>): ScenarioStateV1 {
+  const state = loadScenarios();
+  const updated = state.items.map(s => s.id === id ? { ...s, ...patch } : s);
+  
+  // If patch.pinned === true, unpin others
+  if (patch.pinned === true) {
+    const pinnedId = id;
+    for (const s of updated) {
+      s.pinned = s.id === pinnedId;
+    }
+  }
+  
+  const newState = { ...state, items: updated };
+  saveScenarios(newState);
+  return newState;
+}
+
+export function getPinned(): ScenarioSnapshot | undefined {
+  const state = loadScenarios();
+  return state.items.find(s => s.pinned);
+}
+
 // JSON import/export (safe)
 export function exportScenariosJSON(): string {
   const state = loadScenarios();
@@ -168,7 +192,9 @@ export function importScenariosJSON(json: string): ScenarioStateV1 {
             gp_promote: Array.isArray(item.traces?.gp_promote) ? item.traces.gp_promote.map(safeNum) : [],
             gp_clawback: Array.isArray(item.traces?.gp_clawback) ? item.traces.gp_clawback.map(safeNum) : []
           },
-          note: item.note ? String(item.note) : undefined
+          note: item.note ? String(item.note) : undefined,
+          label: item.label ? String(item.label) : undefined,
+          pinned: Boolean(item.pinned)
         });
       }
     }

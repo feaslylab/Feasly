@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { format } from 'date-fns';
-import { Edit2, Copy, Trash2, Plus } from 'lucide-react';
+import { Edit2, Copy, Trash2, Plus, Pin, PinOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
@@ -28,9 +28,11 @@ import {
   renameSnapshot,
   duplicateSnapshot,
   deleteSnapshot,
+  updateSnapshot,
   type ScenarioSnapshot,
   type ScenarioId
 } from '@/lib/scenarios';
+import EditSnapshotModal from './EditSnapshotModal';
 
 interface ScenarioListProps {
   selectedIds: ScenarioId[];
@@ -43,6 +45,7 @@ export function ScenarioList({ selectedIds, onSelectionChange, refreshTrigger }:
   const [scenarios, setScenarios] = useState<ScenarioSnapshot[]>([]);
   const [editingId, setEditingId] = useState<ScenarioId | null>(null);
   const [editingName, setEditingName] = useState('');
+  const [editModalOpen, setEditModalOpen] = useState<{ id: string; initial: { name: string; label?: string; note?: string; } } | null>(null);
 
   // Load scenarios
   const loadData = () => {
@@ -129,6 +132,27 @@ export function ScenarioList({ selectedIds, onSelectionChange, refreshTrigger }:
     setEditingName(scenario.name);
   };
 
+  const openEditModal = (scenario: ScenarioSnapshot) => {
+    setEditModalOpen({
+      id: scenario.id,
+      initial: {
+        name: scenario.name,
+        label: scenario.label,
+        note: scenario.note
+      }
+    });
+  };
+
+  const handlePin = (id: ScenarioId, currentlyPinned: boolean) => {
+    updateSnapshot(id, { pinned: !currentlyPinned });
+    loadData();
+    
+    toast({
+      title: currentlyPinned ? 'Unpinned' : 'Pinned',
+      description: currentlyPinned ? 'Baseline removed' : 'Set as baseline for comparisons'
+    });
+  };
+
   if (scenarios.length === 0) {
     return (
       <div className="text-center py-8 text-muted-foreground">
@@ -152,6 +176,7 @@ export function ScenarioList({ selectedIds, onSelectionChange, refreshTrigger }:
             <TableHead className="w-12"></TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Created</TableHead>
+            <TableHead className="w-16">Pin</TableHead>
             <TableHead className="text-right">IRR</TableHead>
             <TableHead className="text-right">TVPI</TableHead>
             <TableHead className="text-right">DPI</TableHead>
@@ -195,11 +220,41 @@ export function ScenarioList({ selectedIds, onSelectionChange, refreshTrigger }:
                     autoFocus
                   />
                 ) : (
-                  <span className="font-medium">{scenario.name}</span>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{scenario.name}</span>
+                      {scenario.label && (
+                        <span className="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">
+                          {scenario.label}
+                        </span>
+                      )}
+                      {scenario.pinned && (
+                        <span className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary">
+                          Baseline
+                        </span>
+                      )}
+                    </div>
+                    {scenario.note && (
+                      <div className="text-xs text-muted-foreground mt-1 max-w-xs truncate">
+                        {scenario.note}
+                      </div>
+                    )}
+                  </div>
                 )}
               </TableCell>
               <TableCell className="text-sm text-muted-foreground">
                 {format(new Date(scenario.createdAt), 'MMM dd, HH:mm')}
+              </TableCell>
+              <TableCell>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => handlePin(scenario.id, !!scenario.pinned)}
+                  className={`h-8 w-8 p-0 ${scenario.pinned ? 'text-primary' : 'text-muted-foreground'}`}
+                  title={scenario.pinned ? 'Unpin baseline' : 'Pin as baseline'}
+                >
+                  {scenario.pinned ? <Pin className="h-3 w-3" /> : <PinOff className="h-3 w-3" />}
+                </Button>
               </TableCell>
               <TableCell className="text-right">
                 {formatNumber(scenario.summary.irr_pa, 1, '%')}
@@ -224,8 +279,9 @@ export function ScenarioList({ selectedIds, onSelectionChange, refreshTrigger }:
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => startEdit(scenario)}
+                    onClick={() => openEditModal(scenario)}
                     className="h-8 w-8 p-0"
+                    title="Edit scenario details"
                   >
                     <Edit2 className="h-3 w-3" />
                   </Button>
@@ -271,6 +327,21 @@ export function ScenarioList({ selectedIds, onSelectionChange, refreshTrigger }:
           ))}
         </TableBody>
       </Table>
+
+      {editModalOpen && (
+        <EditSnapshotModal
+          id={editModalOpen.id}
+          initial={editModalOpen.initial}
+          onClose={() => setEditModalOpen(null)}
+          onSave={() => {
+            loadData();
+            toast({
+              title: 'Updated',
+              description: 'Scenario details updated successfully.'
+            });
+          }}
+        />
+      )}
     </div>
   );
 }

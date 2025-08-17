@@ -61,29 +61,27 @@ export default function ScenarioPresets({ onInputsChange }: ScenarioPresetsProps
         onInputsChange(newInputs);
       }
 
-      // auto-save snapshot
-      const eq = numbers?.equity;
-      const T = eq?.calls_total?.length ?? 0;
-      const last = Math.max(0, T - 1);
+      // auto-save snapshot using candidate results
+      const cand = runPreview(newInputs).equity;
       addSnapshot({
         id: uuid(),
         name: `Preset: ${p.name}`,
         createdAt: new Date().toISOString(),
         inputs: newInputs,
         summary: {
-          irr_pa: eq?.kpis?.irr_pa ?? null,
-          tvpi: safeNum(eq?.kpis?.tvpi),
-          dpi: safeNum(eq?.kpis?.dpi),
-          rvpi: safeNum(eq?.kpis?.rvpi),
-          moic: safeNum(eq?.kpis?.moic),
-          gp_clawback_last: safeNum(eq?.gp_clawback?.[last]),
+          irr_pa: cand?.kpis?.irr_pa ?? null,
+          tvpi: safeNum(cand?.kpis?.tvpi),
+          dpi: safeNum(cand?.kpis?.dpi),
+          rvpi: safeNum(cand?.kpis?.rvpi),
+          moic: safeNum(cand?.kpis?.moic),
+          gp_clawback_last: safeNum(cand?.gp_clawback?.slice(-1)[0]),
         },
         traces: {
-          T,
-          calls_total: (eq?.calls_total ?? []).map(safeNum),
-          dists_total: (eq?.dists_total ?? []).map(safeNum),
-          gp_promote: (eq?.gp_promote ?? []).map(safeNum),
-          gp_clawback: (eq?.gp_clawback ?? []).map(safeNum),
+          T: cand?.calls_total?.length ?? 0,
+          calls_total: (cand?.calls_total ?? []).map(safeNum),
+          dists_total: (cand?.dists_total ?? []).map(safeNum),
+          gp_promote: (cand?.gp_promote ?? []).map(safeNum),
+          gp_clawback: (cand?.gp_clawback ?? []).map(safeNum),
         },
       });
       
