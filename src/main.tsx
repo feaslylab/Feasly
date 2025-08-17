@@ -16,6 +16,18 @@ import './index.css'
 initSentry();
 initPostHog();
 
+// Dev-time route validation
+if (import.meta.env.DEV) {
+  import('@/routes/paths').then(({ KNOWN_PATHS }) => {
+    const required = ['/dashboard', '/projects'];
+    for (const p of required) {
+      if (!KNOWN_PATHS.has(p)) {
+        console.warn(`[Router] Required path missing in PATHS: ${p}`);
+      }
+    }
+  });
+}
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>

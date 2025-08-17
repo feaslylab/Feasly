@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { EngineProvider } from "@/lib/engine/EngineContext";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -164,19 +163,5 @@ function DashboardContent() {
 }
 
 export default function Dashboard() {
-  const [formState] = useState({
-    project: { 
-      start_date: "2025-01-01", 
-      periods: 60 
-    },
-    unit_types: [],
-    cost_items: [],
-    debt: []
-  });
-
-  return (
-    <EngineProvider formState={formState}>
-      <DashboardContent />
-    </EngineProvider>
-  );
+  return <DashboardContent />;
 }

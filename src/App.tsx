@@ -7,9 +7,10 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
 import RequireAuth from "@/routes/RequireAuth";
-import AppShell from "@/layouts/AppShell";
+import PrivateLayout from "@/layouts/PrivateLayout";
 import AuthLayout from "@/layouts/AuthLayout";
 import LandingRedirect from "@/routes/LandingRedirect";
+import { PATHS } from "@/routes/paths";
 
 const Index = lazy(() => import("./pages/Index"));
 const NewProject = lazy(() => import("./pages/NewProject"));
@@ -20,6 +21,7 @@ const Auth = lazy(() => import("./pages/Auth").then(m => ({ default: (m as any).
 const FeaslyModel = lazy(() => import("./components/FeaslyModel/FeaslyModel"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 
@@ -34,23 +36,31 @@ const App = () => {
             <Routes>
               {/* Public routes */}
               <Route element={<AuthLayout />}>
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
+                <Route path={PATHS.auth} element={<Auth />} />
+                <Route path={PATHS.resetPassword} element={<ResetPassword />} />
               </Route>
 
               {/* Marketing routes */}
-              <Route path="/welcome" element={<Index />} />
+              <Route path={PATHS.welcome} element={<Index />} />
               
               {/* Private routes */}
-              <Route element={<RequireAuth><AppShell /></RequireAuth>}>
+              <Route element={<RequireAuth><PrivateLayout /></RequireAuth>}>
                 <Route index element={<LandingRedirect />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/projects" element={<Projects />} />
-                <Route path="/projects/new" element={<NewProject />} />
+                <Route path={PATHS.dashboard} element={<Dashboard />} />
+                {/* Case-insensitive alias for dashboard */}
+                <Route path="/Dashboard" element={<Navigate to={PATHS.dashboard} replace />} />
+                <Route path={PATHS.projects} element={<Projects />} />
+                <Route path={PATHS.projectsNew} element={<NewProject />} />
                 <Route path="/feasly-model/:projectId/:scenarioId" element={<FeaslyModel />} />
-                <Route path="/demo" element={<DemoPage />} />
-                <Route path="/demo-project" element={<DemoProject />} />
+                <Route path={PATHS.demo} element={<DemoPage />} />
+                <Route path={PATHS.demoProject} element={<DemoProject />} />
+                
+                {/* 404 within private scope */}
+                <Route path="*" element={<NotFound />} />
               </Route>
+
+              {/* Global 404 fallback */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </TooltipProvider>

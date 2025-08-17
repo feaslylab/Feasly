@@ -1,4 +1,5 @@
 import type { ViewMode } from '@/lib/view-mode';
+import { PATHS } from '@/routes/paths';
 
 export type ViewConfig = {
   nav: {
@@ -19,16 +20,16 @@ export const VIEW_CONFIG: Record<ViewMode, ViewConfig> = {
   lite: {
     nav: { hiddenRoutes: ['/feasly-alerts', '/settings'], showAdvanced: false },
     features: { showWaterfallDebug: false, showScenarioDock: true, showPresets: true },
-    defaults: { landingRoute: '/feasly-model' },
+    defaults: { landingRoute: PATHS.model },
   },
   standard: {
     nav: { hiddenRoutes: ['/feasly-alerts'], showAdvanced: true },
     features: { showWaterfallDebug: false, showScenarioDock: true, showPresets: true },
-    defaults: { landingRoute: '/dashboard' },
+    defaults: { landingRoute: PATHS.dashboard },
   },
   giga: {
     nav: { hiddenRoutes: [], showAdvanced: true },
     features: { showWaterfallDebug: true, showScenarioDock: true, showPresets: true },
-    defaults: { landingRoute: '/dashboard' },
+    defaults: { landingRoute: PATHS.dashboard },
   },
 };
