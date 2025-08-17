@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Suspense } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useFormContext } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
@@ -558,12 +558,17 @@ export function FormContent({ projectId, onSubmit, onSaveDraft }: FormContentPro
               hasPrevious={hasSectionPrevious('results-insights')}
               lazyLoad
             >
-              {/* Import and add ReconciliationCard here */}
-              <ReconciliationCard />
-              <CashFlowCard />
-              <CovenantsCard />
-              <WaterfallCard />
-              <KPIResults />
+              <div className="space-y-6">
+                <ReconciliationCard />
+                <CashFlowCard />
+                <Suspense fallback={<div className="text-sm text-muted-foreground">Loading covenants...</div>}>
+                  <CovenantsCard />
+                </Suspense>
+                <Suspense fallback={<div className="text-sm text-muted-foreground">Loading waterfall...</div>}>
+                  <WaterfallCard />
+                </Suspense>
+                <KPIResults />
+              </div>
             </SectionPanel>
 
             {/* Export & AI */}

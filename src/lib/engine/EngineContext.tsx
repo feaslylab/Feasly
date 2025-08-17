@@ -46,22 +46,42 @@ export function useRevenueTotals() {
 export function useEngineNumbers() {
   const { output } = useEngine();
   // Create a derived, memoized "numbers only" snapshot for charts/UI
-  const num = useMemo(() => ({
-    revenue: numberifyRevenue(output.revenue),
-    costs: numberifyCosts(output.costs),
-    financing: numberifyFin(output.financing ?? {}),
-    tax: numberifyTax(output.tax ?? {}),
-    depreciation: numberifyDep(output.depreciation ?? {}),
-    cash: numberifyCash(output.cash ?? {}),
-    balance_sheet: numberifyBalanceSheet(output.balance_sheet ?? {}),
-    profit_and_loss: numberifyPnL(output.profit_and_loss ?? {}),
-    cash_flow: numberifyCashFlow(output.cash_flow ?? {}),
-    covenants: numberifyCovenants(output.covenants ?? {}),
-    waterfall: numberifyWaterfall(output.waterfall ?? {}),
-    time: {
-      df: output.time?.df ?? [],
-      dt: output.time?.dt ?? []
+  const num = useMemo(() => {
+    try {
+      return {
+        revenue: numberifyRevenue(output.revenue ?? {}),
+        costs: numberifyCosts(output.costs ?? {}),
+        financing: numberifyFin(output.financing ?? {}),
+        tax: numberifyTax(output.tax ?? {}),
+        depreciation: numberifyDep(output.depreciation ?? {}),
+        cash: numberifyCash(output.cash ?? {}),
+        balance_sheet: numberifyBalanceSheet(output.balance_sheet ?? {}),
+        profit_and_loss: numberifyPnL(output.profit_and_loss ?? {}),
+        cash_flow: numberifyCashFlow(output.cash_flow ?? {}),
+        covenants: numberifyCovenants(output.covenants ?? {}),
+        waterfall: numberifyWaterfall(output.waterfall ?? {}),
+        time: {
+          df: output.time?.df ?? [],
+          dt: output.time?.dt ?? []
+        }
+      };
+    } catch (error) {
+      console.error("Error in numberify:", error);
+      return {
+        revenue: {},
+        costs: {},
+        financing: {},
+        tax: {},
+        depreciation: {},
+        cash: {},
+        balance_sheet: {},
+        profit_and_loss: {},
+        cash_flow: {},
+        covenants: {},
+        waterfall: {},
+        time: { df: [], dt: [] }
+      };
     }
-  }), [output]);
+  }, [output]);
   return num;
 }

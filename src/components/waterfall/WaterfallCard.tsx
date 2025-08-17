@@ -16,7 +16,10 @@ const fmt = (n: number | null, suffix = "") => {
 export function WaterfallCard() {
   const { waterfall } = useEngineNumbers();
   
-  if (!waterfall || (!waterfall.lp_distributions?.length && !waterfall.gp_distributions?.length)) {
+  // Add comprehensive safety checks
+  if (!waterfall || 
+      (!Array.isArray(waterfall.lp_distributions) && !Array.isArray(waterfall.gp_distributions)) ||
+      (waterfall.lp_distributions?.length === 0 && waterfall.gp_distributions?.length === 0)) {
     return (
       <Card className="border-warning/20">
         <CardHeader>
@@ -77,7 +80,7 @@ export function WaterfallCard() {
   };
 
   return (
-    <Card>
+    <Card suppressHydrationWarning>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">

@@ -9,7 +9,11 @@ const fmt = (n: number) => {
 
 export function CovenantsCard() {
   const { covenants } = useEngineNumbers();
-  if (!covenants?.portfolio) return null;
+  
+  // Add comprehensive safety checks
+  if (!covenants || !covenants.portfolio || !covenants.portfolio.dscr || covenants.portfolio.dscr.length === 0) {
+    return null;
+  }
 
   // UI state toggles
   const [useStrict, setUseStrict] = React.useState<boolean>(false);
@@ -76,7 +80,7 @@ export function CovenantsCard() {
   };
 
   return (
-    <div className="rounded-2xl p-4 shadow border bg-card">
+    <div className="rounded-2xl p-4 shadow border bg-card" suppressHydrationWarning>
       <div className="flex items-center justify-between mb-3">
         <h3 className="text-lg font-semibold text-foreground">Debt Covenants</h3>
         <div className="flex items-center gap-2">
