@@ -19,6 +19,7 @@ const DemoProject = lazy(() => import("./pages/DemoProject"));
 const Auth = lazy(() => import("./pages/Auth").then(m => ({ default: (m as any).default ?? (m as any).AuthPage })));
 const FeaslyModel = lazy(() => import("./components/FeaslyModel/FeaslyModel"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => {
               {/* Private routes */}
               <Route element={<RequireAuth><AppShell /></RequireAuth>}>
                 <Route index element={<LandingRedirect />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/new" element={<NewProject />} />
                 <Route path="/feasly-model/:projectId/:scenarioId" element={<FeaslyModel />} />
