@@ -6,7 +6,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
-import { ThemeProvider } from "@/contexts/ThemeContext";
 import RequireAuth from "@/routes/RequireAuth";
 import PrivateLayout from "@/layouts/PrivateLayout";
 import AuthLayout from "@/layouts/AuthLayout";
@@ -30,13 +29,12 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <OrganizationProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-              <Routes>
+      <OrganizationProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+            <Routes>
               {/* Public routes */}
               <Route element={<AuthLayout />}>
                 <Route path={PATHS.auth} element={<Auth />} />
@@ -70,8 +68,7 @@ const App = () => {
           </Suspense>
         </TooltipProvider>
       </OrganizationProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+    </QueryClientProvider>
   );
 };
 
