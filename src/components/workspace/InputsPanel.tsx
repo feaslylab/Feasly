@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Building2, DollarSign, Users, Calendar } from 'lucide-react';
+import ProjectSection from './inputs/ProjectSection';
+import UnitsSection from './inputs/UnitsSection';
 
 export default function InputsPanel() {
   return (
@@ -34,46 +36,14 @@ export default function InputsPanel() {
         </TabsList>
 
         <TabsContent value="project" className="space-y-4">
-          <section id="section-project" data-section="project">
-            <Card>
-              <CardHeader>
-                <CardTitle>Project Settings</CardTitle>
-                <CardDescription>
-                  Basic project configuration and timeline
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Start Date</label>
-                    <div className="mt-1 text-sm text-muted-foreground">2025-01-01</div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Periods</label>
-                    <div className="mt-1 text-sm text-muted-foreground">60 months</div>
-                  </div>
-                </div>
-                <Badge variant="secondary">Configuration loaded from project</Badge>
-              </CardContent>
-            </Card>
+          <section id="section-project">
+            <ProjectSection />
           </section>
         </TabsContent>
 
         <TabsContent value="units" className="space-y-4">
-          <section id="section-units" data-section="units">
-            <Card>
-              <CardHeader>
-                <CardTitle>Unit Types</CardTitle>
-                <CardDescription>
-                  Define the different unit types in your project
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  No unit types configured yet
-                </div>
-              </CardContent>
-            </Card>
+          <section id="section-units">
+            <UnitsSection />
           </section>
         </TabsContent>
 
