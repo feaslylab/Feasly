@@ -18,7 +18,7 @@ const Projects = lazy(() => import("./pages/Projects"));
 const DemoPage = lazy(() => import("./pages/DemoPage"));
 const DemoProject = lazy(() => import("./pages/DemoProject"));
 const Auth = lazy(() => import("./pages/Auth").then(m => ({ default: (m as any).default ?? (m as any).AuthPage })));
-const FeaslyModel = lazy(() => import("./components/FeaslyModel/FeaslyModel"));
+const FeaslyModel = lazy(() => import("./pages/FeaslyModel"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const ModelPage = lazy(() => import("./pages/ModelPage"));

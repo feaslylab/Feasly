@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useEngine } from "@/lib/engine/EngineContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import FeaslyModel from "@/components/FeaslyModel/FeaslyModel";
+import { FeaslyModelV2 } from "@/components/FeaslyModel/FeaslyModelV2";
 import { Building2, AlertCircle } from "lucide-react";
 
 interface Project {
@@ -121,7 +121,15 @@ export default function ModelPage() {
       )}
 
       {/* Main Model Interface */}
-      <FeaslyModel />
+      <FeaslyModelV2 
+        projectId={projectId || 'default'}
+        onSubmit={async (data) => {
+          console.log('Model submitted:', data);
+        }}
+        onSaveDraft={() => {
+          console.log('Draft saved');
+        }}
+      />
     </div>
   );
 }
