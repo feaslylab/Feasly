@@ -8,13 +8,31 @@ const fmtAED = (v: number) => `AED ${v.toLocaleString()}`;
 
 function Sparkline({ data }: { data: number[] }) {
   if (!data?.length) return null;
+  
+  // Ensure we have valid numeric data
+  const validData = data.filter(v => typeof v === 'number' && !isNaN(v) && isFinite(v));
+  if (validData.length === 0) return null;
+  
   const w = 160;
   const h = 40;
-  const max = Math.max(...data, 1);
-  const step = w / Math.max(1, data.length - 1);
-  const points = data
-    .map((v, i) => `${i * step},${h - (Math.max(0, v) / max) * (h - 2) - 1}`)
+  
+  // Safe max calculation to avoid call stack issues
+  const max = validData.reduce((acc, val) => Math.max(acc, val), 1);
+  const min = validData.reduce((acc, val) => Math.min(acc, val), 0);
+  const range = max - min || 1; // Avoid division by zero
+  
+  const step = validData.length > 1 ? w / (validData.length - 1) : 0;
+  
+  const points = validData
+    .map((v, i) => {
+      const x = i * step;
+      const y = h - ((v - min) / range) * (h - 4) - 2; // Add padding
+      return `${x.toFixed(2)},${y.toFixed(2)}`;
+    })
     .join(' ');
+    
+  if (!points) return null;
+  
   return (
     <svg width={w} height={h} className="text-primary">
       <polyline fill="none" stroke="currentColor" strokeWidth="2" points={points} />
