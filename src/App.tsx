@@ -6,7 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
-import { LanguageProvider } from "@/contexts/LanguageContext";
+import { LanguageProvider } from '@/contexts/LanguageContext';
+import { LocaleProvider } from '@/contexts/LocaleContext';
+import { DensityProvider } from '@/hooks/useDensity';
 import RequireAuth from "@/routes/RequireAuth";
 import PrivateRoute from "@/components/auth/PrivateRoute";
 import PrivateLayout from "@/layouts/PrivateLayout";
@@ -37,52 +39,56 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <OrganizationProvider>
-        <LanguageProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-              <Routes>
-                {/* Public routes */}
-                <Route element={<AuthLayout />}>
-                  <Route path={PATHS.auth} element={<Auth />} />
-                  <Route path={PATHS.resetPassword} element={<ResetPassword />} />
-                </Route>
+        <LocaleProvider>
+          <DensityProvider>
+            <LanguageProvider>
+              <TooltipProvider>
+                <Toaster />
+                <Sonner />
+                <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+                  <Routes>
+                    {/* Public routes */}
+                    <Route element={<AuthLayout />}>
+                      <Route path={PATHS.auth} element={<Auth />} />
+                      <Route path={PATHS.resetPassword} element={<ResetPassword />} />
+                    </Route>
 
-                {/* Public demo and share routes */}
-                <Route path={PATHS.demo} element={<DemoModelPage />} />
-                <Route path="/share/:token" element={<SharePage />} />
+                    {/* Public demo and share routes */}
+                    <Route path={PATHS.demo} element={<DemoModelPage />} />
+                    <Route path="/share/:token" element={<SharePage />} />
 
-                {/* Marketing routes (conditional) */}
-                {showMarketing && (
-                  <Route path={PATHS.welcome} element={<Index />} />
-                )}
-                
-                {/* Private routes */}
-                <Route element={<PrivateRoute><AppShell /></PrivateRoute>}>
-                  <Route index element={<LandingRedirect />} />
-                  <Route path={PATHS.dashboard} element={<Dashboard />} />
-                  {/* Case-insensitive alias for dashboard */}
-                  <Route path="/Dashboard" element={<Navigate to={PATHS.dashboard} replace />} />
-                  <Route path={PATHS.projects} element={<Projects />} />
-                  <Route path={PATHS.projectsNew} element={<NewProject />} />
-                  <Route path={PATHS.model} element={<ModelPage />} />
-                  <Route path={PATHS.report} element={<ReportPage />} />
-                  
-                  {/* Legacy route redirects */}
-                  <Route path="/feasly-model/:projectId/:scenarioId" element={<Navigate to={`${PATHS.model}?project=$1&scenario=$2`} replace />} />
-                  
-                  {/* 404 within private scope */}
-                  <Route path="*" element={<NotFound />} />
-                </Route>
+                    {/* Marketing routes (conditional) */}
+                    {showMarketing && (
+                      <Route path={PATHS.welcome} element={<Index />} />
+                    )}
+                    
+                    {/* Private routes */}
+                    <Route element={<PrivateRoute><AppShell /></PrivateRoute>}>
+                      <Route index element={<LandingRedirect />} />
+                      <Route path={PATHS.dashboard} element={<Dashboard />} />
+                      {/* Case-insensitive alias for dashboard */}
+                      <Route path="/Dashboard" element={<Navigate to={PATHS.dashboard} replace />} />
+                      <Route path={PATHS.projects} element={<Projects />} />
+                      <Route path={PATHS.projectsNew} element={<NewProject />} />
+                      <Route path={PATHS.model} element={<ModelPage />} />
+                      <Route path={PATHS.report} element={<ReportPage />} />
+                      
+                      {/* Legacy route redirects */}
+                      <Route path="/feasly-model/:projectId/:scenarioId" element={<Navigate to={`${PATHS.model}?project=$1&scenario=$2`} replace />} />
+                      
+                      {/* 404 within private scope */}
+                      <Route path="*" element={<NotFound />} />
+                    </Route>
 
-                {/* Global 404 fallback */}
-                <Route path={PATHS.notFound} element={<NotFound />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </TooltipProvider>
-        </LanguageProvider>
+                    {/* Global 404 fallback */}
+                    <Route path={PATHS.notFound} element={<NotFound />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </TooltipProvider>
+            </LanguageProvider>
+          </DensityProvider>
+        </LocaleProvider>
       </OrganizationProvider>
     </QueryClientProvider>
   );

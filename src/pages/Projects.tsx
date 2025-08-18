@@ -1,233 +1,185 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useAuth } from "@/components/auth/AuthProvider";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { PATHS } from "@/routes/paths";
-import { NewProjectModal } from "@/components/projects/NewProjectModal";
-import { Plus, Search, Building2, Calendar, FolderOpen } from "lucide-react";
-
-interface Project {
-  id: string;
-  name: string;
-  description: string | null;
-  status: string;
-  created_at: string;
-  currency_code: string;
-  is_pinned: boolean;
-}
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { SectionCard } from '@/components/ui/SectionCard';
+import { Toolbar } from '@/components/ui/Toolbar';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Plus, Search, Filter, FolderOpen, Calendar, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { PATHS } from '@/routes/paths';
+import { ds } from '@/lib/design-system';
+import { cn } from '@/lib/utils';
+import { useLocale } from '@/contexts/LocaleContext';
 
 export default function Projects() {
-  const navigate = useNavigate();
-  const { user } = useAuth();
-  const { toast } = useToast();
-  
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState<"name" | "created">("created");
-  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
+  const { t } = useTranslation('common');
+  const { locale } = useLocale();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
-  useEffect(() => {
-    if (user) {
-      fetchProjects();
+  // Mock data - replace with real data in Phase 2
+  const projects = [
+    {
+      id: '1',
+      name: 'Solar Farm Project Alpha',
+      description: 'Large-scale solar installation with 50MW capacity',
+      status: 'In Progress',
+      owner: 'John Smith',
+      created: '2024-01-15',
+      lastModified: '2024-01-18',
+    },
+    {
+      id: '2',
+      name: 'Wind Energy Initiative',
+      description: 'Offshore wind farm development project',
+      status: 'Under Review',
+      owner: 'Sarah Johnson',
+      created: '2024-01-10',
+      lastModified: '2024-01-17',
+    },
+    {
+      id: '3',
+      name: 'Hydroelectric Expansion',
+      description: 'Expansion of existing hydroelectric facility',
+      status: 'Draft',
+      owner: 'Mike Davis',
+      created: '2024-01-08',
+      lastModified: '2024-01-15',
+    },
+  ];
+
+  const hasProjects = projects.length > 0;
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'In Progress':
+        return 'bg-blue-100 text-blue-800';
+      case 'Under Review':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'Draft':
+        return 'bg-gray-100 text-gray-800';
+      case 'Completed':
+        return 'bg-green-100 text-green-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
-  }, [user]);
-
-  const fetchProjects = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('projects')
-        .select('id, name, description, status, created_at, currency_code, is_pinned')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      setProjects(data || []);
-    } catch (error: any) {
-      toast({
-        title: "Error loading projects",
-        description: error.message,
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
   };
-
-  const handleProjectClick = (projectId: string) => {
-    navigate(`${PATHS.model}?project=${projectId}&scenario=baseline`);
-  };
-
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      'active': { variant: 'default' as const, label: 'Active' },
-      'completed': { variant: 'secondary' as const, label: 'Completed' },
-      'draft': { variant: 'outline' as const, label: 'Draft' },
-      'planning': { variant: 'outline' as const, label: 'Planning' },
-    };
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || { variant: 'outline' as const, label: status };
-    return <Badge variant={config.variant}>{config.label}</Badge>;
-  };
-
-  const filteredAndSortedProjects = projects
-    .filter(project => 
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (project.description || "").toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      if (sortBy === "name") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      }
-    });
-
-  if (loading) {
-    return (
-      <div className="p-6">
-        <div className="mb-6">
-          <Skeleton className="h-8 w-48 mb-2" />
-          <Skeleton className="h-4 w-96" />
-        </div>
-        
-        <div className="flex gap-4 mb-6">
-          <Skeleton className="h-10 flex-1" />
-          <Skeleton className="h-10 w-48" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-
-        <div className="space-y-4">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 w-full" />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold mb-2">Projects</h1>
-        <p className="text-muted-foreground">
-          Manage your modeling projects and scenarios
-        </p>
-      </div>
+    <div className={cn(ds.container.pad, ds.container.max, 'mx-auto py-6')}>
+      <PageHeader
+        title={t('projects.title')}
+        subtitle={t('projects.subtitle')}
+        actions={
+          <Button asChild>
+            <Link to={PATHS.projectsNew}>
+              <Plus className="h-4 w-4 mr-2" />
+              {t('projects.newProject')}
+            </Link>
+          </Button>
+        }
+      />
 
-      <div className="flex gap-4 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-          <Input
-            placeholder="Search projects..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+      {!hasProjects ? (
+        <SectionCard>
+          <EmptyState
+            icon={FolderOpen}
+            title={t('projects.empty.title')}
+            subtitle={t('projects.empty.subtitle')}
+            action={
+              <Button asChild>
+                <Link to={PATHS.projectsNew}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  {t('projects.empty.action')}
+                </Link>
+              </Button>
+            }
           />
-        </div>
-        
-        <Select value={sortBy} onValueChange={(value: "name" | "created") => setSortBy(value)}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="created">Recently Created</SelectItem>
-            <SelectItem value="name">Name A-Z</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Button onClick={() => setShowNewProjectModal(true)} className="flex items-center gap-2">
-          <Plus className="w-4 h-4" />
-          New Project
-        </Button>
-      </div>
-
-      {filteredAndSortedProjects.length === 0 ? (
-        <Card className="text-center py-12">
-          <CardContent>
-            <div className="flex flex-col items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-                <Building2 className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-2">
-                  {projects.length === 0 ? "Create your first project" : "No projects found"}
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  {projects.length === 0 
-                    ? "Projects organize your scenarios, KPIs and alerts."
-                    : "Try adjusting your search criteria."
-                  }
-                </p>
-                {projects.length === 0 && (
-                  <Button onClick={() => setShowNewProjectModal(true)} className="flex items-center gap-2">
-                    <Plus className="w-4 h-4" />
-                    New Project
-                  </Button>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        </SectionCard>
       ) : (
-        <div className="space-y-4">
-          {filteredAndSortedProjects.map((project) => (
-            <Card 
-              key={project.id} 
-              className="cursor-pointer hover:bg-accent/50 transition-colors"
-              onClick={() => handleProjectClick(project.id)}
-            >
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <FolderOpen className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                      <h3 className="font-semibold truncate">{project.name}</h3>
-                      {project.is_pinned && (
-                        <Badge variant="secondary" className="text-xs">Pinned</Badge>
-                      )}
-                    </div>
-                    {project.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-1">
-                        {project.description}
-                      </p>
-                    )}
+        <SectionCard>
+          <Toolbar>
+            <Toolbar.Group>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={t('projects.search.placeholder')}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 w-64"
+                  data-testid="project-search"
+                />
+              </div>
+            </Toolbar.Group>
+            <Toolbar.Group align="right">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-40">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder={t('projects.filter.status')} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t('projects.filter.all')}</SelectItem>
+                  <SelectItem value="draft">{t('projects.filter.draft')}</SelectItem>
+                  <SelectItem value="in-progress">{t('projects.filter.inProgress')}</SelectItem>
+                  <SelectItem value="under-review">{t('projects.filter.underReview')}</SelectItem>
+                  <SelectItem value="completed">{t('projects.filter.completed')}</SelectItem>
+                </SelectContent>
+              </Select>
+            </Toolbar.Group>
+          </Toolbar>
+
+          <div className="space-y-4">
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className="flex items-center justify-between p-4 rounded-lg border bg-muted/30 hover:bg-muted/50 transition-colors"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className={cn(ds.type.body, 'font-semibold text-foreground')}>
+                      {project.name}
+                    </h3>
+                    <span className={cn(
+                      ds.type.small,
+                      'px-2 py-1 rounded-full font-medium',
+                      getStatusColor(project.status)
+                    )}>
+                      {project.status}
+                    </span>
                   </div>
-                  
-                  <div className="flex items-center gap-4 flex-shrink-0 ml-4">
-                    {getStatusBadge(project.status)}
-                    <div className="text-right">
-                      <div className="text-sm text-muted-foreground flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {new Date(project.created_at).toLocaleDateString()}
-                      </div>
-                      {project.currency_code && (
-                        <div className="text-xs text-muted-foreground">
-                          {project.currency_code}
-                        </div>
-                      )}
+                  <p className={cn(ds.type.small, 'text-muted-foreground mb-3')}>
+                    {project.description}
+                  </p>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1">
+                      <User className="h-3 w-3 text-muted-foreground" />
+                      <span className={cn(ds.type.small, 'text-muted-foreground')}>
+                        {project.owner}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-3 w-3 text-muted-foreground" />
+                      <span className={cn(ds.type.small, 'text-muted-foreground')}>
+                        {t('projects.lastModified')}: {project.lastModified}
+                      </span>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link to={`${PATHS.model}?project=${project.id}`}>
+                      {t('projects.open')}
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </SectionCard>
       )}
-
-      <NewProjectModal 
-        open={showNewProjectModal}
-        onOpenChange={setShowNewProjectModal}
-        onSuccess={fetchProjects}
-      />
     </div>
   );
 }

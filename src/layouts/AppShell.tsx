@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import { TopBar } from '@/components/layout/TopBar';
 import { EnhancedSidebar } from '@/components/layout/EnhancedSidebar';
+import { PageTransition } from '@/components/ui/PageTransition';
 
 export default function AppShell() {
   return (
@@ -17,7 +18,9 @@ export default function AppShell() {
             Skip to content
           </a>
           <div id="main-content" className="flex-1">
-            <Outlet />
+            <PageTransition>
+              <Outlet />
+            </PageTransition>
           </div>
         </main>
       </div>

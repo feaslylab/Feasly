@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { LocaleProvider, useLocale } from '@/contexts/LocaleContext';
 
 // Mock i18next
@@ -32,39 +33,41 @@ describe('LocaleContext', () => {
   });
 
   it('defaults to English locale', () => {
-    render(
+    const { getByTestId } = render(
       <LocaleProvider>
         <TestComponent />
       </LocaleProvider>
     );
 
-    expect(screen.getByTestId('locale')).toHaveTextContent('en');
-    expect(screen.getByTestId('dir')).toHaveTextContent('ltr');
-    expect(screen.getByTestId('isRTL')).toHaveTextContent('false');
+    expect(getByTestId('locale')).toHaveTextContent('en');
+    expect(getByTestId('dir')).toHaveTextContent('ltr');
+    expect(getByTestId('isRTL')).toHaveTextContent('false');
   });
 
-  it('switches to Arabic and sets RTL', () => {
-    render(
+  it('switches to Arabic and sets RTL', async () => {
+    const user = userEvent.setup();
+    const { getByTestId, getByText } = render(
       <LocaleProvider>
         <TestComponent />
       </LocaleProvider>
     );
 
-    fireEvent.click(screen.getByText('Set Arabic'));
+    await user.click(getByText('Set Arabic'));
 
-    expect(screen.getByTestId('locale')).toHaveTextContent('ar');
-    expect(screen.getByTestId('dir')).toHaveTextContent('rtl');
-    expect(screen.getByTestId('isRTL')).toHaveTextContent('true');
+    expect(getByTestId('locale')).toHaveTextContent('ar');
+    expect(getByTestId('dir')).toHaveTextContent('rtl');
+    expect(getByTestId('isRTL')).toHaveTextContent('true');
   });
 
-  it('persists locale to localStorage', () => {
-    render(
+  it('persists locale to localStorage', async () => {
+    const user = userEvent.setup();
+    const { getByText } = render(
       <LocaleProvider>
         <TestComponent />
       </LocaleProvider>
     );
 
-    fireEvent.click(screen.getByText('Set Arabic'));
+    await user.click(getByText('Set Arabic'));
 
     expect(localStorage.getItem('feasly-locale')).toBe('ar');
   });
@@ -72,13 +75,13 @@ describe('LocaleContext', () => {
   it('restores locale from localStorage', () => {
     localStorage.setItem('feasly-locale', 'ar');
 
-    render(
+    const { getByTestId } = render(
       <LocaleProvider>
         <TestComponent />
       </LocaleProvider>
     );
 
-    expect(screen.getByTestId('locale')).toHaveTextContent('ar');
-    expect(screen.getByTestId('dir')).toHaveTextContent('rtl');
+    expect(getByTestId('locale')).toHaveTextContent('ar');
+    expect(getByTestId('dir')).toHaveTextContent('rtl');
   });
 });
