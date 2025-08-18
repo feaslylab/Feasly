@@ -1,47 +1,49 @@
+import { fmtPct, fmtMult, fmtCurrency } from '@/lib/formatters';
 import { useEngineNumbers } from '@/lib/engine/EngineContext';
 
-const pct = (v: number | null | undefined) =>
-  v == null ? 'N/A' : `${(v * 100).toFixed(1)}%`;
-const mult = (v: number | null | undefined) =>
-  v == null ? 'N/A' : `${v.toFixed(2)}×`;
-const fmtAED = (v: number) => `AED ${v.toLocaleString()}`;
+function Sparkline({ data }: { data: Array<number | null | undefined> }) {
+  const valid = (data ?? []).filter(
+    (v): v is number => typeof v === 'number' && Number.isFinite(v)
+  );
+  if (valid.length === 0) return null;
 
-function Sparkline({ data }: { data: number[] }) {
-  if (!data?.length) return null;
-  
-  // Ensure we have valid numeric data
-  const validData = data.filter(v => typeof v === 'number' && !isNaN(v) && isFinite(v));
-  if (validData.length === 0) return null;
-  
   const w = 160;
   const h = 40;
-  
-  // Safe max calculation to avoid call stack issues
-  const max = validData.reduce((acc, val) => Math.max(acc, val), 1);
-  const min = validData.reduce((acc, val) => Math.min(acc, val), 0);
-  const range = max - min || 1; // Avoid division by zero
-  
-  const step = validData.length > 1 ? w / (validData.length - 1) : 0;
-  
-  const points = validData
+
+  const max = valid.reduce((a, b) => (b > a ? b : a), 1);
+  const min = valid.reduce((a, b) => (b < a ? b : a), 0);
+  const range = max - min || 1;
+
+  const step = valid.length > 1 ? w / (valid.length - 1) : 0;
+
+  const points = valid
     .map((v, i) => {
       const x = i * step;
-      const y = h - ((v - min) / range) * (h - 4) - 2; // Add padding
+      const y = h - ((v - min) / range) * (h - 4) - 2; // 2px vertical padding
       return `${x.toFixed(2)},${y.toFixed(2)}`;
     })
     .join(' ');
-    
+
   if (!points) return null;
-  
+
   return (
-    <svg width={w} height={h} className="text-primary">
-      <polyline fill="none" stroke="currentColor" strokeWidth="2" points={points} />
+    <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label="trend">
+      <polyline fill="none" stroke="currentColor" strokeWidth="1.5" points={points} />
     </svg>
   );
 }
 
+function Metric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border p-3">
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-base font-semibold">{value}</div>
+    </div>
+  );
+}
+
 export default function ResultsPanel() {
-  const numbers = useEngineNumbers();
+  const numbers = useEngineNumbers?.() ?? null;
   const eq = numbers?.equity ?? null;
 
   const irr = eq?.kpis?.irr_pa ?? null;
@@ -50,11 +52,26 @@ export default function ResultsPanel() {
   const rvpi = eq?.kpis?.rvpi ?? null;
   const moic = eq?.kpis?.moic ?? null;
 
-  const T = eq?.calls_total?.length ?? 0;
+  const T = Array.isArray(eq?.calls_total) ? eq!.calls_total.length : 0;
   const last = Math.max(0, T - 1);
   const claw = Number(eq?.gp_clawback?.[last] ?? 0);
 
   const dists = Array.isArray(eq?.dists_total) ? eq!.dists_total.map(Number) : [];
+
+  if (!numbers || !eq) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-lg font-semibold">Results</h2>
+          <p className="text-sm text-muted-foreground">Financial projections and KPIs.</p>
+        </div>
+        <div className="text-sm text-muted-foreground">
+          No calculation results yet. Run the model to see results.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -64,41 +81,26 @@ export default function ResultsPanel() {
 
       {claw > 0 && (
         <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm">
-          GP Clawback outstanding at end: <span className="font-semibold">{fmtAED(claw)}</span>
+          GP Clawback outstanding at end: <span className="font-semibold">{fmtCurrency(claw, 'AED')}</span>
         </div>
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <div className="rounded-lg border p-3">
-          <div className="text-xs text-muted-foreground">IRR</div>
-          <div className="text-xl font-semibold">{pct(irr)}</div>
-        </div>
-        <div className="rounded-lg border p-3">
-          <div className="text-xs text-muted-foreground">TVPI</div>
-          <div className="text-xl font-semibold">{mult(tvpi)}</div>
-        </div>
-        <div className="rounded-lg border p-3">
-          <div className="text-xs text-muted-foreground">DPI</div>
-          <div className="text-xl font-semibold">{mult(dpi)}</div>
-        </div>
-        <div className="rounded-lg border p-3">
-          <div className="text-xs text-muted-foreground">RVPI</div>
-          <div className="text-xl font-semibold">{mult(rvpi)}</div>
-        </div>
-        <div className="rounded-lg border p-3">
-          <div className="text-xs text-muted-foreground">MOIC</div>
-          <div className="text-xl font-semibold">{mult(moic)}</div>
-        </div>
+        <Metric label="IRR" value={fmtPct(irr)} />
+        <Metric label="TVPI" value={fmtMult(tvpi)} />
+        <Metric label="DPI" value={fmtMult(dpi)} />
+        <Metric label="RVPI" value={fmtMult(rvpi)} />
+        <Metric label="MOIC" value={fmtMult(moic)} />
       </div>
 
-      <div className="rounded-lg border p-4">
-        <div className="text-sm font-medium mb-2">Distributions Timeline</div>
-        {dists.length ? (
+      <section className="space-y-2">
+        <div className="text-sm font-medium">Distributions Timeline</div>
+        {dists.length > 0 ? (
           <Sparkline data={dists} />
         ) : (
           <div className="text-sm text-muted-foreground">No distribution data yet.</div>
         )}
-      </div>
+      </section>
     </div>
   );
 }

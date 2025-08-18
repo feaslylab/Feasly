@@ -12,6 +12,7 @@ import PreviewPanel from '@/components/workspace/PreviewPanel';
 import ResultsPanel from '@/components/workspace/ResultsPanel';
 import { OnboardingPanel } from '@/components/workspace/OnboardingPanel';
 import { FirstRunOverlay } from '@/components/workspace/FirstRunOverlay';
+import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 
 interface Project {
   id: string;
@@ -252,13 +253,29 @@ export default function FeaslyModel() {
   const renderContent = () => {
     switch (activeTab) {
       case 'inputs':
-        return <InputsPanel />;
+        return (
+          <ErrorBoundary name="InputsPanel">
+            <InputsPanel />
+          </ErrorBoundary>
+        );
       case 'preview':
-        return <PreviewPanel onBlockingChange={setPreviewBlocksRun} />;
+        return (
+          <ErrorBoundary name="PreviewPanel">
+            <PreviewPanel onBlockingChange={setPreviewBlocksRun} />
+          </ErrorBoundary>
+        );
       case 'results':
-        return <ResultsPanel />;
+        return (
+          <ErrorBoundary name="ResultsPanel">
+            <ResultsPanel />
+          </ErrorBoundary>
+        );
       default:
-        return <InputsPanel />;
+        return (
+          <ErrorBoundary name="InputsPanel">
+            <InputsPanel />
+          </ErrorBoundary>
+        );
     }
   };
 
