@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useEngine, useEngineNumbers } from '@/lib/engine/EngineContext';
 import { useAutosave } from '@/lib/autosave/useAutosave';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,7 +21,8 @@ interface Project {
 type WorkspaceTab = 'inputs' | 'preview' | 'results';
 
 export default function FeaslyModel() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { inputs, setInputs } = useEngine();
   const numbers = useEngineNumbers();
   const { toast } = useToast();
@@ -29,14 +30,87 @@ export default function FeaslyModel() {
   const [project, setProject] = useState<Project | null>(null);
   const [projectLoading, setProjectLoading] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [activeTab, setActiveTab] = useState<WorkspaceTab>('inputs');
   const [previewBlocksRun, setPreviewBlocksRun] = useState(false);
+  const [draftConflict, setDraftConflict] = useState<string | null>(null);
 
   const projectId = searchParams.get('project');
   const scenarioId = searchParams.get('scenario') || 'baseline';
+  const tabFromUrl = searchParams.get('tab') as WorkspaceTab | null;
+  const [activeTab, setActiveTab] = useState<WorkspaceTab>(tabFromUrl || 'inputs');
 
   // AUTOSAVE (local)
   const { status: saveStatus, savedAt, forceSave } = useAutosave(projectId, inputs);
+
+  // Handle tab changes with URL persistence
+  const handleTabChange = (tab: WorkspaceTab) => {
+    setActiveTab(tab);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('tab', tab);
+    setSearchParams(newParams, { replace: true });
+  };
+
+  // Reset to baseline inputs
+  const handleResetToBaseline = () => {
+    if (setInputs) {
+      setInputs({
+        project: { 
+          start_date: new Date().toISOString().slice(0, 10), 
+          periods: 60,
+          periodicity: 'monthly'
+        },
+        unit_types: [],
+        cost_items: [],
+        debt: []
+      });
+      toast({ title: 'Reset to Baseline', description: 'Inputs have been reset to default values.' });
+    }
+  };
+
+  // Check for newer drafts from other tabs
+  useEffect(() => {
+    if (!projectId) return;
+    
+    const checkForNewerDraft = () => {
+      try {
+        const stored = localStorage.getItem(`draft:${projectId}`);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const storedTime = parsed?.savedAt || 0;
+          const currentTime = Date.now();
+          
+          // If draft is newer than 10 seconds ago and we haven't seen this conflict
+          if (storedTime > currentTime - 10000 && storedTime > (savedAt || 0) && !draftConflict) {
+            setDraftConflict(stored);
+          }
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+
+    const interval = setInterval(checkForNewerDraft, 5000);
+    return () => clearInterval(interval);
+  }, [projectId, savedAt, draftConflict]);
+
+  // Load newer draft
+  const handleLoadNewerDraft = () => {
+    if (draftConflict && setInputs) {
+      try {
+        const parsed = JSON.parse(draftConflict);
+        setInputs(parsed.data);
+        setDraftConflict(null);
+        toast({ title: 'Draft Loaded', description: 'Newer draft has been loaded.' });
+      } catch (e) {
+        toast({ title: 'Load Error', description: 'Failed to load newer draft.', variant: 'destructive' });
+      }
+    }
+  };
+
+  // Instrument events
+  const trackEvent = (event: string, data?: any) => {
+    // Simple console logging for now - can be replaced with analytics
+    console.log(`[Analytics] ${event}`, data);
+  };
 
   useEffect(() => {
     if (projectId) {
@@ -99,12 +173,14 @@ export default function FeaslyModel() {
   const onRunCalculation = async () => {
     if (previewBlocksRun) return;
     setIsCalculating(true);
+    trackEvent('run_model', { projectId, scenarioId });
     try {
       // engine recalcs on setInputs; we simulate a cycle for UX
       await new Promise((r) => setTimeout(r, 800));
-      setActiveTab('results');
+      handleTabChange('results');
       toast({ title: 'Calculation Complete' });
     } catch (e: any) {
+      trackEvent('run_model_error', { error: e?.message });
       toast({ title: 'Run failed', description: e?.message || 'Unknown error', variant: 'destructive' });
     } finally {
       setIsCalculating(false);
@@ -141,6 +217,7 @@ export default function FeaslyModel() {
     };
 
     localStorage.setItem(`snapshot:${snapshot.id}`, JSON.stringify(snapshot));
+    trackEvent('save_snapshot', { snapshotId: snapshot.id, projectId });
     toast({ title: 'Snapshot saved' });
   };
 
@@ -161,19 +238,42 @@ export default function FeaslyModel() {
   };
 
   return (
-    <WorkspaceLayout
-      projectName={projectName}
-      scenarioName={scenarioId}
-      onSaveSnapshot={onSaveSnapshot}
-      onRunCalculation={onRunCalculation}
-      isCalculating={isCalculating}
-      savedAt={savedAt}
-      saveStatus={saveStatus}
-      disableRun={previewBlocksRun}
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-    >
-      {renderContent()}
-    </WorkspaceLayout>
+    <>
+      {draftConflict && (
+        <div className="bg-amber-50 border-amber-200 border-b px-4 py-2 flex items-center justify-between text-sm">
+          <span>Newer draft detected from another tab</span>
+          <div className="flex gap-2">
+            <button
+              onClick={handleLoadNewerDraft}
+              className="text-amber-700 underline hover:no-underline"
+            >
+              Load
+            </button>
+            <button
+              onClick={() => setDraftConflict(null)}
+              className="text-amber-700 underline hover:no-underline"
+            >
+              Ignore
+            </button>
+          </div>
+        </div>
+      )}
+      
+      <WorkspaceLayout
+        projectName={projectName}
+        scenarioName={scenarioId}
+        onSaveSnapshot={onSaveSnapshot}
+        onRunCalculation={onRunCalculation}
+        onResetToBaseline={handleResetToBaseline}
+        isCalculating={isCalculating}
+        savedAt={savedAt}
+        saveStatus={saveStatus}
+        disableRun={previewBlocksRun}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      >
+        {renderContent()}
+      </WorkspaceLayout>
+    </>
   );
 }

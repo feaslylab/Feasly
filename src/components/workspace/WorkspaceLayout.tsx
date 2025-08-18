@@ -15,6 +15,7 @@ interface WorkspaceLayoutProps {
   scenarioName?: string;
   onSaveSnapshot?: () => void;
   onRunCalculation?: () => void;
+  onResetToBaseline?: () => void;
   isCalculating?: boolean;
   savedAt?: number | null;
   saveStatus?: SaveStatus;
@@ -29,6 +30,7 @@ export default function WorkspaceLayout({
   scenarioName = 'baseline',
   onSaveSnapshot,
   onRunCalculation,
+  onResetToBaseline,
   isCalculating = false,
   savedAt,
   saveStatus = 'idle',
@@ -71,7 +73,7 @@ export default function WorkspaceLayout({
                 <span className="text-muted-foreground">{scenarioName}</span>
               </div>
             )}
-            <div className={cn('text-xs', saveClass)}>{humanSaved}</div>
+            <div className={cn('text-xs', saveClass)} aria-live="polite">{humanSaved}</div>
           </div>
 
           <div className="flex items-center gap-2">
@@ -93,6 +95,12 @@ export default function WorkspaceLayout({
             <Button size="sm" variant="outline" onClick={onSaveSnapshot}>
               Save Snapshot
             </Button>
+            
+            {onResetToBaseline && (
+              <Button size="sm" variant="ghost" onClick={onResetToBaseline}>
+                Reset to Baseline
+              </Button>
+            )}
           </div>
         </div>
 

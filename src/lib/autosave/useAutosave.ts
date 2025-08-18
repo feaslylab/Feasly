@@ -29,6 +29,8 @@ export function useAutosave<T>(key: string | null, payload: T, delayMs = 800) {
       setStatus('saved');
     } catch (e) {
       console.error('[Autosave] error', e);
+      // Track autosave errors
+      console.log('[Analytics] autosave_error', { error: e });
       setStatus('error');
     }
   }, [canSave, key, draftHash]);
