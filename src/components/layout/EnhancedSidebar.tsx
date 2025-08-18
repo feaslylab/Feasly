@@ -7,14 +7,21 @@ import { useTranslation } from 'react-i18next';
 import { PATHS } from '@/routes/paths';
 import { useState } from 'react';
 
-const baseNavigation = [
+// Define the navigation item type explicitly to avoid TypeScript inference issues
+interface NavigationItem {
+  nameKey: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const baseNavigation: NavigationItem[] = [
   { nameKey: 'dashboard', href: PATHS.dashboard, icon: BarChart3 },
   { nameKey: 'projects', href: PATHS.projects, icon: FolderOpen },
   { nameKey: 'reports', href: PATHS.report, icon: FileText },
 ];
 
 // Conditionally add demo link based on feature flag
-const navigation = [...baseNavigation];
+const navigation: NavigationItem[] = [...baseNavigation];
 const showDemoLink = import.meta.env.VITE_FEATURE_DEMO_LINK === 'true';
 if (showDemoLink) {
   navigation.push({ nameKey: 'demo', href: PATHS.demo, icon: Eye });
