@@ -1,4 +1,4 @@
-import { FeaslyModelV2 } from "@/components/FeaslyModel/FeaslyModelV2";
+import FeaslyModel from "@/components/FeaslyModel/FeaslyModel";
 import { EngineProvider } from "@/lib/engine/EngineContext";
 import { useState } from "react";
 
@@ -16,15 +16,7 @@ export default function FeaslyModelPage() {
 
   return (
     <EngineProvider formState={formState}>
-      <FeaslyModelV2 
-        projectId="default"
-        onSubmit={async (data) => {
-          console.log('Model submitted:', data);
-        }}
-        onSaveDraft={() => {
-          console.log('Draft saved');
-        }}
-      />
+      <FeaslyModel />
     </EngineProvider>
   );
 }
