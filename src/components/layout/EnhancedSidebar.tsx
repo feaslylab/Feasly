@@ -1,4 +1,4 @@
-import { Building2, BarChart3, FolderOpen, FileText, Eye } from 'lucide-react';
+import { BarChart3, FolderOpen, FileText, Eye } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -6,26 +6,20 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useTranslation } from 'react-i18next';
 import { PATHS } from '@/routes/paths';
 import { useState } from 'react';
+import type { NavigationItem } from '@/types/navigation';
 
-// Define the navigation item type explicitly to avoid TypeScript inference issues
-interface NavigationItem {
-  nameKey: string;
-  href: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const baseNavigation: NavigationItem[] = [
+// Base items: use `satisfies` so TS checks fields but doesn't over-narrow the array shape.
+const baseNavigation = [
   { nameKey: 'dashboard', href: PATHS.dashboard, icon: BarChart3 },
-  { nameKey: 'projects', href: PATHS.projects, icon: FolderOpen },
-  { nameKey: 'reports', href: PATHS.report, icon: FileText },
-];
+  { nameKey: 'projects',  href: PATHS.projects,  icon: FolderOpen },
+  { nameKey: 'reports',   href: PATHS.report,    icon: FileText },
+] satisfies NavigationItem[];
 
-// Conditionally add demo link based on feature flag
-const navigation: NavigationItem[] = [...baseNavigation];
+// Build final nav at runtime
 const showDemoLink = import.meta.env.VITE_FEATURE_DEMO_LINK === 'true';
-if (showDemoLink) {
-  navigation.push({ nameKey: 'demo', href: PATHS.demo, icon: Eye });
-}
+const navigation: NavigationItem[] = showDemoLink
+  ? [...baseNavigation, { nameKey: 'demo', href: PATHS.demo, icon: Eye }]
+  : [...baseNavigation];
 
 export function EnhancedSidebar() {
   const { isRTL } = useLanguage();
