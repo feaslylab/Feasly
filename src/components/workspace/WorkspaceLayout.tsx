@@ -16,6 +16,7 @@ interface WorkspaceLayoutProps {
   onSaveSnapshot?: () => void;
   onRunCalculation?: () => void;
   onResetToBaseline?: () => void;
+  onOpenChecklist?: () => void;
   isCalculating?: boolean;
   savedAt?: number | null;
   saveStatus?: SaveStatus;
@@ -31,6 +32,7 @@ export default function WorkspaceLayout({
   onSaveSnapshot,
   onRunCalculation,
   onResetToBaseline,
+  onOpenChecklist,
   isCalculating = false,
   savedAt,
   saveStatus = 'idle',
@@ -95,6 +97,12 @@ export default function WorkspaceLayout({
             <Button size="sm" variant="outline" onClick={onSaveSnapshot}>
               Save Snapshot
             </Button>
+
+            {onOpenChecklist && (
+              <Button size="sm" variant="secondary" onClick={onOpenChecklist}>
+                Checklist
+              </Button>
+            )}
             
             {onResetToBaseline && (
               <Button size="sm" variant="ghost" onClick={onResetToBaseline}>

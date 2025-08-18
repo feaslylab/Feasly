@@ -9,6 +9,7 @@ export const FLAGS = {
   showClawbackBanner: true,
   enableAdvancedFeatures: true,
   enableScenarios: true, // on in both dev/prod
+  onboardingChecklist: true,
 } as const;
 
 // Type-safe flag checker

@@ -4,10 +4,14 @@ import { useEngine, useEngineNumbers } from '@/lib/engine/EngineContext';
 import { useAutosave } from '@/lib/autosave/useAutosave';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { FLAGS } from '@/lib/flags';
+import { useOnboardingTasks } from '@/lib/onboarding/tasks';
 import WorkspaceLayout from '@/components/workspace/WorkspaceLayout';
 import InputsPanel from '@/components/workspace/InputsPanel';
 import PreviewPanel from '@/components/workspace/PreviewPanel';
 import ResultsPanel from '@/components/workspace/ResultsPanel';
+import { OnboardingPanel } from '@/components/workspace/OnboardingPanel';
+import { FirstRunOverlay } from '@/components/workspace/FirstRunOverlay';
 
 interface Project {
   id: string;
@@ -38,6 +42,9 @@ export default function FeaslyModel() {
   const tabFromUrl = searchParams.get('tab') as WorkspaceTab | null;
   const [activeTab, setActiveTab] = useState<WorkspaceTab>(tabFromUrl || 'inputs');
 
+  // Onboarding + checklist
+  const { tasks, hasBlocking } = useOnboardingTasks();
+
   // AUTOSAVE (local)
   const { status: saveStatus, savedAt, forceSave } = useAutosave(projectId, inputs);
 
@@ -47,6 +54,24 @@ export default function FeaslyModel() {
     const newParams = new URLSearchParams(searchParams);
     newParams.set('tab', tab);
     setSearchParams(newParams, { replace: true });
+  };
+
+  // Smooth scroll to Inputs section from query
+  const section = searchParams.get('section');
+  useEffect(() => {
+    if (activeTab !== 'inputs') return;
+    if (!section) return;
+    const el = document.querySelector<HTMLElement>(`[data-section="${section}"]`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [activeTab, section]);
+
+  // Open checklist helper
+  const openChecklist = () => {
+    const p = new URLSearchParams(searchParams);
+    p.set('tab', 'inputs');
+    p.set('section', 'project');
+    setSearchParams(p, { replace: true });
+    console.log(`[Analytics] onboarding_open`, { source: 'header' });
   };
 
   // Reset to baseline inputs
@@ -268,12 +293,20 @@ export default function FeaslyModel() {
         isCalculating={isCalculating}
         savedAt={savedAt}
         saveStatus={saveStatus}
-        disableRun={previewBlocksRun}
+        disableRun={hasBlocking}
         activeTab={activeTab}
         onTabChange={handleTabChange}
+        onOpenChecklist={FLAGS.onboardingChecklist ? openChecklist : undefined}
       >
-        {renderContent()}
+        <div className={FLAGS.onboardingChecklist ? "grid gap-6 lg:grid-cols-[1fr_320px]" : ""}>
+          <div>{renderContent()}</div>
+          {FLAGS.onboardingChecklist && <OnboardingPanel projectId={projectId} />}
+        </div>
       </WorkspaceLayout>
+      
+      {FLAGS.onboardingChecklist && (
+        <FirstRunOverlay projectId={projectId} onOpenChecklist={openChecklist} />
+      )}
     </>
   );
 }
