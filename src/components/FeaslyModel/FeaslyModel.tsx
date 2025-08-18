@@ -267,7 +267,7 @@ export default function FeaslyModel() {
       case 'results':
         return (
           <ErrorBoundary name="ResultsPanel">
-            <ResultsPanel />
+            <ResultsPanel currency={project?.currency_code} />
           </ErrorBoundary>
         );
       default:

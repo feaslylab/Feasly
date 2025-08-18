@@ -11,8 +11,18 @@ export class ErrorBoundary extends Component<
   }
   
   componentDidCatch(err: Error, info: any) {
-    // optional: send to Sentry/PostHog here
-    console.error('[ErrorBoundary]', this.props.name ?? 'Component', err, info);
+    // Enhanced logging for monitoring
+    const context = {
+      component: this.props.name ?? 'Component',
+      route: window.location.pathname,
+      search: window.location.search,
+      timestamp: new Date().toISOString(),
+    };
+    
+    console.error('[ErrorBoundary]', context, err, info);
+    
+    // Optional: send to Sentry/PostHog here
+    // window.posthog?.capture('component_error', { ...context, error: err.message });
   }
   
   render() {

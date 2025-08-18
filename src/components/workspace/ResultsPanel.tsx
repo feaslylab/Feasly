@@ -10,6 +10,15 @@ function Sparkline({ data }: { data: Array<number | null | undefined> }) {
   const w = 160;
   const h = 40;
 
+  // Single point: render a dot instead of a line
+  if (valid.length === 1) {
+    return (
+      <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label="single data point">
+        <circle cx={w / 2} cy={h / 2} r="3" fill="currentColor" />
+      </svg>
+    );
+  }
+
   const max = valid.reduce((a, b) => (b > a ? b : a), 1);
   const min = valid.reduce((a, b) => (b < a ? b : a), 0);
   const range = max - min || 1;
@@ -42,7 +51,7 @@ function Metric({ label, value }: { label: string; value: string }) {
   );
 }
 
-export default function ResultsPanel() {
+export default function ResultsPanel({ currency = 'AED' }: { currency?: string }) {
   const numbers = useEngineNumbers?.() ?? null;
   const eq = numbers?.equity ?? null;
 
@@ -81,7 +90,7 @@ export default function ResultsPanel() {
 
       {claw > 0 && (
         <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm">
-          GP Clawback outstanding at end: <span className="font-semibold">{fmtCurrency(claw, 'AED')}</span>
+          GP Clawback outstanding at end: <span className="font-semibold">{fmtCurrency(claw, currency)}</span>
         </div>
       )}
 
