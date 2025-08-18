@@ -25,12 +25,20 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   const setLanguage = async (lang: Language) => {
     setIsLoading(true);
+    const previousLanguage = language;
     try {
       await i18n.changeLanguage(lang);
       setLanguageState(lang);
       document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
       document.documentElement.lang = lang;
       localStorage.setItem('language', lang);
+      
+      // Track language change for telemetry
+      if (typeof window !== 'undefined' && previousLanguage !== lang) {
+        import('@/lib/telemetry').then(({ telemetry }) => {
+          telemetry.localeChanged(previousLanguage, lang);
+        });
+      }
     } catch (error) {
       console.error('Failed to change language:', error);
     } finally {

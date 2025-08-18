@@ -3,12 +3,14 @@ export const PATHS = {
   dashboard: '/dashboard',
   projects: '/projects',
   projectsNew: '/projects/new',
-  model: '/model',
+  model: '/model',          // expects ?project=<id>&scenario=<id> (scenario optional)
+  report: '/report',        // optional preview route for last-exported report
+  demo: '/demo',            // public read-only demo
+  share: '/share/:token',   // public read-only share view
   auth: '/auth',
   resetPassword: '/reset-password',
   welcome: '/welcome',
-  demo: '/demo',
-  demoProject: '/demo-project',
+  notFound: '/404',
 } as const;
 
 export const KNOWN_PATHS = new Set<string>(Object.values(PATHS));

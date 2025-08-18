@@ -12,6 +12,9 @@ import { initSentry, initPostHog } from './lib/analytics';
 import App from './App.tsx'
 import './index.css'
 
+// Initialize telemetry for tracking
+import { telemetry } from '@/lib/telemetry';
+
 // Initialize analytics
 initSentry();
 initPostHog();
@@ -27,6 +30,11 @@ if (import.meta.env.DEV) {
     }
   });
 }
+
+// Initialize page view tracking
+const path = window.location.pathname;
+const mode = path.startsWith('/demo') ? 'demo' : path.startsWith('/share') ? 'share' : 'app';
+telemetry.pageView(path, mode, i18n.language);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
