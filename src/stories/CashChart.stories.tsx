@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import CashChart from '../components/CashChart';
+import { ThemeProvider } from '../contexts/ThemeContext';
 
 const meta: Meta<typeof CashChart> = {
   title: 'Components/CashChart',
@@ -8,6 +9,15 @@ const meta: Meta<typeof CashChart> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
+  decorators: [
+    (Story) => (
+      <ThemeProvider>
+        <div className="min-h-screen bg-background text-foreground p-4">
+          <Story />
+        </div>
+      </ThemeProvider>
+    ),
+  ],
 };
 
 export default meta;

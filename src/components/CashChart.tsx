@@ -27,7 +27,18 @@ function toRows(cash: number[]) {
 }
 
 export default function CashChart({ data }: { data?: number[] }) {
-  const { actualTheme } = useTheme();
+  // Add comprehensive error handling and theme safety
+  let actualTheme: 'light' | 'dark' = 'light';
+  let themeError = false;
+  
+  try {
+    const themeContext = useTheme();
+    actualTheme = themeContext?.actualTheme || 'light';
+  } catch (error) {
+    console.warn('Theme context not available, using light theme fallback');
+    themeError = true;
+  }
+  
   let rows: CashPoint[] = [];
   
   try {
@@ -41,11 +52,6 @@ export default function CashChart({ data }: { data?: number[] }) {
   // Add safety checks for data
   if (!Array.isArray(rows) || rows.length === 0) {
     return <div className="text-sm text-muted-foreground p-4">No cash flow data available</div>;
-  }
-  
-  // Add safety check for theme context
-  if (!actualTheme) {
-    return <div className="text-sm text-muted-foreground p-4">Loading chart...</div>;
   }
 
   // hide when nothing to show
