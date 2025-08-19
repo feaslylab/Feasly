@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { FileBarChart2, BarChart3, Calculator, PieChart, Settings, History, LineChart } from 'lucide-react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useEngine, useEngineNumbers } from '@/lib/engine/EngineContext';
 import { useAutosave } from '@/lib/autosave/useAutosave';
@@ -16,6 +17,7 @@ import ExecutiveReportPanel from '@/components/workspace/ExecutiveReportPanel';
 import ResultsPanel from '@/components/workspace/ResultsPanel';
 import SnapshotHistoryPanel from '@/components/workspace/SnapshotHistoryPanel';
 import PresetsPanel from '@/components/presets/PresetsPanel';
+import InsightsDashboard from '@/components/workspace/InsightsDashboard';
 import { OnboardingPanel } from '@/components/workspace/OnboardingPanel';
 import { FirstRunOverlay } from '@/components/workspace/FirstRunOverlay';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
@@ -29,7 +31,7 @@ interface Project {
   status: string;
 }
 
-type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'executive_report' | 'results' | 'snapshots' | 'presets';
+type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'executive_report' | 'insights' | 'results' | 'snapshots' | 'presets';
 
 export default function FeaslyModel() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -285,6 +287,12 @@ export default function FeaslyModel() {
             <ExecutiveReportPanel />
           </ErrorBoundary>
         );
+      case 'insights':
+        return (
+          <ErrorBoundary name="InsightsDashboard">
+            <InsightsDashboard />
+          </ErrorBoundary>
+        );
       case 'results':
         return (
           <ErrorBoundary name="ResultsPanel">
@@ -347,6 +355,20 @@ export default function FeaslyModel() {
         activeTab={activeTab}
         onTabChange={handleTabChange}
         onOpenChecklist={FLAGS.onboardingChecklist ? openChecklist : undefined}
+        scenarioSelector={
+          <ScenarioSelector
+            scenarios={scenarioManager.scenarios}
+            currentScenario={scenarioManager.currentScenario}
+            onScenarioChange={scenarioManager.switchScenario}
+            onCreateScenario={scenarioManager.createNewScenario}
+            onRenameScenario={scenarioManager.renameScenario}
+            onDeleteScenario={(id: string) => {
+              // Stub delete functionality - will be implemented in scenario manager
+              toast({ title: 'Delete not implemented', description: 'Scenario deletion coming soon', variant: 'destructive' });
+              return Promise.resolve(false);
+            }}
+          />
+        }
       >
         <div className={FLAGS.onboardingChecklist ? "grid gap-6 lg:grid-cols-[1fr_320px]" : ""}>
           <div>{renderContent()}</div>
