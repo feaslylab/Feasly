@@ -52,9 +52,22 @@ export type CostItemInput = z.infer<typeof CostItemSchema>;
 export const DebtItemSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1, "Name is required"),
+  type: z.enum(['senior', 'mezzanine', 'bridge']).default('senior'),
   amount: z.number().positive("Amount must be positive"),
   interest_rate: z.number().min(0, "Interest rate cannot be negative").max(100, "Interest rate cannot exceed 100%"),
-  start_month: z.number().int().nonnegative("Start month cannot be negative").default(0),
-  term_months: z.number().int().positive("Term must be positive").default(12),
-});
+  payment_type: z.enum(['paid', 'capitalized', 'bullet']).default('paid'),
+  amortization: z.enum(['linear', 'bullet']).default('linear'),
+  drawdown_start: z.number().int().nonnegative("Drawdown start cannot be negative").default(0),
+  drawdown_end: z.number().int().nonnegative("Drawdown end cannot be negative").default(12),
+  fees: z.number().nonnegative("Fees cannot be negative").default(0),
+  // Legacy fields for backward compatibility
+  start_month: z.number().int().nonnegative().optional(),
+  term_months: z.number().int().positive().optional(),
+}).refine(
+  (data) => data.drawdown_end > data.drawdown_start,
+  {
+    message: "Drawdown end must be after drawdown start",
+    path: ["drawdown_end"]
+  }
+);
 export type DebtItemInput = z.infer<typeof DebtItemSchema>;
