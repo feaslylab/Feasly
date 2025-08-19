@@ -5,6 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Save, Play, Eye, BarChart3, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ApprovalWatermark } from '@/components/approvals/ApprovalWatermark';
+import { useApprovalStatus } from '@/hooks/useApprovalStatus';
 
 type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'executive_report' | 'results' | 'snapshots' | 'presets';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -42,6 +44,8 @@ export default function WorkspaceLayout({
   onTabChange,
   scenarioSelector
 }: WorkspaceLayoutProps) {
+  // Get approval status for current scenario
+  const { isApproved } = useApprovalStatus('default', scenarioName);
 
   const tabs = [
     { id: 'inputs' as const, label: 'Inputs' },
@@ -69,7 +73,14 @@ export default function WorkspaceLayout({
       : 'text-muted-foreground';
 
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="flex flex-col h-full w-full relative">
+      {/* Approval Watermark */}
+      <ApprovalWatermark 
+        projectId="default"
+        scenarioId={scenarioName}
+        scenarioName={scenarioName}
+      />
+      
       {/* Header */}
       <div className="sticky top-0 z-20 border-b bg-background/70 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 h-14 flex items-center justify-between gap-3">
@@ -91,20 +102,47 @@ export default function WorkspaceLayout({
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span>
-                    <Button size="sm" onClick={onRunCalculation} disabled={disableRun || isCalculating}>
+                    <Button 
+                      size="sm" 
+                      onClick={onRunCalculation} 
+                      disabled={disableRun || isCalculating || isApproved}
+                    >
                       {isCalculating ? 'Calculating…' : 'Run'}
                     </Button>
                   </span>
                 </TooltipTrigger>
-                {disableRun && (
-                  <TooltipContent side="bottom">Fix blocking issues in Preview to run the model.</TooltipContent>
+                {(disableRun || isApproved) && (
+                  <TooltipContent side="bottom">
+                    {isApproved 
+                      ? 'Cannot run calculations on approved scenarios'
+                      : 'Fix blocking issues in Preview to run the model.'
+                    }
+                  </TooltipContent>
                 )}
               </Tooltip>
             </TooltipProvider>
 
-            <Button size="sm" variant="outline" onClick={onSaveSnapshot}>
-              Save Snapshot
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={onSaveSnapshot}
+                      disabled={isApproved}
+                    >
+                      Save Snapshot
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                {isApproved && (
+                  <TooltipContent side="bottom">
+                    Cannot save snapshots for approved scenarios
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
 
             {onOpenChecklist && (
               <Button size="sm" variant="secondary" onClick={onOpenChecklist}>
@@ -113,9 +151,27 @@ export default function WorkspaceLayout({
             )}
             
             {onResetToBaseline && (
-              <Button size="sm" variant="ghost" onClick={onResetToBaseline}>
-                Reset to Baseline
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={onResetToBaseline}
+                        disabled={isApproved}
+                      >
+                        Reset to Baseline
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  {isApproved && (
+                    <TooltipContent side="bottom">
+                      Cannot reset approved scenarios
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
             )}
           </div>
         </div>

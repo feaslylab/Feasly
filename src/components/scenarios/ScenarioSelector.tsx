@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { ChevronDown, Plus, Edit, Trash2, Copy } from 'lucide-react';
 import { Scenario } from '@/types/scenario';
+import { ApprovalManagerPanel } from '@/components/approvals/ApprovalManagerPanel';
 
 interface ScenarioSelectorProps {
   scenarios: Scenario[];
@@ -88,7 +89,14 @@ export function ScenarioSelector({
   };
 
   return (
-    <>
+    <div className="flex items-center gap-3">
+      {/* Approval Manager */}
+      <ApprovalManagerPanel 
+        projectId="default"
+        scenarioId={currentScenario?.id || 'baseline'}
+      />
+      
+      {/* Scenario Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" className={className}>
@@ -98,7 +106,7 @@ export function ScenarioSelector({
             <ChevronDown className="ml-2 h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuContent align="end" className="w-56 bg-background border border-border shadow-lg z-50">
           {scenarios.map((scenario) => (
             <DropdownMenuItem
               key={scenario.id}
@@ -265,6 +273,6 @@ export function ScenarioSelector({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </div>
   );
 }

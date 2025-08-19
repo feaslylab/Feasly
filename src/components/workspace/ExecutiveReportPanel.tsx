@@ -241,14 +241,16 @@ export default function ExecutiveReportPanel() {
             <Badge variant="outline">{currentScenario?.name || 'Baseline'}</Badge>
           </div>
         </div>
-        <Button 
-          onClick={handleExportToPowerPoint}
-          disabled={isExporting}
-          className="flex items-center gap-2"
-        >
-          <Download className="h-4 w-4" />
-          {isExporting ? 'Exporting...' : 'Export to PowerPoint'}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button 
+            onClick={handleExportToPowerPoint}
+            disabled={isExporting}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            {isExporting ? 'Exporting...' : 'Export to PowerPoint'}
+          </Button>
+        </div>
       </div>
 
       <Separator />
