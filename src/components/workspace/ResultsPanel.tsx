@@ -185,7 +185,7 @@ function ExportSection() {
 }
 
 function ResultsPanelContent({ currency = 'AED' }: { currency?: string }) {
-  const numbers = useEngineNumbers?.() ?? null;
+  const numbers = useEngineNumbers();
   const eq = numbers?.equity ?? null;
 
   const irr = eq?.kpis?.irr_pa ?? null;
