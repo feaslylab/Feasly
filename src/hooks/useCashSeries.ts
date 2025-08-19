@@ -19,14 +19,27 @@ export function useCashSeries(): CashPoint[] {
       return 0;
     });
 
-    return sampleCash.map((v, i) => ({
-      period : `P${i}`,
-      inflow : v > 0 ?  v : 0,
-      outflow: v < 0 ? -v : 0,
-      net    : v,
-    }));
+    return sampleCash.map((v, i) => {
+      // Ensure all numbers are finite and safe for charts
+      const safeValue = Number.isFinite(v) ? v : 0;
+      const inflow = safeValue > 0 ? safeValue : 0;
+      const outflow = safeValue < 0 ? -safeValue : 0;
+      
+      return {
+        period: `P${i}`,
+        inflow: Number.isFinite(inflow) ? inflow : 0,
+        outflow: Number.isFinite(outflow) ? outflow : 0,
+        net: Number.isFinite(safeValue) ? safeValue : 0,
+      };
+    });
   } catch (error) {
     console.error('Error in useCashSeries:', error);
-    return [];
+    // Return minimal safe data to prevent chart crash
+    return [{
+      period: 'P0',
+      inflow: 0,
+      outflow: 0,
+      net: 0,
+    }];
   }
 }

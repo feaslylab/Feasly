@@ -211,6 +211,18 @@ export const chartHelpers = {
       baseline: colors[CHART_CATEGORIES.BASELINE],
     };
   },
+
+  /**
+   * Get theme colors for cash flow chart compatibility
+   */
+  getThemeColors: (theme: 'light' | 'dark' = 'light') => {
+    const colors = getChartColors(theme);
+    return {
+      inflow: colors[CHART_CATEGORIES.REVENUE],   // Green for money coming in
+      outflow: colors[CHART_CATEGORIES.COST],     // Red for money going out  
+      net: colors[CHART_CATEGORIES.PROFIT],       // Blue for net result
+    };
+  },
 };
 
 // Re-export for convenience
