@@ -49,13 +49,29 @@ export default function CashChart({ data }: { data?: number[] }) {
     rows = [{ period: 'P0', inflow: 0, outflow: 0, net: 0 }];
   }
   
-  // Add safety checks for data
+  // Add safety checks for data - validate each data point
   if (!Array.isArray(rows) || rows.length === 0) {
     return <div className="text-sm text-muted-foreground p-4">No cash flow data available</div>;
   }
 
+  // Validate and clean the data to prevent chart rendering errors
+  const validRows = rows.filter(row => {
+    return row && 
+           typeof row.period === 'string' && 
+           typeof row.inflow === 'number' && 
+           typeof row.outflow === 'number' && 
+           typeof row.net === 'number' &&
+           Number.isFinite(row.inflow) &&
+           Number.isFinite(row.outflow) &&
+           Number.isFinite(row.net);
+  });
+
+  if (validRows.length === 0) {
+    return <div className="text-sm text-muted-foreground p-4">No valid cash flow data available</div>;
+  }
+
   // hide when nothing to show
-  if (rows.every(p => p.net === 0)) {
+  if (validRows.every(p => p.net === 0)) {
     return <div className="text-sm text-muted-foreground p-4">No cash flow activity</div>;
   }
   
@@ -81,14 +97,14 @@ export default function CashChart({ data }: { data?: number[] }) {
         variant="ghost"
         size="sm"
         className="ml-auto mb-2"
-        onClick={() => exportCsv(rows)}
+        onClick={() => exportCsv(validRows)}
       >
         Export CSV
       </Button>
 
       <ChartErrorBoundary>
-        <ResponsiveContainer key={`${rows.length}-${actualTheme}`} width="100%" height={310}>
-          <AreaChart data={rows} stackOffset="sign">
+        <ResponsiveContainer key={`${validRows.length}-${actualTheme}`} width="100%" height={310}>
+          <AreaChart data={validRows} stackOffset="sign">
             <XAxis 
               dataKey="period" 
               hide 
