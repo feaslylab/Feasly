@@ -1,11 +1,25 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Building2, DollarSign, Users, Calendar } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import ProjectSection from './inputs/ProjectSection';
 import UnitsSection from './inputs/UnitsSection';
 import CostSection from './inputs/CostSection';
 import FinancingSection from './inputs/FinancingSection';
+import FeaslyValidationPanel from './validation/FeaslyValidationPanel';
 
 export default function InputsPanel() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeSection = searchParams.get('section') || 'project';
+
+  const handleSectionClick = (section: string) => {
+    setSearchParams(prev => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set('tab', 'inputs');
+      newParams.set('section', section);
+      return newParams;
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -15,7 +29,13 @@ export default function InputsPanel() {
         </p>
       </div>
 
-      <Tabs defaultValue="project" className="w-full">
+      {/* Validation Panel */}
+      <FeaslyValidationPanel 
+        projectId="current-project" 
+        onSectionClick={handleSectionClick}
+      />
+
+      <Tabs value={activeSection} onValueChange={handleSectionClick} className="w-full">
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="project" className="gap-2">
             <Building2 className="h-4 w-4" />
