@@ -29,16 +29,31 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
 
   // Transform unit types from form format to engine format  
   const transformUnitTypes = (formUnitTypes: any[] = []) => {
-    return formUnitTypes.map((unit: any) => ({
-      key: unit.id || unit.name || `unit_${Math.random().toString(36).substr(2, 9)}`,
-      category: "other" as const,
-      count: unit.units || 0,
-      sellable_area_sqm: 100, // Default area
-      delivery_month: unit.start_month || 0,
-      initial_price_sqm_sale: (unit.price || 0) / 100, // Convert to per sqm
-      revenue_policy: "handover" as const,
-      vat_class_output: "out_of_scope" as const
-    }));
+    return formUnitTypes.map((unit: any) => {
+      // Handle revenue mode specific mappings
+      const isRental = unit.revenue_mode === 'rent';
+      
+      return {
+        key: unit.id || unit.name || `unit_${Math.random().toString(36).substr(2, 9)}`,
+        category: "residential" as const,
+        count: unit.units || 0,
+        sellable_area_sqm: 1, // Normalized to 1 since pricing is per unit
+        delivery_month: unit.start_month || 0,
+        // For sales: use price directly (per unit becomes per sqm since area = 1)
+        initial_price_sqm_sale: isRental ? 0 : (unit.price || 0),
+        // For rentals: use monthly rent * occupancy rate
+        initial_rent_sqm_m: isRental ? (unit.rent_per_month || 0) * (unit.occupancy_rate || 0.8) : 0,
+        revenue_policy: "handover" as const,
+        vat_class_output: "out_of_scope" as const,
+        // Add curve for revenue distribution
+        curve: {
+          meaning: (isRental ? "occupancy" : "sell_through") as "occupancy" | "sell_through",
+          values: isRental 
+            ? Array(unit.lease_term_months || 12).fill(unit.occupancy_rate || 0.8)
+            : Array(unit.duration_months || 1).fill(1 / (unit.duration_months || 1))
+        }
+      };
+    });
   };
 
   // Transform debt items from form format to engine format

@@ -11,10 +11,33 @@ export const UnitTypeSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1, "Name is required"),
   units: z.number().int().positive("Units must be > 0"),
-  price: z.number().nonnegative("Price cannot be negative"),
+  revenue_mode: z.enum(["sale", "rent"]),
+  price: z.number().nonnegative("Price cannot be negative").optional(),
+  rent_per_month: z.number().nonnegative("Rent cannot be negative").optional(),
+  occupancy_rate: z.number().min(0, "Occupancy rate cannot be negative").max(1, "Occupancy rate cannot exceed 100%").optional(),
+  lease_term_months: z.number().int().positive("Lease term must be positive").optional(),
   start_month: z.number().int().nonnegative().default(0),
   duration_months: z.number().int().positive().default(1),
-});
+}).refine(
+  (data) => {
+    if (data.revenue_mode === "sale") {
+      return data.price !== undefined && data.price >= 0;
+    }
+    if (data.revenue_mode === "rent") {
+      return data.rent_per_month !== undefined && 
+             data.occupancy_rate !== undefined && 
+             data.lease_term_months !== undefined &&
+             data.rent_per_month >= 0 &&
+             data.occupancy_rate >= 0 && data.occupancy_rate <= 1 &&
+             data.lease_term_months > 0;
+    }
+    return true;
+  },
+  {
+    message: "Required fields missing for selected revenue mode",
+    path: ["revenue_mode"]
+  }
+);
 export type UnitTypeInput = z.infer<typeof UnitTypeSchema>;
 
 export const CostItemSchema = z.object({
