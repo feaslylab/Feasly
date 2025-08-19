@@ -1,9 +1,9 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { Building2, DollarSign, Users, Calendar } from 'lucide-react';
 import ProjectSection from './inputs/ProjectSection';
 import UnitsSection from './inputs/UnitsSection';
+import CostSection from './inputs/CostSection';
+import FinancingSection from './inputs/FinancingSection';
 
 export default function InputsPanel() {
   return (
@@ -49,37 +49,13 @@ export default function InputsPanel() {
 
         <TabsContent value="costs" className="space-y-4">
           <section id="section-costs" data-section="costs">
-            <Card>
-              <CardHeader>
-                <CardTitle>Cost Items</CardTitle>
-                <CardDescription>
-                  Project costs and construction schedule
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  No cost items configured yet
-                </div>
-              </CardContent>
-            </Card>
+            <CostSection />
           </section>
         </TabsContent>
 
         <TabsContent value="financing" className="space-y-4">
           <section id="section-financing" data-section="financing">
-            <Card>
-              <CardHeader>
-                <CardTitle>Financing Structure</CardTitle>
-                <CardDescription>
-                  Debt and equity configuration
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-muted-foreground">
-                  No financing configured yet
-                </div>
-              </CardContent>
-            </Card>
+            <FinancingSection />
           </section>
         </TabsContent>
       </Tabs>
