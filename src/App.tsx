@@ -23,6 +23,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const ModelPage = lazy(() => import("./pages/ModelPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const FeaslyLanding = lazy(() => import("./pages/marketing/FeaslyLanding"));
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => {
               </Route>
 
               {/* Marketing routes */}
+              <Route path="/" element={<FeaslyLanding />} />
               <Route path={PATHS.welcome} element={<Index />} />
               
               {/* Private routes */}
