@@ -9,6 +9,7 @@ import { useOnboardingTasks } from '@/lib/onboarding/tasks';
 import WorkspaceLayout from '@/components/workspace/WorkspaceLayout';
 import InputsPanel from '@/components/workspace/InputsPanel';
 import PreviewPanel from '@/components/workspace/PreviewPanel';
+import RevenuePreviewPanel from '@/components/workspace/preview/RevenuePreviewPanel';
 import ResultsPanel from '@/components/workspace/ResultsPanel';
 import SnapshotHistoryPanel from '@/components/workspace/SnapshotHistoryPanel';
 import PresetsPanel from '@/components/presets/PresetsPanel';
@@ -25,7 +26,7 @@ interface Project {
   status: string;
 }
 
-type WorkspaceTab = 'inputs' | 'preview' | 'results' | 'snapshots' | 'presets';
+type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'results' | 'snapshots' | 'presets';
 
 export default function FeaslyModel() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -264,6 +265,12 @@ export default function FeaslyModel() {
         return (
           <ErrorBoundary name="PreviewPanel">
             <PreviewPanel onBlockingChange={setPreviewBlocksRun} />
+          </ErrorBoundary>
+        );
+      case 'preview_revenue':
+        return (
+          <ErrorBoundary name="RevenuePreviewPanel">
+            <RevenuePreviewPanel />
           </ErrorBoundary>
         );
       case 'results':
