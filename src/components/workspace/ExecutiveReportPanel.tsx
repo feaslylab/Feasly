@@ -5,11 +5,11 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { AlertCircle, Download, FileText, Calendar, Building2, TrendingUp, DollarSign } from 'lucide-react';
+import { AlertCircle, Download, FileText, Calendar, Building2, TrendingUp, DollarSign, FileBarChart2 } from 'lucide-react';
 import { useEngine, useEngineNumbers } from '@/lib/engine/EngineContext';
 import { useScenarioManager } from '@/hooks/useScenarioManager';
 import { useCashSeries } from '@/hooks/useCashSeries';
-import { CashChart } from '@/components/CashChart';
+import CashChart from '@/components/CashChart';
 import { fmtCurrency } from '@/lib/utils';
 import { ChartErrorBoundary } from '@/components/charts/ChartErrorBoundary';
 import PptxGenJS from 'pptxgenjs';
@@ -67,7 +67,7 @@ export default function ExecutiveReportPanel() {
   const [isExporting, setIsExporting] = useState(false);
   const { inputs, output } = useEngine();
   const numbers = useEngineNumbers();
-  const scenarioManager = useScenarioManager(inputs?.project_id || 'default');
+  const scenarioManager = useScenarioManager('default');
   const cashSeries = useCashSeries();
 
   const currentDate = new Date().toLocaleDateString('en-US', {
@@ -79,6 +79,15 @@ export default function ExecutiveReportPanel() {
   // Check if we have enough data to generate a report
   const hasData = inputs && output && numbers;
   const currentScenario = scenarioManager.currentScenario;
+
+  // Get KPI data from equity calculations (matching FeaslyModel.tsx pattern)
+  const eq = numbers.equity;
+  const kpis = {
+    irr: eq?.kpis?.irr_pa ?? 0,
+    tvpi: Number(eq?.kpis?.tvpi ?? 0),
+    dpi: Number(eq?.kpis?.dpi ?? 0),
+    moic: Number(eq?.kpis?.moic ?? 0)
+  };
 
   const handleExportToPowerPoint = async () => {
     if (!hasData) return;
@@ -109,19 +118,30 @@ export default function ExecutiveReportPanel() {
         fontSize: 24, bold: true
       });
 
-      // Add KPI table
-      const kpiData = [
-        ['Metric', 'Value'],
-        ['IRR', `${(numbers.summary?.irr || 0).toFixed(1)}%`],
-        ['TVPI', `${(numbers.summary?.tvpi || 0).toFixed(2)}x`],
-        ['DPI', `${(numbers.summary?.dpi || 0).toFixed(2)}x`],
-        ['MOIC', `${(numbers.summary?.moic || 0).toFixed(2)}x`]
-      ];
-
-      overviewSlide.addTable(kpiData, {
-        x: 1, y: 1.5, w: 4, h: 3,
-        border: { pt: 1, color: 'CFCFCF' },
-        fill: { color: 'F8F9FA' }
+      // Add KPI data as text (PptxGenJS format)
+      overviewSlide.addText('Key Performance Indicators', {
+        x: 1, y: 1.5, w: 8, h: 0.5,
+        fontSize: 16, bold: true
+      });
+      
+      overviewSlide.addText(`IRR: ${(kpis.irr || 0).toFixed(1)}%`, {
+        x: 1, y: 2.2, w: 4, h: 0.4,
+        fontSize: 14
+      });
+      
+      overviewSlide.addText(`TVPI: ${(kpis.tvpi || 0).toFixed(2)}x`, {
+        x: 1, y: 2.6, w: 4, h: 0.4,
+        fontSize: 14
+      });
+      
+      overviewSlide.addText(`DPI: ${(kpis.dpi || 0).toFixed(2)}x`, {
+        x: 1, y: 3.0, w: 4, h: 0.4,
+        fontSize: 14
+      });
+      
+      overviewSlide.addText(`MOIC: ${(kpis.moic || 0).toFixed(2)}x`, {
+        x: 1, y: 3.4, w: 4, h: 0.4,
+        fontSize: 14
       });
 
       // Slide 3: Sources & Uses
@@ -131,20 +151,48 @@ export default function ExecutiveReportPanel() {
         fontSize: 24, bold: true
       });
 
-      // Add sources and uses data
+      // Add sources and uses data as text
       const totalCosts = numbers.costs?.total || 0;
       const totalFinancing = numbers.financing?.total || 0;
 
-      const sourcesUsesData = [
-        ['Uses', 'Amount', 'Sources', 'Amount'],
-        ['Construction', fmtCurrency(numbers.costs?.construction || 0), 'Equity', fmtCurrency(numbers.financing?.equity || 0)],
-        ['Land', fmtCurrency(numbers.costs?.land || 0), 'Debt', fmtCurrency(numbers.financing?.debt || 0)],
-        ['Total Uses', fmtCurrency(totalCosts), 'Total Sources', fmtCurrency(totalFinancing)]
-      ];
-
-      sourcesUsesSlide.addTable(sourcesUsesData, {
-        x: 1, y: 1.5, w: 8, h: 4,
-        border: { pt: 1, color: 'CFCFCF' }
+      sourcesUsesSlide.addText('Uses of Funds', {
+        x: 1, y: 1.5, w: 4, h: 0.5,
+        fontSize: 16, bold: true
+      });
+      
+      sourcesUsesSlide.addText(`Construction: ${fmtCurrency(numbers.costs?.construction || 0)}`, {
+        x: 1, y: 2.2, w: 4, h: 0.4,
+        fontSize: 14
+      });
+      
+      sourcesUsesSlide.addText(`Land: ${fmtCurrency(numbers.costs?.land || 0)}`, {
+        x: 1, y: 2.6, w: 4, h: 0.4,
+        fontSize: 14
+      });
+      
+      sourcesUsesSlide.addText(`Total Uses: ${fmtCurrency(totalCosts)}`, {
+        x: 1, y: 3.0, w: 4, h: 0.4,
+        fontSize: 14, bold: true
+      });
+      
+      sourcesUsesSlide.addText('Sources of Funds', {
+        x: 5, y: 1.5, w: 4, h: 0.5,
+        fontSize: 16, bold: true
+      });
+      
+      sourcesUsesSlide.addText(`Equity: ${fmtCurrency(numbers.financing?.equity || 0)}`, {
+        x: 5, y: 2.2, w: 4, h: 0.4,
+        fontSize: 14
+      });
+      
+      sourcesUsesSlide.addText(`Debt: ${fmtCurrency(numbers.financing?.debt || 0)}`, {
+        x: 5, y: 2.6, w: 4, h: 0.4,
+        fontSize: 14
+      });
+      
+      sourcesUsesSlide.addText(`Total Sources: ${fmtCurrency(totalFinancing)}`, {
+        x: 5, y: 3.0, w: 4, h: 0.4,
+        fontSize: 14, bold: true
       });
 
       // Save the presentation
@@ -215,26 +263,26 @@ export default function ExecutiveReportPanel() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <KpiCard
             title="IRR"
-            value={`${(numbers.summary?.irr || 0).toFixed(1)}%`}
+            value={`${(kpis.irr || 0).toFixed(1)}%`}
             subtitle="Internal Rate of Return"
             icon={TrendingUp}
             trend="up"
           />
           <KpiCard
             title="TVPI"
-            value={`${(numbers.summary?.tvpi || 0).toFixed(2)}x`}
+            value={`${(kpis.tvpi || 0).toFixed(2)}x`}
             subtitle="Total Value to Paid-In"
             icon={DollarSign}
           />
           <KpiCard
             title="DPI"
-            value={`${(numbers.summary?.dpi || 0).toFixed(2)}x`}
+            value={`${(kpis.dpi || 0).toFixed(2)}x`}
             subtitle="Distributions to Paid-In"
             icon={TrendingUp}
           />
           <KpiCard
             title="MOIC"
-            value={`${(numbers.summary?.moic || 0).toFixed(2)}x`}
+            value={`${(kpis.moic || 0).toFixed(2)}x`}
             subtitle="Multiple on Invested Capital"
             icon={DollarSign}
           />
@@ -332,7 +380,7 @@ export default function ExecutiveReportPanel() {
         <Card>
           <CardContent className="p-6">
             <ChartErrorBoundary>
-              <CashChart data={cashSeries} className="h-80" />
+              <CashChart />
             </ChartErrorBoundary>
           </CardContent>
         </Card>
@@ -369,7 +417,7 @@ export default function ExecutiveReportPanel() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Project ID:</span>
-                <span className="font-mono">{inputs?.project_id || 'default'}</span>
+                <span className="font-mono">{'default'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Scenario:</span>
