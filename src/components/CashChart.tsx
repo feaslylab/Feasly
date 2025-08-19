@@ -87,21 +87,55 @@ export default function CashChart({ data }: { data?: number[] }) {
       </Button>
 
       <ChartErrorBoundary>
-        <ResponsiveContainer key={rows.length} width="100%" height={310}>
+        <ResponsiveContainer key={`${rows.length}-${actualTheme}`} width="100%" height={310}>
           <AreaChart data={rows} stackOffset="sign">
-            <XAxis dataKey="period" hide />
+            <XAxis 
+              dataKey="period" 
+              hide 
+              stroke="hsl(var(--muted-foreground))"
+            />
             <YAxis
               tickFormatter={v => v.toLocaleString()}
               width={70}
+              stroke="hsl(var(--muted-foreground))"
             />
             <Tooltip
               formatter={(v: number) => v.toLocaleString()}
               labelFormatter={p => `Period ${p}`}
+              contentStyle={{
+                backgroundColor: 'hsl(var(--background))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '6px'
+              }}
             />
             <Legend verticalAlign="top" height={24} />
-            <Area type="monotone" dataKey="inflow" stackId="1" fillOpacity={0.55} fill={colors.inflow} stroke="none" name="Inflow"/>
-            <Area type="monotone" dataKey="outflow" stackId="1" fillOpacity={0.55} fill={colors.outflow} stroke="none" name="Outflow"/>
-            <Area type="monotone" dataKey="net" stackId="1" fillOpacity={0.55} fill={colors.net} stroke="none" name="Net"/>
+            <Area 
+              type="monotone" 
+              dataKey="inflow" 
+              stackId="1" 
+              fillOpacity={0.55} 
+              fill={colors.inflow} 
+              stroke="none" 
+              name="Inflow"
+            />
+            <Area 
+              type="monotone" 
+              dataKey="outflow" 
+              stackId="1" 
+              fillOpacity={0.55} 
+              fill={colors.outflow} 
+              stroke="none" 
+              name="Outflow"
+            />
+            <Area 
+              type="monotone" 
+              dataKey="net" 
+              stackId="1" 
+              fillOpacity={0.55} 
+              fill={colors.net} 
+              stroke="none" 
+              name="Net"
+            />
           </AreaChart>
         </ResponsiveContainer>
       </ChartErrorBoundary>
