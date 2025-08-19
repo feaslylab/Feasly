@@ -1,5 +1,10 @@
 import { fmtPct, fmtMult, fmtCurrency } from '@/lib/formatters';
 import { useEngineNumbers } from '@/lib/engine/EngineContext';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { TrendingUp, TrendingDown, Download, FileText, BarChart3 } from 'lucide-react';
 
 function Sparkline({ data }: { data: Array<number | null | undefined> }) {
   const valid = (data ?? []).filter(
@@ -42,16 +47,144 @@ function Sparkline({ data }: { data: Array<number | null | undefined> }) {
   );
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
-  return (
+function Metric({ label, value, tooltip }: { label: string; value: string; tooltip?: string }) {
+  const content = (
     <div className="rounded-md border p-3">
       <div className="text-xs text-muted-foreground">{label}</div>
       <div className="text-base font-semibold">{value}</div>
     </div>
   );
+
+  if (tooltip) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {content}
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="max-w-xs">{tooltip}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+
+  return content;
 }
 
-export default function ResultsPanel({ currency = 'AED' }: { currency?: string }) {
+function EmptyState() {
+  return (
+    <div className="flex flex-col items-center justify-center py-12 text-center">
+      <BarChart3 className="h-12 w-12 text-muted-foreground mb-4" />
+      <h3 className="text-lg font-semibold mb-2">📉 No Results Yet</h3>
+      <p className="text-muted-foreground">
+        Run the model to see financial projections and KPIs.
+      </p>
+    </div>
+  );
+}
+
+function CashFlowTable({ numbers }: { numbers: any }) {
+  const cashflow = numbers?.cashflow ?? [];
+  
+  if (!Array.isArray(cashflow) || cashflow.length === 0) {
+    return <div className="text-sm text-muted-foreground">No cash flow data available.</div>;
+  }
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">Cash flow breakdown over project lifecycle</p>
+      <div className="rounded-md border">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b bg-muted/50">
+              <th className="p-3 text-left">Period</th>
+              <th className="p-3 text-right">Net Cash Flow</th>
+              <th className="p-3 text-right">Equity Calls</th>
+              <th className="p-3 text-right">Distributions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cashflow.slice(0, 10).map((row: any, i: number) => (
+              <tr key={i} className="border-b">
+                <td className="p-3">{row?.month || `Period ${i + 1}`}</td>
+                <td className="p-3 text-right">{fmtCurrency(row?.netCashflow, 'AED')}</td>
+                <td className="p-3 text-right">{fmtCurrency(row?.equityInjected, 'AED')}</td>
+                <td className="p-3 text-right">{fmtCurrency(row?.revenue, 'AED')}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+function FinancingDetails({ numbers }: { numbers: any }) {
+  const debt = numbers?.debt ?? {};
+  const totalDraws = debt?.draws_total ?? [];
+  
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">Financing structure and repayment over time</p>
+      
+      {totalDraws.length > 0 ? (
+        <div className="space-y-3">
+          <div className="rounded-md border p-3">
+            <div className="text-xs text-muted-foreground">Total Loan Draws</div>
+            <div className="text-base font-semibold">{fmtCurrency(totalDraws.reduce((a: number, b: number) => a + (b || 0), 0), 'AED')}</div>
+          </div>
+          
+          <div>
+            <div className="text-sm font-medium mb-2">Loan Principal Curve</div>
+            <Sparkline data={totalDraws} />
+          </div>
+        </div>
+      ) : (
+        <div className="text-sm text-muted-foreground">No financing data available.</div>
+      )}
+    </div>
+  );
+}
+
+function ExportSection() {
+  const handleDownloadCSV = () => {
+    // TODO: Implement CSV export
+    console.log('CSV export not yet implemented');
+  };
+
+  const handleExportSnapshot = () => {
+    // TODO: Implement snapshot export
+    console.log('Snapshot export not yet implemented');
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-muted-foreground">Export results and insights</p>
+      
+      <div className="flex gap-3">
+        <Button variant="outline" onClick={handleDownloadCSV}>
+          <Download className="h-4 w-4 mr-2" />
+          Download CSV
+        </Button>
+        <Button variant="outline" onClick={handleExportSnapshot}>
+          <FileText className="h-4 w-4 mr-2" />
+          Export Snapshot
+        </Button>
+      </div>
+      
+      <div className="rounded-md border p-4 text-center">
+        <h4 className="font-medium mb-2">Coming Soon: AI-generated narrative insights</h4>
+        <p className="text-sm text-muted-foreground">
+          Get automated analysis and recommendations based on your project results.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function ResultsPanelContent({ currency = 'AED' }: { currency?: string }) {
   const numbers = useEngineNumbers?.() ?? null;
   const eq = numbers?.equity ?? null;
 
@@ -69,47 +202,113 @@ export default function ResultsPanel({ currency = 'AED' }: { currency?: string }
 
   if (!numbers || !eq) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6" data-section="results">
         <div>
           <h2 className="text-lg font-semibold">Results</h2>
-          <p className="text-sm text-muted-foreground">Financial projections and KPIs.</p>
+          <p className="text-sm text-muted-foreground">View projected financial outcomes and performance KPIs.</p>
         </div>
-        <div className="text-sm text-muted-foreground">
-          No calculation results yet. Run the model to see results.
-        </div>
+        <EmptyState />
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" data-section="results">
       <div>
         <h2 className="text-lg font-semibold">Results</h2>
-        <p className="text-sm text-muted-foreground">Financial projections and KPIs.</p>
+        <p className="text-sm text-muted-foreground">View projected financial outcomes and performance KPIs.</p>
       </div>
 
-      {claw > 0 && (
-        <div className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm">
-          GP Clawback outstanding at end: <span className="font-semibold">{fmtCurrency(claw, currency)}</span>
-        </div>
-      )}
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <Metric label="IRR" value={fmtPct(irr)} />
-        <Metric label="TVPI" value={fmtMult(tvpi)} />
-        <Metric label="DPI" value={fmtMult(dpi)} />
-        <Metric label="RVPI" value={fmtMult(rvpi)} />
-        <Metric label="MOIC" value={fmtMult(moic)} />
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <Metric 
+          label="IRR (pa)" 
+          value={fmtPct(irr)} 
+          tooltip="Internal Rate of Return - the annualized return on equity investment"
+        />
+        <Metric 
+          label="TVPI" 
+          value={fmtMult(tvpi)} 
+          tooltip="Total Value to Paid-In - total value relative to invested capital"
+        />
+        <Metric 
+          label="DPI" 
+          value={fmtMult(dpi)} 
+          tooltip="Distributions to Paid-In - cash returned relative to invested capital"
+        />
+        <Metric 
+          label="RVPI" 
+          value={fmtMult(rvpi)} 
+          tooltip="Residual Value to Paid-In - remaining value relative to invested capital"
+        />
+        <Metric 
+          label="MOIC" 
+          value={fmtMult(moic)} 
+          tooltip="Multiple of Invested Capital - total return multiple on investment"
+        />
+        {claw > 0 && (
+          <Metric 
+            label="GP Clawback" 
+            value={fmtCurrency(claw, currency)} 
+            tooltip="Outstanding GP clawback amount at project end"
+          />
+        )}
       </div>
 
+      {/* Distributions Timeline */}
       <section className="space-y-2">
-        <div className="text-sm font-medium">Distributions Timeline</div>
+        <div className="text-sm font-medium">Distribution Timeline</div>
         {dists.length > 0 ? (
           <Sparkline data={dists} />
         ) : (
           <div className="text-sm text-muted-foreground">No distribution data yet.</div>
         )}
       </section>
+
+      {/* Tabbed Detailed Results */}
+      <Tabs defaultValue="returns" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="returns">Returns</TabsTrigger>
+          <TabsTrigger value="cashflow">Cash Flow</TabsTrigger>
+          <TabsTrigger value="financing">Financing</TabsTrigger>
+          <TabsTrigger value="export">Export / AI Insights</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="returns" className="space-y-4">
+          <div>
+            <h3 className="font-medium mb-2">Detailed Return Metrics</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Detailed return metrics over the project lifecycle
+            </p>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <Metric label="IRR (pa)" value={fmtPct(irr)} />
+              <Metric label="TVPI" value={fmtMult(tvpi)} />
+              <Metric label="MOIC" value={fmtMult(moic)} />
+            </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="cashflow">
+          <CashFlowTable numbers={numbers} />
+        </TabsContent>
+        
+        <TabsContent value="financing">
+          <FinancingDetails numbers={numbers} />
+        </TabsContent>
+        
+        <TabsContent value="export">
+          <ExportSection />
+        </TabsContent>
+      </Tabs>
     </div>
+  );
+}
+
+export default function ResultsPanel({ currency = 'AED' }: { currency?: string }) {
+  return (
+    <ErrorBoundary>
+      <ResultsPanelContent currency={currency} />
+    </ErrorBoundary>
   );
 }
