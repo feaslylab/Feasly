@@ -1,25 +1,17 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Download, FileText } from "lucide-react";
+import { FileText } from "lucide-react";
 import { usePortfolioData } from "@/hooks/usePortfolioData";
 import { PortfolioKPICards } from "./PortfolioKPICards";
 import { PortfolioProjectsList } from "./PortfolioProjectsList";
 import { PortfolioInsights } from "./PortfolioInsights";
-import { useToast } from "@/hooks/use-toast";
+import { PortfolioExportPanel } from "./PortfolioExportPanel";
 
 export const PortfolioDashboard = () => {
   const { portfolioProjects, portfolioKPIs, getTopPerformer, getRiskOutliers } = usePortfolioData();
-  const { toast } = useToast();
   
   const topPerformer = getTopPerformer();
   const riskOutliers = getRiskOutliers();
-
-  const handleExportPortfolio = () => {
-    toast({
-      title: "Export Portfolio",
-      description: "Portfolio export functionality will be available soon.",
-    });
-  };
 
   if (portfolioProjects.length === 0) {
     return (
@@ -59,10 +51,7 @@ export const PortfolioDashboard = () => {
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={handleExportPortfolio}>
-            <Download className="h-4 w-4 mr-2" />
-            Export Portfolio
-          </Button>
+          <PortfolioExportPanel />
         </div>
       </div>
 
