@@ -12,6 +12,7 @@ import WorkspaceLayout from '@/components/workspace/WorkspaceLayout';
 import InputsPanel from '@/components/workspace/InputsPanel';
 import PreviewPanel from '@/components/workspace/PreviewPanel';
 import RevenuePreviewPanel from '@/components/workspace/preview/RevenuePreviewPanel';
+import ExecutiveReportPanel from '@/components/workspace/ExecutiveReportPanel';
 import ResultsPanel from '@/components/workspace/ResultsPanel';
 import SnapshotHistoryPanel from '@/components/workspace/SnapshotHistoryPanel';
 import PresetsPanel from '@/components/presets/PresetsPanel';
@@ -28,7 +29,7 @@ interface Project {
   status: string;
 }
 
-type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'results' | 'snapshots' | 'presets';
+type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'executive_report' | 'results' | 'snapshots' | 'presets';
 
 export default function FeaslyModel() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -276,6 +277,12 @@ export default function FeaslyModel() {
         return (
           <ErrorBoundary name="RevenuePreviewPanel">
             <RevenuePreviewPanel />
+          </ErrorBoundary>
+        );
+      case 'executive_report':
+        return (
+          <ErrorBoundary name="ExecutiveReportPanel">
+            <ExecutiveReportPanel />
           </ErrorBoundary>
         );
       case 'results':

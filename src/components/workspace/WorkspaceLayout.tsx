@@ -6,7 +6,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Save, Play, Eye, BarChart3, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'results' | 'snapshots' | 'presets';
+type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'executive_report' | 'results' | 'snapshots' | 'presets';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 interface WorkspaceLayoutProps {
@@ -47,6 +47,7 @@ export default function WorkspaceLayout({
     { id: 'inputs' as const, label: 'Inputs' },
     { id: 'preview' as const, label: 'Preview' },
     { id: 'preview_revenue' as const, label: 'Revenue Preview' },
+    { id: 'executive_report' as const, label: 'Executive Report' },
     { id: 'results' as const, label: 'Results' },
     { id: 'snapshots' as const, label: 'Snapshots' },
     { id: 'presets' as const, label: 'Presets' },
