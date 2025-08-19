@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { TrendingUp, TrendingDown, Download, FileText, BarChart3 } from 'lucide-react';
+import { ExportToolsPanel } from './results/ExportToolsPanel';
 
 function Sparkline({ data }: { data: Array<number | null | undefined> }) {
   const valid = (data ?? []).filter(
@@ -148,41 +149,6 @@ function FinancingDetails({ numbers }: { numbers: any }) {
   );
 }
 
-function ExportSection() {
-  const handleDownloadCSV = () => {
-    // TODO: Implement CSV export
-    console.log('CSV export not yet implemented');
-  };
-
-  const handleExportSnapshot = () => {
-    // TODO: Implement snapshot export
-    console.log('Snapshot export not yet implemented');
-  };
-
-  return (
-    <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">Export results and insights</p>
-      
-      <div className="flex gap-3">
-        <Button variant="outline" onClick={handleDownloadCSV}>
-          <Download className="h-4 w-4 mr-2" />
-          Download CSV
-        </Button>
-        <Button variant="outline" onClick={handleExportSnapshot}>
-          <FileText className="h-4 w-4 mr-2" />
-          Export Snapshot
-        </Button>
-      </div>
-      
-      <div className="rounded-md border p-4 text-center">
-        <h4 className="font-medium mb-2">Coming Soon: AI-generated narrative insights</h4>
-        <p className="text-sm text-muted-foreground">
-          Get automated analysis and recommendations based on your project results.
-        </p>
-      </div>
-    </div>
-  );
-}
 
 function ResultsPanelContent({ currency = 'AED' }: { currency?: string }) {
   const numbers = useEngineNumbers();
@@ -298,7 +264,7 @@ function ResultsPanelContent({ currency = 'AED' }: { currency?: string }) {
         </TabsContent>
         
         <TabsContent value="export">
-          <ExportSection />
+          <ExportToolsPanel />
         </TabsContent>
       </Tabs>
     </div>
