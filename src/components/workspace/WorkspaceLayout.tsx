@@ -3,10 +3,10 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Save, Play, Eye, BarChart3 } from 'lucide-react';
+import { Save, Play, Eye, BarChart3, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-type WorkspaceTab = 'inputs' | 'preview' | 'results';
+type WorkspaceTab = 'inputs' | 'preview' | 'results' | 'snapshots';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 interface WorkspaceLayoutProps {
@@ -45,6 +45,7 @@ export default function WorkspaceLayout({
     { id: 'inputs' as const, label: 'Inputs' },
     { id: 'preview' as const, label: 'Preview' },
     { id: 'results' as const, label: 'Results' },
+    { id: 'snapshots' as const, label: 'Snapshots' },
   ];
 
   const humanSaved = savedAt

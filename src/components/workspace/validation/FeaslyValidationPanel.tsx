@@ -33,7 +33,7 @@ export default function FeaslyValidationPanel({
     const stored = localStorage.getItem(`validation_dismissed:${projectId}`);
     if (stored) {
       try {
-        const dismissed = new Set(JSON.parse(stored));
+        const dismissed = new Set<string>(JSON.parse(stored));
         setDismissedWarnings(dismissed);
       } catch (e) {
         console.warn('Failed to parse dismissed validations from localStorage');
