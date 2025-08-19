@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { ApprovalWatermark } from '@/components/approvals/ApprovalWatermark';
 import { useApprovalStatus } from '@/hooks/useApprovalStatus';
 
-type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'executive_report' | 'insights' | 'results' | 'snapshots' | 'presets';
+type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'executive_report' | 'insights' | 'results' | 'snapshots' | 'presets' | 'portfolio';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
 interface WorkspaceLayoutProps {
@@ -56,6 +56,7 @@ export default function WorkspaceLayout({
     { id: 'results' as const, label: 'Results' },
     { id: 'snapshots' as const, label: 'Snapshots' },
     { id: 'presets' as const, label: 'Presets' },
+    { id: 'portfolio' as const, label: 'Portfolio' },
   ];
 
   const humanSaved = savedAt

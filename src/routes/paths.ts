@@ -4,6 +4,7 @@ export const PATHS = {
   projects: '/projects',
   projectsNew: '/projects/new',
   model: '/model',
+  portfolio: '/portfolio',
   auth: '/auth',
   resetPassword: '/reset-password',
   welcome: '/welcome',

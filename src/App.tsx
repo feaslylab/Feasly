@@ -23,6 +23,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const ModelPage = lazy(() => import("./pages/ModelPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
 const FeaslyLanding = lazy(() => import("./pages/marketing/FeaslyLanding"));
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => {
                 <Route path="/Dashboard" element={<Navigate to={PATHS.dashboard} replace />} />
                 <Route path={PATHS.projects} element={<Projects />} />
                 <Route path={PATHS.projectsNew} element={<NewProject />} />
+                <Route path={PATHS.portfolio} element={<Portfolio />} />
                 <Route path={PATHS.model} element={<ModelPage />} />
                 {/* Legacy route with params - redirect to new format */}
                 <Route path="/feasly-model/:projectId/:scenarioId" element={<Navigate to={`${PATHS.model}?project=$1&scenario=$2`} replace />} />
