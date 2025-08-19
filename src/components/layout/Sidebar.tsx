@@ -63,13 +63,10 @@ export const Sidebar = () => {
   const showMini = isAutoHidden && !shouldShowSidebar && !isMobile;
 
   useEffect(() => {
-    const root = document.documentElement;
-    const offset = expanded ? '16rem' : (showMini ? '4rem' : '0px');
-    root.style.setProperty('--sidebar-offset', offset);
-    return () => {
-      root.style.removeProperty('--sidebar-offset');
-    };
-  }, [expanded, showMini]);
+    // The useResponsiveLayout hook now handles CSS variable updates
+    const sidebarWidth = !shouldShowSidebar ? 0 : isCollapsed ? 56 : 256;
+    document.documentElement.style.setProperty('--sidebar-width', `${sidebarWidth}px`);
+  }, [shouldShowSidebar, isCollapsed]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -80,7 +77,7 @@ export const Sidebar = () => {
     <>
       {/* Mini Sidebar - Always visible when auto-hidden */}
       {isAutoHidden && !shouldShowSidebar && !isMobile && (
-        <div className="fixed left-0 top-0 z-20 h-full w-16 bg-card border-r border-border flex flex-col">
+        <div className="fixed left-0 top-[var(--header-height)] z-[var(--z-sidebar)] h-[calc(100vh-var(--header-height))] w-14 bg-card border-r border-border flex flex-col">
           {/* Mini Header */}
           <div className="flex items-center justify-center h-14 border-b border-border">
             <div className="w-6 h-6">
@@ -118,10 +115,10 @@ export const Sidebar = () => {
 
       {/* Main Sidebar */}
       <div className={cn(
-        "fixed left-0 top-0 z-40 h-full bg-card border-r border-border transition-all duration-300 ease-in-out",
+        "fixed left-0 top-[var(--header-height)] z-[var(--z-sidebar)] h-[calc(100vh-var(--header-height))] bg-card border-r border-border transition-all duration-300 ease-in-out",
         "flex flex-col justify-between",
         shouldShowSidebar ? "translate-x-0" : "-translate-x-full",
-        isCollapsed ? "w-16" : "w-64"
+        isCollapsed ? "w-14" : "w-64"
       )}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

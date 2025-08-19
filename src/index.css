@@ -75,9 +75,30 @@
     --shadow-glow: 0 0 30px hsl(var(--primary-glow) / 0.3);
     --shadow-elegant: 0 10px 30px -10px hsl(var(--primary) / 0.25);
 
-    /* Animation Durations */
+  /* Animation Durations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-out;
+
+    /* Layout System - Unified Z-Index Scale */
+    --z-base: 1;
+    --z-sticky: 10;
+    --z-sidebar: 20;
+    --z-header: 30;
+    --z-dropdown: 40;
+    --z-overlay: 50;
+    --z-modal: 60;
+    --z-toast: 70;
+    --z-tooltip: 80;
+
+    /* Dynamic Layout Spacing */
+    --header-height: 3rem;      /* 48px */
+    --sidebar-width: 16rem;     /* 256px */
+    --sidebar-collapsed: 3.5rem; /* 56px */
+    --mobile-nav-height: 3.5rem; /* 56px */
+
+    /* Content spacing calculations */
+    --content-top: var(--header-height);
+    --content-left: 0px; /* Dynamic via JS */
 
     /* Financial Chart Colors */
     --chart-revenue: 142 71% 45%;
@@ -496,6 +517,26 @@
 
   .feasly-stack {
     @apply space-y-4;
+  }
+
+  /* Responsive Layout Classes */
+  .mobile-optimized-button {
+    @apply min-h-[44px] min-w-[44px] touch-none;
+  }
+
+  .mobile-optimized-input {
+    @apply min-h-[44px] touch-none;
+  }
+
+  .mobile-safe-area {
+    @apply pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)];
+  }
+
+  /* Remove old layout classes - replaced by new system */
+  .sidebar-auto-space,
+  .sidebar-collapsed-space,
+  .sidebar-expanded-space {
+    /* These classes are now handled by the unified layout system */
   }
 
   .feasly-stack-sm {

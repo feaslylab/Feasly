@@ -3,6 +3,8 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { EngineProvider } from '@/lib/engine/EngineContext';
 import Header from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
+import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
+import { MobileLayoutFixes } from '@/components/ui/mobile-layout-fixes';
 
 function useCanonicalPath() {
   const loc = useLocation();
@@ -51,17 +53,26 @@ function LoadingFallback() {
 export default function PrivateLayout() {
   useCanonicalPath();
   const defaultInputs = useMemo(createDefaultProjectInputs, []);
+  const { contentClasses, isMobile } = useResponsiveLayout();
 
   return (
     <EngineProvider formState={defaultInputs}>
-      <div className="min-h-screen bg-background">
+      <MobileLayoutFixes />
+      <div className="min-h-screen w-full bg-background mobile-full-height">
+        {/* Fixed Header */}
+        <Header />
+        
+        {/* Fixed Sidebar */}
         <Sidebar />
-        <div className="flex flex-col min-w-0 min-h-screen sidebar-auto-space">
-          <Header />
-          <main className="pt-14 flex-1">
-            <Suspense fallback={<LoadingFallback />}>
-              <Outlet />
-            </Suspense>
+        
+        {/* Main Content Area */}
+        <div className="flex flex-col min-h-screen w-full">
+          <main className={contentClasses.main} style={{ marginLeft: isMobile ? 0 : 'var(--sidebar-space)' }}>
+            <div className={`${contentClasses.container} mobile-safe-content`}>
+              <Suspense fallback={<LoadingFallback />}>
+                <Outlet />
+              </Suspense>
+            </div>
           </main>
         </div>
       </div>
