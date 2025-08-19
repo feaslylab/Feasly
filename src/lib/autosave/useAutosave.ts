@@ -6,13 +6,15 @@ function stableStringify(obj: any): string {
   return JSON.stringify(obj, Object.keys(obj).sort());
 }
 
-export function useAutosave<T>(key: string | null, payload: T, delayMs = 800) {
+export function useAutosave<T>(projectId: string | null, scenarioId: string | null, payload: T, delayMs = 800) {
   const [status, setStatus] = useState<AutosaveStatus>('idle');
   const [savedAt, setSavedAt] = useState<number | null>(null);
   const prevHashRef = useRef<string | null>(null);
   const timerRef = useRef<number | null>(null);
 
-  const canSave = !!key;
+  const canSave = !!(projectId && scenarioId);
+  const storageKey = canSave ? `inputs:${projectId}:${scenarioId}` : null;
+  
   const draft = useMemo(() => {
     return { v: 1, savedAt: Date.now(), data: payload };
   }, [payload]);
@@ -20,10 +22,10 @@ export function useAutosave<T>(key: string | null, payload: T, delayMs = 800) {
   const draftHash = useMemo(() => stableStringify(draft), [draft]);
 
   const forceSave = useCallback(() => {
-    if (!canSave) return;
+    if (!canSave || !storageKey) return;
     try {
       setStatus('saving');
-      localStorage.setItem(`draft:${key}`, draftHash);
+      localStorage.setItem(storageKey, JSON.stringify(payload));
       prevHashRef.current = draftHash;
       setSavedAt(Date.now());
       setStatus('saved');
@@ -33,7 +35,7 @@ export function useAutosave<T>(key: string | null, payload: T, delayMs = 800) {
       console.log('[Analytics] autosave_error', { error: e });
       setStatus('error');
     }
-  }, [canSave, key, draftHash]);
+  }, [canSave, storageKey, payload, draftHash]);
 
   useEffect(() => {
     if (!canSave) return;
@@ -53,19 +55,18 @@ export function useAutosave<T>(key: string | null, payload: T, delayMs = 800) {
 
   // load last saved (just for status on mount)
   useEffect(() => {
-    if (!canSave) return;
+    if (!canSave || !storageKey) return;
     try {
-      const raw = localStorage.getItem(`draft:${key}`);
+      const raw = localStorage.getItem(storageKey);
       if (raw) {
-        prevHashRef.current = raw;
-        const parsed = JSON.parse(raw);
-        if (parsed?.savedAt) setSavedAt(parsed.savedAt);
+        prevHashRef.current = stableStringify({ v: 1, savedAt: Date.now(), data: JSON.parse(raw) });
+        setSavedAt(Date.now());
         setStatus('saved');
       }
     } catch {
       // ignore
     }
-  }, [canSave, key]);
+  }, [canSave, storageKey]);
 
   return { status, savedAt, forceSave };
 }

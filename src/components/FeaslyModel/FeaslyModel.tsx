@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useEngine, useEngineNumbers } from '@/lib/engine/EngineContext';
 import { useAutosave } from '@/lib/autosave/useAutosave';
+import { useScenarioManager } from '@/hooks/useScenarioManager';
+import { ScenarioSelector } from '@/components/scenarios/ScenarioSelector';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { FLAGS } from '@/lib/flags';
@@ -41,16 +43,19 @@ export default function FeaslyModel() {
   const [previewBlocksRun, setPreviewBlocksRun] = useState(false);
   const [draftConflict, setDraftConflict] = useState<string | null>(null);
 
-  const projectId = searchParams.get('project');
+  const projectId = searchParams.get('project') || 'default';
   const scenarioId = searchParams.get('scenario') || 'baseline';
   const tabFromUrl = searchParams.get('tab') as WorkspaceTab | null;
   const [activeTab, setActiveTab] = useState<WorkspaceTab>(tabFromUrl || 'inputs');
 
+  // Scenario management
+  const scenarioManager = useScenarioManager(projectId);
+
   // Onboarding + checklist
   const { tasks, hasBlocking } = useOnboardingTasks();
 
-  // AUTOSAVE (local)
-  const { status: saveStatus, savedAt, forceSave } = useAutosave(projectId, inputs);
+  // AUTOSAVE (local) - now includes scenario isolation
+  const { status: saveStatus, savedAt, forceSave } = useAutosave(projectId, scenarioManager.currentScenarioId, inputs);
 
   // Handle tab changes with URL persistence
   const handleTabChange = (tab: WorkspaceTab) => {

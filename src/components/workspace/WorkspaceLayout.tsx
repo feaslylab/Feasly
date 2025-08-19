@@ -23,6 +23,7 @@ interface WorkspaceLayoutProps {
   disableRun?: boolean;
   activeTab: WorkspaceTab;
   onTabChange: (t: WorkspaceTab) => void;
+  scenarioSelector?: React.ReactNode;
 }
 
 export default function WorkspaceLayout({
@@ -82,6 +83,8 @@ export default function WorkspaceLayout({
           </div>
 
           <div className="flex items-center gap-2">
+            {scenarioSelector}
+            
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
