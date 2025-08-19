@@ -128,7 +128,7 @@ export default function NewPricingPage() {
   const faqs = [
     {
       question: "When will Feasly be available?",
-      answer: "We're currently in private beta with select GCC partners. Public launch is planned for Q2 2025. Join our waitlist to get early access."
+      answer: "Feasly is available now for enterprise customers. Contact our sales team to schedule a demo and discuss deployment options."
     },
     {
       question: "Do you support regional hosting requirements?",

@@ -88,8 +88,8 @@ export default function ContactPage() {
       icon: Shield
     },
     {
-      title: "Early Access",
-      description: "Join our private beta program and influence the development of features that matter most to your workflow.",
+      title: "Production Ready",
+      description: "Built for enterprise use with proven reliability and performance across GCC markets.",
       icon: Star
     }
   ];

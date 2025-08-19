@@ -400,7 +400,7 @@ export default function PricingPage() {
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <div className="max-w-md mx-auto">
                     <WaitlistForm 
-                      placeholder="Enter your email for early access"
+                      placeholder="Enter your email to get started"
                       buttonText="Join Waitlist"
                       className="justify-center"
                     />
