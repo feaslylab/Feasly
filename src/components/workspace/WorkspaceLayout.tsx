@@ -39,7 +39,8 @@ export default function WorkspaceLayout({
   saveStatus = 'idle',
   disableRun = false,
   activeTab,
-  onTabChange
+  onTabChange,
+  scenarioSelector
 }: WorkspaceLayoutProps) {
 
   const tabs = [
