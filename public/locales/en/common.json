@@ -40,7 +40,9 @@
     "insights": "Feasly Insights",
     "alerts": "Portfolio Alerts",
     "settings": "Settings",
-    "newProject": "New Project"
+    "newProject": "New Project",
+    "portfolio": "Portfolio",
+    "demo": "Demo"
   },
   "auth": {
     "account": "Account"

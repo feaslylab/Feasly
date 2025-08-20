@@ -58,9 +58,9 @@ export default function PrivateLayout() {
     <SidebarProvider>
       <EngineProvider formState={defaultInputs}>
         <MobileLayoutFixes />
-        <div className="min-h-screen w-full bg-background">
+        <div className="min-h-screen w-full bg-background flex">
           <AppSidebar />
-          <SidebarInset>
+          <SidebarInset className="flex-1">
             <Header />
             <main className="flex-1 overflow-auto">
               <div className="p-4">
