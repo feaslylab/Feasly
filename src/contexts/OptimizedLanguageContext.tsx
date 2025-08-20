@@ -46,6 +46,7 @@ const translations = {
     // Navigation
     'nav.dashboard': 'Dashboard',
     'nav.projects': 'Projects',
+    'nav.portfolio': 'Portfolio',
     'nav.settings': 'Settings',
     'nav.newProject': 'New Project',
     'nav.model': 'Feasly Model',
@@ -93,6 +94,7 @@ const translations = {
     // Navigation  
     'nav.dashboard': 'لوحة التحكم',
     'nav.projects': 'المشاريع',
+    'nav.portfolio': 'المحفظة',
     'nav.settings': 'الإعدادات',
     'nav.newProject': 'مشروع جديد',
     'nav.model': 'نموذج فيزلي',

@@ -17,6 +17,7 @@ import { PATHS } from "@/routes/paths";
 const navigation = [
   { nameKey: "dashboard", href: "/dashboard", icon: BarChart3 },
   { nameKey: "projects", href: "/projects", icon: FolderOpen },
+  { nameKey: "portfolio", href: PATHS.portfolio, icon: Building2 },
   { nameKey: "model", href: PATHS.model, icon: Building },
   { nameKey: "flow", href: "/feasly-flow", icon: BarChart3 },
   { nameKey: "finance", href: "/feasly-finance", icon: DollarSign },
@@ -36,6 +37,7 @@ const getModuleTitle = (pathname: string, t: any) => {
   if (pathname.startsWith('/feasly-alerts')) return t('title', { ns: 'feasly.alerts' });
   if (pathname.startsWith('/dashboard')) return t('nav.dashboard', { ns: 'common' });
   if (pathname.startsWith('/projects')) return t('nav.projects', { ns: 'common' });
+  if (pathname.startsWith('/portfolio')) return t('nav.portfolio', { ns: 'common' });
   if (pathname.startsWith('/settings')) return t('nav.settings', { ns: 'common' });
   return 'Financial Modeling Platform';
 };
