@@ -7,7 +7,7 @@ import {
   SaleLine,
   RentalLine,
   LoanFacility
-} from "../../packages/feasly-engine/src";
+} from "@feasly/feasly-engine";
 
 /** VERY minimal parser – enough to support the fixture.
     It extracts:

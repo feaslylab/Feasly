@@ -1,4 +1,4 @@
-import { runModel, ProjectInputs } from '../../../packages/feasly-engine/src';
+import { runModel, ProjectInputs } from "../../../packages/feasly-engine/src/index";
 
 export type PreviewResult = {
   equity: any | null;

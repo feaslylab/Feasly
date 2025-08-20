@@ -3,7 +3,7 @@ import {
   buildSaleRevenue,
   buildLoanSchedule,
   computeKPIs
-} from "../../packages/feasly-engine/src";
+} from "@feasly/feasly-engine";
 
 export function runEngine(dto: Awaited<ReturnType<typeof import("./parseEmdfToDto").emdfToDto>>) {
   const horizon = 60;

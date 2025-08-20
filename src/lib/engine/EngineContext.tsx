@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useMemo, useState } from "react";
-import { runModel, ProjectInputs } from "../../../packages/feasly-engine/src";
+import { runModel, ProjectInputs } from "../../../packages/feasly-engine/src/index";
 import { mapFormToProjectInputs } from "@/lib/mapFormToProjectInputs";
 import {
   numberifyRevenue, numberifyCosts, numberifyFin,

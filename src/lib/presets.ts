@@ -1,4 +1,4 @@
-import { ProjectInputs } from '../../packages/feasly-engine/src/types';
+import { ProjectInputs } from "../../packages/feasly-engine/src/types";
 import { safeNum } from '@/lib/format';
 
 export type PresetId = 'conservative' | 'base' | 'aggressive';
