@@ -26,6 +26,10 @@ export const PRESETS: FeaslyPreset[] = [
       cost_items: [
         { id: '1', label: 'Construction', amount: 30000000, category: 'construction', cost_code: 'CONST-001', vat_input_eligible: true, is_capex: true, start_month: 6, duration_months: 24 },
         { id: '2', label: 'Design Fees', amount: 1500000, category: 'soft', cost_code: 'SOFT-001', vat_input_eligible: true, is_capex: true, start_month: 0, duration_months: 6 }
+      ],
+      financing_slices: [
+        { id: '1', type: 'equity', label: 'Developer Equity', amount: 40000000, start_month: 0 },
+        { id: '2', type: 'senior_debt', label: 'Construction Loan', amount: 70000000, interest_rate: 0.055, tenor_months: 36, dscr_min: 1.2, is_interest_only: true, start_month: 3 }
       ]
     }
   },
@@ -41,6 +45,10 @@ export const PRESETS: FeaslyPreset[] = [
       cost_items: [
         { id: '1', label: 'Construction', amount: 20000000, category: 'construction', cost_code: 'CONST-002', vat_input_eligible: true, is_capex: true, start_month: 5, duration_months: 18 },
         { id: '2', label: 'Marketing', amount: 1000000, category: 'marketing', cost_code: 'MKT-001', vat_input_eligible: true, is_capex: false, start_month: 20, duration_months: 4 }
+      ],
+      financing_slices: [
+        { id: '1', type: 'equity', label: 'Investor Capital', amount: 20000000, start_month: 0 },
+        { id: '2', type: 'senior_debt', label: 'Retail Facility', amount: 35000000, interest_rate: 0.065, tenor_months: 48, dscr_min: 1.15, is_interest_only: false, start_month: 0 }
       ]
     }
   },
@@ -59,6 +67,11 @@ export const PRESETS: FeaslyPreset[] = [
         { id: '1', label: 'Foundation & Structure', amount: 25000000, category: 'construction', cost_code: 'CONST-003', vat_input_eligible: true, is_capex: true, start_month: 3, duration_months: 18 },
         { id: '2', label: 'MEP Systems', amount: 12000000, category: 'construction', cost_code: 'MEP-001', vat_input_eligible: true, is_capex: true, start_month: 12, duration_months: 12 },
         { id: '3', label: 'Finishing', amount: 8000000, category: 'construction', cost_code: 'FINISH-001', vat_input_eligible: true, is_capex: true, start_month: 20, duration_months: 8 }
+      ],
+      financing_slices: [
+        { id: '1', type: 'equity', label: 'Sponsor Equity', amount: 35000000, start_month: 0 },
+        { id: '2', type: 'senior_debt', label: 'Senior Construction', amount: 60000000, interest_rate: 0.05, tenor_months: 42, dscr_min: 1.25, is_interest_only: true, start_month: 2 },
+        { id: '3', type: 'mezzanine_debt', label: 'Mezzanine Capital', amount: 15000000, interest_rate: 0.12, tenor_months: 36, dscr_min: 1.1, is_interest_only: false, start_month: 6 }
       ]
     }
   },
@@ -77,6 +90,10 @@ export const PRESETS: FeaslyPreset[] = [
         { id: '1', label: 'Premium Construction', amount: 45000000, category: 'construction', cost_code: 'CONST-004', vat_input_eligible: true, is_capex: true, start_month: 6, duration_months: 30 },
         { id: '2', label: 'Luxury Finishes', amount: 8000000, category: 'construction', cost_code: 'FINISH-002', vat_input_eligible: true, is_capex: true, start_month: 24, duration_months: 12 },
         { id: '3', label: 'Amenities & Common Areas', amount: 5000000, category: 'construction', cost_code: 'AMENITY-001', vat_input_eligible: true, is_capex: true, start_month: 18, duration_months: 18 }
+      ],
+      financing_slices: [
+        { id: '1', type: 'equity', label: 'Family Office Capital', amount: 50000000, start_month: 0 },
+        { id: '2', type: 'senior_debt', label: 'Luxury Development Loan', amount: 75000000, interest_rate: 0.045, tenor_months: 54, dscr_min: 1.3, is_interest_only: true, start_month: 5 }
       ]
     }
   }
