@@ -6,7 +6,7 @@ export function useResponsiveLayout() {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const isDesktop = useIsDesktop();
-  const { shouldShowSidebar, isCollapsed } = useSidebarState();
+  const { shouldShowSidebar, isCollapsed, isAutoHidden } = useSidebarState();
 
   // Simplified layout calculations with proper buffer zones
   const layoutSpacing = {
@@ -25,10 +25,15 @@ export function useResponsiveLayout() {
     root.style.setProperty('--header-height', `${layoutSpacing.headerHeight}px`);
     root.style.setProperty('--mobile-nav-height', `${layoutSpacing.mobileNavHeight}px`);
     
-    // Unified sidebar space calculation with buffer
+    // Enhanced sidebar space calculation - always account for sidebar when present
     let sidebarSpace = '0px';
-    if (shouldShowSidebar && !isMobile) {
-      sidebarSpace = isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)';
+    if (!isMobile) {
+      if (shouldShowSidebar) {
+        sidebarSpace = isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)';
+      } else if (isAutoHidden) {
+        // Even when auto-hidden, reserve space for the mini sidebar
+        sidebarSpace = 'var(--sidebar-collapsed)';
+      }
     }
     
     root.style.setProperty('--sidebar-space', sidebarSpace);
@@ -55,12 +60,12 @@ export function useResponsiveLayout() {
         'flex-1 overflow-auto relative',
         // Top spacing for header
         isMobile ? 'pt-[var(--header-height)] pb-[var(--mobile-nav-height)]' : 'pt-[var(--header-height)]',
-        // Left spacing with buffer for desktop
-        !isMobile && shouldShowSidebar ? 'ml-[var(--content-left-space)]' : '',
+        // Left spacing with buffer for desktop - account for all sidebar states
+        !isMobile && (shouldShowSidebar || isAutoHidden) ? 'ml-[var(--content-left-space)]' : '',
         // Smooth transitions
         'transition-all duration-300 ease-in-out',
-        // Visual separation
-        !isMobile && shouldShowSidebar ? 'border-l border-border/30' : ''
+        // Visual separation when sidebar is present
+        !isMobile && (shouldShowSidebar || isAutoHidden) ? 'border-l border-border/30' : ''
       ].filter(Boolean).join(' '),
       container: [
         'w-full mx-auto relative',
