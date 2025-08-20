@@ -2,8 +2,8 @@ import { Suspense, useMemo, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { EngineProvider } from '@/lib/engine/EngineContext';
 import Header from '@/components/layout/Header';
-import { Sidebar } from '@/components/layout/Sidebar';
-import { useResponsiveLayout } from '@/hooks/useResponsiveLayout';
+import AppSidebar from '@/components/layout/AppSidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { MobileLayoutFixes } from '@/components/ui/mobile-layout-fixes';
 
 function useCanonicalPath() {
@@ -53,29 +53,25 @@ function LoadingFallback() {
 export default function PrivateLayout() {
   useCanonicalPath();
   const defaultInputs = useMemo(createDefaultProjectInputs, []);
-  const { contentClasses, isMobile } = useResponsiveLayout();
 
   return (
-    <EngineProvider formState={defaultInputs}>
-      <MobileLayoutFixes />
-      <div className="min-h-screen w-full bg-background mobile-full-height">
-        {/* Fixed Header */}
-        <Header />
-        
-        {/* Fixed Sidebar */}
-        <Sidebar />
-        
-        {/* Main Content Area - Enhanced spacing and visual separation */}
-        <div className="flex flex-col min-h-screen w-full">
-          <main className={contentClasses.main}>
-            <div className={`${contentClasses.container} mobile-safe-content`}>
-              <Suspense fallback={<LoadingFallback />}>
-                <Outlet />
-              </Suspense>
-            </div>
-          </main>
+    <SidebarProvider>
+      <EngineProvider formState={defaultInputs}>
+        <MobileLayoutFixes />
+        <div className="min-h-screen w-full bg-background">
+          <AppSidebar />
+          <SidebarInset>
+            <Header />
+            <main className="flex-1 overflow-auto p-4">
+              <div className="max-w-7xl mx-auto">
+                <Suspense fallback={<LoadingFallback />}>
+                  <Outlet />
+                </Suspense>
+              </div>
+            </main>
+          </SidebarInset>
         </div>
-      </div>
-    </EngineProvider>
+      </EngineProvider>
+    </SidebarProvider>
   );
 }
