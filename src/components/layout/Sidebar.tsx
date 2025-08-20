@@ -139,7 +139,7 @@ export const Sidebar = () => {
                     : "px-3 py-3 text-sm font-medium",
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent",
+                    : "text-sidebar-foreground hover:text-sidebar-foreground hover:bg-sidebar-accent/50",
                   isRTL && !isCollapsed && "flex-row-reverse"
                 )
               }

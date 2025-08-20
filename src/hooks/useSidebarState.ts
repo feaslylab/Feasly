@@ -14,7 +14,7 @@ export function useSidebarState() {
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Start with saved state from localStorage, default to expanded on desktop
     if (isMobile) return true;
-    return getStoredState(); // Use stored state on desktop
+    return getStoredState();
   });
 
   // Simple visibility logic - always show the sidebar
@@ -36,7 +36,8 @@ export function useSidebarState() {
     console.log('Toggle sidebar clicked, current state:', isCollapsed);
     setIsCollapsed(prev => {
       const newState = !prev;
-      console.log('New sidebar state:', newState);
+      console.log('New sidebar state will be:', newState);
+      localStorage.setItem('sidebar-collapsed', JSON.stringify(newState));
       return newState;
     });
   };
