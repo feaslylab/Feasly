@@ -50,10 +50,14 @@ export type UnitTypeInput = z.infer<typeof UnitTypeSchema>;
 
 export const CostItemSchema = z.object({
   id: z.string().min(1),
-  name: z.string().min(1, "Name is required"),
-  amount: z.number().positive("Amount must be positive"),
-  start_month: z.number().int().nonnegative("Start month cannot be negative").default(0),
-  duration_months: z.number().int().positive("Duration must be positive").default(1),
+  label: z.string().min(1, "Label is required"),
+  amount: z.number().nonnegative("Amount must be positive"),
+  category: z.enum(["construction", "land", "soft", "infra", "marketing", "other"]),
+  cost_code: z.string().optional(),
+  vat_input_eligible: z.boolean().default(false),
+  is_capex: z.boolean().default(true),
+  start_month: z.number().int().nonnegative().default(0),
+  duration_months: z.number().int().positive().default(1),
 });
 export type CostItemInput = z.infer<typeof CostItemSchema>;
 

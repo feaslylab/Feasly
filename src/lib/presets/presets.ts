@@ -23,8 +23,8 @@ export const PRESETS: FeaslyPreset[] = [
         { id: '2', name: '2BR', asset_subtype: 'Residential', revenue_mode: 'sale', units: 60, unit_area_sqm: 100, price_per_sqm: 12000, start_month: 12, duration_months: 12 }
       ],
       cost_items: [
-        { id: '1', name: 'Construction', amount: 30000000, start_month: 6, duration_months: 24 },
-        { id: '2', name: 'Design Fees', amount: 1500000, start_month: 0, duration_months: 6 }
+        { id: '1', label: 'Construction', amount: 30000000, category: 'construction', cost_code: 'CONST-001', vat_input_eligible: true, is_capex: true, start_month: 6, duration_months: 24 },
+        { id: '2', label: 'Design Fees', amount: 1500000, category: 'soft', cost_code: 'SOFT-001', vat_input_eligible: true, is_capex: true, start_month: 0, duration_months: 6 }
       ]
     }
   },
@@ -38,8 +38,8 @@ export const PRESETS: FeaslyPreset[] = [
         { id: '1', name: 'Retail Lot', asset_subtype: 'Retail', revenue_mode: 'sale', units: 25, unit_area_sqm: 100, price_per_sqm: 25000, start_month: 10, duration_months: 18 }
       ],
       cost_items: [
-        { id: '1', name: 'Construction', amount: 20000000, start_month: 5, duration_months: 18 },
-        { id: '2', name: 'Marketing', amount: 1000000, start_month: 20, duration_months: 4 }
+        { id: '1', label: 'Construction', amount: 20000000, category: 'construction', cost_code: 'CONST-002', vat_input_eligible: true, is_capex: true, start_month: 5, duration_months: 18 },
+        { id: '2', label: 'Marketing', amount: 1000000, category: 'marketing', cost_code: 'MKT-001', vat_input_eligible: true, is_capex: false, start_month: 20, duration_months: 4 }
       ]
     }
   },
@@ -55,9 +55,9 @@ export const PRESETS: FeaslyPreset[] = [
         { id: '3', name: 'Retail Space', asset_subtype: 'Retail', revenue_mode: 'sale', units: 8, unit_area_sqm: 80, price_per_sqm: 22500, start_month: 12, duration_months: 6 }
       ],
       cost_items: [
-        { id: '1', name: 'Foundation & Structure', amount: 25000000, start_month: 3, duration_months: 18 },
-        { id: '2', name: 'MEP Systems', amount: 12000000, start_month: 12, duration_months: 12 },
-        { id: '3', name: 'Finishing', amount: 8000000, start_month: 20, duration_months: 8 }
+        { id: '1', label: 'Foundation & Structure', amount: 25000000, category: 'construction', cost_code: 'CONST-003', vat_input_eligible: true, is_capex: true, start_month: 3, duration_months: 18 },
+        { id: '2', label: 'MEP Systems', amount: 12000000, category: 'construction', cost_code: 'MEP-001', vat_input_eligible: true, is_capex: true, start_month: 12, duration_months: 12 },
+        { id: '3', label: 'Finishing', amount: 8000000, category: 'construction', cost_code: 'FINISH-001', vat_input_eligible: true, is_capex: true, start_month: 20, duration_months: 8 }
       ]
     }
   },
@@ -73,9 +73,9 @@ export const PRESETS: FeaslyPreset[] = [
         { id: '3', name: '3BR Premium', asset_subtype: 'Luxury Residential', revenue_mode: 'sale', units: 16, unit_area_sqm: 150, price_per_sqm: 16000, start_month: 20, duration_months: 8 }
       ],
       cost_items: [
-        { id: '1', name: 'Premium Construction', amount: 45000000, start_month: 6, duration_months: 30 },
-        { id: '2', name: 'Luxury Finishes', amount: 8000000, start_month: 24, duration_months: 12 },
-        { id: '3', name: 'Amenities & Common Areas', amount: 5000000, start_month: 18, duration_months: 18 }
+        { id: '1', label: 'Premium Construction', amount: 45000000, category: 'construction', cost_code: 'CONST-004', vat_input_eligible: true, is_capex: true, start_month: 6, duration_months: 30 },
+        { id: '2', label: 'Luxury Finishes', amount: 8000000, category: 'construction', cost_code: 'FINISH-002', vat_input_eligible: true, is_capex: true, start_month: 24, duration_months: 12 },
+        { id: '3', label: 'Amenities & Common Areas', amount: 5000000, category: 'construction', cost_code: 'AMENITY-001', vat_input_eligible: true, is_capex: true, start_month: 18, duration_months: 18 }
       ]
     }
   }

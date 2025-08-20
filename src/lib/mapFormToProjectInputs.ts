@@ -18,11 +18,13 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
       }
       
       return {
-        key: item.id || item.name || `cost_${Math.random().toString(36).substr(2, 9)}`,
+        key: item.label || item.name || item.id || `cost_${Math.random().toString(36).substr(2, 9)}`,
         base_amount: item.amount || 0,
         phasing,
-        is_opex: false,
-        vat_input_eligible: false
+        is_opex: !Boolean(item.is_capex), // invert is_capex to get is_opex
+        vat_input_eligible: Boolean(item.vat_input_eligible),
+        category: item.category || 'other',
+        cost_code: item.cost_code || ''
       };
     });
   };

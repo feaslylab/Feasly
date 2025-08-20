@@ -205,7 +205,7 @@ export default function PresetsPanel() {
                         </div>
                         {preset.inputs.cost_items.map((cost, index) => (
                           <div key={cost.id} className={`grid grid-cols-4 gap-4 p-3 text-sm ${index !== preset.inputs.cost_items.length - 1 ? 'border-b' : ''}`}>
-                            <div className="font-medium">{cost.name}</div>
+                            <div className="font-medium">{cost.label}</div>
                             <div>{fmtAED(cost.amount)}</div>
                             <div>{cost.start_month}</div>
                             <div>{cost.duration_months} months</div>

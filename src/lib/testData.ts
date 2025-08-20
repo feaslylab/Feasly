@@ -1,4 +1,4 @@
-import { DebtItemInput, UnitTypeInput } from "@/schemas/inputs";
+import { DebtItemInput, UnitTypeInput, CostItemInput } from "@/schemas/inputs";
 
 /**
  * Sample data generators for testing Sprint 2 features
@@ -40,6 +40,33 @@ export function createSampleUnits(): UnitTypeInput[] {
       lease_term_months: 36,
       start_month: 24,
       duration_months: 1,
+    }
+  ];
+}
+
+export function createSampleCosts(): CostItemInput[] {
+  return [
+    {
+      id: "construction",
+      label: "Construction",
+      amount: 50000000,
+      category: "construction",
+      cost_code: "TEST-CONST",
+      vat_input_eligible: true,
+      is_capex: true,
+      start_month: 6,
+      duration_months: 18
+    },
+    {
+      id: "land",
+      label: "Land Purchase",
+      amount: 15000000,
+      category: "land",
+      cost_code: "TEST-LAND",
+      vat_input_eligible: false,
+      is_capex: true,
+      start_month: 0,
+      duration_months: 1
     }
   ];
 }
