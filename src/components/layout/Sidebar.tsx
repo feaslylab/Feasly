@@ -56,10 +56,12 @@ export const Sidebar = () => {
   
   const filteredNavigation = navigation.filter(item => !cfg.nav.hiddenRoutes.includes(item.href));
 
-  // Update CSS variable for layout calculations
+  // Update CSS variable for content positioning
   useEffect(() => {
-    const sidebarWidth = isCollapsed ? 56 : 256;
-    document.documentElement.style.setProperty('--sidebar-width', `${sidebarWidth}px`);
+    const sidebarWidth = isCollapsed ? '56px' : '256px';
+    document.documentElement.style.setProperty('--sidebar-width', sidebarWidth);
+    document.documentElement.style.setProperty('--sidebar-space', sidebarWidth);
+    console.log('🔧 CSS Variable Update:', { isCollapsed, sidebarWidth });
   }, [isCollapsed]);
 
   const handleSignOut = async () => {
@@ -73,20 +75,15 @@ export const Sidebar = () => {
         "fixed left-0 top-[var(--header-height)] h-[calc(100vh-var(--header-height))]",
         "bg-sidebar/98 backdrop-blur-lg border-r border-sidebar-border/60 shadow-elegant z-[var(--z-sidebar)]",
         "flex flex-col transition-all duration-300 ease-in-out",
-        // Width states - Force specific widths with visual debugging
-        isCollapsed ? "w-14 min-w-[56px] max-w-[56px]" : "w-64 min-w-[256px] max-w-[256px]",
-        // Debug border to see width changes
-        "border-l-4", isCollapsed ? "border-l-red-500" : "border-l-green-500",
         // RTL support
         "rtl:right-0 rtl:left-auto rtl:border-l rtl:border-r-0",
-        // Mobile overlay
+        // Mobile behavior
         isMobile ? "bg-sidebar/95" : ""
       )}
       style={{
         width: isCollapsed ? '56px' : '256px'
       }}
       data-collapsed={isCollapsed}
-      data-debug={`${isCollapsed ? 'collapsed' : 'expanded'}-${Date.now()}`}
     >
       {/* Top Section - Navigation */}
       <div className="flex flex-col min-h-0">

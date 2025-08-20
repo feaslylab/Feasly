@@ -91,12 +91,13 @@
 
     /* Dynamic Layout Spacing - Unified System */
     --header-height: 3rem;          /* 48px */
-    --sidebar-width: 16rem;         /* 256px - full width */
     --sidebar-collapsed: 3.5rem;    /* 56px - collapsed width */
+    --sidebar-expanded: 16rem;       /* 256px - full width */
     --sidebar-buffer: 1.5rem;       /* 24px - breathing room between elements */
     --mobile-nav-height: 3.5rem;    /* 56px */
 
     /* Calculated Content Spacing - Single Source of Truth */
+    --sidebar-width: 0px;           /* Dynamic: set by JS based on state */
     --sidebar-space: 0px;           /* Dynamic: set by JS based on state */
     --content-left-space: calc(var(--sidebar-space) + var(--sidebar-buffer));
     --content-safe-area: var(--header-height);
