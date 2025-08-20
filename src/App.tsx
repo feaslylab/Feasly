@@ -24,6 +24,12 @@ const ModelPage = lazy(() => import("./pages/ModelPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
 const FeaslyLanding = lazy(() => import("./pages/marketing/FeaslyLanding"));
+const FeaslyFlow = lazy(() => import("./pages/FeaslyFlow"));
+const FeaslyFinance = lazy(() => import("./pages/FeaslyFinance"));
+const FeaslyConsolidate = lazy(() => import("./pages/FeaslyConsolidate"));
+const FeaslyInsights = lazy(() => import("./pages/FeaslyInsights"));
+const FeaslyAlerts = lazy(() => import("./pages/FeaslyAlerts"));
+const Settings = lazy(() => import("./pages/Settings"));
 
 const queryClient = new QueryClient();
 
@@ -56,6 +62,12 @@ const App = () => {
                 <Route path={PATHS.projectsNew} element={<NewProject />} />
                 <Route path={PATHS.portfolio} element={<Portfolio />} />
                 <Route path={PATHS.model} element={<ModelPage />} />
+                <Route path={PATHS.flow} element={<FeaslyFlow />} />
+                <Route path={PATHS.finance} element={<FeaslyFinance />} />
+                <Route path={PATHS.consolidate} element={<FeaslyConsolidate />} />
+                <Route path={PATHS.insights} element={<FeaslyInsights />} />
+                <Route path={PATHS.alerts} element={<FeaslyAlerts />} />
+                <Route path={PATHS.settings} element={<Settings />} />
                 {/* Legacy route with params - redirect to new format */}
                 <Route path="/feasly-model/:projectId/:scenarioId" element={<Navigate to={`${PATHS.model}?project=$1&scenario=$2`} replace />} />
                 <Route path={PATHS.demo} element={<DemoPage />} />

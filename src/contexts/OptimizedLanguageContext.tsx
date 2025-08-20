@@ -54,6 +54,7 @@ const translations = {
     'nav.finance': 'Feasly Finance',
     'nav.consolidate': 'Feasly Consolidate',
     'nav.insights': 'Feasly Insights',
+    'nav.alerts': 'Feasly Alerts',
     
     // Common
     'common.loading': 'Loading...',
@@ -102,6 +103,7 @@ const translations = {
     'nav.finance': 'مالية فيزلي',
     'nav.consolidate': 'توحيد فيزلي',
     'nav.insights': 'رؤى فيزلي',
+    'nav.alerts': 'تنبيهات فيزلي',
     
     // Common
     'common.loading': 'جاري التحميل...',

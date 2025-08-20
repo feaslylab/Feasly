@@ -19,26 +19,26 @@ const navigation = [
   { nameKey: "projects", href: "/projects", icon: FolderOpen },
   { nameKey: "portfolio", href: PATHS.portfolio, icon: Building2 },
   { nameKey: "model", href: PATHS.model, icon: Building },
-  { nameKey: "flow", href: "/feasly-flow", icon: BarChart3 },
-  { nameKey: "finance", href: "/feasly-finance", icon: DollarSign },
-  { nameKey: "consolidate", href: "/feasly-consolidate", icon: FolderOpen },
-  { nameKey: "insights", href: "/feasly-insights", icon: TrendingUp },
-  { nameKey: "alerts", href: "/feasly-alerts", icon: AlertTriangle },
-  { nameKey: "settings", href: "/settings", icon: Settings },
+  { nameKey: "flow", href: PATHS.flow, icon: BarChart3 },
+  { nameKey: "finance", href: PATHS.finance, icon: DollarSign },
+  { nameKey: "consolidate", href: PATHS.consolidate, icon: FolderOpen },
+  { nameKey: "insights", href: PATHS.insights, icon: TrendingUp },
+  { nameKey: "alerts", href: PATHS.alerts, icon: AlertTriangle },
+  { nameKey: "settings", href: PATHS.settings, icon: Settings },
 ];
 
 // Helper function to get module title based on current route
 const getModuleTitle = (pathname: string, t: any) => {
   if (pathname.startsWith('/model')) return t('title', { ns: 'feasly.model' });
-  if (pathname.startsWith('/feasly-flow')) return t('title', { ns: 'feasly.flow' });
-  if (pathname.startsWith('/feasly-finance')) return t('title', { ns: 'feasly.finance' });
-  if (pathname.startsWith('/feasly-consolidate')) return t('title', { ns: 'feasly.consolidate' });
-  if (pathname.startsWith('/feasly-insights')) return t('title', { ns: 'feasly.insights' });
-  if (pathname.startsWith('/feasly-alerts')) return t('title', { ns: 'feasly.alerts' });
+  if (pathname.startsWith(PATHS.flow)) return t('title', { ns: 'feasly.flow' });
+  if (pathname.startsWith(PATHS.finance)) return t('title', { ns: 'feasly.finance' });
+  if (pathname.startsWith(PATHS.consolidate)) return t('title', { ns: 'feasly.consolidate' });
+  if (pathname.startsWith(PATHS.insights)) return t('title', { ns: 'feasly.insights' });
+  if (pathname.startsWith(PATHS.alerts)) return t('title', { ns: 'feasly.alerts' });
   if (pathname.startsWith('/dashboard')) return t('nav.dashboard', { ns: 'common' });
   if (pathname.startsWith('/projects')) return t('nav.projects', { ns: 'common' });
   if (pathname.startsWith('/portfolio')) return t('nav.portfolio', { ns: 'common' });
-  if (pathname.startsWith('/settings')) return t('nav.settings', { ns: 'common' });
+  if (pathname.startsWith(PATHS.settings)) return t('nav.settings', { ns: 'common' });
   return 'Financial Modeling Platform';
 };
 
