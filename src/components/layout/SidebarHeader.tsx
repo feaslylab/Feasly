@@ -19,7 +19,10 @@ export default function SidebarHeader() {
       
       {/* Toggle Button - Always visible */}
       <button
-        onClick={toggleSidebar}
+        onClick={() => {
+          console.log('Button clicked, calling toggleSidebar');
+          toggleSidebar();
+        }}
         className={cn(
           "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors",
           "h-8 w-8 flex items-center justify-center rounded-md",
@@ -28,6 +31,8 @@ export default function SidebarHeader() {
         title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         <Menu className="h-4 w-4" />
+        {/* Debug indicator */}
+        <span className="sr-only">Collapsed: {isCollapsed.toString()}</span>
       </button>
     </div>
   );

@@ -67,10 +67,11 @@ export const Sidebar = () => {
   // Consolidated CSS variable management - now handled by useResponsiveLayout
   // This ensures single source of truth for spacing calculations
   useEffect(() => {
-    // Legacy support - useResponsiveLayout now handles the main CSS variable updates
-    const sidebarWidth = !shouldShowSidebar ? 0 : isCollapsed ? 56 : 256;
+    // Update CSS variable for layout calculations
+    const sidebarWidth = isCollapsed ? 56 : 256;
     document.documentElement.style.setProperty('--sidebar-width', `${sidebarWidth}px`);
-  }, [shouldShowSidebar, isCollapsed]);
+    console.log('Updated sidebar width CSS variable:', sidebarWidth);
+  }, [isCollapsed]);
 
   const handleSignOut = async () => {
     await signOut();
