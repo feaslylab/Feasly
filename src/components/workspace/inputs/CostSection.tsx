@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CostItemSchema, type CostItemInput } from "@/schemas/inputs";
-import { Plus, Trash2, Save, DollarSign, Eye, EyeOff } from "lucide-react";
+import { Plus, Trash2, Save, DollarSign, Eye, EyeOff, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import CurveEditor, { type CurveData } from "@/components/shared/CurveEditor";
 
 const costCategories = [
   { value: "construction", label: "Construction" },
@@ -30,6 +31,10 @@ function newCostItem(): CostItemInput {
     is_capex: true,
     start_month: 0,
     duration_months: 1,
+    curve: {
+      meaning: "phasing",
+      values: [0] // Will be populated based on amount and duration
+    }
   };
 }
 
@@ -37,23 +42,49 @@ export default function CostSection() {
   const { inputs, setInputs } = useEngine();
   const [draft, setDraft] = useState<CostItemInput | null>(null);
   const [showPhasing, setShowPhasing] = useState(false);
+  const [expandedCurves, setExpandedCurves] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
   const costItems = useMemo<CostItemInput[]>(() => {
     if (!Array.isArray(inputs?.cost_items)) return [];
     
+    const projectPeriods = inputs?.project?.periods || inputs?.project?.duration_months || 60;
+     
     // Transform existing data to our schema format
-    return inputs.cost_items.map((cost: any, index: number) => ({
-      id: cost.id || `cost-${index}`,
-      label: cost.label || cost.name || `Cost Item ${index + 1}`,
-      amount: Number(cost.amount || cost.value || 0),
-      category: cost.category || "construction",
-      cost_code: cost.cost_code || "",
-      vat_input_eligible: Boolean(cost.vat_input_eligible),
-      is_capex: cost.is_capex !== undefined ? Boolean(cost.is_capex) : true,
-      start_month: Number(cost.start_month || 0),
-      duration_months: Number(cost.duration_months || 1),
-    }));
+    return inputs.cost_items.map((cost: any, index: number) => {
+      const duration = Number(cost.duration_months || 1);
+      const amount = Number(cost.amount || cost.value || 0);
+      
+      // Generate default curve if not present
+      let curve = cost.curve;
+      if (!curve || !curve.values) {
+        const defaultPhasing = Array(projectPeriods).fill(0);
+        const monthlyAmount = amount / duration;
+        const startMonth = Number(cost.start_month || 0);
+        
+        for (let i = startMonth; i < Math.min(startMonth + duration, projectPeriods); i++) {
+          defaultPhasing[i] = monthlyAmount;
+        }
+        
+        curve = {
+          meaning: "phasing",
+          values: defaultPhasing
+        };
+      }
+      
+      return {
+        id: cost.id || `cost-${index}`,
+        label: cost.label || cost.name || `Cost Item ${index + 1}`,
+        amount,
+        category: cost.category || "construction",
+        cost_code: cost.cost_code || "",
+        vat_input_eligible: Boolean(cost.vat_input_eligible),
+        is_capex: cost.is_capex !== undefined ? Boolean(cost.is_capex) : true,
+        start_month: Number(cost.start_month || 0),
+        duration_months: duration,
+        curve
+      };
+    });
   }, [inputs]);
 
   // Group costs by category
@@ -128,7 +159,34 @@ export default function CostSection() {
   const edit = (row: CostItemInput) => setDraft({ ...row });
 
   // Generate phasing preview for a cost item
+  const updateCostCurve = (costId: string, newValues: number[]) => {
+    setInputs((prev: any) => ({
+      ...prev,
+      cost_items: costItems.map(cost => 
+        cost.id === costId 
+          ? { ...cost, curve: { ...cost.curve, values: newValues } }
+          : cost
+      )
+    }));
+  };
+
+  const toggleCurveExpanded = (costId: string) => {
+    setExpandedCurves(prev => {
+      const next = new Set(prev);
+      if (next.has(costId)) {
+        next.delete(costId);
+      } else {
+        next.add(costId);
+      }
+      return next;
+    });
+  };
+
   const generatePhasing = (cost: CostItemInput, totalPeriods: number = 60) => {
+    if (cost.curve?.values && cost.curve.values.length === totalPeriods) {
+      return cost.curve.values;
+    }
+    // Fallback to linear phasing
     const phasing = new Array(totalPeriods).fill(0);
     const monthlyAmount = cost.amount / cost.duration_months;
     
@@ -138,6 +196,8 @@ export default function CostSection() {
     
     return phasing;
   };
+
+  const projectPeriods = inputs?.project?.periods || inputs?.project?.duration_months || 60;
 
   return (
     <Card className="p-4 space-y-4" data-section="costs">
@@ -241,6 +301,14 @@ export default function CostSection() {
                   {c.vat_input_eligible ? "✓" : ""}
                 </td>
                 <td className="p-2 text-right space-x-1">
+                  <Button 
+                    size="sm" 
+                    variant="ghost" 
+                    onClick={() => toggleCurveExpanded(c.id)}
+                    title="Edit Phasing Curve"
+                  >
+                    <TrendingUp className="h-4 w-4" />
+                  </Button>
                   <Button size="sm" variant="ghost" onClick={() => edit(c)}>Edit</Button>
                   <Button size="sm" variant="ghost" onClick={() => remove(c.id)}>
                     <Trash2 className="h-4 w-4" />
@@ -368,6 +436,23 @@ export default function CostSection() {
           )}
         </div>
       )}
+
+      {/* Curve Editors for Cost Items */}
+      {costItems.map((cost) => (
+        expandedCurves.has(cost.id) && (
+          <div key={`curve-${cost.id}`} className="mt-4">
+            <CurveEditor
+              id={cost.id}
+              label={`${cost.label} Cost Phasing`}
+              totalAmount={cost.amount}
+              curve={cost.curve as CurveData}
+              totalPeriods={projectPeriods}
+              currency={inputs?.project?.currency || "AED"}
+              onChange={(newValues) => updateCostCurve(cost.id, newValues)}
+            />
+          </div>
+        )
+      ))}
     </Card>
   );
 }

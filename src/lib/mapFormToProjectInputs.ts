@@ -7,14 +7,24 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
   // Transform cost items from form format to engine format
   const transformCostItems = (formCostItems: any[] = []) => {
     return formCostItems.map((item: any) => {
-      // Create phasing array based on start_month and duration
-      const phasing = Array(periods).fill(0);
-      const startMonth = item.start_month || 0;
-      const duration = item.duration_months || 1;
-      const monthlyAmount = (item.amount || 0) / duration;
-      
-      for (let i = startMonth; i < Math.min(startMonth + duration, periods); i++) {
-        phasing[i] = monthlyAmount;
+      // Use curve values if present, otherwise fallback to linear phasing
+      let phasing;
+      if (item.curve?.values && Array.isArray(item.curve.values)) {
+        // Ensure curve values match project periods
+        phasing = item.curve.values.slice(0, periods);
+        if (phasing.length < periods) {
+          phasing = phasing.concat(Array(periods - phasing.length).fill(0));
+        }
+      } else {
+        // Fallback to linear phasing based on start_month and duration
+        phasing = Array(periods).fill(0);
+        const startMonth = item.start_month || 0;
+        const duration = item.duration_months || 1;
+        const monthlyAmount = (item.amount || 0) / duration;
+        
+        for (let i = startMonth; i < Math.min(startMonth + duration, periods); i++) {
+          phasing[i] = monthlyAmount;
+        }
       }
       
       return {
@@ -24,7 +34,8 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
         is_opex: !Boolean(item.is_capex), // invert is_capex to get is_opex
         vat_input_eligible: Boolean(item.vat_input_eligible),
         category: item.category || 'other',
-        cost_code: item.cost_code || ''
+        cost_code: item.cost_code || '',
+        curve: item.curve || undefined
       };
     });
   };
@@ -33,6 +44,27 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
   const transformUnitTypes = (formUnitTypes: any[] = []) => {
     return formUnitTypes.map((unit: any) => {
       const isRental = unit.revenue_mode === 'rent';
+      
+      // Use curve values if present, otherwise generate defaults
+      let curve;
+      if (unit.curve?.values && Array.isArray(unit.curve.values)) {
+        curve = unit.curve;
+      } else {
+        // Generate default curves based on revenue mode
+        if (isRental) {
+          const leaseTerm = unit.lease_term_months || 12;
+          curve = {
+            meaning: "occupancy" as const,
+            values: Array(leaseTerm).fill(unit.occupancy_rate || 0.8)
+          };
+        } else {
+          const duration = unit.duration_months || 1;
+          curve = {
+            meaning: "sell_through" as const,
+            values: Array(duration).fill(1.0 / duration)
+          };
+        }
+      }
       
       return {
         key: unit.id || unit.name || `unit_${Math.random().toString(36).substr(2, 9)}`,
@@ -44,12 +76,7 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
         initial_rent_sqm_m: isRental ? (unit.rent_per_month || 0) * (unit.occupancy_rate || 0.8) / (unit.unit_area_sqm || 1) : 0,
         revenue_policy: "handover" as const,
         vat_class_output: "out_of_scope" as const,
-        curve: {
-          meaning: (isRental ? "occupancy" : "sell_through") as "occupancy" | "sell_through",
-          values: isRental 
-            ? Array(unit.lease_term_months || 12).fill(unit.occupancy_rate || 0.8)
-            : Array(unit.duration_months || 1).fill(1 / (unit.duration_months || 1))
-        }
+        curve
       };
     });
   };
@@ -85,7 +112,15 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
     unit_types: transformUnitTypes(form?.unit_types),
     cost_items: transformCostItems(form?.cost_items),
     debt: transformDebtItems(form?.debt),
-    financing_slices: form?.financing_slices ?? [],
+    financing_slices: (form?.financing_slices ?? []).map((slice: any) => ({
+      ...slice,
+      curve: slice.curve || {
+        meaning: "drawdown",
+        values: slice.type !== "equity" 
+          ? Array(Math.min(24, periods)).fill((slice.amount || 0) / Math.min(24, periods)).concat(Array(Math.max(0, periods - 24)).fill(0))
+          : Array(periods).fill(0)
+      }
+    })),
     tax: form?.tax ?? { vat_enabled:false, vat_rate:0, corp_tax_enabled:false, corp_tax_rate:0, zakat_enabled:false, interest_cap_pct_ebitda:1, allow_nol_carryforward:true, vat_ruleset:"UAE_2025" },
     escrow: form?.escrow ?? { wafi_enabled:false, collection_cap:{alpha:1,beta:1}, release_rules:"alpha_beta", milestones:[] },
     valuation: form?.valuation ?? { selling_cost_pct:0, cap_rate_pa_income:0, stabilize_month:24 },

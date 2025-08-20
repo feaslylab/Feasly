@@ -26,6 +26,10 @@ export const UnitTypeSchema = z.object({
   lease_term_months: z.number().int().positive("Lease term must be positive").optional(),
   start_month: z.number().int().nonnegative().default(0),
   duration_months: z.number().int().positive().default(1),
+  curve: z.object({
+    meaning: z.enum(["sell_through", "occupancy"]),
+    values: z.array(z.number())
+  }).optional(),
 }).refine(
   (data) => {
     if (data.revenue_mode === "sale") {
@@ -58,6 +62,10 @@ export const CostItemSchema = z.object({
   is_capex: z.boolean().default(true),
   start_month: z.number().int().nonnegative().default(0),
   duration_months: z.number().int().positive().default(1),
+  curve: z.object({
+    meaning: z.enum(["phasing"]),
+    values: z.array(z.number())
+  }).optional(),
 });
 export type CostItemInput = z.infer<typeof CostItemSchema>;
 
@@ -71,6 +79,10 @@ export const FinancingSliceSchema = z.object({
   dscr_min: z.number().min(0).max(5).optional(),
   is_interest_only: z.boolean().optional(),
   start_month: z.number().int().nonnegative().default(0),
+  curve: z.object({
+    meaning: z.enum(["drawdown"]),
+    values: z.array(z.number())
+  }).optional(),
 });
 export type FinancingSliceInput = z.infer<typeof FinancingSliceSchema>;
 

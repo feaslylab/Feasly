@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FinancingSliceSchema, type FinancingSliceInput } from "@/schemas/inputs";
-import { Plus, Trash2, Save, TrendingUp, AlertTriangle, DollarSign } from "lucide-react";
+import { Plus, Trash2, Save, TrendingUp, AlertTriangle, DollarSign, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import CurveEditor, { type CurveData } from "@/components/shared/CurveEditor";
 
 const financingTypes = [
   { value: "equity", label: "Equity" },
@@ -27,29 +28,67 @@ function newFinancingSlice(): FinancingSliceInput {
     dscr_min: undefined,
     is_interest_only: false,
     start_month: 0,
+    curve: {
+      meaning: "drawdown",
+      values: [0] // Will be populated for debt financing
+    }
   };
 }
 
 export default function FinancingSection() {
   const { inputs, setInputs } = useEngine();
   const [draft, setDraft] = useState<FinancingSliceInput | null>(null);
+  const [expandedCurves, setExpandedCurves] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
   const financingSlices = useMemo<FinancingSliceInput[]>(() => {
     if (!Array.isArray(inputs?.financing_slices)) return [];
     
+    const projectPeriods = inputs?.project?.periods || inputs?.project?.duration_months || 60;
+    
     // Transform existing data to our schema format
-    return inputs.financing_slices.map((slice: any, index: number) => ({
-      id: slice.id || `financing-${index}`,
-      type: slice.type || "equity",
-      label: slice.label || slice.name || `Financing ${index + 1}`,
-      amount: Number(slice.amount || 0),
-      interest_rate: slice.interest_rate ? Number(slice.interest_rate) : undefined,
-      tenor_months: slice.tenor_months ? Number(slice.tenor_months) : undefined,
-      dscr_min: slice.dscr_min ? Number(slice.dscr_min) : undefined,
-      is_interest_only: Boolean(slice.is_interest_only),
-      start_month: Number(slice.start_month || 0),
-    }));
+    return inputs.financing_slices.map((slice: any, index: number) => {
+      const amount = Number(slice.amount || 0);
+      const type = slice.type || "equity";
+      
+      // Generate default curve if not present (for debt only)
+      let curve = slice.curve;
+      if (!curve || !curve.values) {
+        if (type !== "equity") {
+          // Default linear drawdown over first 24 months
+          const drawdownPeriods = Math.min(24, projectPeriods);
+          const monthlyDraw = amount / drawdownPeriods;
+          const defaultDrawdown = Array(projectPeriods).fill(0);
+          
+          for (let i = 0; i < drawdownPeriods; i++) {
+            defaultDrawdown[i] = monthlyDraw;
+          }
+          
+          curve = {
+            meaning: "drawdown",
+            values: defaultDrawdown
+          };
+        } else {
+          curve = {
+            meaning: "drawdown",
+            values: Array(projectPeriods).fill(0)
+          };
+        }
+      }
+      
+      return {
+        id: slice.id || `financing-${index}`,
+        type,
+        label: slice.label || slice.name || `Financing ${index + 1}`,
+        amount,
+        interest_rate: slice.interest_rate ? Number(slice.interest_rate) : undefined,
+        tenor_months: slice.tenor_months ? Number(slice.tenor_months) : undefined,
+        dscr_min: slice.dscr_min ? Number(slice.dscr_min) : undefined,
+        is_interest_only: Boolean(slice.is_interest_only),
+        start_month: Number(slice.start_month || 0),
+        curve
+      };
+    });
   }, [inputs]);
 
   // Group financing by type
@@ -153,6 +192,29 @@ export default function FinancingSection() {
 
   const edit = (row: FinancingSliceInput) => setDraft({ ...row });
 
+  const updateFinancingCurve = (financeId: string, newValues: number[]) => {
+    setInputs((prev: any) => ({
+      ...prev,
+      financing_slices: financingSlices.map(slice => 
+        slice.id === financeId 
+          ? { ...slice, curve: { ...slice.curve, values: newValues } }
+          : slice
+      )
+    }));
+  };
+
+  const toggleCurveExpanded = (financeId: string) => {
+    setExpandedCurves(prev => {
+      const next = new Set(prev);
+      if (next.has(financeId)) {
+        next.delete(financeId);
+      } else {
+        next.add(financeId);
+      }
+      return next;
+    });
+  };
+
   const getTypeColor = (type: string) => {
     switch (type) {
       case "equity": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
@@ -161,6 +223,8 @@ export default function FinancingSection() {
       default: return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
     }
   };
+
+  const projectPeriods = inputs?.project?.periods || inputs?.project?.duration_months || 60;
 
   return (
     <Card className="p-4 space-y-4" data-section="financing">
@@ -279,6 +343,16 @@ export default function FinancingSection() {
                   {slice.type !== "equity" && slice.is_interest_only ? "✓" : "-"}
                 </td>
                 <td className="p-2 text-right space-x-1">
+                  {slice.type !== "equity" && (
+                    <Button 
+                      size="sm" 
+                      variant="ghost" 
+                      onClick={() => toggleCurveExpanded(slice.id)}
+                      title="Edit Drawdown Curve"
+                    >
+                      <BarChart3 className="h-4 w-4" />
+                    </Button>
+                  )}
                   <Button size="sm" variant="ghost" onClick={() => edit(slice)}>Edit</Button>
                   <Button size="sm" variant="ghost" onClick={() => remove(slice.id)}>
                     <Trash2 className="h-4 w-4" />
@@ -426,6 +500,23 @@ export default function FinancingSection() {
           </div>
         </div>
       )}
+
+      {/* Curve Editors for Financing Slices (Debt Only) */}
+      {financingSlices.map((slice) => (
+        slice.type !== "equity" && expandedCurves.has(slice.id) && (
+          <div key={`curve-${slice.id}`} className="mt-4">
+            <CurveEditor
+              id={slice.id}
+              label={`${slice.label} Drawdown Schedule`}
+              totalAmount={slice.amount}
+              curve={slice.curve as CurveData}
+              totalPeriods={projectPeriods}
+              currency={inputs?.project?.currency || "AED"}
+              onChange={(newValues) => updateFinancingCurve(slice.id, newValues)}
+            />
+          </div>
+        )
+      ))}
     </Card>
   );
 }

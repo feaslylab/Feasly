@@ -1,14 +1,15 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useEngine } from "@/lib/engine/EngineContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { UnitTypeSchema, UnitTypeInput } from "@/schemas/inputs";
 import { nanoid } from "nanoid";
-import { Trash2, Edit, Plus, Calculator } from "lucide-react";
-import { useState } from "react";
+import { Trash2, Edit, Plus, Calculator, ChevronDown, TrendingUp } from "lucide-react";
+import CurveEditor, { type CurveData } from "@/components/shared/CurveEditor";
 
 function newRow(): UnitTypeInput {
   return {
@@ -24,12 +25,17 @@ function newRow(): UnitTypeInput {
     lease_term_months: 12,
     start_month: 0,
     duration_months: 1,
+    curve: {
+      meaning: "sell_through",
+      values: [1.0] // Default to 100% in first month
+    }
   };
 }
 
 export default function ProductMixSection() {
   const { inputs, setInputs } = useEngine();
   const [draft, setDraft] = useState<UnitTypeInput | null>(null);
+  const [expandedCurves, setExpandedCurves] = useState<Set<string>>(new Set());
 
   const unitTypes = useMemo<UnitTypeInput[]>(() => {
     if (!inputs?.unit_types) return [];
@@ -46,6 +52,12 @@ export default function ProductMixSection() {
       lease_term_months: Number(raw.lease_term_months ?? 12),
       start_month: Number(raw.start_month ?? 0),
       duration_months: Number(raw.duration_months ?? 1),
+      curve: raw.curve || {
+        meaning: raw.revenue_mode === "rent" ? "occupancy" : "sell_through",
+        values: raw.revenue_mode === "rent" 
+          ? Array(raw.lease_term_months || 12).fill(raw.occupancy_rate || 0.8)
+          : Array(raw.duration_months || 1).fill(1.0 / (raw.duration_months || 1))
+      }
     }));
   }, [inputs]);
 
@@ -131,6 +143,31 @@ export default function ProductMixSection() {
     return 0;
   };
 
+  const updateUnitCurve = (unitId: string, newValues: number[]) => {
+    setInputs((prev: any) => ({
+      ...prev,
+      unit_types: unitTypes.map(unit => 
+        unit.id === unitId 
+          ? { ...unit, curve: { ...unit.curve, values: newValues } }
+          : unit
+      )
+    }));
+  };
+
+  const toggleCurveExpanded = (unitId: string) => {
+    setExpandedCurves(prev => {
+      const next = new Set(prev);
+      if (next.has(unitId)) {
+        next.delete(unitId);
+      } else {
+        next.add(unitId);
+      }
+      return next;
+    });
+  };
+
+  const projectPeriods = inputs?.project?.periods || inputs?.project?.duration_months || 60;
+
   return (
     <Card className="p-6 space-y-6" data-section="product-mix">
       <div className="space-y-2">
@@ -209,6 +246,15 @@ export default function ProductMixSection() {
                       <Button
                         variant="ghost"
                         size="sm"
+                        onClick={() => toggleCurveExpanded(unit.id)}
+                        className="h-7 w-7 p-0"
+                        title="Edit Timing Curve"
+                      >
+                        <TrendingUp className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
                         onClick={() => edit(unit)}
                         className="h-7 w-7 p-0"
                       >
@@ -230,6 +276,23 @@ export default function ProductMixSection() {
           </table>
         </div>
       )}
+
+      {/* Curve Editors for Unit Types */}
+      {unitTypes.map((unit) => (
+        expandedCurves.has(unit.id) && (
+          <div key={`curve-${unit.id}`} className="mt-4">
+            <CurveEditor
+              id={unit.id}
+              label={`${unit.name} Revenue Distribution`}
+              totalAmount={calculateRowRevenue(unit)}
+              curve={unit.curve as CurveData}
+              totalPeriods={projectPeriods}
+              currency={inputs?.project?.currency || "AED"}
+              onChange={(newValues) => updateUnitCurve(unit.id, newValues)}
+            />
+          </div>
+        )
+      ))}
 
       {/* Draft Form */}
       {draft && (
