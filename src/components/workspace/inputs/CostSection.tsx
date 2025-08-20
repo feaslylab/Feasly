@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { useEngine } from "@/lib/engine/EngineContext";
+import { InlineBadge } from "@/components/warnings/InlineBadge";
+import { validateFeasibility } from "@/utils/validateFeasibility";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -40,6 +42,8 @@ function newCostItem(): CostItemInput {
 
 export default function CostSection() {
   const { inputs, setInputs } = useEngine();
+  const feasibility = useMemo(() => validateFeasibility(inputs), [inputs]);
+  const costWarnings = feasibility.warnings.filter(w => w.location === 'costs');
   const [draft, setDraft] = useState<CostItemInput | null>(null);
   const [showPhasing, setShowPhasing] = useState(false);
   const [expandedCurves, setExpandedCurves] = useState<Set<string>>(new Set());

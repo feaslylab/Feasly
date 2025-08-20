@@ -1,5 +1,7 @@
 import { useMemo, useState } from "react";
 import { useEngine } from "@/lib/engine/EngineContext";
+import { InlineBadge } from "@/components/warnings/InlineBadge";
+import { validateFeasibility } from "@/utils/validateFeasibility";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -37,6 +39,8 @@ function newFinancingSlice(): FinancingSliceInput {
 
 export default function FinancingSection() {
   const { inputs, setInputs } = useEngine();
+  const feasibility = useMemo(() => validateFeasibility(inputs), [inputs]);
+  const financingWarnings = feasibility.warnings.filter(w => w.location === 'financing');
   const [draft, setDraft] = useState<FinancingSliceInput | null>(null);
   const [expandedCurves, setExpandedCurves] = useState<Set<string>>(new Set());
   const { toast } = useToast();

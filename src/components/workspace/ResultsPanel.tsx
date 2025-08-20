@@ -1,5 +1,5 @@
 import { fmtPct, fmtMult, fmtCurrency } from '@/lib/formatters';
-import { useEngineNumbers } from '@/lib/engine/EngineContext';
+import { useEngineNumbers, useEngine } from '@/lib/engine/EngineContext';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,10 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { TrendingUp, TrendingDown, Download, FileText, BarChart3, Calendar } from 'lucide-react';
 import { ExportToolsPanel } from './results/ExportToolsPanel';
 import { KPIOverviewPanel, type KPIMetrics } from '@/components/results/KPIOverviewPanel';
+import { WarningBanner } from '@/components/warnings/WarningBanner';
+import { WarningsPopover } from '@/components/warnings/WarningsPopover';
+import { validateFeasibility } from '@/utils/validateFeasibility';
+import { useMemo } from 'react';
 
 function Sparkline({ data }: { data: Array<number | null | undefined> }) {
   const valid = (data ?? []).filter(
