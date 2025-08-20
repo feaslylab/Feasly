@@ -12,11 +12,12 @@ import { useSidebarState } from "@/hooks/useSidebarState";
 import SidebarHeader from "./SidebarHeader";
 import { useViewMode } from '@/lib/view-mode';
 import { VIEW_CONFIG } from '@/lib/views/config';
+import { PATHS } from "@/routes/paths";
 
 const navigation = [
   { nameKey: "dashboard", href: "/dashboard", icon: BarChart3 },
   { nameKey: "projects", href: "/projects", icon: FolderOpen },
-  { nameKey: "model", href: "/feasly-model", icon: Building },
+  { nameKey: "model", href: PATHS.model, icon: Building },
   { nameKey: "flow", href: "/feasly-flow", icon: BarChart3 },
   { nameKey: "finance", href: "/feasly-finance", icon: DollarSign },
   { nameKey: "consolidate", href: "/feasly-consolidate", icon: FolderOpen },
@@ -27,7 +28,7 @@ const navigation = [
 
 // Helper function to get module title based on current route
 const getModuleTitle = (pathname: string, t: any) => {
-  if (pathname.startsWith('/feasly-model')) return t('title', { ns: 'feasly.model' });
+  if (pathname.startsWith('/model')) return t('title', { ns: 'feasly.model' });
   if (pathname.startsWith('/feasly-flow')) return t('title', { ns: 'feasly.flow' });
   if (pathname.startsWith('/feasly-finance')) return t('title', { ns: 'feasly.finance' });
   if (pathname.startsWith('/feasly-consolidate')) return t('title', { ns: 'feasly.consolidate' });
