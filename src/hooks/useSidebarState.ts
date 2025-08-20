@@ -12,9 +12,9 @@ export function useSidebarState() {
   const isMobile = useIsMobile();
   
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    // Start expanded by default on desktop for better UX
+    // Start with saved state from localStorage, default to expanded on desktop
     if (isMobile) return true;
-    return false; // Always start expanded on desktop
+    return getStoredState(); // Use stored state on desktop
   });
 
   // Simple visibility logic - always show the sidebar

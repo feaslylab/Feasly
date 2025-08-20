@@ -85,11 +85,15 @@ export const Sidebar = () => {
           "fixed left-0 top-[var(--header-height)] h-[calc(100vh-var(--header-height))]",
           "bg-sidebar/98 backdrop-blur-lg border-r border-sidebar-border/60 shadow-elegant z-[var(--z-sidebar)]",
           "flex flex-col transition-all duration-300 ease-in-out",
-          // Width based on collapsed state
+          // Width based on collapsed state - ensure proper transition
           isCollapsed ? "w-14" : "w-64",
           // RTL support
           "rtl:right-0 rtl:left-auto rtl:border-l rtl:border-r-0"
         )}
+        style={{ 
+          // Force width with inline styles to ensure transition works
+          width: isCollapsed ? '56px' : '256px' 
+        }}
       >
       {/* Top Section - Navigation */}
       <div className="flex flex-col min-h-0">
