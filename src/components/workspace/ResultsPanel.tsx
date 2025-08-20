@@ -10,6 +10,7 @@ import { KPIOverviewPanel, type KPIMetrics } from '@/components/results/KPIOverv
 import { WarningBanner } from '@/components/warnings/WarningBanner';
 import { WarningsPopover } from '@/components/warnings/WarningsPopover';
 import { validateFeasibility } from '@/utils/validateFeasibility';
+import { useExecutiveSummaryGenerator } from '@/components/export/ExecutiveSummaryGenerator';
 import { useMemo } from 'react';
 
 function Sparkline({ data }: { data: Array<number | null | undefined> }) {
@@ -157,6 +158,11 @@ function FinancingDetails({ numbers }: { numbers: any }) {
 
 function ResultsPanelContent({ currency = 'AED' }: { currency?: string }) {
   const numbers = useEngineNumbers();
+  const { inputs } = useEngine();
+  const { generateExecutiveSummaryPDF } = useExecutiveSummaryGenerator();
+  
+  // Calculate feasibility warnings
+  const feasibility = useMemo(() => validateFeasibility(inputs), [inputs]);
   const eq = numbers?.equity ?? null;
 
   const irr = eq?.kpis?.irr_pa ?? null;
@@ -290,6 +296,20 @@ function ResultsPanelContent({ currency = 'AED' }: { currency?: string }) {
         
         <TabsContent value="export">
           <div className="space-y-4">
+            <div className="border rounded-lg p-4">
+              <h3 className="font-medium mb-2">📄 Executive Summary</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                Generate a professional PDF report with KPIs, feasibility assessment, and project details
+              </p>
+              <Button 
+                variant="default" 
+                onClick={generateExecutiveSummaryPDF}
+                className="flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Export Executive Summary
+              </Button>
+            </div>
             <ExportToolsPanel />
             <div className="border rounded-lg p-4">
               <h3 className="font-medium mb-2">📅 Visual Timeline</h3>
