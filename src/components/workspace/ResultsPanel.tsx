@@ -4,7 +4,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { TrendingUp, TrendingDown, Download, FileText, BarChart3 } from 'lucide-react';
+import { TrendingUp, TrendingDown, Download, FileText, BarChart3, Calendar } from 'lucide-react';
 import { ExportToolsPanel } from './results/ExportToolsPanel';
 import { KPIOverviewPanel, type KPIMetrics } from '@/components/results/KPIOverviewPanel';
 
@@ -285,7 +285,27 @@ function ResultsPanelContent({ currency = 'AED' }: { currency?: string }) {
         </TabsContent>
         
         <TabsContent value="export">
-          <ExportToolsPanel />
+          <div className="space-y-4">
+            <ExportToolsPanel />
+            <div className="border rounded-lg p-4">
+              <h3 className="font-medium mb-2">📅 Visual Timeline</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                View your project's financial timeline in an interactive Gantt-style chart
+              </p>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  // Navigate to timeline tab - this is a placeholder
+                  // In actual implementation, would need to access parent tab context
+                  console.log('Navigate to timeline tab');
+                }}
+                className="flex items-center gap-2"
+              >
+                <Calendar className="w-4 h-4" />
+                Open Timeline View
+              </Button>
+            </div>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
