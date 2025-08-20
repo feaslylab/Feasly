@@ -1,7 +1,7 @@
 import { ProjectInputs } from "../../packages/feasly-engine/src/types";
 
 export function mapFormToProjectInputs(form: any): ProjectInputs {
-  const periods = form?.project?.periods ?? 120;
+  const periods = form?.project?.periods ?? form?.project?.duration_months ?? 120;
   const start_date = form?.project?.start_date ?? new Date().toISOString().slice(0,10);
 
   // Transform cost items from form format to engine format
@@ -30,22 +30,18 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
   // Transform unit types from form format to engine format  
   const transformUnitTypes = (formUnitTypes: any[] = []) => {
     return formUnitTypes.map((unit: any) => {
-      // Handle revenue mode specific mappings
       const isRental = unit.revenue_mode === 'rent';
       
       return {
         key: unit.id || unit.name || `unit_${Math.random().toString(36).substr(2, 9)}`,
-        category: "residential" as const,
+        category: (unit.asset_subtype?.toLowerCase() === 'retail' ? 'retail' : 'residential') as "residential" | "retail",
         count: unit.units || 0,
-        sellable_area_sqm: 1, // Normalized to 1 since pricing is per unit
+        sellable_area_sqm: unit.unit_area_sqm || 1,
         delivery_month: unit.start_month || 0,
-        // For sales: use price directly (per unit becomes per sqm since area = 1)
-        initial_price_sqm_sale: isRental ? 0 : (unit.price || 0),
-        // For rentals: use monthly rent * occupancy rate
-        initial_rent_sqm_m: isRental ? (unit.rent_per_month || 0) * (unit.occupancy_rate || 0.8) : 0,
+        initial_price_sqm_sale: isRental ? 0 : (unit.price_per_sqm || 0),
+        initial_rent_sqm_m: isRental ? (unit.rent_per_month || 0) * (unit.occupancy_rate || 0.8) / (unit.unit_area_sqm || 1) : 0,
         revenue_policy: "handover" as const,
         vat_class_output: "out_of_scope" as const,
-        // Add curve for revenue distribution
         curve: {
           meaning: (isRental ? "occupancy" : "sell_through") as "occupancy" | "sell_through",
           values: isRental 
@@ -71,7 +67,17 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
   };
 
   return {
-    project: { start_date, periods, periodicity: "monthly" },
+    project: { 
+      start_date, 
+      periods, 
+      periodicity: "monthly",
+      project_type: form?.project?.project_type,
+      developer_name: form?.project?.developer_name,
+      project_location: form?.project?.project_location,
+      currency: form?.project?.currency,
+      duration_months: form?.project?.duration_months,
+      masterplan_mode: form?.project?.masterplan_mode
+    },
     engineMode: "excel_parity",
     index_buckets: form?.index_buckets ?? [],
     unit_types: transformUnitTypes(form?.unit_types),

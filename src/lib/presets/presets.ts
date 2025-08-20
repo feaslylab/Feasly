@@ -19,8 +19,8 @@ export const PRESETS: FeaslyPreset[] = [
     category: 'residential',
     inputs: {
       unit_types: [
-        { id: '1', name: '1BR', units: 40, price: 900000, start_month: 12, duration_months: 12 },
-        { id: '2', name: '2BR', units: 60, price: 1200000, start_month: 12, duration_months: 12 }
+        { id: '1', name: '1BR', asset_subtype: 'Residential', revenue_mode: 'sale', units: 40, unit_area_sqm: 75, price_per_sqm: 12000, start_month: 12, duration_months: 12 },
+        { id: '2', name: '2BR', asset_subtype: 'Residential', revenue_mode: 'sale', units: 60, unit_area_sqm: 100, price_per_sqm: 12000, start_month: 12, duration_months: 12 }
       ],
       cost_items: [
         { id: '1', name: 'Construction', amount: 30000000, start_month: 6, duration_months: 24 },
@@ -35,7 +35,7 @@ export const PRESETS: FeaslyPreset[] = [
     category: 'retail',
     inputs: {
       unit_types: [
-        { id: '1', name: 'Retail Lot', units: 25, price: 2500000, start_month: 10, duration_months: 18 }
+        { id: '1', name: 'Retail Lot', asset_subtype: 'Retail', revenue_mode: 'sale', units: 25, unit_area_sqm: 100, price_per_sqm: 25000, start_month: 10, duration_months: 18 }
       ],
       cost_items: [
         { id: '1', name: 'Construction', amount: 20000000, start_month: 5, duration_months: 18 },
@@ -50,9 +50,9 @@ export const PRESETS: FeaslyPreset[] = [
     category: 'mixed_use',
     inputs: {
       unit_types: [
-        { id: '1', name: 'Studio', units: 30, price: 750000, start_month: 18, duration_months: 8 },
-        { id: '2', name: '1BR', units: 45, price: 950000, start_month: 18, duration_months: 8 },
-        { id: '3', name: 'Retail Space', units: 8, price: 1800000, start_month: 12, duration_months: 6 }
+        { id: '1', name: 'Studio', asset_subtype: 'Residential', revenue_mode: 'sale', units: 30, unit_area_sqm: 50, price_per_sqm: 15000, start_month: 18, duration_months: 8 },
+        { id: '2', name: '1BR', asset_subtype: 'Residential', revenue_mode: 'sale', units: 45, unit_area_sqm: 75, price_per_sqm: 12667, start_month: 18, duration_months: 8 },
+        { id: '3', name: 'Retail Space', asset_subtype: 'Retail', revenue_mode: 'sale', units: 8, unit_area_sqm: 80, price_per_sqm: 22500, start_month: 12, duration_months: 6 }
       ],
       cost_items: [
         { id: '1', name: 'Foundation & Structure', amount: 25000000, start_month: 3, duration_months: 18 },
@@ -68,9 +68,9 @@ export const PRESETS: FeaslyPreset[] = [
     category: 'residential',
     inputs: {
       unit_types: [
-        { id: '1', name: 'Penthouse', units: 4, price: 3500000, start_month: 24, duration_months: 6 },
-        { id: '2', name: '2BR Premium', units: 20, price: 1800000, start_month: 20, duration_months: 8 },
-        { id: '3', name: '3BR Premium', units: 16, price: 2400000, start_month: 20, duration_months: 8 }
+        { id: '1', name: 'Penthouse', asset_subtype: 'Luxury Residential', revenue_mode: 'sale', units: 4, unit_area_sqm: 200, price_per_sqm: 17500, start_month: 24, duration_months: 6 },
+        { id: '2', name: '2BR Premium', asset_subtype: 'Luxury Residential', revenue_mode: 'sale', units: 20, unit_area_sqm: 120, price_per_sqm: 15000, start_month: 20, duration_months: 8 },
+        { id: '3', name: '3BR Premium', asset_subtype: 'Luxury Residential', revenue_mode: 'sale', units: 16, unit_area_sqm: 150, price_per_sqm: 16000, start_month: 20, duration_months: 8 }
       ],
       cost_items: [
         { id: '1', name: 'Premium Construction', amount: 45000000, start_month: 6, duration_months: 30 },

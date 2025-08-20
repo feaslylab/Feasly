@@ -63,10 +63,19 @@ export default function PresetsPanel() {
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case 'residential': return 'Residential';
-      case 'retail': return 'Retail';
+      case 'retail': return 'Retail';  
       case 'mixed_use': return 'Mixed Use';
       default: return category;
     }
+  };
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'AED',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
   };
 
   return (
@@ -171,7 +180,7 @@ export default function PresetsPanel() {
                           <div key={unit.id} className={`grid grid-cols-5 gap-4 p-3 text-sm ${index !== preset.inputs.unit_types.length - 1 ? 'border-b' : ''}`}>
                             <div className="font-medium">{unit.name}</div>
                             <div>{unit.units}</div>
-                            <div>{fmtAED(unit.price)}</div>
+                            <div>{formatCurrency(unit.unit_area_sqm * unit.price_per_sqm || 0)}</div>
                             <div>{unit.start_month}</div>
                             <div>{unit.duration_months} months</div>
                           </div>

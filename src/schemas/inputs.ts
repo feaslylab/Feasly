@@ -4,15 +4,23 @@ export const ProjectSchema = z.object({
   start_date: z.string().min(1, "Start date is required"),
   periods: z.number().int().positive("Periods must be a positive integer"),
   periodicity: z.enum(["monthly", "quarterly", "yearly"]).default("monthly"),
+  project_type: z.enum(["Residential", "Mixed-Use", "Retail", "Hospitality", "Industrial", "Master Plan"]).default("Residential"),
+  developer_name: z.string().optional(),
+  project_location: z.string().optional(),
+  currency: z.string().default("AED"),
+  duration_months: z.number().int().positive("Duration must be positive").optional(),
+  masterplan_mode: z.boolean().default(false),
 });
 export type ProjectInput = z.infer<typeof ProjectSchema>;
 
 export const UnitTypeSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1, "Name is required"),
-  units: z.number().int().positive("Units must be > 0"),
+  asset_subtype: z.string().min(1, "Asset subtype is required"),
   revenue_mode: z.enum(["sale", "rent"]),
-  price: z.number().nonnegative("Price cannot be negative").optional(),
+  units: z.number().int().positive("Units must be > 0"),
+  unit_area_sqm: z.number().positive("Unit area must be positive"),
+  price_per_sqm: z.number().nonnegative("Price per sqm cannot be negative").optional(),
   rent_per_month: z.number().nonnegative("Rent cannot be negative").optional(),
   occupancy_rate: z.number().min(0, "Occupancy rate cannot be negative").max(1, "Occupancy rate cannot exceed 100%").optional(),
   lease_term_months: z.number().int().positive("Lease term must be positive").optional(),
@@ -21,7 +29,7 @@ export const UnitTypeSchema = z.object({
 }).refine(
   (data) => {
     if (data.revenue_mode === "sale") {
-      return data.price !== undefined && data.price >= 0;
+      return data.price_per_sqm !== undefined && data.price_per_sqm >= 0;
     }
     if (data.revenue_mode === "rent") {
       return data.rent_per_month !== undefined && 

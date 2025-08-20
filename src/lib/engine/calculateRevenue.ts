@@ -33,9 +33,9 @@ export function calculateRevenue(
     const unitMonthlyRevenue = new Array(totalMonths).fill(0);
     let unitTotalRevenue = 0;
 
-    if (unit.revenue_mode === 'sale' && unit.price) {
+    if (unit.revenue_mode === 'sale' && unit.price_per_sqm) {
       // Sale revenue: total contract value spread over duration
-      const totalContractValue = unit.units * unit.price;
+      const totalContractValue = unit.units * unit.unit_area_sqm * unit.price_per_sqm;
       const monthlyAmount = totalContractValue / unit.duration_months;
       
       // Apply revenue over the specified duration starting from start_month
@@ -101,7 +101,7 @@ export function mapUnitsToEngineFormat(unitTypes: UnitTypeInput[]) {
         category: 'residential', // Default category
         count: unit.units,
         sellable_area_sqm: 1, // Normalized to 1 since price is per unit
-        initial_price_sqm_sale: unit.price || 0,
+        initial_price_sqm_sale: unit.price_per_sqm || 0,
         initial_rent_sqm_m: 0,
         delivery_month: unit.start_month,
         curve: {
