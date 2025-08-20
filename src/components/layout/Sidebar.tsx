@@ -71,13 +71,16 @@ export const Sidebar = () => {
         "fixed left-0 top-[var(--header-height)] h-[calc(100vh-var(--header-height))]",
         "bg-sidebar/98 backdrop-blur-lg border-r border-sidebar-border/60 shadow-elegant z-[var(--z-sidebar)]",
         "flex flex-col transition-all duration-300 ease-in-out",
-        // Width states
-        isCollapsed ? "w-14" : "w-64",
+        // Width states - Force specific widths
+        isCollapsed ? "w-14 min-w-[56px] max-w-[56px]" : "w-64 min-w-[256px] max-w-[256px]",
         // RTL support
         "rtl:right-0 rtl:left-auto rtl:border-l rtl:border-r-0",
         // Mobile overlay
         isMobile ? "bg-sidebar/95" : ""
       )}
+      style={{
+        width: isCollapsed ? '56px' : '256px'
+      }}
     >
       {/* Top Section - Navigation */}
       <div className="flex flex-col min-h-0">

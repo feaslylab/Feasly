@@ -2,32 +2,26 @@ import { useState, useEffect } from 'react';
 import { useIsMobile } from './use-mobile';
 
 export function useSidebarState() {
-  // Get stored state from localStorage
-  const getStoredState = () => {
-    if (typeof window === 'undefined') return false;
-    const stored = localStorage.getItem('sidebar-collapsed');
-    return stored ? JSON.parse(stored) : false;
-  };
-
   const isMobile = useIsMobile();
   
+  // Get stored state from localStorage with proper null checking
+  const getStoredState = (): boolean | null => {
+    if (typeof window === 'undefined') return null;
+    const stored = localStorage.getItem('sidebar-collapsed');
+    if (stored === null) return null;
+    return JSON.parse(stored);
+  };
+  
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    // Default to collapsed on both mobile and desktop for consistent UX
     const stored = getStoredState();
-    return stored !== null ? stored : true; // Default to collapsed
+    // Default to collapsed if no stored preference
+    return stored !== null ? stored : true;
   });
 
   // Persist state to localStorage
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', JSON.stringify(isCollapsed));
   }, [isCollapsed]);
-
-  // Auto-collapse on mobile
-  useEffect(() => {
-    if (isMobile && !isCollapsed) {
-      setIsCollapsed(true);
-    }
-  }, [isMobile, isCollapsed]);
 
   const toggleSidebar = () => {
     setIsCollapsed(prev => !prev);
