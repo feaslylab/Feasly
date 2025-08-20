@@ -101,35 +101,25 @@ export default function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r">
-      {/* Header */}
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">F</span>
-          </div>
-          {!isCollapsed && (
-            <div className="flex flex-col">
-              <span className="font-semibold text-sm">Feasly</span>
-              <span className="text-xs text-muted-foreground">Financial Modeling</span>
-            </div>
-          )}
-        </div>
+      {/* Simplified header - no duplicate branding */}
+      <SidebarHeader className="p-2">
+        <div className="h-2" /> {/* Small spacer */}
       </SidebarHeader>
 
       {/* Main Navigation */}
       <SidebarContent className="px-2">
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel className={isCollapsed ? "sr-only" : ""}>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {filteredNavigation.map((item) => {
                 const isActive = currentPath === item.href
                 return (
                   <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={isActive}>
+                    <SidebarMenuButton asChild isActive={isActive} tooltip={isCollapsed ? t(`nav.${item.nameKey}`) : undefined}>
                       <NavLink to={item.href} className="flex items-center gap-3">
-                        <item.icon className="h-4 w-4" />
-                        <span>{t(`nav.${item.nameKey}`)}</span>
+                        <item.icon className="h-4 w-4 flex-shrink-0" />
+                        {!isCollapsed && <span>{t(`nav.${item.nameKey}`)}</span>}
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -141,14 +131,14 @@ export default function AppSidebar() {
 
         {/* Quick Actions */}
         <SidebarGroup>
-          <SidebarGroupLabel>Quick Actions</SidebarGroupLabel>
+          <SidebarGroupLabel className={isCollapsed ? "sr-only" : ""}>Quick Actions</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild tooltip={isCollapsed ? "New Project" : undefined}>
                   <NavLink to="/projects/new" className="flex items-center gap-3">
-                    <Plus className="h-4 w-4" />
-                    <span>New Project</span>
+                    <Plus className="h-4 w-4 flex-shrink-0" />
+                    {!isCollapsed && <span>New Project</span>}
                   </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -173,13 +163,15 @@ export default function AppSidebar() {
                       {getUserInitials()}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{getUserDisplayName()}</span>
-                    <span className="truncate text-xs text-muted-foreground">
-                      {user?.email}
-                    </span>
-                  </div>
-                  <ChevronUp className="ml-auto size-4" />
+                  {!isCollapsed && (
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">{getUserDisplayName()}</span>
+                      <span className="truncate text-xs text-muted-foreground">
+                        {user?.email}
+                      </span>
+                    </div>
+                  )}
+                  {!isCollapsed && <ChevronUp className="ml-auto size-4" />}
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent
