@@ -51,6 +51,8 @@ export const Sidebar = () => {
     toggleSidebar, 
     isMobile 
   } = useSidebarState();
+
+  console.log('🔧 Sidebar Render - isCollapsed:', isCollapsed, 'isMobile:', isMobile);
   
   const filteredNavigation = navigation.filter(item => !cfg.nav.hiddenRoutes.includes(item.href));
 
@@ -66,13 +68,15 @@ export const Sidebar = () => {
   };
 
   return (
-    <div 
+    <div
       className={cn(
         "fixed left-0 top-[var(--header-height)] h-[calc(100vh-var(--header-height))]",
         "bg-sidebar/98 backdrop-blur-lg border-r border-sidebar-border/60 shadow-elegant z-[var(--z-sidebar)]",
         "flex flex-col transition-all duration-300 ease-in-out",
-        // Width states - Force specific widths
+        // Width states - Force specific widths with visual debugging
         isCollapsed ? "w-14 min-w-[56px] max-w-[56px]" : "w-64 min-w-[256px] max-w-[256px]",
+        // Debug border to see width changes
+        "border-l-4", isCollapsed ? "border-l-red-500" : "border-l-green-500",
         // RTL support
         "rtl:right-0 rtl:left-auto rtl:border-l rtl:border-r-0",
         // Mobile overlay
@@ -81,6 +85,8 @@ export const Sidebar = () => {
       style={{
         width: isCollapsed ? '56px' : '256px'
       }}
+      data-collapsed={isCollapsed}
+      data-debug={`${isCollapsed ? 'collapsed' : 'expanded'}-${Date.now()}`}
     >
       {/* Top Section - Navigation */}
       <div className="flex flex-col min-h-0">

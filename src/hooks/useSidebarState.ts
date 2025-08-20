@@ -14,22 +14,36 @@ export function useSidebarState() {
   
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const stored = getStoredState();
-    // Default to collapsed if no stored preference
-    return stored !== null ? stored : true;
+    const defaultState = stored !== null ? stored : true;
+    console.log('🔧 Sidebar State Init:', { stored, defaultState });
+    return defaultState;
   });
 
   // Persist state to localStorage
   useEffect(() => {
+    console.log('💾 Persisting to localStorage:', isCollapsed);
     localStorage.setItem('sidebar-collapsed', JSON.stringify(isCollapsed));
   }, [isCollapsed]);
 
+  const clearStorageAndReset = () => {
+    console.log('🧹 Clearing localStorage and resetting');
+    localStorage.removeItem('sidebar-collapsed');
+    setIsCollapsed(true); // Reset to default
+  };
+
   const toggleSidebar = () => {
-    setIsCollapsed(prev => !prev);
+    console.log('🔧 Sidebar Toggle Called - Current State:', isCollapsed);
+    setIsCollapsed(prev => {
+      const newState = !prev;
+      console.log('🔧 Sidebar Toggle - New State:', newState);
+      return newState;
+    });
   };
 
   return {
     isCollapsed,
     toggleSidebar,
+    clearStorageAndReset,
     isMobile
   };
 }
