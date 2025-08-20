@@ -11,18 +11,14 @@ export function useSidebarState() {
   };
 
   const isMobile = useIsMobile();
-  const { isNearEdge } = useMouseProximity(80); // Larger proximity zone for better UX
   
   const [isCollapsed, setIsCollapsed] = useState(() => {
     // Default to expanded on desktop, collapsed on mobile
     return isMobile ? true : getStoredState();
   });
-  
-  const [isAutoHidden, setIsAutoHidden] = useState(false); // Disable auto-hide by default 
-  const [isHovered, setIsHovered] = useState(false);
 
-  // Enhanced sidebar visibility logic - simpler approach
-  const shouldShowSidebar = !isAutoHidden || isNearEdge || isHovered || isMobile;
+  // Simple visibility logic - always show the sidebar
+  const shouldShowSidebar = true;
 
   // Persist state to localStorage
   useEffect(() => {
@@ -40,29 +36,18 @@ export function useSidebarState() {
     setIsCollapsed(prev => !prev);
   };
 
-  const toggleAutoHide = () => {
-    setIsAutoHidden(prev => !prev);
-  };
-
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-  };
-
   return {
     isCollapsed,
-    isAutoHidden,
     shouldShowSidebar,
-    isNearEdge,
-    isHovered,
-    setIsCollapsed,
     toggleSidebar,
-    toggleAutoHide,
-    handleMouseEnter,
-    handleMouseLeave,
-    isMobile
+    isMobile,
+    // Legacy props for compatibility
+    isAutoHidden: false,
+    isNearEdge: false,
+    isHovered: false,
+    setIsCollapsed,
+    toggleAutoHide: () => {},
+    handleMouseEnter: () => {},
+    handleMouseLeave: () => {}
   };
 }
