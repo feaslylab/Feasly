@@ -26,9 +26,9 @@ import { Button } from '@/components/ui/button'
 import { 
   LayoutDashboard, 
   FolderOpen, 
-  Users, 
+  Calculator, 
   BarChart3, 
-  Settings, 
+  Play, 
   Plus,
   LogOut,
   ChevronUp
@@ -51,16 +51,22 @@ const navigation = [
     icon: FolderOpen,
   },
   {
-    name: 'Team',
-    nameKey: 'team',
-    href: '/team-management',
-    icon: Users,
+    name: 'Model',
+    nameKey: 'model',
+    href: '/model',
+    icon: Calculator,
   },
   {
     name: 'Portfolio',
     nameKey: 'portfolio',
     href: '/portfolio',
     icon: BarChart3,
+  },
+  {
+    name: 'Demo',
+    nameKey: 'demo',
+    href: '/demo',
+    icon: Play,
   },
 ]
 

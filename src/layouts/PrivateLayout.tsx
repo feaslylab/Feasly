@@ -62,8 +62,8 @@ export default function PrivateLayout() {
           <AppSidebar />
           <SidebarInset>
             <Header />
-            <main className="flex-1 overflow-auto p-4">
-              <div className="max-w-7xl mx-auto">
+            <main className="flex-1 overflow-auto">
+              <div className="p-4">
                 <Suspense fallback={<LoadingFallback />}>
                   <Outlet />
                 </Suspense>
