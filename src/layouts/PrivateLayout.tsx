@@ -2,8 +2,6 @@ import { Suspense, useMemo, useEffect } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { EngineProvider } from '@/lib/engine/EngineContext';
 import Header from '@/components/layout/Header';
-import AppSidebar from '@/components/layout/AppSidebar';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 import { MobileLayoutFixes } from '@/components/ui/mobile-layout-fixes';
 
 function useCanonicalPath() {
@@ -55,23 +53,16 @@ export default function PrivateLayout() {
   const defaultInputs = useMemo(createDefaultProjectInputs, []);
 
   return (
-    <SidebarProvider>
-      <EngineProvider formState={defaultInputs}>
-        <MobileLayoutFixes />
-        <div className="min-h-screen w-full bg-background flex">
-          <AppSidebar />
-          <SidebarInset className="flex-1">
-            <Header />
-            <main className="flex-1 overflow-auto">
-              <div className="p-4">
-                <Suspense fallback={<LoadingFallback />}>
-                  <Outlet />
-                </Suspense>
-              </div>
-            </main>
-          </SidebarInset>
-        </div>
-      </EngineProvider>
-    </SidebarProvider>
+    <EngineProvider formState={defaultInputs}>
+      <MobileLayoutFixes />
+      <div className="min-h-screen w-full bg-background flex flex-col">
+        <Header />
+        <main className="flex-1 overflow-auto">
+          <Suspense fallback={<LoadingFallback />}>
+            <Outlet />
+          </Suspense>
+        </main>
+      </div>
+    </EngineProvider>
   );
 }

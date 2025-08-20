@@ -83,44 +83,7 @@ export default function ModelPage() {
 
   return (
     <div className="min-h-screen">
-      {/* Project Banner */}
-      {projectId && (
-        <div className="border-b bg-muted/30 px-6 py-3">
-          {projectLoading ? (
-            <div className="flex items-center gap-3">
-              <Skeleton className="w-5 h-5" />
-              <Skeleton className="h-5 w-48" />
-            </div>
-          ) : projectError ? (
-            <Alert variant="destructive" className="max-w-2xl">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                {projectError}
-              </AlertDescription>
-            </Alert>
-          ) : project ? (
-            <div className="flex items-center gap-3 text-sm">
-              <Building2 className="w-4 h-4 text-muted-foreground" />
-              <span className="font-medium">Loaded project:</span>
-              <span className="text-primary font-semibold">{project.name}</span>
-              {project.currency_code && (
-                <>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="text-muted-foreground">currency {project.currency_code}</span>
-                </>
-              )}
-              {scenarioId && (
-                <>
-                  <span className="text-muted-foreground">•</span>
-                  <span className="text-muted-foreground">scenario {scenarioId}</span>
-                </>
-              )}
-            </div>
-          ) : null}
-        </div>
-      )}
-
-      {/* Main Model Interface */}
+      {/* Main Model Interface - Full Height */}
       <FeaslyModel />
     </div>
   );

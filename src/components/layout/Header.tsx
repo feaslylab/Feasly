@@ -15,7 +15,8 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import ScenarioPickerV2 from "@/components/ui/ScenarioPickerV2";
 import ViewSwitch from '@/components/layout/ViewSwitch';
-import { SidebarTrigger } from '@/components/ui/sidebar';
+import NavigationMenu from '@/components/layout/NavigationMenu';
+import Breadcrumbs from '@/components/layout/Breadcrumbs';
 import { TM } from "@/components/ui/trademark";
 
 export default function Header() {
@@ -55,20 +56,20 @@ export default function Header() {
 
   return (
     <>
-      <header className="flex h-12 shrink-0 items-center gap-3 border-b bg-background px-3">
-        <div className="flex items-center gap-3 flex-1">
-          {/* Sidebar trigger and Logo section */}
-          <div className="flex items-center gap-3">
-            <SidebarTrigger className="-ml-1" />
+      <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-4">
+        <div className="flex items-center gap-4 flex-1">
+          {/* Navigation and Logo section */}
+          <div className="flex items-center gap-4">
+            <NavigationMenu />
             
-            {/* Feasly Logo and Brand - Compact */}
-            <div className="flex items-center gap-2">
-              <div className="relative w-6 h-6 flex-shrink-0">
+            {/* Feasly Logo and Brand */}
+            <div className="flex items-center gap-3">
+              <div className="relative w-7 h-7 flex-shrink-0">
                 {/* Light mode logo */}
                 <img 
                   src="/lovable-uploads/89cbafc3-6eb7-4543-a767-15db07676b80.png" 
                   alt="Feasly Logo" 
-                  className="w-6 h-6 object-contain block dark:hidden"
+                  className="w-7 h-7 object-contain block dark:hidden"
                 />
                 {/* Dark mode logo with white backing */}
                 <div className="hidden dark:block absolute inset-0">
@@ -76,17 +77,22 @@ export default function Header() {
                   <img 
                     src="/lovable-uploads/89cbafc3-6eb7-4543-a767-15db07676b80.png" 
                     alt="Feasly Logo - Dark" 
-                    className="relative w-6 h-6 object-contain"
+                    className="relative w-7 h-7 object-contain"
                   />
                 </div>
               </div>
-              <span className="text-lg font-bold text-foreground tracking-tight font-playfair hidden sm:block">
+              <span className="text-xl font-bold text-foreground tracking-tight font-playfair hidden sm:block">
                 Feasly<TM />
               </span>
             </div>
+            
+            {/* Breadcrumbs */}
+            <div className="hidden md:block">
+              <Breadcrumbs />
+            </div>
           </div>
 
-          {/* Center section - Scenario Picker */}
+          {/* Center section - Scenario Picker (Model page only) */}
           <div className="flex-1 flex justify-center">
             <div className="hidden lg:block">
               <ScenarioPickerV2
