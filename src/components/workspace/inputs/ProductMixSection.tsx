@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { UnitTypeSchema, UnitTypeInput } from "@/schemas/inputs";
 import { nanoid } from "nanoid";
-import { Trash2, Edit, Plus, Calculator, ChevronDown, TrendingUp } from "lucide-react";
+import { TableSectionContainer } from '../SectionContainer';
+import { Calculator, Plus, Trash2, Edit, TrendingUp } from "lucide-react";
 import CurveEditor, { type CurveData } from "@/components/shared/CurveEditor";
 
 function newRow(): UnitTypeInput {
@@ -169,16 +170,19 @@ export default function ProductMixSection() {
   const projectPeriods = inputs?.project?.periods || inputs?.project?.duration_months || 60;
 
   return (
-    <Card className="p-6 space-y-6" data-section="product-mix">
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          <Calculator className="h-5 w-5" />
-          Product Mix
-        </h3>
-        <p className="text-sm text-muted-foreground">
-          Define your asset types, unit configurations, and revenue assumptions
-        </p>
-      </div>
+    <TableSectionContainer
+      title="Product Mix"
+      description="Define your asset types, unit configurations, and revenue assumptions"
+      icon={<Calculator className="h-5 w-5" />}
+      actions={
+        !draft && (
+          <Button onClick={add} size="sm" className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            Add Unit Type
+          </Button>
+        )
+      }
+    >
 
       {/* Live Metrics Preview */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-muted/30 rounded-lg">
@@ -432,17 +436,16 @@ export default function ProductMixSection() {
       )}
 
       {/* Add Button */}
-      {!draft && (
-        <div className="flex justify-between items-center pt-4 border-t">
-          <div className="text-sm text-muted-foreground">
-            {unitTypes.length === 0 ? "No unit types defined yet" : `${unitTypes.length} unit type(s) configured`}
-          </div>
+      {!draft && unitTypes.length === 0 && (
+        <div className="text-center py-8 text-muted-foreground">
+          <Calculator className="h-12 w-12 mx-auto mb-4 opacity-50" />
+          <p className="mb-4">No unit types defined yet</p>
           <Button onClick={add} size="sm" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             Add Unit Type
           </Button>
         </div>
       )}
-    </Card>
+    </TableSectionContainer>
   );
 }

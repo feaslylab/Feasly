@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FinancingSliceSchema, type FinancingSliceInput } from "@/schemas/inputs";
-import { Plus, Trash2, Save, TrendingUp, AlertTriangle, DollarSign, BarChart3 } from "lucide-react";
+import { TableSectionContainer } from '../SectionContainer';
+import { TrendingUp, Plus, Trash2, Save, AlertTriangle, DollarSign, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import CurveEditor, { type CurveData } from "@/components/shared/CurveEditor";
 
@@ -231,16 +232,16 @@ export default function FinancingSection() {
   const projectPeriods = inputs?.project?.periods || inputs?.project?.duration_months || 60;
 
   return (
-    <Card className="p-4 space-y-4" data-section="financing">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h3 className="text-sm font-semibold">Capital Stack</h3>
-          <p className="text-xs text-muted-foreground">Configure equity and debt financing for your project</p>
-        </div>
+    <TableSectionContainer
+      title="Capital Stack"
+      description="Configure equity and debt financing for your project"
+      icon={<TrendingUp className="h-5 w-5" />}
+      actions={
         <Button size="sm" variant="outline" onClick={add}>
           <Plus className="h-4 w-4 mr-1" /> Add Financing
         </Button>
-      </div>
+      }
+    >
 
       {/* Capital Analysis Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -521,6 +522,6 @@ export default function FinancingSection() {
           </div>
         )
       ))}
-    </Card>
+    </TableSectionContainer>
   );
 }

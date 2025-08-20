@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CostItemSchema, type CostItemInput } from "@/schemas/inputs";
-import { Plus, Trash2, Save, DollarSign, Eye, EyeOff, TrendingUp } from "lucide-react";
+import { TableSectionContainer } from '../SectionContainer';
+import { DollarSign, Plus, Trash2, Save, Eye, EyeOff, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import CurveEditor, { type CurveData } from "@/components/shared/CurveEditor";
 
@@ -204,12 +205,11 @@ export default function CostSection() {
   const projectPeriods = inputs?.project?.periods || inputs?.project?.duration_months || 60;
 
   return (
-    <Card className="p-4 space-y-4" data-section="costs">
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h3 className="text-sm font-semibold">Cost Items</h3>
-          <p className="text-xs text-muted-foreground">Configure construction, land, soft costs, and other project expenses</p>
-        </div>
+    <TableSectionContainer
+      title="Cost Items"
+      description="Configure construction, land, soft costs, and other project expenses"
+      icon={<DollarSign className="h-5 w-5" />}
+      actions={
         <div className="flex items-center gap-2">
           <Button
             size="sm"
@@ -223,7 +223,8 @@ export default function CostSection() {
             <Plus className="h-4 w-4 mr-1" /> Add Cost Item
           </Button>
         </div>
-      </div>
+      }
+    >
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -457,6 +458,6 @@ export default function CostSection() {
           </div>
         )
       ))}
-    </Card>
+    </TableSectionContainer>
   );
 }

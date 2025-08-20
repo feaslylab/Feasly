@@ -3,7 +3,8 @@ import { useEngine } from "@/lib/engine/EngineContext";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card } from "@/components/ui/card";
+import { FormSectionContainer } from '../SectionContainer';
+import { Building2 } from 'lucide-react';
 import { ProjectSchema } from "@/schemas/inputs";
 
 export default function ProjectSection() {
@@ -37,98 +38,95 @@ export default function ProjectSection() {
   };
 
   return (
-    <Card className="p-4 space-y-4" data-section="project">
-      <div className="space-y-2">
-        <h3 className="text-sm font-semibold">Basic Configuration</h3>
-        <p className="text-xs text-muted-foreground">Set your project's timeline and cadence</p>
-      </div>
-
-      <div className="space-y-6">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="space-y-2">
-            <Label>Project Type</Label>
-            <Select value={project.project_type} onValueChange={(v) => patch({ project_type: v as any })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent className="bg-background border border-border z-dropdown">
-                <SelectItem value="Residential">Residential</SelectItem>
-                <SelectItem value="Mixed-Use">Mixed-Use</SelectItem>
-                <SelectItem value="Retail">Retail</SelectItem>
-                <SelectItem value="Hospitality">Hospitality</SelectItem>
-                <SelectItem value="Industrial">Industrial</SelectItem>
-                <SelectItem value="Master Plan">Master Plan</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
-            <Label>Developer Name</Label>
-            <Input
-              type="text"
-              placeholder="Enter developer name"
-              value={project.developer_name}
-              onChange={(e) => patch({ developer_name: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Project Location</Label>
-            <Input
-              type="text"
-              placeholder="Enter project location"
-              value={project.project_location}
-              onChange={(e) => patch({ project_location: e.target.value })}
-            />
-          </div>
+    <FormSectionContainer
+      title="Project Configuration"
+      description="Define your project's basic parameters and timeline"
+      icon={<Building2 className="h-5 w-5" />}
+    >
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="space-y-2">
+          <Label>Project Type</Label>
+          <Select value={project.project_type} onValueChange={(v) => patch({ project_type: v as any })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent className="bg-background border border-border z-dropdown">
+              <SelectItem value="Residential">Residential</SelectItem>
+              <SelectItem value="Mixed-Use">Mixed-Use</SelectItem>
+              <SelectItem value="Retail">Retail</SelectItem>
+              <SelectItem value="Hospitality">Hospitality</SelectItem>
+              <SelectItem value="Industrial">Industrial</SelectItem>
+              <SelectItem value="Master Plan">Master Plan</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="space-y-2">
-            <Label>Currency</Label>
-            <Select value={project.currency} onValueChange={(v) => patch({ currency: v })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent className="bg-background border border-border z-dropdown">
-                <SelectItem value="AED">AED (UAE Dirham)</SelectItem>
-                <SelectItem value="USD">USD (US Dollar)</SelectItem>
-                <SelectItem value="EUR">EUR (Euro)</SelectItem>
-                <SelectItem value="GBP">GBP (British Pound)</SelectItem>
-                <SelectItem value="SAR">SAR (Saudi Riyal)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="space-y-2">
+          <Label>Developer Name</Label>
+          <Input
+            type="text"
+            placeholder="Enter developer name"
+            value={project.developer_name}
+            onChange={(e) => patch({ developer_name: e.target.value })}
+          />
+        </div>
 
-          <div className="space-y-2">
-            <Label>Duration (Months)</Label>
-            <Input
-              type="number"
-              inputMode="numeric"
-              min={1}
-              value={project.duration_months}
-              onChange={(e) => patch({ duration_months: Number(e.target.value) })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Start Date</Label>
-            <Input
-              type="date"
-              value={project.start_date}
-              onChange={(e) => patch({ start_date: e.target.value })}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Periodicity</Label>
-            <Select value={project.periodicity} onValueChange={(v) => patch({ periodicity: v as any })}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent className="bg-background border border-border z-dropdown">
-                <SelectItem value="monthly">Monthly</SelectItem>
-                <SelectItem value="quarterly">Quarterly</SelectItem>
-                <SelectItem value="yearly">Yearly</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="space-y-2">
+          <Label>Project Location</Label>
+          <Input
+            type="text"
+            placeholder="Enter project location"
+            value={project.project_location}
+            onChange={(e) => patch({ project_location: e.target.value })}
+          />
         </div>
       </div>
-    </Card>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="space-y-2">
+          <Label>Currency</Label>
+          <Select value={project.currency} onValueChange={(v) => patch({ currency: v })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent className="bg-background border border-border z-dropdown">
+              <SelectItem value="AED">AED (UAE Dirham)</SelectItem>
+              <SelectItem value="USD">USD (US Dollar)</SelectItem>
+              <SelectItem value="EUR">EUR (Euro)</SelectItem>
+              <SelectItem value="GBP">GBP (British Pound)</SelectItem>
+              <SelectItem value="SAR">SAR (Saudi Riyal)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Duration (Months)</Label>
+          <Input
+            type="number"
+            inputMode="numeric"
+            min={1}
+            value={project.duration_months}
+            onChange={(e) => patch({ duration_months: Number(e.target.value) })}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Start Date</Label>
+          <Input
+            type="date"
+            value={project.start_date}
+            onChange={(e) => patch({ start_date: e.target.value })}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label>Periodicity</Label>
+          <Select value={project.periodicity} onValueChange={(v) => patch({ periodicity: v as any })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent className="bg-background border border-border z-dropdown">
+              <SelectItem value="monthly">Monthly</SelectItem>
+              <SelectItem value="quarterly">Quarterly</SelectItem>
+              <SelectItem value="yearly">Yearly</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+    </FormSectionContainer>
   );
 }
