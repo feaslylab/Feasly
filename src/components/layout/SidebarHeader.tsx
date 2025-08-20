@@ -6,7 +6,7 @@ export default function SidebarHeader() {
   const { toggleSidebar, isCollapsed, clearStorageAndReset } = useSidebarState();
 
   const handleToggle = () => {
-    console.log('🔧 SidebarHeader Toggle Clicked');
+    console.log('🔧 [HEADER] Toggle Button Clicked - isCollapsed:', isCollapsed, 'timestamp:', Date.now());
     toggleSidebar();
   };
 
@@ -15,7 +15,7 @@ export default function SidebarHeader() {
     clearStorageAndReset();
   };
 
-  console.log('🔧 SidebarHeader Render - isCollapsed:', isCollapsed);
+  console.log('🔧 [HEADER] Render - isCollapsed:', isCollapsed, 'timestamp:', Date.now());
 
   return (
     <div className="flex items-center h-12 px-2 border-b border-border justify-between">

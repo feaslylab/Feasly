@@ -15,7 +15,7 @@ export function useSidebarState() {
   const [isCollapsed, setIsCollapsed] = useState(() => {
     const stored = getStoredState();
     const defaultState = stored !== null ? stored : true;
-    console.log('🔧 Sidebar State Init:', { stored, defaultState });
+    console.log('🔧 [INIT] Sidebar State Init:', { stored, defaultState, timestamp: Date.now() });
     return defaultState;
   });
 
@@ -32,10 +32,10 @@ export function useSidebarState() {
   };
 
   const toggleSidebar = () => {
-    console.log('🔧 Sidebar Toggle Called - Current State:', isCollapsed);
+    console.log('🔧 [CLICK] Toggle Called - Current State:', isCollapsed, 'Timestamp:', Date.now());
     setIsCollapsed(prev => {
       const newState = !prev;
-      console.log('🔧 Sidebar Toggle - New State:', newState);
+      console.log('🔧 [STATE] Toggle Complete - Old:', prev, 'New:', newState, 'Timestamp:', Date.now());
       return newState;
     });
   };

@@ -52,7 +52,7 @@ export const Sidebar = () => {
     isMobile 
   } = useSidebarState();
 
-  console.log('🔧 Sidebar Render - isCollapsed:', isCollapsed, 'isMobile:', isMobile);
+  console.log('🔧 [RENDER] Sidebar - isCollapsed:', isCollapsed, 'isMobile:', isMobile, 'timestamp:', Date.now());
   
   const filteredNavigation = navigation.filter(item => !cfg.nav.hiddenRoutes.includes(item.href));
 
@@ -113,8 +113,8 @@ export const Sidebar = () => {
 
         {/* Navigation - Scrollable */}
         <nav className={cn(
-          "flex-1 pt-2 pb-4 space-y-2 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent",
-          isCollapsed ? "px-3" : "px-4"
+          "flex-1 pt-2 pb-4 space-y-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent",
+          isCollapsed ? "px-2" : "px-4"
         )}>
           {filteredNavigation.map((item) => (
             <NavLink
@@ -122,11 +122,11 @@ export const Sidebar = () => {
               to={item.href}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 rounded-lg transition-all duration-200 touch-none",
-                  "min-h-[44px]",
+                  "flex items-center rounded-lg transition-all duration-200 touch-none",
+                  "min-h-[44px] relative",
                   isCollapsed 
-                    ? "px-2 py-2 justify-center mx-auto w-10" // Better spacing for collapsed state
-                    : "px-3 py-3 text-sm font-medium", // More padding for expanded state
+                    ? "w-10 h-10 p-0 justify-center mx-auto" // Fixed width and height for collapsed
+                    : "px-3 py-3 text-sm font-medium gap-3", // Proper spacing for expanded
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-accent",
@@ -135,7 +135,7 @@ export const Sidebar = () => {
               }
               title={isCollapsed ? t(`nav.${item.nameKey}`) : undefined}
             >
-              <item.icon className={cn("w-4 h-4 flex-shrink-0")} /> {/* Slightly smaller icons */}
+              <item.icon className={cn("w-4 h-4 flex-shrink-0")} />
               {!isCollapsed && (
                 <span className="truncate">{t(`nav.${item.nameKey}`)}</span>
               )}
