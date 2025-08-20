@@ -65,9 +65,9 @@ export default function PrivateLayout() {
         {/* Fixed Sidebar */}
         <Sidebar />
         
-        {/* Main Content Area */}
+        {/* Main Content Area - Enhanced spacing and visual separation */}
         <div className="flex flex-col min-h-screen w-full">
-          <main className={contentClasses.main} style={{ marginLeft: isMobile ? 0 : 'var(--sidebar-space)' }}>
+          <main className={contentClasses.main}>
             <div className={`${contentClasses.container} mobile-safe-content`}>
               <Suspense fallback={<LoadingFallback />}>
                 <Outlet />

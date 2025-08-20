@@ -8,30 +8,39 @@ export function useResponsiveLayout() {
   const isDesktop = useIsDesktop();
   const { shouldShowSidebar, isCollapsed } = useSidebarState();
 
-  // Calculate dynamic spacing based on layout state
+  // Simplified layout calculations with proper buffer zones
   const layoutSpacing = {
-    headerHeight: isMobile ? 56 : 48, // Mobile gets slightly larger touch targets
+    headerHeight: isMobile ? 56 : 48,
     sidebarWidth: shouldShowSidebar ? (isCollapsed ? 56 : 256) : 0,
     contentPadding: isMobile ? 16 : 24,
     mobileNavHeight: isMobile ? 56 : 0,
+    sidebarBuffer: 24, // Consistent breathing room
   };
 
-  // Update CSS custom properties for dynamic layout
+  // Single source of truth for sidebar spacing with smooth transitions
   useEffect(() => {
     const root = document.documentElement;
+    
+    // Update core layout variables
     root.style.setProperty('--header-height', `${layoutSpacing.headerHeight}px`);
-    root.style.setProperty('--content-left', `${layoutSpacing.sidebarWidth}px`);
     root.style.setProperty('--mobile-nav-height', `${layoutSpacing.mobileNavHeight}px`);
     
-    // Set sidebar width class for spacing calculations
-    if (shouldShowSidebar && !isCollapsed) {
-      root.style.setProperty('--sidebar-space', 'var(--sidebar-width)');
-    } else if (shouldShowSidebar && isCollapsed) {
-      root.style.setProperty('--sidebar-space', 'var(--sidebar-collapsed)');
-    } else {
-      root.style.setProperty('--sidebar-space', '0px');
+    // Unified sidebar space calculation with buffer
+    let sidebarSpace = '0px';
+    if (shouldShowSidebar && !isMobile) {
+      sidebarSpace = isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)';
     }
-  }, [layoutSpacing.headerHeight, layoutSpacing.sidebarWidth, layoutSpacing.mobileNavHeight, shouldShowSidebar, isCollapsed]);
+    
+    root.style.setProperty('--sidebar-space', sidebarSpace);
+    
+    // Add transition class for smooth layout changes
+    document.body.classList.add('layout-transition');
+    const timeout = setTimeout(() => {
+      document.body.classList.remove('layout-transition');
+    }, 300);
+    
+    return () => clearTimeout(timeout);
+  }, [shouldShowSidebar, isCollapsed, isMobile, layoutSpacing.headerHeight, layoutSpacing.mobileNavHeight]);
 
   return {
     isMobile,
@@ -40,21 +49,34 @@ export function useResponsiveLayout() {
     isTouch: isMobile || isTablet,
     breakpoint: isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop',
     layoutSpacing,
-    // Helper classes for consistent spacing
+    // Enhanced helper classes with proper spacing and visual separation
     contentClasses: {
       main: [
-        'flex-1 overflow-auto',
+        'flex-1 overflow-auto relative',
+        // Top spacing for header
         isMobile ? 'pt-[var(--header-height)] pb-[var(--mobile-nav-height)]' : 'pt-[var(--header-height)]',
-        'transition-all duration-300 ease-in-out'
-      ].join(' '),
-      container: [
-        'w-full mx-auto',
-        isMobile ? 'px-4 py-4' : 'px-6 py-6',
-        'max-w-7xl'
-      ].join(' '),
-      sidebar: [
+        // Left spacing with buffer for desktop
+        !isMobile && shouldShowSidebar ? 'ml-[var(--content-left-space)]' : '',
+        // Smooth transitions
         'transition-all duration-300 ease-in-out',
-        shouldShowSidebar ? 'ml-[var(--sidebar-space)]' : 'ml-0'
+        // Visual separation
+        !isMobile && shouldShowSidebar ? 'border-l border-border/30' : ''
+      ].filter(Boolean).join(' '),
+      container: [
+        'w-full mx-auto relative',
+        isMobile ? 'px-4 py-4' : 'px-6 py-6',
+        'max-w-7xl',
+        // Additional breathing room on desktop
+        !isMobile ? 'min-h-[calc(100vh-var(--content-safe-area))]' : ''
+      ].filter(Boolean).join(' '),
+      sidebar: [
+        'fixed left-0 top-[var(--header-height)] h-[calc(100vh-var(--header-height))]',
+        'transition-all duration-300 ease-in-out',
+        'z-[var(--z-sidebar)]',
+        // Enhanced shadow for visual separation
+        'shadow-elegant border-r border-border/50',
+        // Backdrop blur for premium feel
+        'backdrop-blur-sm bg-sidebar/95'
       ].join(' ')
     }
   };

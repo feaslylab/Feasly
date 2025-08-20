@@ -1,4 +1,3 @@
-
 @import './components/ui/feasly-design-system.css';
 @import './components/ui/mobile-animations.css';
 @import './components/ui/visual-fixes.css';
@@ -90,15 +89,17 @@
     --z-toast: 70;
     --z-tooltip: 80;
 
-    /* Dynamic Layout Spacing */
-    --header-height: 3rem;      /* 48px */
-    --sidebar-width: 16rem;     /* 256px */
-    --sidebar-collapsed: 3.5rem; /* 56px */
-    --mobile-nav-height: 3.5rem; /* 56px */
+    /* Dynamic Layout Spacing - Unified System */
+    --header-height: 3rem;          /* 48px */
+    --sidebar-width: 16rem;         /* 256px - full width */
+    --sidebar-collapsed: 3.5rem;    /* 56px - collapsed width */
+    --sidebar-buffer: 1.5rem;       /* 24px - breathing room between elements */
+    --mobile-nav-height: 3.5rem;    /* 56px */
 
-    /* Content spacing calculations */
-    --content-top: var(--header-height);
-    --content-left: 0px; /* Dynamic via JS */
+    /* Calculated Content Spacing - Single Source of Truth */
+    --sidebar-space: 0px;           /* Dynamic: set by JS based on state */
+    --content-left-space: calc(var(--sidebar-space) + var(--sidebar-buffer));
+    --content-safe-area: var(--header-height);
 
     /* Financial Chart Colors */
     --chart-revenue: 142 71% 45%;
@@ -223,6 +224,15 @@
     @apply font-sans;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     letter-spacing: -0.015em;
+  }
+  
+  /* Enhanced Layout Transition System */
+  .layout-transition {
+    * {
+      transition: margin 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                  padding 300ms cubic-bezier(0.4, 0, 0.2, 1),
+                  transform 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
   }
   
   /* RTL Support */
@@ -498,92 +508,154 @@
   }
 
   .feasly-shimmer {
-    @apply relative overflow-hidden bg-muted/30;
+    @apply relative overflow-hidden bg-muted/30 rounded;
   }
 
   .feasly-shimmer::after {
-    @apply absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent
-           animate-shimmer content-[''];
+    @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-background/50 to-transparent;
+    content: '';
+    animation: shimmer 2s infinite;
   }
 
-  /* Professional Spacing */
-  .feasly-section {
-    @apply space-y-6 py-8;
+  /* Financial Data Presentation */
+  .feasly-metric {
+    @apply bg-card border border-border/50 rounded-lg p-4 space-y-2;
   }
 
-  .feasly-section-lg {
-    @apply space-y-8 py-12;
+  .feasly-metric-value {
+    @apply text-2xl font-bold text-foreground;
   }
 
-  .feasly-stack {
-    @apply space-y-4;
+  .feasly-metric-label {
+    @apply text-sm text-muted-foreground;
   }
 
-  /* Responsive Layout Classes */
-  .mobile-optimized-button {
-    @apply min-h-[44px] min-w-[44px] touch-none;
+  .feasly-metric-change {
+    @apply text-xs font-medium;
   }
 
-  .mobile-optimized-input {
-    @apply min-h-[44px] touch-none;
+  .feasly-metric-positive {
+    @apply feasly-metric-change text-success;
   }
 
-  .mobile-safe-area {
-    @apply pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)];
+  .feasly-metric-negative {
+    @apply feasly-metric-change text-destructive;
   }
 
-  /* Remove old layout classes - replaced by new system */
-  .sidebar-auto-space,
-  .sidebar-collapsed-space,
-  .sidebar-expanded-space {
-    /* These classes are now handled by the unified layout system */
+  .feasly-metric-neutral {
+    @apply feasly-metric-change text-muted-foreground;
   }
 
-  .feasly-stack-sm {
-    @apply space-y-2;
+  /* Professional Charts */
+  .feasly-chart-container {
+    @apply bg-card border border-border/50 rounded-xl p-6 shadow-elevation-2;
   }
 
-  .feasly-stack-lg {
-    @apply space-y-6;
+  .feasly-chart-title {
+    @apply text-lg font-semibold text-foreground mb-4;
   }
 
-  /* Responsive Design */
-  .feasly-responsive-grid {
-    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6;
+  .feasly-chart-legend {
+    @apply flex flex-wrap gap-4 mb-4;
   }
 
-  .feasly-responsive-stack {
-    @apply flex flex-col lg:flex-row gap-6;
+  .feasly-chart-legend-item {
+    @apply flex items-center gap-2 text-sm text-muted-foreground;
   }
 
-  /* Professional Animations */
-  .feasly-fade-in {
-    @apply animate-fade-in;
+  .feasly-chart-legend-color {
+    @apply w-3 h-3 rounded-full;
+  }
+}
+
+@layer utilities {
+  /* Typography Utilities */
+  .text-balance {
+    text-wrap: balance;
   }
 
-  .feasly-scale-hover {
-    @apply hover:scale-[1.02] transition-transform duration-200;
+  /* Interactive Elements */
+  .interactive {
+    @apply transition-all duration-200 hover:scale-[1.02] active:scale-[0.98];
   }
 
-  .feasly-glow-hover {
-    @apply hover:shadow-glow transition-shadow duration-300;
+  .interactive-subtle {
+    @apply transition-all duration-150 hover:bg-accent/50 active:bg-accent;
   }
 
-  /* Focus Management */
-  .feasly-focus-ring {
+  /* Focus States */
+  .focus-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2;
   }
 
-  /* Professional Borders */
-  .feasly-border {
-    @apply border border-border/50;
+  .focus-ring-inset {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset;
   }
 
-  .feasly-border-dashed {
-    @apply border border-dashed border-border/50;
+  /* Glassmorphism */
+  .glass {
+    @apply bg-card/80 backdrop-blur-md border border-border/50;
   }
 
-  .feasly-divider {
-    @apply border-t border-border/30;
+  .glass-strong {
+    @apply bg-card/90 backdrop-blur-lg border border-border/60;
+  }
+
+  /* Animations */
+  .animate-in {
+    @apply animate-fade-in;
+  }
+
+  .animate-out {
+    @apply animate-fade-out;
+  }
+
+  /* Scroll Enhancements */
+  .scroll-smooth {
+    scroll-behavior: smooth;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+
+  .scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Mobile Optimizations */
+  .mobile-safe-content {
+    @apply pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)];
+  }
+
+  .mobile-full-height {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Layout Utilities */
+  .content-with-sidebar {
+    margin-left: var(--sidebar-space);
+    padding-left: var(--sidebar-buffer);
+    transition: var(--transition-smooth);
+  }
+
+  .content-without-sidebar {
+    margin-left: 0;
+    padding-left: 0;
+    transition: var(--transition-smooth);
+  }
+
+  /* RTL Utilities */
+  .rtl .content-with-sidebar {
+    margin-left: 0;
+    margin-right: var(--sidebar-space);
+    padding-left: 0;
+    padding-right: var(--sidebar-buffer);
   }
 }

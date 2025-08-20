@@ -57,13 +57,14 @@ export const Sidebar = () => {
   } = useSidebarState();
   
   const filteredNavigation = navigation.filter(item => !cfg.nav.hiddenRoutes.includes(item.href));
+  
+  // Enhanced mini sidebar with better visual indicators
+  const shouldShowMiniSidebar = isAutoHidden && !shouldShowSidebar && !isMobile;
 
-  // Reflect sidebar layout on the document for global spacing rules
-  const expanded = shouldShowSidebar && !isCollapsed;
-  const showMini = isAutoHidden && !shouldShowSidebar && !isMobile;
-
+  // Consolidated CSS variable management - now handled by useResponsiveLayout
+  // This ensures single source of truth for spacing calculations
   useEffect(() => {
-    // The useResponsiveLayout hook now handles CSS variable updates
+    // Legacy support - useResponsiveLayout now handles the main CSS variable updates
     const sidebarWidth = !shouldShowSidebar ? 0 : isCollapsed ? 56 : 256;
     document.documentElement.style.setProperty('--sidebar-width', `${sidebarWidth}px`);
   }, [shouldShowSidebar, isCollapsed]);
@@ -75,53 +76,69 @@ export const Sidebar = () => {
 
   return (
     <>
-      {/* Mini Sidebar - Always visible when auto-hidden */}
-      {isAutoHidden && !shouldShowSidebar && !isMobile && (
-        <div className="fixed left-0 top-[var(--header-height)] z-[var(--z-sidebar)] h-[calc(100vh-var(--header-height))] w-14 bg-card border-r border-border flex flex-col">
-          {/* Mini Header */}
-          <div className="flex items-center justify-center h-14 border-b border-border">
-            <div className="w-6 h-6">
-              <img 
-                src="/lovable-uploads/4b3d51a1-21a0-4d40-a32f-16a402b2a939.png" 
-                alt="Feasly Logo" 
-                className="w-6 h-6 object-contain"
-              />
-            </div>
-          </div>
-          
-          {/* Mini Navigation */}
-          <nav className="flex-1 py-4 px-2 overflow-y-auto space-y-2">
-            {filteredNavigation.map((item) => (
+      {/* Enhanced Mini Sidebar - Auto-hidden state with better visual indicators */}
+      {shouldShowMiniSidebar && (
+        <div 
+          className={cn(
+            "fixed left-0 top-[var(--header-height)] h-[calc(100vh-var(--header-height))]",
+            "w-14 bg-sidebar/98 backdrop-blur-lg border-r border-sidebar-border/60",
+            "flex flex-col items-center py-4 gap-3 z-[var(--z-sidebar)]",
+            "transition-all duration-300 ease-in-out shadow-elegant",
+            "hover:w-16 hover:shadow-strong group",
+            // Visual indicator for interactivity
+            "before:absolute before:right-0 before:top-1/2 before:-translate-y-1/2",
+            "before:w-1 before:h-8 before:bg-primary/30 before:rounded-l-full",
+            "before:transition-all before:duration-300",
+            "hover:before:h-12 hover:before:bg-primary/50"
+          )}
+          onMouseEnter={handleMouseEnter}
+        >
+          {/* Mini Navigation Icons with enhanced tooltips */}
+          {filteredNavigation.slice(0, 6).map((item) => {
+            const Icon = item.icon;
+            const isActive = location.pathname === item.href;
+            
+            return (
               <NavLink
                 key={item.nameKey}
                 to={item.href}
-                className={({ isActive }) =>
-                  cn(
-                    "flex items-center justify-center rounded-lg transition-all duration-200",
-                    "h-10 w-10 mx-auto", // Added mx-auto for centered positioning
-                    isActive
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-accent"
-                  )
-                }
-                title={t(`nav.${item.nameKey}`)}
+                className={cn(
+                  "p-2.5 rounded-xl transition-all duration-200 relative group/tooltip",
+                  "hover:scale-110 active:scale-95",
+                  isActive 
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-md ring-2 ring-sidebar-primary/20" 
+                    : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                )}
               >
-                <item.icon className="w-4 h-4" /> {/* Slightly smaller icons */}
+                <Icon className="h-4 w-4" />
+                {/* Enhanced tooltip with better positioning */}
+                <div className="absolute left-full ml-3 px-3 py-2 bg-popover/95 backdrop-blur text-popover-foreground text-sm rounded-lg shadow-strong opacity-0 group-hover/tooltip:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap z-[var(--z-tooltip)] border border-border/50">
+                  {t(`nav.${item.nameKey}`)}
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-2 h-2 bg-popover/95 border-l border-t border-border/50 rotate-45"></div>
+                </div>
               </NavLink>
-            ))}
-          </nav>
+            );
+          })}
         </div>
       )}
 
-      {/* Main Sidebar */}
-      <div className={cn(
-        "fixed left-0 top-[var(--header-height)] z-[var(--z-sidebar)] h-[calc(100vh-var(--header-height))] bg-card border-r border-border transition-all duration-300 ease-in-out",
-        "flex flex-col justify-between",
-        shouldShowSidebar ? "translate-x-0" : "-translate-x-full",
-        isCollapsed ? "w-14" : "w-64"
-      )}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      {/* Enhanced Main Sidebar with premium styling */}
+      <div 
+        className={cn(
+          "fixed left-0 top-[var(--header-height)] h-[calc(100vh-var(--header-height))]",
+          "bg-sidebar/98 backdrop-blur-lg border-r border-sidebar-border/60 shadow-elegant z-[var(--z-sidebar)]",
+          "flex flex-col transition-all duration-300 ease-in-out",
+          // Width and visibility states
+          shouldShowSidebar 
+            ? (isCollapsed ? "w-14" : "w-64") 
+            : "-translate-x-full opacity-0",
+          // RTL support
+          "rtl:right-0 rtl:left-auto rtl:border-l rtl:border-r-0",
+          // Mobile overlay
+          isMobile && shouldShowSidebar ? "bg-sidebar/95" : ""
+        )}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
       {/* Top Section - Navigation */}
       <div className="flex flex-col min-h-0">

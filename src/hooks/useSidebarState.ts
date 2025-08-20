@@ -11,18 +11,23 @@ export function useSidebarState() {
   };
 
   const isMobile = useIsMobile();
-  const { isNearEdge } = useMouseProximity(50);
+  const { isNearEdge } = useMouseProximity(80); // Larger proximity zone for better UX
   
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    // Default to collapsed on mobile, auto-hide on desktop
+    // Default to collapsed on mobile, preserve state on desktop
     return isMobile || getStoredState();
   });
   
   const [isAutoHidden, setIsAutoHidden] = useState(!isMobile);
   const [isHovered, setIsHovered] = useState(false);
 
-  // Show sidebar when mouse is near edge or hovering
-  const shouldShowSidebar = !isCollapsed && (isNearEdge || isHovered || !isAutoHidden);
+  // Enhanced sidebar visibility logic with better user experience
+  const shouldShowSidebar = !isCollapsed && (
+    isNearEdge ||       // Mouse near left edge
+    isHovered ||        // Hovering over sidebar
+    !isAutoHidden ||    // Auto-hide disabled
+    isMobile            // Always show on mobile when not collapsed
+  );
 
   // Persist state to localStorage
   useEffect(() => {
