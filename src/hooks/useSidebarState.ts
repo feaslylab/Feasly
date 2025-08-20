@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useIsMobile } from './use-mobile';
-import { useMouseProximity } from './useMouseProximity';
 
 export function useSidebarState() {
   // Get stored state from localStorage
@@ -13,8 +12,9 @@ export function useSidebarState() {
   const isMobile = useIsMobile();
   
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    // Default to expanded on desktop, collapsed on mobile
-    return isMobile ? true : getStoredState();
+    // Start expanded by default on desktop for better UX
+    if (isMobile) return true;
+    return false; // Always start expanded on desktop
   });
 
   // Simple visibility logic - always show the sidebar
@@ -33,7 +33,12 @@ export function useSidebarState() {
   }, [isMobile]);
 
   const toggleSidebar = () => {
-    setIsCollapsed(prev => !prev);
+    console.log('Toggle sidebar clicked, current state:', isCollapsed);
+    setIsCollapsed(prev => {
+      const newState = !prev;
+      console.log('New sidebar state:', newState);
+      return newState;
+    });
   };
 
   return {

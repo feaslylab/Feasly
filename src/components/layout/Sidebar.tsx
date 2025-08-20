@@ -130,19 +130,19 @@ export const Sidebar = () => {
                   "flex items-center gap-3 rounded-lg transition-all duration-200 touch-none",
                   "min-h-[44px]",
                   isCollapsed 
-                    ? "px-2 py-2 justify-center mx-auto w-10" // Better spacing for collapsed state
-                    : "px-3 py-3 text-sm font-medium", // More padding for expanded state
+                    ? "px-2 py-2 justify-center mx-auto w-10" 
+                    : "px-3 py-3 text-sm font-medium",
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm"
-                    : "text-muted-foreground hover:text-foreground hover:bg-accent",
+                    : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent",
                   isRTL && !isCollapsed && "flex-row-reverse"
                 )
               }
               title={isCollapsed ? t(`nav.${item.nameKey}`) : undefined}
             >
-              <item.icon className={cn("w-4 h-4 flex-shrink-0")} /> {/* Slightly smaller icons */}
+              <item.icon className={cn("w-4 h-4 flex-shrink-0")} />
               {!isCollapsed && (
-                <span className="truncate">{t(`nav.${item.nameKey}`)}</span>
+                <span className="truncate text-sidebar-foreground">{t(`nav.${item.nameKey}`)}</span>
               )}
             </NavLink>
           ))}
