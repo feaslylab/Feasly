@@ -296,7 +296,13 @@ export const ProjectInputs = z.object({
   project: z.object({
     start_date: z.string(),
     periods: z.number().int().positive(),
-    periodicity: Periodicity.default("monthly")
+    periodicity: Periodicity.default("monthly"),
+    project_type: z.enum(["Residential", "Mixed-Use", "Retail", "Hospitality", "Industrial", "Master Plan"]).optional(),
+    developer_name: z.string().optional(),
+    project_location: z.string().optional(),
+    currency: z.string().optional(),
+    duration_months: z.number().int().positive().optional(),
+    masterplan_mode: z.boolean().optional(),
   }),
   engineMode: z.enum(["excel_parity","feasly_enhanced"]).default("excel_parity"),
   index_buckets: z.array(IndexBucket).default([]),
