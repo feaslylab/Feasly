@@ -6,12 +6,12 @@ export function useResponsiveLayout() {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const isDesktop = useIsDesktop();
-  const { shouldShowSidebar, isCollapsed, isAutoHidden } = useSidebarState();
+  const { isCollapsed } = useSidebarState();
 
   // Simplified layout calculations with proper buffer zones
   const layoutSpacing = {
     headerHeight: isMobile ? 56 : 48,
-    sidebarWidth: shouldShowSidebar ? (isCollapsed ? 56 : 256) : 0,
+    sidebarWidth: isCollapsed ? 56 : 256,
     contentPadding: isMobile ? 16 : 24,
     mobileNavHeight: isMobile ? 56 : 0,
     sidebarBuffer: 24, // Consistent breathing room
@@ -25,15 +25,10 @@ export function useResponsiveLayout() {
     root.style.setProperty('--header-height', `${layoutSpacing.headerHeight}px`);
     root.style.setProperty('--mobile-nav-height', `${layoutSpacing.mobileNavHeight}px`);
     
-    // Enhanced sidebar space calculation - always account for sidebar when present
+    // Enhanced sidebar space calculation
     let sidebarSpace = '0px';
     if (!isMobile) {
-      if (shouldShowSidebar) {
-        sidebarSpace = isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)';
-      } else if (isAutoHidden) {
-        // Even when auto-hidden, reserve space for the mini sidebar
-        sidebarSpace = 'var(--sidebar-collapsed)';
-      }
+      sidebarSpace = isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)';
     }
     
     root.style.setProperty('--sidebar-space', sidebarSpace);
@@ -45,7 +40,7 @@ export function useResponsiveLayout() {
     }, 300);
     
     return () => clearTimeout(timeout);
-  }, [shouldShowSidebar, isCollapsed, isMobile, layoutSpacing.headerHeight, layoutSpacing.mobileNavHeight]);
+  }, [isCollapsed, isMobile, layoutSpacing.headerHeight, layoutSpacing.mobileNavHeight]);
 
   return {
     isMobile,
@@ -60,12 +55,12 @@ export function useResponsiveLayout() {
         'flex-1 overflow-auto relative',
         // Top spacing for header
         isMobile ? 'pt-[var(--header-height)] pb-[var(--mobile-nav-height)]' : 'pt-[var(--header-height)]',
-        // Left spacing with buffer for desktop - account for all sidebar states
-        !isMobile && (shouldShowSidebar || isAutoHidden) ? 'ml-[var(--content-left-space)]' : '',
+        // Left spacing with buffer for desktop
+        !isMobile ? 'ml-[var(--content-left-space)]' : '',
         // Smooth transitions
         'transition-all duration-300 ease-in-out',
         // Visual separation when sidebar is present
-        !isMobile && (shouldShowSidebar || isAutoHidden) ? 'border-l border-border/30' : ''
+        !isMobile ? 'border-l border-border/30' : ''
       ].filter(Boolean).join(' '),
       container: [
         'w-full mx-auto relative',
