@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
@@ -12,8 +12,6 @@ import { cn } from "@/lib/utils";
 export const AuthPage = () => {
   console.log('AuthPage component mounted');
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const navigate = useNavigate();
-  const location = useLocation();
 
   // Ensure theme is properly loaded
   useEffect(() => {
@@ -24,12 +22,6 @@ export const AuthPage = () => {
 
   const toggleMode = () => {
     setIsLoginMode(!isLoginMode);
-  };
-
-  const handleSuccess = () => {
-    // Navigate to the intended destination or dashboard
-    const from = (location.state as any)?.from?.pathname || '/dashboard';
-    navigate(from, { replace: true });
   };
 
   return (
@@ -77,9 +69,9 @@ export const AuthPage = () => {
         }}
       >
         {isLoginMode ? (
-          <LoginForm onToggleMode={toggleMode} onSuccess={handleSuccess} />
+          <LoginForm onToggleMode={toggleMode} onSuccess={() => {}} />
         ) : (
-          <SignUpForm onToggleMode={toggleMode} onSuccess={handleSuccess} />
+          <SignUpForm onToggleMode={toggleMode} onSuccess={() => {}} />
         )}
       </motion.div>
     </div>

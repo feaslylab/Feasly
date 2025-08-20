@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useIsMobile } from './use-mobile';
+import { useMouseProximity } from './useMouseProximity';
 
 export function useSidebarState() {
   // Get stored state from localStorage
@@ -10,50 +11,68 @@ export function useSidebarState() {
   };
 
   const isMobile = useIsMobile();
+  const { isNearEdge } = useMouseProximity(80); // Larger proximity zone for better UX
   
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    // Start with saved state from localStorage, default to expanded on desktop
-    if (isMobile) return true;
-    return getStoredState();
+    // Default to collapsed on mobile, preserve state on desktop
+    return isMobile || getStoredState();
   });
+  
+  const [isAutoHidden, setIsAutoHidden] = useState(!isMobile);
+  const [isHovered, setIsHovered] = useState(false);
 
-  // Simple visibility logic - always show the sidebar
-  const shouldShowSidebar = true;
+  // Enhanced sidebar visibility logic with better user experience
+  const shouldShowSidebar = !isCollapsed && (
+    isNearEdge ||       // Mouse near left edge
+    isHovered ||        // Hovering over sidebar
+    !isAutoHidden ||    // Auto-hide disabled
+    isMobile            // Always show on mobile when not collapsed
+  );
 
   // Persist state to localStorage
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', JSON.stringify(isCollapsed));
   }, [isCollapsed]);
 
-  // Auto-collapse on mobile only
+  // Auto-collapse on mobile, auto-hide on desktop
   useEffect(() => {
-    if (isMobile && !isCollapsed) {
-      setIsCollapsed(true);
+    if (isMobile) {
+      setIsAutoHidden(false);
+      if (!isCollapsed) {
+        setIsCollapsed(true);
+      }
+    } else {
+      setIsAutoHidden(true);
     }
-  }, [isMobile]);
+  }, [isMobile, isCollapsed]);
 
   const toggleSidebar = () => {
-    console.log('Toggle sidebar clicked, current state:', isCollapsed);
-    setIsCollapsed(prev => {
-      const newState = !prev;
-      console.log('New sidebar state will be:', newState);
-      localStorage.setItem('sidebar-collapsed', JSON.stringify(newState));
-      return newState;
-    });
+    setIsCollapsed(prev => !prev);
+  };
+
+  const toggleAutoHide = () => {
+    setIsAutoHidden(prev => !prev);
+  };
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
   };
 
   return {
     isCollapsed,
+    isAutoHidden,
     shouldShowSidebar,
-    toggleSidebar,
-    isMobile,
-    // Legacy props for compatibility
-    isAutoHidden: false,
-    isNearEdge: false,
-    isHovered: false,
+    isNearEdge,
+    isHovered,
     setIsCollapsed,
-    toggleAutoHide: () => {},
-    handleMouseEnter: () => {},
-    handleMouseLeave: () => {}
+    toggleSidebar,
+    toggleAutoHide,
+    handleMouseEnter,
+    handleMouseLeave,
+    isMobile
   };
 }
