@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Bell, Download } from "lucide-react";
+import { useLocation, NavLink } from "react-router-dom";
+import { LayoutDashboard, FolderOpen, Calculator, BarChart3, Play } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useProjectStore } from "@/hooks/useProjectStore";
 import { useScenarioStore } from "@/hooks/useScenarioStore";
@@ -15,9 +16,38 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import ScenarioPickerV2 from "@/components/ui/ScenarioPickerV2";
 import ViewSwitch from '@/components/layout/ViewSwitch';
-import NavigationMenu from '@/components/layout/NavigationMenu';
 import Breadcrumbs from '@/components/layout/Breadcrumbs';
 import { TM } from "@/components/ui/trademark";
+import { PATHS } from '@/routes/paths';
+import { cn } from '@/lib/utils';
+
+const navigationItems = [
+  {
+    label: 'Dashboard',
+    href: PATHS.dashboard,
+    icon: LayoutDashboard,
+  },
+  {
+    label: 'Projects',
+    href: PATHS.projects,
+    icon: FolderOpen,
+  },
+  {
+    label: 'Model',
+    href: PATHS.model,
+    icon: Calculator,
+  },
+  {
+    label: 'Portfolio',
+    href: PATHS.portfolio,
+    icon: BarChart3,
+  },
+  {
+    label: 'Demo',
+    href: PATHS.demo,
+    icon: Play,
+  },
+];
 
 export default function Header() {
   const { user } = useAuth();
@@ -30,6 +60,7 @@ export default function Header() {
   const [renameScenarioOpen, setRenameScenarioOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [selectedScenarioForAction, setSelectedScenarioForAction] = useState<string | null>(null);
+  const location = useLocation();
 
   const handleExportZip = async () => {
     if (!projectId || !scenarioId) {
@@ -54,14 +85,19 @@ export default function Header() {
     }
   };
 
+  const isActive = (href: string) => {
+    if (href === PATHS.dashboard) {
+      return location.pathname === href;
+    }
+    return location.pathname.startsWith(href);
+  };
+
   return (
     <>
-      <header className="flex h-14 shrink-0 items-center gap-4 border-b bg-background px-4">
-        <div className="flex items-center gap-4 flex-1">
-          {/* Navigation and Logo section */}
-          <div className="flex items-center gap-4">
-            <NavigationMenu />
-            
+      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="container mx-auto flex h-14 items-center justify-between px-4">
+          {/* Left Section - Logo and Navigation */}
+          <div className="flex items-center gap-6">
             {/* Feasly Logo and Brand */}
             <div className="flex items-center gap-3">
               <div className="relative w-7 h-7 flex-shrink-0">
@@ -86,14 +122,36 @@ export default function Header() {
               </span>
             </div>
             
-            {/* Breadcrumbs */}
-            <div className="hidden md:block">
-              <Breadcrumbs />
-            </div>
+            {/* Navigation Tabs */}
+            <nav className="hidden md:flex items-center gap-1">
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                const active = isActive(item.href);
+                
+                return (
+                  <NavLink
+                    key={item.href}
+                    to={item.href}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                      active 
+                        ? "bg-accent text-accent-foreground" 
+                        : "text-muted-foreground hover:bg-accent/50 hover:text-accent-foreground"
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </NavLink>
+                );
+              })}
+            </nav>
           </div>
 
-          {/* Center section - Scenario Picker (Model page only) */}
-          <div className="flex-1 flex justify-center">
+          {/* Right Section - Controls and Actions */}
+          <div className="flex items-center gap-2">
+            <div className="hidden lg:block">
+              <Breadcrumbs />
+            </div>
             <div className="hidden lg:block">
               <ScenarioPickerV2
                 value={{ projectId, scenarioId }}
@@ -116,10 +174,6 @@ export default function Header() {
                 <span className="text-xs">Project & Scenario</span>
               </Button>
             </div>
-          </div>
-
-          {/* Right section - Controls and Actions */}
-          <div className="flex items-center gap-2">
             <div className="hidden sm:flex items-center gap-2">
               <ViewSwitch />
               <ThemeToggle />
