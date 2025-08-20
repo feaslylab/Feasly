@@ -14,37 +14,27 @@ export function useSidebarState() {
   const { isNearEdge } = useMouseProximity(80); // Larger proximity zone for better UX
   
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    // Default to collapsed on mobile, preserve state on desktop
-    return isMobile || getStoredState();
+    // Default to expanded on desktop, collapsed on mobile
+    return isMobile ? true : getStoredState();
   });
   
-  const [isAutoHidden, setIsAutoHidden] = useState(!isMobile);
+  const [isAutoHidden, setIsAutoHidden] = useState(false); // Disable auto-hide by default 
   const [isHovered, setIsHovered] = useState(false);
 
-  // Enhanced sidebar visibility logic with better user experience
-  const shouldShowSidebar = !isCollapsed && (
-    isNearEdge ||       // Mouse near left edge
-    isHovered ||        // Hovering over sidebar
-    !isAutoHidden ||    // Auto-hide disabled
-    isMobile            // Always show on mobile when not collapsed
-  );
+  // Enhanced sidebar visibility logic - simpler approach
+  const shouldShowSidebar = !isAutoHidden || isNearEdge || isHovered || isMobile;
 
   // Persist state to localStorage
   useEffect(() => {
     localStorage.setItem('sidebar-collapsed', JSON.stringify(isCollapsed));
   }, [isCollapsed]);
 
-  // Auto-collapse on mobile, auto-hide on desktop
+  // Auto-collapse on mobile only
   useEffect(() => {
-    if (isMobile) {
-      setIsAutoHidden(false);
-      if (!isCollapsed) {
-        setIsCollapsed(true);
-      }
-    } else {
-      setIsAutoHidden(true);
+    if (isMobile && !isCollapsed) {
+      setIsCollapsed(true);
     }
-  }, [isMobile, isCollapsed]);
+  }, [isMobile]);
 
   const toggleSidebar = () => {
     setIsCollapsed(prev => !prev);
