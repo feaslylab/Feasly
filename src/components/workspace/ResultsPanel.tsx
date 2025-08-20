@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { TrendingUp, TrendingDown, Download, FileText, BarChart3 } from 'lucide-react';
 import { ExportToolsPanel } from './results/ExportToolsPanel';
+import { KPIOverviewPanel, type KPIMetrics } from '@/components/results/KPIOverviewPanel';
 
 function Sparkline({ data }: { data: Array<number | null | undefined> }) {
   const valid = (data ?? []).filter(
@@ -160,6 +161,20 @@ function ResultsPanelContent({ currency = 'AED' }: { currency?: string }) {
   const rvpi = eq?.kpis?.rvpi ?? null;
   const moic = eq?.kpis?.moic ?? null;
 
+  // Map engine data to KPI format
+  const baseKPIs: KPIMetrics = {
+    npv: eq?.kpis?.npv ?? 0,
+    irr_pa: irr ?? 0,
+    equity_multiple: moic ?? 0,
+    profit_pct: eq?.kpis?.profit_margin ?? 0,
+    project_value: eq?.kpis?.project_value ?? 0,
+    total_cost: eq?.kpis?.total_cost ?? 0,
+    roi: eq?.kpis?.roi ?? 0,
+    dscr_min: eq?.kpis?.dscr_min,
+    cash_on_cash: eq?.kpis?.cash_yield,
+    payback_months: eq?.kpis?.payback_months
+  };
+
   const T = Array.isArray(eq?.calls_total) ? eq!.calls_total.length : 0;
   const last = Math.max(0, T - 1);
   const claw = Number(eq?.gp_clawback?.[last] ?? 0);
@@ -185,7 +200,13 @@ function ResultsPanelContent({ currency = 'AED' }: { currency?: string }) {
         <p className="text-sm text-muted-foreground">View projected financial outcomes and performance KPIs.</p>
       </div>
 
-      {/* KPI Cards */}
+      {/* Enhanced KPI Overview */}
+      <KPIOverviewPanel 
+        kpis={{ base: baseKPIs }}
+        currency={currency}
+      />
+
+      {/* Legacy KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <Metric 
           label="IRR (pa)" 
