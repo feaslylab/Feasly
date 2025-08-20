@@ -25,10 +25,10 @@ export function useResponsiveLayout() {
     root.style.setProperty('--header-height', `${layoutSpacing.headerHeight}px`);
     root.style.setProperty('--mobile-nav-height', `${layoutSpacing.mobileNavHeight}px`);
     
-    // Enhanced sidebar space calculation
+    // Enhanced sidebar space calculation with concrete values
     let sidebarSpace = '0px';
     if (!isMobile) {
-      sidebarSpace = isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)';
+      sidebarSpace = isCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-expanded)';
     }
     
     root.style.setProperty('--sidebar-space', sidebarSpace);

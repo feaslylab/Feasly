@@ -56,12 +56,9 @@ export const Sidebar = () => {
   
   const filteredNavigation = navigation.filter(item => !cfg.nav.hiddenRoutes.includes(item.href));
 
-  // Update CSS variable for content positioning
+  // Enhanced sidebar transitions - no CSS variable conflicts
   useEffect(() => {
-    const sidebarWidth = isCollapsed ? '56px' : '256px';
-    document.documentElement.style.setProperty('--sidebar-width', sidebarWidth);
-    document.documentElement.style.setProperty('--sidebar-space', sidebarWidth);
-    console.log('🔧 CSS Variable Update:', { isCollapsed, sidebarWidth });
+    console.log('🔧 [EFFECT] Sidebar width change:', isCollapsed ? '56px' : '256px', 'timestamp:', Date.now());
   }, [isCollapsed]);
 
   const handleSignOut = async () => {
@@ -114,7 +111,7 @@ export const Sidebar = () => {
         {/* Navigation - Scrollable */}
         <nav className={cn(
           "flex-1 pt-2 pb-4 space-y-1 overflow-y-auto min-h-0 scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent",
-          isCollapsed ? "px-2" : "px-4"
+          isCollapsed ? "px-1" : "px-4"
         )}>
           {filteredNavigation.map((item) => (
             <NavLink
@@ -123,10 +120,10 @@ export const Sidebar = () => {
               className={({ isActive }) =>
                 cn(
                   "flex items-center rounded-lg transition-all duration-200 touch-none",
-                  "min-h-[44px] relative",
+                  "relative group",
                   isCollapsed 
-                    ? "w-10 h-10 p-0 justify-center mx-auto" // Fixed width and height for collapsed
-                    : "px-3 py-3 text-sm font-medium gap-3", // Proper spacing for expanded
+                    ? "w-12 h-12 p-0 justify-center mx-auto" // Larger target for better UX
+                    : "px-3 py-3 text-sm font-medium gap-3 min-h-[44px]", // Proper spacing for expanded
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm"
                     : "text-muted-foreground hover:text-foreground hover:bg-accent",
@@ -135,7 +132,10 @@ export const Sidebar = () => {
               }
               title={isCollapsed ? t(`nav.${item.nameKey}`) : undefined}
             >
-              <item.icon className={cn("w-4 h-4 flex-shrink-0")} />
+              <item.icon className={cn(
+                "w-5 h-5 flex-shrink-0",
+                isCollapsed ? "m-auto" : ""
+              )} />
               {!isCollapsed && (
                 <span className="truncate">{t(`nav.${item.nameKey}`)}</span>
               )}

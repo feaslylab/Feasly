@@ -97,7 +97,6 @@
     --mobile-nav-height: 3.5rem;    /* 56px */
 
     /* Calculated Content Spacing - Single Source of Truth */
-    --sidebar-width: 0px;           /* Dynamic: set by JS based on state */
     --sidebar-space: 0px;           /* Dynamic: set by JS based on state */
     --content-left-space: calc(var(--sidebar-space) + var(--sidebar-buffer));
     --content-safe-area: var(--header-height);
