@@ -12,8 +12,9 @@ export function useSidebarState() {
   const isMobile = useIsMobile();
   
   const [isCollapsed, setIsCollapsed] = useState(() => {
-    // Default to collapsed on mobile, preserve state on desktop
-    return isMobile || getStoredState();
+    // Default to collapsed on both mobile and desktop for consistent UX
+    const stored = getStoredState();
+    return stored !== null ? stored : true; // Default to collapsed
   });
 
   // Persist state to localStorage

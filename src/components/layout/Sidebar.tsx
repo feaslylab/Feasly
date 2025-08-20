@@ -85,24 +85,25 @@ export const Sidebar = () => {
         <SidebarHeader />
 
         {/* Quick Action */}
-        {!isCollapsed && (
-          <div className="px-4 pb-2 pt-6 flex-shrink-0">
-            <Button 
-              asChild
-              className={cn(
-                "w-full justify-start gap-3 px-3 py-3 text-primary-foreground rounded-lg",
-                "bg-gradient-to-b from-primary to-primary-dark",
-                "shadow-sm hover:shadow-md transition-colors",
-                isRTL && !isCollapsed && "flex-row-reverse"
-              )}
-            >
-              <NavLink to="/projects">
-                <Plus className="w-4 h-4" />
-                {t('nav.newProject')}
-              </NavLink>
-            </Button>
-          </div>
-        )}
+        <div className={cn("pb-2 pt-6 flex-shrink-0", isCollapsed ? "px-3" : "px-4")}>
+          <Button 
+            asChild
+            className={cn(
+              "text-primary-foreground rounded-lg shadow-sm hover:shadow-md transition-colors",
+              "bg-gradient-to-b from-primary to-primary-dark",
+              isCollapsed 
+                ? "w-10 h-10 p-0 justify-center mx-auto" 
+                : "w-full justify-start gap-3 px-3 py-3",
+              isRTL && !isCollapsed && "flex-row-reverse"
+            )}
+            title={isCollapsed ? t('nav.newProject') : undefined}
+          >
+            <NavLink to="/projects">
+              <Plus className="w-4 h-4" />
+              {!isCollapsed && t('nav.newProject')}
+            </NavLink>
+          </Button>
+        </div>
 
         {/* Navigation - Scrollable */}
         <nav className={cn(
