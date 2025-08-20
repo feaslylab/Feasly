@@ -54,7 +54,31 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
     });
   };
 
-  // Transform debt items from form format to engine format
+  // Transform financing slices from form format to engine format
+  const transformFinancingSlices = (formFinancingSlices: any[] = []) => {
+    const equity = formFinancingSlices
+      .filter(slice => slice.type === "equity")
+      .reduce((sum, slice) => sum + (Number(slice.amount) || 0), 0);
+    
+    const debt = formFinancingSlices
+      .filter(slice => slice.type === "senior_debt" || slice.type === "mezzanine_debt")
+      .reduce((sum, slice) => sum + (Number(slice.amount) || 0), 0);
+    
+    const slices = formFinancingSlices.map(slice => ({
+      key: slice.label?.toLowerCase().replace(/\s+/g, '_') || slice.id || `slice_${Math.random().toString(36).substr(2, 9)}`,
+      type: slice.type,
+      amount: Number(slice.amount || 0),
+      rate: slice.interest_rate ? Number(slice.interest_rate) : undefined,
+      tenor: slice.tenor_months ? Number(slice.tenor_months) : undefined,
+      dscr_min: slice.dscr_min ? Number(slice.dscr_min) : undefined,
+      interest_only: Boolean(slice.is_interest_only),
+      start_month: Number(slice.start_month || 0),
+    }));
+
+    return { equity, debt, slices };
+  };
+
+  // Transform debt items from form format to engine format (legacy support)
   const transformDebtItems = (formDebtItems: any[] = []) => {
     return formDebtItems.map((debt: any) => ({
       key: debt.id || debt.name || `debt_${Math.random().toString(36).substr(2, 9)}`,
@@ -85,6 +109,7 @@ export function mapFormToProjectInputs(form: any): ProjectInputs {
     unit_types: transformUnitTypes(form?.unit_types),
     cost_items: transformCostItems(form?.cost_items),
     debt: transformDebtItems(form?.debt),
+    financing_slices: form?.financing_slices ?? [],
     tax: form?.tax ?? { vat_enabled:false, vat_rate:0, corp_tax_enabled:false, corp_tax_rate:0, zakat_enabled:false, interest_cap_pct_ebitda:1, allow_nol_carryforward:true, vat_ruleset:"UAE_2025" },
     escrow: form?.escrow ?? { wafi_enabled:false, collection_cap:{alpha:1,beta:1}, release_rules:"alpha_beta", milestones:[] },
     valuation: form?.valuation ?? { selling_cost_pct:0, cap_rate_pa_income:0, stabilize_month:24 },

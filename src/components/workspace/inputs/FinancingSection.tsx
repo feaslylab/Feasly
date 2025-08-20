@@ -4,89 +4,161 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DebtItemSchema, type DebtItemInput } from "@/schemas/inputs";
-import { Plus, Trash2, Save, Building, Percent, DollarSign } from "lucide-react";
+import { FinancingSliceSchema, type FinancingSliceInput } from "@/schemas/inputs";
+import { Plus, Trash2, Save, TrendingUp, AlertTriangle, DollarSign } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
-function newDebtItem(): DebtItemInput {
+const financingTypes = [
+  { value: "equity", label: "Equity" },
+  { value: "senior_debt", label: "Senior Debt" },
+  { value: "mezzanine_debt", label: "Mezzanine Debt" },
+] as const;
+
+function newFinancingSlice(): FinancingSliceInput {
   return {
     id: crypto.randomUUID(),
-    name: "",
-    type: "senior",
+    type: "equity",
+    label: "",
     amount: 0,
-    interest_rate: 0,
-    payment_type: "paid",
-    amortization: "linear",
-    drawdown_start: 0,
-    drawdown_end: 12,
-    fees: 0,
+    interest_rate: undefined,
+    tenor_months: undefined,
+    dscr_min: undefined,
+    is_interest_only: false,
+    start_month: 0,
   };
 }
 
 export default function FinancingSection() {
   const { inputs, setInputs } = useEngine();
-  const [draft, setDraft] = useState<DebtItemInput | null>(null);
+  const [draft, setDraft] = useState<FinancingSliceInput | null>(null);
+  const { toast } = useToast();
 
-  const debtItems = useMemo<DebtItemInput[]>(() => {
-    if (!Array.isArray(inputs?.debt)) return [];
+  const financingSlices = useMemo<FinancingSliceInput[]>(() => {
+    if (!Array.isArray(inputs?.financing_slices)) return [];
     
     // Transform existing data to our schema format
-    return inputs.debt.map((debt: any, index: number) => ({
-      id: debt.id || `debt-${index}`,
-      name: debt.name || `Debt Item ${index + 1}`,
-      type: debt.type || "senior",
-      amount: Number(debt.amount || debt.principal || 0),
-      interest_rate: Number(debt.interest_rate || debt.rate || 0),
-      payment_type: debt.payment_type || "paid",
-      amortization: debt.amortization || "linear",
-      drawdown_start: Number(debt.drawdown_start || debt.start_month || 0),
-      drawdown_end: Number(debt.drawdown_end || debt.term_months || 12),
-      fees: Number(debt.fees || 0),
+    return inputs.financing_slices.map((slice: any, index: number) => ({
+      id: slice.id || `financing-${index}`,
+      type: slice.type || "equity",
+      label: slice.label || slice.name || `Financing ${index + 1}`,
+      amount: Number(slice.amount || 0),
+      interest_rate: slice.interest_rate ? Number(slice.interest_rate) : undefined,
+      tenor_months: slice.tenor_months ? Number(slice.tenor_months) : undefined,
+      dscr_min: slice.dscr_min ? Number(slice.dscr_min) : undefined,
+      is_interest_only: Boolean(slice.is_interest_only),
+      start_month: Number(slice.start_month || 0),
     }));
   }, [inputs]);
 
-  const add = () => setDraft(newDebtItem());
+  // Group financing by type
+  const groupedFinancing = useMemo(() => {
+    const groups: Record<string, FinancingSliceInput[]> = {
+      equity: [],
+      senior_debt: [],
+      mezzanine_debt: [],
+    };
+    
+    financingSlices.forEach(slice => {
+      if (groups[slice.type]) {
+        groups[slice.type].push(slice);
+      }
+    });
+    
+    return groups;
+  }, [financingSlices]);
+
+  // Calculate totals and validation
+  const analysis = useMemo(() => {
+    const equity = financingSlices.filter(s => s.type === "equity").reduce((sum, s) => sum + s.amount, 0);
+    const seniorDebt = financingSlices.filter(s => s.type === "senior_debt").reduce((sum, s) => sum + s.amount, 0);
+    const mezzanineDebt = financingSlices.filter(s => s.type === "mezzanine_debt").reduce((sum, s) => sum + s.amount, 0);
+    const totalDebt = seniorDebt + mezzanineDebt;
+    const totalCapital = equity + totalDebt;
+    
+    // Calculate cost estimate from cost_items
+    const totalCosts = Array.isArray(inputs?.cost_items) 
+      ? inputs.cost_items.reduce((sum: number, cost: any) => sum + (Number(cost.amount) || 0), 0)
+      : 0;
+    
+    const ltc = totalCosts > 0 ? totalDebt / totalCosts : 0;
+    const equityRatio = totalCapital > 0 ? equity / totalCapital : 0;
+    const debtRatio = totalCapital > 0 ? totalDebt / totalCapital : 0;
+    
+    // Validation warnings
+    const warnings: string[] = [];
+    if (ltc > 0.8) warnings.push("LTC ratio exceeds 80%");
+    if (equityRatio < 0.2) warnings.push("Equity ratio below 20%");
+    if (totalCapital < totalCosts * 0.9) warnings.push("Capital shortfall detected");
+    
+    return {
+      equity,
+      seniorDebt,
+      mezzanineDebt,
+      totalDebt,
+      totalCapital,
+      totalCosts,
+      ltc,
+      equityRatio,
+      debtRatio,
+      warnings,
+    };
+  }, [financingSlices, inputs]);
+
+  const add = () => setDraft(newFinancingSlice());
   const cancel = () => setDraft(null);
 
   const save = () => {
     if (!draft) return;
-    const parsed = DebtItemSchema.safeParse({
-      ...draft,
-      amount: Number(draft.amount),
-      interest_rate: Number(draft.interest_rate),
-      drawdown_start: Number(draft.drawdown_start),
-      drawdown_end: Number(draft.drawdown_end),
-      fees: Number(draft.fees),
-    });
+    const parsed = FinancingSliceSchema.safeParse(draft);
     if (!parsed.success) {
-      console.error('Validation errors:', parsed.error.errors);
+      toast({
+        title: "Validation Error",
+        description: "Please check all required fields",
+        variant: "destructive",
+      });
       return;
     }
-    const idx = debtItems.findIndex((d) => d.id === draft.id);
+    
+    const idx = financingSlices.findIndex((s) => s.id === draft.id);
     const nextList =
       idx === -1
-        ? [...debtItems, parsed.data]
-        : debtItems.map((d, i) => (i === idx ? parsed.data : d));
+        ? [...financingSlices, parsed.data]
+        : financingSlices.map((s, i) => (i === idx ? parsed.data : s));
 
-    setInputs((prev: any) => ({ ...prev, debt: nextList }));
+    setInputs((prev: any) => ({ ...prev, financing_slices: nextList }));
     setDraft(null);
+    
+    toast({
+      title: "Financing Slice Saved",
+      description: `${parsed.data.label} has been saved successfully`,
+    });
   };
 
   const remove = (id: string) => {
+    const slice = financingSlices.find(s => s.id === id);
     setInputs((prev: any) => ({
       ...prev,
-      debt: debtItems.filter((d) => d.id !== id),
+      financing_slices: financingSlices.filter((s) => s.id !== id),
     }));
+    
+    if (slice) {
+      toast({
+        title: "Financing Slice Deleted",
+        description: `${slice.label} has been removed`,
+      });
+    }
   };
 
-  const edit = (row: DebtItemInput) => setDraft({ ...row });
+  const edit = (row: FinancingSliceInput) => setDraft({ ...row });
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'senior': return 'bg-blue-100 text-blue-800';
-      case 'mezzanine': return 'bg-purple-100 text-purple-800';
-      case 'bridge': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case "equity": return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+      case "senior_debt": return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+      case "mezzanine_debt": return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+      default: return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
     }
   };
 
@@ -94,58 +166,121 @@ export default function FinancingSection() {
     <Card className="p-4 space-y-4" data-section="financing">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h3 className="text-sm font-semibold">Advanced Financing</h3>
-          <p className="text-xs text-muted-foreground">Configure senior debt, mezzanine, bridge loans and other financing instruments</p>
+          <h3 className="text-sm font-semibold">Capital Stack</h3>
+          <p className="text-xs text-muted-foreground">Configure equity and debt financing for your project</p>
         </div>
         <Button size="sm" variant="outline" onClick={add}>
-          <Plus className="h-4 w-4 mr-1" /> Add Debt Item
+          <Plus className="h-4 w-4 mr-1" /> Add Financing
         </Button>
       </div>
+
+      {/* Capital Analysis Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="p-3 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+          <div className="text-xs text-green-600 dark:text-green-400">Total Equity</div>
+          <div className="text-lg font-semibold text-green-800 dark:text-green-200">
+            {analysis.equity.toLocaleString()}
+          </div>
+          <div className="text-xs text-green-600 dark:text-green-400">
+            {(analysis.equityRatio * 100).toFixed(1)}%
+          </div>
+        </div>
+        <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+          <div className="text-xs text-blue-600 dark:text-blue-400">Total Debt</div>
+          <div className="text-lg font-semibold text-blue-800 dark:text-blue-200">
+            {analysis.totalDebt.toLocaleString()}
+          </div>
+          <div className="text-xs text-blue-600 dark:text-blue-400">
+            {(analysis.debtRatio * 100).toFixed(1)}%
+          </div>
+        </div>
+        <div className="p-3 bg-muted/50 rounded-lg">
+          <div className="text-xs text-muted-foreground">LTC Ratio</div>
+          <div className="text-lg font-semibold">{(analysis.ltc * 100).toFixed(1)}%</div>
+        </div>
+        <div className="p-3 bg-muted/50 rounded-lg">
+          <div className="text-xs text-muted-foreground">Total Capital</div>
+          <div className="text-lg font-semibold">{analysis.totalCapital.toLocaleString()}</div>
+        </div>
+      </div>
+
+      {/* Validation Warnings */}
+      {analysis.warnings.length > 0 && (
+        <div className="p-3 bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+          <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+            <AlertTriangle className="h-4 w-4" />
+            <span className="text-sm font-medium">Capital Stack Warnings</span>
+          </div>
+          <ul className="mt-2 text-sm text-yellow-700 dark:text-yellow-300 space-y-1">
+            {analysis.warnings.map((warning, idx) => (
+              <li key={idx}>• {warning}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="rounded-md border overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
-              <th className="text-left p-2">Name</th>
-              <th className="text-center p-2">Type</th>
+              <th className="text-left p-2">Label</th>
+              <th className="text-left p-2">Type</th>
               <th className="text-right p-2">Amount</th>
               <th className="text-right p-2">Rate (%)</th>
-              <th className="text-center p-2">Payment</th>
-              <th className="text-center p-2">Amort.</th>
-              <th className="text-right p-2">Start</th>
-              <th className="text-right p-2">End</th>
-              <th className="text-right p-2">Fees</th>
-              <th className="p-2 w-24"></th>
+              <th className="text-right p-2">Tenor (mo)</th>
+              <th className="text-center p-2">DSCR Min</th>
+              <th className="text-center p-2">IO</th>
+              <th className="p-2 w-32"></th>
             </tr>
           </thead>
 
           <tbody>
-            {debtItems.length === 0 && !draft && (
+            {financingSlices.length === 0 && !draft && (
               <tr>
-                <td colSpan={10} className="p-4 text-muted-foreground text-center">
-                  No debt items yet. Click "Add Debt Item".
+                <td colSpan={8} className="p-8 text-muted-foreground text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <TrendingUp className="h-8 w-8 opacity-50" />
+                    <p>No financing configured yet</p>
+                    <Button size="sm" onClick={add}>Add your first financing slice</Button>
+                  </div>
                 </td>
               </tr>
             )}
 
-            {debtItems.map((d) => (
-              <tr key={d.id} className="border-t">
-                <td className="p-2 font-medium">{d.name}</td>
-                <td className="p-2 text-center">
-                  <span className={`inline-flex px-2 py-1 text-xs rounded-full ${getTypeColor(d.type)}`}>
-                    {d.type}
+            {/* Render financing grouped by type */}
+            {financingTypes.map((typeInfo) => {
+              const items = groupedFinancing[typeInfo.value];
+              if (items.length === 0) return null;
+              
+              return (
+                <tr key={`type-${typeInfo.value}`} className="bg-muted/30">
+                  <td colSpan={8} className="p-2 font-medium text-xs uppercase tracking-wide">
+                    {typeInfo.label} ({items.length})
+                  </td>
+                </tr>
+              );
+            })}
+
+            {financingSlices.map((slice) => (
+              <tr key={slice.id} className="border-t hover:bg-muted/20">
+                <td className="p-2 font-medium">{slice.label}</td>
+                <td className="p-2">
+                  <span className={`inline-flex px-2 py-1 text-xs rounded-full ${getTypeColor(slice.type)}`}>
+                    {financingTypes.find(t => t.value === slice.type)?.label}
                   </span>
                 </td>
-                <td className="p-2 text-right">{d.amount.toLocaleString()}</td>
-                <td className="p-2 text-right">{d.interest_rate}%</td>
-                <td className="p-2 text-center capitalize">{d.payment_type}</td>
-                <td className="p-2 text-center capitalize">{d.amortization}</td>
-                <td className="p-2 text-right">{d.drawdown_start}</td>
-                <td className="p-2 text-right">{d.drawdown_end}</td>
-                <td className="p-2 text-right">{d.fees.toLocaleString()}</td>
-                <td className="p-2 text-right space-x-2">
-                  <Button size="sm" variant="ghost" onClick={() => edit(d)}>Edit</Button>
-                  <Button size="sm" variant="ghost" onClick={() => remove(d.id)}>
+                <td className="p-2 text-right font-mono">{slice.amount.toLocaleString()}</td>
+                <td className="p-2 text-right">
+                  {slice.interest_rate ? (slice.interest_rate * 100).toFixed(2) : "-"}
+                </td>
+                <td className="p-2 text-right">{slice.tenor_months || "-"}</td>
+                <td className="p-2 text-center">{slice.dscr_min?.toFixed(2) || "-"}</td>
+                <td className="p-2 text-center">
+                  {slice.type !== "equity" && slice.is_interest_only ? "✓" : "-"}
+                </td>
+                <td className="p-2 text-right space-x-1">
+                  <Button size="sm" variant="ghost" onClick={() => edit(slice)}>Edit</Button>
+                  <Button size="sm" variant="ghost" onClick={() => remove(slice.id)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </td>
@@ -155,25 +290,26 @@ export default function FinancingSection() {
             {draft && (
               <tr className="border-t bg-muted/30">
                 <td className="p-2">
-                  <Label className="sr-only">Name</Label>
                   <Input
-                    value={draft.name}
-                    onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                    placeholder="e.g. Construction Loan"
+                    value={draft.label}
+                    onChange={(e) => setDraft({ ...draft, label: e.target.value })}
+                    placeholder="e.g. Senior Construction Loan"
                   />
                 </td>
                 <td className="p-2">
-                  <Select 
-                    value={draft.type} 
-                    onValueChange={(value: "senior" | "mezzanine" | "bridge") => setDraft({ ...draft, type: value })}
+                  <Select
+                    value={draft.type}
+                    onValueChange={(value) => setDraft({ ...draft, type: value as any })}
                   >
-                    <SelectTrigger className="w-28">
+                    <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="senior">Senior</SelectItem>
-                      <SelectItem value="mezzanine">Mezzanine</SelectItem>
-                      <SelectItem value="bridge">Bridge</SelectItem>
+                      {financingTypes.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </td>
@@ -184,7 +320,6 @@ export default function FinancingSection() {
                     min={0}
                     value={draft.amount}
                     onChange={(e) => setDraft({ ...draft, amount: Number(e.target.value) })}
-                    placeholder="Amount"
                   />
                 </td>
                 <td className="p-2">
@@ -194,48 +329,10 @@ export default function FinancingSection() {
                     min={0}
                     max={100}
                     step={0.1}
-                    value={draft.interest_rate}
-                    onChange={(e) => setDraft({ ...draft, interest_rate: Number(e.target.value) })}
-                    placeholder="Rate"
-                  />
-                </td>
-                <td className="p-2">
-                  <Select 
-                    value={draft.payment_type} 
-                    onValueChange={(value: "paid" | "capitalized" | "bullet") => setDraft({ ...draft, payment_type: value })}
-                  >
-                    <SelectTrigger className="w-24">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="paid">Paid</SelectItem>
-                      <SelectItem value="capitalized">Cap.</SelectItem>
-                      <SelectItem value="bullet">Bullet</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </td>
-                <td className="p-2">
-                  <Select 
-                    value={draft.amortization} 
-                    onValueChange={(value: "linear" | "bullet") => setDraft({ ...draft, amortization: value })}
-                  >
-                    <SelectTrigger className="w-20">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="linear">Linear</SelectItem>
-                      <SelectItem value="bullet">Bullet</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </td>
-                <td className="p-2">
-                  <Input
-                    type="number"
-                    inputMode="numeric"
-                    min={0}
-                    value={draft.drawdown_start}
-                    onChange={(e) => setDraft({ ...draft, drawdown_start: Number(e.target.value) })}
-                    placeholder="Start"
+                    value={draft.interest_rate ? draft.interest_rate * 100 : ""}
+                    onChange={(e) => setDraft({ ...draft, interest_rate: e.target.value ? Number(e.target.value) / 100 : undefined })}
+                    placeholder="7.0"
+                    disabled={draft.type === "equity"}
                   />
                 </td>
                 <td className="p-2">
@@ -243,9 +340,10 @@ export default function FinancingSection() {
                     type="number"
                     inputMode="numeric"
                     min={1}
-                    value={draft.drawdown_end}
-                    onChange={(e) => setDraft({ ...draft, drawdown_end: Number(e.target.value) })}
-                    placeholder="End"
+                    value={draft.tenor_months || ""}
+                    onChange={(e) => setDraft({ ...draft, tenor_months: e.target.value ? Number(e.target.value) : undefined })}
+                    placeholder="48"
+                    disabled={draft.type === "equity"}
                   />
                 </td>
                 <td className="p-2">
@@ -253,13 +351,25 @@ export default function FinancingSection() {
                     type="number"
                     inputMode="decimal"
                     min={0}
-                    value={draft.fees}
-                    onChange={(e) => setDraft({ ...draft, fees: Number(e.target.value) })}
-                    placeholder="Fees"
+                    max={5}
+                    step={0.1}
+                    value={draft.dscr_min || ""}
+                    onChange={(e) => setDraft({ ...draft, dscr_min: e.target.value ? Number(e.target.value) : undefined })}
+                    placeholder="1.2"
+                    disabled={draft.type === "equity"}
                   />
                 </td>
-                <td className="p-2 text-right space-x-2">
-                  <Button size="sm" onClick={save}><Save className="h-4 w-4 mr-1" />Save</Button>
+                <td className="p-2 text-center">
+                  <Switch
+                    checked={draft.is_interest_only || false}
+                    onCheckedChange={(checked) => setDraft({ ...draft, is_interest_only: checked })}
+                    disabled={draft.type === "equity"}
+                  />
+                </td>
+                <td className="p-2 text-right space-x-1">
+                  <Button size="sm" onClick={save}>
+                    <Save className="h-4 w-4 mr-1" />Save
+                  </Button>
                   <Button size="sm" variant="ghost" onClick={cancel}>Cancel</Button>
                 </td>
               </tr>
@@ -267,6 +377,55 @@ export default function FinancingSection() {
           </tbody>
         </table>
       </div>
+
+      {/* Capital Structure Visualization */}
+      {financingSlices.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="text-sm font-semibold">Capital Structure</h4>
+          <div className="h-6 bg-muted rounded-lg overflow-hidden flex">
+            {analysis.equity > 0 && (
+              <div 
+                className="bg-green-500 flex items-center justify-center text-xs text-white font-medium"
+                style={{ width: `${analysis.equityRatio * 100}%` }}
+              >
+                {analysis.equityRatio > 0.15 ? `${(analysis.equityRatio * 100).toFixed(0)}%` : ""}
+              </div>
+            )}
+            {analysis.seniorDebt > 0 && (
+              <div 
+                className="bg-blue-500 flex items-center justify-center text-xs text-white font-medium"
+                style={{ width: `${(analysis.seniorDebt / analysis.totalCapital) * 100}%` }}
+              >
+                {(analysis.seniorDebt / analysis.totalCapital) > 0.15 ? 
+                  `${((analysis.seniorDebt / analysis.totalCapital) * 100).toFixed(0)}%` : ""}
+              </div>
+            )}
+            {analysis.mezzanineDebt > 0 && (
+              <div 
+                className="bg-purple-500 flex items-center justify-center text-xs text-white font-medium"
+                style={{ width: `${(analysis.mezzanineDebt / analysis.totalCapital) * 100}%` }}
+              >
+                {(analysis.mezzanineDebt / analysis.totalCapital) > 0.15 ? 
+                  `${((analysis.mezzanineDebt / analysis.totalCapital) * 100).toFixed(0)}%` : ""}
+              </div>
+            )}
+          </div>
+          <div className="flex gap-4 text-xs">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-green-500 rounded"></div>
+              <span>Equity</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-blue-500 rounded"></div>
+              <span>Senior Debt</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-purple-500 rounded"></div>
+              <span>Mezzanine</span>
+            </div>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }

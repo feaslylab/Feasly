@@ -61,6 +61,19 @@ export const CostItemSchema = z.object({
 });
 export type CostItemInput = z.infer<typeof CostItemSchema>;
 
+export const FinancingSliceSchema = z.object({
+  id: z.string().min(1),
+  type: z.enum(["equity", "senior_debt", "mezzanine_debt"]),
+  label: z.string().min(1, "Label is required"),
+  amount: z.number().positive("Amount is required"),
+  interest_rate: z.number().min(0).max(1).optional(),
+  tenor_months: z.number().int().positive().optional(),
+  dscr_min: z.number().min(0).max(5).optional(),
+  is_interest_only: z.boolean().optional(),
+  start_month: z.number().int().nonnegative().default(0),
+});
+export type FinancingSliceInput = z.infer<typeof FinancingSliceSchema>;
+
 export const DebtItemSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1, "Name is required"),

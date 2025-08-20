@@ -1,14 +1,15 @@
-import { UnitTypeInput, CostItemInput } from "@/schemas/inputs";
+import { UnitTypeInput, CostItemInput, FinancingSliceInput } from "@/schemas/inputs";
 
 export interface FeaslyPreset {
   id: string;
   name: string;
   description: string;
   category: 'residential' | 'retail' | 'mixed_use';
-  inputs: {
-    unit_types: UnitTypeInput[];
-    cost_items: CostItemInput[];
-  };
+      inputs: {
+        unit_types: UnitTypeInput[];
+        cost_items: CostItemInput[];
+        financing_slices?: FinancingSliceInput[];
+      };
 }
 
 export const PRESETS: FeaslyPreset[] = [
