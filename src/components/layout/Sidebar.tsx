@@ -202,29 +202,29 @@ export const Sidebar = () => {
       </div>
 
       {/* Bottom User Section - Always Visible */}
-      <div className={cn("border-t border-border flex-shrink-0", isCollapsed ? "p-2" : "p-4")}>
+      <div className={cn("border-t border-sidebar-border flex-shrink-0 bg-sidebar/95", isCollapsed ? "p-2" : "p-4")}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               className={cn(
-                "w-full h-auto text-left touch-none min-h-[44px]", // Touch-friendly height
+                "w-full h-auto text-left touch-none min-h-[44px] hover:bg-sidebar-accent", 
                 isCollapsed ? "p-2 justify-center" : "p-3",
                 isRTL && !isCollapsed ? "flex-row-reverse" : ""
               )}
             >
               <div className={cn("flex items-center w-full", isCollapsed ? "justify-center" : "gap-3")}>
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0 ring-2 ring-sidebar-border/20">
                   <span className="text-primary-foreground font-medium text-sm">
                     {user?.user_metadata?.full_name?.[0] || user?.email?.[0] || "U"}
                   </span>
                 </div>
                 {!isCollapsed && (
                   <div className="flex-1 min-w-0 text-left">
-                    <p className="font-medium text-foreground truncate text-sm">
+                    <p className="font-medium text-sidebar-foreground truncate text-sm">
                       {user?.user_metadata?.full_name || t('auth.account')}
                     </p>
-                    <p className="text-xs text-muted-foreground truncate">
+                    <p className="text-xs text-sidebar-foreground/60 truncate">
                       {user?.email}
                     </p>
                   </div>
