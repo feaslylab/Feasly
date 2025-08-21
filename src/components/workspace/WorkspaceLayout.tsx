@@ -94,12 +94,11 @@ export default function WorkspaceLayout({
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <span>
-                      <Button 
-                        size="sm" 
-                        onClick={onRunCalculation} 
-                        disabled={disableRun || isCalculating || isApproved}
-                        className="h-4 px-2 text-xs font-medium bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md transition-all duration-200"
-                      >
+                       <Button 
+                         onClick={onRunCalculation} 
+                         disabled={disableRun || isCalculating || isApproved}
+                         className="h-4 px-2 text-xs font-medium bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md transition-all duration-200"
+                       >
                         <Play className="h-2 w-2 mr-0.5" strokeWidth={1.5} />
                         {isCalculating ? 'Running...' : 'Run'}
                       </Button>
@@ -123,11 +122,10 @@ export default function WorkspaceLayout({
                     <TooltipTrigger asChild>
                       <span>
                         <Button 
-                          size="sm" 
                           variant="ghost" 
                           onClick={onSaveSnapshot}
                           disabled={isApproved}
-                            className="h-4 w-4 p-0 hover:bg-muted/60 transition-colors"
+                          className="h-4 w-4 p-0 hover:bg-muted/60 transition-colors"
                         >
                           <Save className="h-2 w-2" />
                         </Button>
@@ -144,7 +142,6 @@ export default function WorkspaceLayout({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button 
-                          size="sm" 
                           variant="ghost" 
                           onClick={onOpenChecklist}
                           className="h-4 w-4 p-0 hover:bg-muted/60 transition-colors"
@@ -163,7 +160,6 @@ export default function WorkspaceLayout({
                       <TooltipTrigger asChild>
                         <span>
                           <Button 
-                            size="sm" 
                             variant="ghost" 
                             onClick={onResetToBaseline}
                             disabled={isApproved}
