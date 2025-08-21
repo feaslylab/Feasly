@@ -25,12 +25,6 @@ export default function Breadcrumbs({ className }: BreadcrumbsProps) {
       breadcrumbs.push({ label: 'Model', path: PATHS.model });
     } else if (pathname.startsWith(PATHS.portfolio)) {
       breadcrumbs.push({ label: 'Portfolio', path: PATHS.portfolio });
-    } else if (pathname.startsWith(PATHS.demo)) {
-      if (pathname === PATHS.demoProject) {
-        breadcrumbs.push({ label: 'Demo Project', path: PATHS.demoProject });
-      } else {
-        breadcrumbs.push({ label: 'Demo', path: PATHS.demo });
-      }
     }
 
     return breadcrumbs;

@@ -15,7 +15,6 @@ import { PATHS } from "@/routes/paths";
 const Index = lazy(() => import("./pages/Index"));
 const NewProject = lazy(() => import("./pages/NewProject"));
 const Projects = lazy(() => import("./pages/Projects"));
-const DemoPage = lazy(() => import("./pages/DemoPage"));
 const Auth = lazy(() => import("./pages/Auth").then(m => ({ default: (m as any).default ?? (m as any).AuthPage })));
 const FeaslyModel = lazy(() => import("./components/FeaslyModel/FeaslyModel"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
@@ -58,7 +57,6 @@ const App = () => {
                 <Route path={PATHS.model} element={<ModelPage />} />
                 {/* Legacy route with params - redirect to new format */}
                 <Route path="/feasly-model/:projectId/:scenarioId" element={<Navigate to={`${PATHS.model}?project=$1&scenario=$2`} replace />} />
-                <Route path={PATHS.demo} element={<DemoPage />} />
                 
                 {/* 404 within private scope */}
                 <Route path="*" element={<NotFound />} />

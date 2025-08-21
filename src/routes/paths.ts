@@ -8,8 +8,6 @@ export const PATHS = {
   auth: '/auth',
   resetPassword: '/reset-password',
   welcome: '/welcome',
-  demo: '/demo',
-  demoProject: '/demo-project',
 } as const;
 
 export const KNOWN_PATHS = new Set<string>(Object.values(PATHS));

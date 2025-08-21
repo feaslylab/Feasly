@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation, NavLink } from "react-router-dom";
-import { LayoutDashboard, FolderOpen, Calculator, BarChart3, Play } from "lucide-react";
+import { LayoutDashboard, FolderOpen, Calculator, BarChart3 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useProjectStore } from "@/hooks/useProjectStore";
 import { useScenarioStore } from "@/hooks/useScenarioStore";
@@ -41,11 +41,6 @@ const navigationItems = [
     label: 'Portfolio',
     href: PATHS.portfolio,
     icon: BarChart3,
-  },
-  {
-    label: 'Demo',
-    href: PATHS.demo,
-    icon: Play,
   },
 ];
 
