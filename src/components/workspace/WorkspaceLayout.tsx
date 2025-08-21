@@ -98,9 +98,9 @@ export default function WorkspaceLayout({
                         size="sm" 
                         onClick={onRunCalculation} 
                         disabled={disableRun || isCalculating || isApproved}
-                        className="h-7 px-3 text-xs font-medium bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md transition-all duration-200"
+                        className="h-6 px-2.5 text-xs font-medium bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md transition-all duration-200"
                       >
-                        <Play className="h-2.5 w-2.5 mr-1" strokeWidth={1.5} />
+                        <Play className="h-2 w-2 mr-1" strokeWidth={1.5} />
                         {isCalculating ? 'Running...' : 'Run'}
                       </Button>
                     </span>
@@ -127,9 +127,9 @@ export default function WorkspaceLayout({
                           variant="ghost" 
                           onClick={onSaveSnapshot}
                           disabled={isApproved}
-                          className="h-7 w-7 p-0 hover:bg-muted/60 transition-colors"
+          className="h-6 w-6 p-0 hover:bg-muted/60 transition-colors"
                         >
-                          <Save className="h-3 w-3" />
+                          <Save className="h-2.5 w-2.5" />
                         </Button>
                       </span>
                     </TooltipTrigger>
