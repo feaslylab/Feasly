@@ -100,8 +100,8 @@ export default function WorkspaceLayout({
                          className="px-2 text-xs font-medium bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
                          style={{ height: '20px', minHeight: '20px' }}
                        >
-                         <Play className="h-2 w-2 mr-px" strokeWidth={1.5} />
-                         {isCalculating ? 'Running...' : 'Run'}
+                          <Play className="h-2 w-2" strokeWidth={1.5} />
+                          <span className="ml-0.5">{isCalculating ? 'Running...' : 'Run'}</span>
                        </Button>
                     </span>
                   </TooltipTrigger>
