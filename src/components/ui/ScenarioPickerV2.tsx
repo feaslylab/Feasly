@@ -139,7 +139,7 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
         onValueChange={handleValueChange}
         disabled={disabled || isCalculating}
       >
-        <SelectTrigger className="w-full min-w-0 h-auto px-2 py-1 text-sm border border-border rounded bg-background text-foreground">
+        <SelectTrigger size="sm" className="w-full min-w-0">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="max-w-[400px] bg-background/95 backdrop-blur-sm border-border/50 shadow-lg rounded-lg">
@@ -166,10 +166,11 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
       </Select>
       
       <Button
+        size="sm"
         variant="outline"
         onClick={handleCreateNew}
         disabled={disabled || isCalculating}
-        className="h-auto px-2 py-1 text-sm border border-border rounded bg-background text-foreground"
+        className="h-auto px-2 py-1"
       >
         <Plus className="h-3 w-3 mr-1" />
         New
