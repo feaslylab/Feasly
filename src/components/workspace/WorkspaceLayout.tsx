@@ -7,6 +7,7 @@ import { Save, Play, Eye, BarChart3, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ApprovalWatermark } from '@/components/approvals/ApprovalWatermark';
 import { useApprovalStatus } from '@/hooks/useApprovalStatus';
+import { FilingCabinetTabs } from './FilingCabinetTabs';
 
 type WorkspaceTab = 'inputs' | 'preview' | 'preview_revenue' | 'executive_report' | 'insights' | 'results' | 'timeline' | 'snapshots' | 'presets' | 'portfolio';
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
@@ -46,19 +47,6 @@ export default function WorkspaceLayout({
 }: WorkspaceLayoutProps) {
   // Get approval status for current scenario
   const { isApproved } = useApprovalStatus('default', scenarioName);
-
-  const tabs = [
-    { id: 'inputs' as const, label: 'Inputs' },
-    { id: 'preview' as const, label: 'Preview' },
-    { id: 'preview_revenue' as const, label: 'Revenue Preview' },
-    { id: 'executive_report' as const, label: 'Executive Report' },
-    { id: 'insights' as const, label: 'Insights' },
-    { id: 'results' as const, label: 'Results' },
-    { id: 'timeline' as const, label: 'Timeline' },
-    { id: 'snapshots' as const, label: 'Snapshots' },
-    { id: 'presets' as const, label: 'Presets' },
-    { id: 'portfolio' as const, label: 'Portfolio' },
-  ];
 
   const humanSaved = savedAt
     ? `Saved • ${Math.max(0, Math.floor((Date.now() - savedAt) / 1000))}s ago`
@@ -179,22 +167,9 @@ export default function WorkspaceLayout({
           </div>
         </div>
 
-        {/* Tabs */}
+        {/* Filing Cabinet Tabs */}
         <div className="mx-auto max-w-7xl px-4">
-          <div className="flex gap-2">
-            {tabs.map((t) => (
-              <button
-                key={t.id}
-                onClick={() => onTabChange(t.id)}
-                className={cn(
-                  'flex items-center gap-2 border-b-2 px-4 py-3 text-sm font-medium transition-colors hover:text-foreground',
-                  activeTab === t.id ? 'border-primary text-primary' : 'border-transparent text-muted-foreground'
-                )}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
+          <FilingCabinetTabs activeTab={activeTab} onTabChange={onTabChange} />
         </div>
       </div>
 
