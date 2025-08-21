@@ -97,12 +97,12 @@ export default function WorkspaceLayout({
                        <Button 
                          onClick={onRunCalculation} 
                          disabled={disableRun || isCalculating || isApproved}
-                         className="px-2 text-xs font-medium bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md transition-all duration-200"
+                         className="px-2 text-xs font-medium bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center"
                          style={{ height: '20px', minHeight: '20px' }}
                        >
-                        <Play className="h-2 w-2 mr-0.5" strokeWidth={1.5} />
-                        {isCalculating ? 'Running...' : 'Run'}
-                      </Button>
+                         <Play className="h-2 w-2 mr-px" strokeWidth={1.5} />
+                         {isCalculating ? 'Running...' : 'Run'}
+                       </Button>
                     </span>
                   </TooltipTrigger>
                   {(disableRun || isApproved) && (
