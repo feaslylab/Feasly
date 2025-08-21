@@ -35,26 +35,53 @@ const tabs = [
 export function FilingCabinetTabs({ activeTab, onTabChange }: FilingCabinetTabsProps) {
   return (
     <div className="relative">
-      {/* Modern Tab Container - compact and clean */}
-      <div className="flex items-center overflow-x-auto scrollbar-hide bg-muted/20 rounded-lg p-1 gap-1">
-        {tabs.map((tab) => {
+      {/* Excel-style workbook tabs */}
+      <div className="flex items-end border-b border-border/30">
+        {tabs.map((tab, index) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
+          
+          // Light colors for different tabs (Excel-style)
+          const tabColors = [
+            'bg-blue-50 border-blue-200 text-blue-800 hover:bg-blue-100', // Inputs
+            'bg-green-50 border-green-200 text-green-800 hover:bg-green-100', // Preview  
+            'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100', // Revenue Preview
+            'bg-purple-50 border-purple-200 text-purple-800 hover:bg-purple-100', // Executive Report
+            'bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100', // Insights
+            'bg-rose-50 border-rose-200 text-rose-800 hover:bg-rose-100', // Results
+            'bg-cyan-50 border-cyan-200 text-cyan-800 hover:bg-cyan-100', // Timeline
+            'bg-indigo-50 border-indigo-200 text-indigo-800 hover:bg-indigo-100', // Snapshots
+            'bg-slate-50 border-slate-200 text-slate-800 hover:bg-slate-100', // Presets
+            'bg-orange-50 border-orange-200 text-orange-800 hover:bg-orange-100', // Portfolio
+          ];
           
           return (
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                'flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md transition-all duration-200 whitespace-nowrap',
-                'hover:bg-background/60 focus:outline-none focus:ring-2 focus:ring-primary/30',
+                'relative flex items-center gap-2 px-3 py-2 text-xs font-medium',
+                'border-t border-l border-r rounded-t-lg transition-all duration-200',
+                'hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2',
                 isActive 
-                  ? 'bg-background text-foreground shadow-sm border border-border/50'
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? cn(
+                      'bg-background border-border text-foreground -mb-px z-10',
+                      'shadow-sm border-b-background' // Hide bottom border to connect with content
+                    )
+                  : cn(
+                      tabColors[index] || 'bg-muted/30 border-border/50 text-muted-foreground hover:bg-muted/50',
+                      'border-b-border/30 mb-0 mr-0.5'
+                    ),
+                index > 0 && !isActive && 'border-l-transparent -ml-px'
               )}
+              style={{
+                clipPath: isActive 
+                  ? undefined 
+                  : 'polygon(8px 0%, calc(100% - 8px) 0%, 100% 100%, 0% 100%)'
+              }}
             >
-              <Icon className="h-3 w-3" />
-              <span className="hidden sm:inline">{tab.label}</span>
+              <Icon className="h-3 w-3 flex-shrink-0" />
+              <span className="whitespace-nowrap">{tab.label}</span>
             </button>
           );
         })}
