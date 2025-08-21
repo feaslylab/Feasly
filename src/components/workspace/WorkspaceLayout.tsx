@@ -74,7 +74,7 @@ export default function WorkspaceLayout({
       
       {/* Header */}
       <div className="sticky top-0 z-20 border-b bg-background/70 backdrop-blur shadow-soft">
-        <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between gap-4">
+        <div className="mx-auto max-w-7xl px-4 h-12 flex items-center justify-between gap-4">
           <div className="min-w-0">
             {projectName && (
               <div className="truncate text-sm">
@@ -86,10 +86,10 @@ export default function WorkspaceLayout({
             <div className={cn('text-xs', saveClass)} aria-live="polite">{humanSaved}</div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {scenarioSelector}
             
-            <div className="flex items-center bg-muted/30 rounded-lg p-1 gap-1">
+            <div className="flex items-center bg-muted/20 rounded-md p-0.5 gap-0.5">
               {/* Primary Action - Run */}
               <TooltipProvider>
                 <Tooltip>
@@ -99,10 +99,10 @@ export default function WorkspaceLayout({
                         size="sm" 
                         onClick={onRunCalculation} 
                         disabled={disableRun || isCalculating || isApproved}
-                        className="h-8 px-4 font-medium"
+                        className="h-7 px-3 text-xs font-medium"
                       >
-                        <Play className="h-4 w-4 mr-1.5" />
-                        {isCalculating ? 'Calculating…' : 'Run'}
+                        <Play className="h-3 w-3 mr-1" />
+                        {isCalculating ? 'Running...' : 'Run'}
                       </Button>
                     </span>
                   </TooltipTrigger>
@@ -127,9 +127,9 @@ export default function WorkspaceLayout({
                         variant="ghost" 
                         onClick={onSaveSnapshot}
                         disabled={isApproved}
-                        className="h-8 w-8 p-0"
+                        className="h-7 w-7 p-0"
                       >
-                        <Save className="h-4 w-4" />
+                        <Save className="h-3 w-3" />
                       </Button>
                     </span>
                   </TooltipTrigger>
@@ -147,9 +147,9 @@ export default function WorkspaceLayout({
                         size="sm" 
                         variant="ghost" 
                         onClick={onOpenChecklist}
-                        className="h-8 w-8 p-0"
+                        className="h-7 w-7 p-0"
                       >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-3 w-3" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent side="bottom">Checklist</TooltipContent>
@@ -167,9 +167,9 @@ export default function WorkspaceLayout({
                           variant="ghost" 
                           onClick={onResetToBaseline}
                           disabled={isApproved}
-                          className="h-8 w-8 p-0"
+                          className="h-7 w-7 p-0"
                         >
-                          <Database className="h-4 w-4" />
+                          <Database className="h-3 w-3" />
                         </Button>
                       </span>
                     </TooltipTrigger>
