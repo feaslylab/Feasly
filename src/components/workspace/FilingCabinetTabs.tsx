@@ -34,14 +34,14 @@ const tabs = [
 
 export function FilingCabinetTabs({ activeTab, onTabChange }: FilingCabinetTabsProps) {
   return (
-    <div className="relative">
-      {/* Filing Cabinet Base - subtle wood grain texture */}
-      <div className="h-3 bg-gradient-to-b from-muted/10 via-muted/20 to-muted/40 border-b border-border/20 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/5 to-transparent" />
+    <div className="relative bg-gradient-to-b from-muted/5 to-muted/10 pb-0">
+      {/* Filing Cabinet Base - cleaner design */}
+      <div className="h-2 bg-gradient-to-b from-muted/15 to-muted/25 relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/3 to-transparent" />
       </div>
       
       {/* Tab Container */}
-      <div className="flex items-end gap-0 relative -mb-px">
+      <div className="flex items-end relative -mb-px px-1">
         {tabs.map((tab, index) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -51,92 +51,78 @@ export function FilingCabinetTabs({ activeTab, onTabChange }: FilingCabinetTabsP
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                'group relative flex items-center gap-2.5 px-5 py-3 text-sm font-medium transition-all duration-300 ease-out',
-                'bg-gradient-to-b border-l border-r border-t rounded-t-xl transform-gpu',
-                'hover:scale-[1.02] hover:-translate-y-1',
-                'focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2 focus:ring-offset-background',
-                // Filing cabinet tab styling with enhanced depth
+                'group relative flex items-center gap-2 px-4 py-2.5 mx-0.5 text-sm font-medium transition-all duration-200 ease-out',
+                'bg-gradient-to-b rounded-t-lg transform-gpu border border-b-0',
+                'hover:-translate-y-0.5 hover:shadow-md',
+                'focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-1',
+                // Clean active/inactive styling
                 isActive 
                   ? [
-                      'from-background via-background/98 to-background/95',
-                      'border-border/60 text-foreground shadow-xl shadow-black/5',
-                      'z-30 -translate-y-2 scale-105',
-                      // Connect active tab to content area
-                      'before:absolute before:bottom-0 before:left-0 before:right-0 before:h-px before:bg-background before:z-10'
+                      'from-background to-background/98 border-border/50',
+                      'text-foreground shadow-lg shadow-black/5',
+                      'z-30 -translate-y-1',
+                      // Clean connection to content
+                      'before:absolute before:bottom-0 before:left-0 before:right-0 before:h-px before:bg-background'
                     ]
                   : [
-                      'from-muted/20 via-muted/40 to-muted/60',
-                      'border-border/40 text-muted-foreground',
-                      'z-10 hover:from-muted/30 hover:via-muted/50 hover:to-muted/70 hover:text-foreground',
-                      'shadow-md shadow-black/5 hover:shadow-lg hover:shadow-black/10'
+                      'from-muted/30 to-muted/50 border-border/30',
+                      'text-muted-foreground hover:text-foreground',
+                      'hover:from-muted/40 hover:to-muted/60',
+                      'shadow-sm shadow-black/5'
                     ],
-                // Overlapping tabs for authentic filing cabinet look
-                index > 0 && '-ml-3',
-                // Depth layering
-                !isActive && 'hover:z-20'
+                // Subtle overlap for filing effect
+                index > 0 && '-ml-1'
               )}
               style={{
-                // Dynamic z-index and positioning for filing cabinet effect
-                zIndex: isActive ? 30 : 20 - index,
+                // Refined z-index stacking
+                zIndex: isActive ? 30 : 20 - (index * 0.5),
+                // Cleaner transforms
                 transform: isActive 
-                  ? 'translateY(-8px) scale(1.05)' 
-                  : `translateY(${Math.min(index * 2, 6)}px) scale(${1 - index * 0.01})`,
-                // Subtle rotation for more realistic stacking
-                transformOrigin: 'bottom center',
+                  ? 'translateY(-4px)' 
+                  : `translateY(${index * 0.5}px)`,
               }}
             >
-              {/* Tab label area with paper texture */}
+              {/* Subtle paper texture */}
               <div className={cn(
-                'absolute inset-0 rounded-t-xl opacity-20',
-                'bg-gradient-to-br from-white/10 via-transparent to-black/5',
+                'absolute inset-0 rounded-t-lg opacity-20 pointer-events-none',
+                'bg-gradient-to-br from-white/8 to-transparent',
                 isActive && 'opacity-30'
               )} />
               
-              {/* Icon */}
+              {/* Icon with refined styling */}
               <Icon className={cn(
                 'h-4 w-4 transition-all duration-200 relative z-10',
-                isActive ? 'text-primary scale-110' : 'text-muted-foreground group-hover:text-foreground group-hover:scale-105'
+                isActive 
+                  ? 'text-primary' 
+                  : 'text-muted-foreground/80 group-hover:text-foreground group-hover:scale-105'
               )} />
               
-              {/* Label */}
+              {/* Label with better typography */}
               <span className={cn(
-                'whitespace-nowrap transition-all duration-200 relative z-10 select-none',
+                'whitespace-nowrap transition-all duration-200 relative z-10 font-medium',
                 isActive 
-                  ? 'text-foreground font-semibold' 
+                  ? 'text-foreground' 
                   : 'text-muted-foreground group-hover:text-foreground'
               )}>
                 {tab.label}
               </span>
               
-              {/* Active Tab Indicator - like a tab marker */}
+              {/* Refined active indicator */}
               {isActive && (
-                <>
-                  <div className="absolute bottom-1 left-4 right-4 h-0.5 bg-gradient-to-r from-primary/40 via-primary to-primary/40 rounded-full" />
-                  <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary rounded-full shadow-sm" />
-                </>
+                <div className="absolute bottom-0 left-3 right-3 h-0.5 bg-primary/60 rounded-t-full" />
               )}
               
-              {/* Filing Cabinet Tab Edge Shadow */}
-              <div className={cn(
-                'absolute right-0 top-1 bottom-1 w-px opacity-40',
-                'bg-gradient-to-b from-transparent via-border/60 to-transparent',
-                isActive ? 'opacity-30' : 'opacity-50'
-              )} />
-              
-              {/* Paper fold effect on non-active tabs */}
-              {!isActive && (
-                <div className="absolute top-0 right-0 w-3 h-3 bg-gradient-to-bl from-muted/60 to-transparent rounded-tr-xl" />
+              {/* Subtle edge definition */}
+              {!isActive && index < tabs.length - 1 && (
+                <div className="absolute right-0 top-2 bottom-2 w-px bg-border/20" />
               )}
             </button>
           );
         })}
       </div>
       
-      {/* Base Line - the desk surface */}
-      <div className="h-px bg-gradient-to-r from-border/40 via-border to-border/40 relative z-20" />
-      
-      {/* Filing Cabinet Shadow and Depth */}
-      <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-b from-transparent via-muted/5 to-muted/10 blur-sm" />
+      {/* Clean base line */}
+      <div className="h-px bg-border/60 relative z-20" />
     </div>
   );
 }
