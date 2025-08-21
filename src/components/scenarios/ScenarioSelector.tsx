@@ -94,7 +94,8 @@ export function ScenarioSelector({
         <DropdownMenuTrigger asChild>
           <Button 
             variant="ghost" 
-            className="h-4 px-1.5 bg-muted/30 hover:bg-muted/50 border-0 rounded-md transition-all duration-200 text-xs font-medium"
+            className="px-1.5 bg-muted/30 hover:bg-muted/50 border-0 rounded-md transition-all duration-200 text-xs font-medium"
+            style={{ height: '20px', minHeight: '20px' }}
           >
             <span className="text-xs font-medium text-foreground/90">
               {currentScenario?.name || 'Select Scenario'}
