@@ -89,7 +89,7 @@ export default function FeaslyLanding() {
         <div className="container flex h-14 items-center justify-between">
           <div className="flex items-center space-x-2">
             <Building2 className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl">Feasly</span>
+            <span className="font-gate font-bold text-xl">Feasly™</span>
           </div>
           <div className="flex items-center space-x-4">
             <Button variant="ghost" onClick={handleTryDemo}>
