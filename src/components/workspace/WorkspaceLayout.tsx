@@ -100,7 +100,7 @@ export default function WorkspaceLayout({
                         disabled={disableRun || isCalculating || isApproved}
                         className="h-7 px-3 text-xs font-medium bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md transition-all duration-200"
                       >
-                        <Play className="h-3 w-3 mr-1" />
+                        <Play className="h-2.5 w-2.5 mr-1" strokeWidth={1.5} />
                         {isCalculating ? 'Running...' : 'Run'}
                       </Button>
                     </span>
