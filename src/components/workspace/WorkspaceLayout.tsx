@@ -98,7 +98,7 @@ export default function WorkspaceLayout({
                         size="sm" 
                         onClick={onRunCalculation} 
                         disabled={disableRun || isCalculating || isApproved}
-                        className="h-5 px-2 text-xs font-medium bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md transition-all duration-200"
+                        className="h-4 px-2 text-xs font-medium bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-sm hover:shadow-md transition-all duration-200"
                       >
                         <Play className="h-2 w-2 mr-0.5" strokeWidth={1.5} />
                         {isCalculating ? 'Running...' : 'Run'}
@@ -127,7 +127,7 @@ export default function WorkspaceLayout({
                           variant="ghost" 
                           onClick={onSaveSnapshot}
                           disabled={isApproved}
-                          className="h-5 w-5 p-0 hover:bg-muted/60 transition-colors"
+                            className="h-4 w-4 p-0 hover:bg-muted/60 transition-colors"
                         >
                           <Save className="h-2 w-2" />
                         </Button>
@@ -147,7 +147,7 @@ export default function WorkspaceLayout({
                           size="sm" 
                           variant="ghost" 
                           onClick={onOpenChecklist}
-                          className="h-5 w-5 p-0 hover:bg-muted/60 transition-colors"
+                          className="h-4 w-4 p-0 hover:bg-muted/60 transition-colors"
                         >
                           <Eye className="h-2 w-2" />
                         </Button>
@@ -167,7 +167,7 @@ export default function WorkspaceLayout({
                             variant="ghost" 
                             onClick={onResetToBaseline}
                             disabled={isApproved}
-                            className="h-5 w-5 p-0 hover:bg-muted/60 transition-colors"
+                            className="h-4 w-4 p-0 hover:bg-muted/60 transition-colors"
                           >
                             <Database className="h-2 w-2" />
                           </Button>
