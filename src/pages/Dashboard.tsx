@@ -18,7 +18,6 @@ import {
   useRentalStore
 } from "@/hooks/useTableStores";
 import KpiGrid from "@/components/KpiGrid";
-import CashChart from "@/components/CashChart";
 import { useLiveRecalc }     from '@/hooks/useLiveRecalc';
 import ConstructionTable     from '@/components/ConstructionTable';
 import SaleTable             from '@/components/SaleTable';

@@ -42,7 +42,18 @@ export default function CashChart({ data }: { data?: number[] }) {
   let rows: CashPoint[] = [];
   
   try {
-    rows = data ? toRows(data) : useCashSeries();
+    // Only call useCashSeries if no data prop is provided
+    if (data) {
+      rows = toRows(data);
+    } else {
+      // Try to get cash series, but fallback gracefully
+      try {
+        rows = useCashSeries();
+      } catch (seriesError) {
+        console.warn('useCashSeries failed:', seriesError);
+        rows = [{ period: 'P0', inflow: 0, outflow: 0, net: 0 }];
+      }
+    }
   } catch (error) {
     console.error('Error generating cash series:', error);
     // Return a safe fallback instead of crashing
