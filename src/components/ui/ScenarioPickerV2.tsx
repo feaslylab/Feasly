@@ -140,8 +140,14 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
         disabled={disabled || isCalculating}
       >
         <SelectTrigger 
-          className="w-full min-w-0 border border-border rounded px-2 py-1 text-sm bg-background text-foreground"
-          style={{ height: 'auto', minHeight: '32px', paddingTop: '4px', paddingBottom: '4px' }}
+          className="w-full min-w-0 !border !border-border !rounded !px-2 !py-1 !text-sm !bg-background !text-foreground !h-auto"
+          style={{ 
+            height: '32px !important', 
+            minHeight: '32px !important', 
+            padding: '4px 8px !important',
+            fontSize: '14px !important',
+            lineHeight: '1.5 !important'
+          }}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
@@ -172,8 +178,14 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
         variant="outline"
         onClick={handleCreateNew}
         disabled={disabled || isCalculating}
-        className="border border-border rounded px-2 py-1 text-sm bg-background text-foreground"
-        style={{ height: '32px', minHeight: '32px', paddingTop: '4px', paddingBottom: '4px' }}
+        className="!border !border-border !rounded !px-2 !py-1 !text-sm !bg-background !text-foreground !h-auto"
+        style={{ 
+          height: '32px !important', 
+          minHeight: '32px !important', 
+          padding: '4px 8px !important',
+          fontSize: '14px !important',
+          lineHeight: '1.5 !important'
+        }}
       >
         <Plus className="h-3 w-3 mr-1" />
         New
