@@ -73,8 +73,8 @@ export default function WorkspaceLayout({
       />
       
       {/* Header */}
-      <div className="sticky top-0 z-20 border-b bg-background/70 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-4 h-14 flex items-center justify-between gap-3">
+      <div className="sticky top-0 z-20 border-b bg-background/70 backdrop-blur shadow-soft">
+        <div className="mx-auto max-w-7xl px-4 h-16 flex items-center justify-between gap-4">
           <div className="min-w-0">
             {projectName && (
               <div className="truncate text-sm">
@@ -86,62 +86,38 @@ export default function WorkspaceLayout({
             <div className={cn('text-xs', saveClass)} aria-live="polite">{humanSaved}</div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {scenarioSelector}
             
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>
-                    <Button 
-                      size="sm" 
-                      onClick={onRunCalculation} 
-                      disabled={disableRun || isCalculating || isApproved}
-                    >
-                      {isCalculating ? 'Calculating…' : 'Run'}
-                    </Button>
-                  </span>
-                </TooltipTrigger>
-                {(disableRun || isApproved) && (
-                  <TooltipContent side="bottom">
-                    {isApproved 
-                      ? 'Cannot run calculations on approved scenarios'
-                      : 'Fix blocking issues in Preview to run the model.'
-                    }
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </TooltipProvider>
+            <div className="flex items-center bg-muted/30 rounded-lg p-1 gap-1">
+              {/* Primary Action - Run */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <Button 
+                        size="sm" 
+                        onClick={onRunCalculation} 
+                        disabled={disableRun || isCalculating || isApproved}
+                        className="h-8 px-4 font-medium"
+                      >
+                        <Play className="h-4 w-4 mr-1.5" />
+                        {isCalculating ? 'Calculating…' : 'Run'}
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  {(disableRun || isApproved) && (
+                    <TooltipContent side="bottom">
+                      {isApproved 
+                        ? 'Cannot run calculations on approved scenarios'
+                        : 'Fix blocking issues in Preview to run the model.'
+                      }
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
 
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>
-                    <Button 
-                      size="sm" 
-                      variant="outline" 
-                      onClick={onSaveSnapshot}
-                      disabled={isApproved}
-                    >
-                      Save Snapshot
-                    </Button>
-                  </span>
-                </TooltipTrigger>
-                {isApproved && (
-                  <TooltipContent side="bottom">
-                    Cannot save snapshots for approved scenarios
-                  </TooltipContent>
-                )}
-              </Tooltip>
-            </TooltipProvider>
-
-            {onOpenChecklist && (
-              <Button size="sm" variant="secondary" onClick={onOpenChecklist}>
-                Checklist
-              </Button>
-            )}
-            
-            {onResetToBaseline && (
+              {/* Secondary Actions */}
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -149,21 +125,61 @@ export default function WorkspaceLayout({
                       <Button 
                         size="sm" 
                         variant="ghost" 
-                        onClick={onResetToBaseline}
+                        onClick={onSaveSnapshot}
                         disabled={isApproved}
+                        className="h-8 w-8 p-0"
                       >
-                        Reset to Baseline
+                        <Save className="h-4 w-4" />
                       </Button>
                     </span>
                   </TooltipTrigger>
-                  {isApproved && (
-                    <TooltipContent side="bottom">
-                      Cannot reset approved scenarios
-                    </TooltipContent>
-                  )}
+                  <TooltipContent side="bottom">
+                    {isApproved ? 'Cannot save snapshots for approved scenarios' : 'Save Snapshot'}
+                  </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            )}
+
+              {onOpenChecklist && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={onOpenChecklist}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">Checklist</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+              
+              {onResetToBaseline && (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          onClick={onResetToBaseline}
+                          disabled={isApproved}
+                          className="h-8 w-8 p-0"
+                        >
+                          <Database className="h-4 w-4" />
+                        </Button>
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      {isApproved ? 'Cannot reset approved scenarios' : 'Reset to Baseline'}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
+            </div>
           </div>
         </div>
 

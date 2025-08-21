@@ -24,7 +24,6 @@ export default {
 		mono: ['JetBrains Mono', 'Consolas', 'Monaco', 'monospace'],
 		script: ['Dancing Script', 'cursive'],
 		playfair: ['Playfair Display', 'ui-serif', 'Georgia', 'serif'],
-		gate: ['Gate', 'sans-serif'],
 	},
 		fontSize: {
 			'xs': ['11px', { lineHeight: '16px', fontWeight: '400' }],
@@ -136,7 +135,7 @@ export default {
 				'soft': 'var(--shadow-soft)',
 				'medium': 'var(--shadow-medium)',
 				'strong': 'var(--shadow-strong)',
-				'elegant': 'var(--shadow-elegant)',
+				'shadow-header': 'var(--shadow-header)',
 			},
 			keyframes: {
 				'accordion-down': {
