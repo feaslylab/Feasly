@@ -139,7 +139,7 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
         onValueChange={handleValueChange}
         disabled={disabled || isCalculating}
       >
-        <SelectTrigger className={`w-full min-w-0 bg-muted/30 hover:bg-muted/50 border-0 transition-all duration-200 text-xs font-medium`} style={{ height: '20px', minHeight: '20px' }}>
+        <SelectTrigger className="w-full min-w-0 border border-border rounded px-2 py-1 text-sm bg-background text-foreground">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="max-w-[400px] bg-background/95 backdrop-blur-sm border-border/50 shadow-lg rounded-lg">
@@ -166,14 +166,13 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
       </Select>
       
       <Button
-        variant="ghost"
+        variant="outline"
         size="sm"
         onClick={handleCreateNew}
         disabled={disabled || isCalculating}
-        className="px-1.5 bg-muted/30 hover:bg-muted/50 border-0 text-xs font-medium transition-all duration-200"
-        style={{ height: '20px', minHeight: '20px' }}
+        className="border border-border rounded px-2 py-1 text-sm bg-background text-foreground"
       >
-        <Plus className="h-2 w-2 mr-0.5" />
+        <Plus className="h-3 w-3 mr-1" />
         New
       </Button>
     </div>
