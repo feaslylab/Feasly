@@ -139,16 +139,7 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
         onValueChange={handleValueChange}
         disabled={disabled || isCalculating}
       >
-        <SelectTrigger 
-          className="w-full min-w-0 !border !border-border !rounded !px-2 !py-1 !text-sm !bg-background !text-foreground !h-auto"
-          style={{ 
-            height: '32px !important', 
-            minHeight: '32px !important', 
-            padding: '4px 8px !important',
-            fontSize: '14px !important',
-            lineHeight: '1.5 !important'
-          }}
-        >
+        <SelectTrigger className="w-full min-w-0 h-auto px-2 py-1 text-sm border border-border rounded bg-background text-foreground">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent className="max-w-[400px] bg-background/95 backdrop-blur-sm border-border/50 shadow-lg rounded-lg">
@@ -178,14 +169,7 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
         variant="outline"
         onClick={handleCreateNew}
         disabled={disabled || isCalculating}
-        className="!border !border-border !rounded !px-2 !py-1 !text-sm !bg-background !text-foreground !h-auto"
-        style={{ 
-          height: '32px !important', 
-          minHeight: '32px !important', 
-          padding: '4px 8px !important',
-          fontSize: '14px !important',
-          lineHeight: '1.5 !important'
-        }}
+        className="h-auto px-2 py-1 text-sm border border-border rounded bg-background text-foreground"
       >
         <Plus className="h-3 w-3 mr-1" />
         New
