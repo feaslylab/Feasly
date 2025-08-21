@@ -62,12 +62,6 @@ const navigation = [
     href: '/portfolio',
     icon: BarChart3,
   },
-  {
-    name: 'Demo',
-    nameKey: 'demo',
-    href: '/demo',
-    icon: Play,
-  },
 ]
 
 export default function AppSidebar() {

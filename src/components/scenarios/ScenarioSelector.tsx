@@ -94,9 +94,9 @@ export function ScenarioSelector({
         <DropdownMenuTrigger asChild>
           <Button 
             variant="ghost" 
-            className={`h-8 px-3 bg-muted/30 hover:bg-muted/50 border-0 rounded-md transition-all duration-200 ${className}`}
+            className="h-7 px-2.5 bg-muted/30 hover:bg-muted/50 border-0 rounded-md transition-all duration-200 text-xs font-medium"
           >
-            <span className="text-sm font-medium text-foreground/90">
+            <span className="text-xs font-medium text-foreground/90">
               {currentScenario?.name || 'Select Scenario'}
             </span>
             <ChevronDown className="ml-2 h-3 w-3 opacity-60" />
