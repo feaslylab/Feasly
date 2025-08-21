@@ -86,10 +86,9 @@ export default function WorkspaceLayout({
             <div className={cn('text-xs', saveClass)} aria-live="polite">{humanSaved}</div>
           </div>
 
-          <div className="flex items-center gap-2">
-            {scenarioSelector}
-            
-            <div className="flex items-center bg-muted/20 rounded-md p-0.5 gap-0.5">
+            <div className="flex items-center gap-2">
+              {scenarioSelector}
+              
               {/* Primary Action - Run */}
               <TooltipProvider>
                 <Tooltip>
@@ -99,9 +98,9 @@ export default function WorkspaceLayout({
                         size="sm" 
                         onClick={onRunCalculation} 
                         disabled={disableRun || isCalculating || isApproved}
-                        className="h-7 px-3 text-xs font-medium"
+                        className="h-8 px-4 text-sm font-semibold bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary shadow-md hover:shadow-lg transition-all duration-200"
                       >
-                        <Play className="h-3 w-3 mr-1" />
+                        <Play className="h-3 w-3 mr-1.5" />
                         {isCalculating ? 'Running...' : 'Run'}
                       </Button>
                     </span>
@@ -118,46 +117,7 @@ export default function WorkspaceLayout({
               </TooltipProvider>
 
               {/* Secondary Actions */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={onSaveSnapshot}
-                        disabled={isApproved}
-                        className="h-7 w-7 p-0"
-                      >
-                        <Save className="h-3 w-3" />
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom">
-                    {isApproved ? 'Cannot save snapshots for approved scenarios' : 'Save Snapshot'}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-
-              {onOpenChecklist && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button 
-                        size="sm" 
-                        variant="ghost" 
-                        onClick={onOpenChecklist}
-                        className="h-7 w-7 p-0"
-                      >
-                        <Eye className="h-3 w-3" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">Checklist</TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-              
-              {onResetToBaseline && (
+              <div className="flex items-center bg-muted/20 rounded-md p-0.5 gap-0.5">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -165,22 +125,62 @@ export default function WorkspaceLayout({
                         <Button 
                           size="sm" 
                           variant="ghost" 
-                          onClick={onResetToBaseline}
+                          onClick={onSaveSnapshot}
                           disabled={isApproved}
-                          className="h-7 w-7 p-0"
+                          className="h-7 w-7 p-0 hover:bg-muted/60 transition-colors"
                         >
-                          <Database className="h-3 w-3" />
+                          <Save className="h-3 w-3" />
                         </Button>
                       </span>
                     </TooltipTrigger>
                     <TooltipContent side="bottom">
-                      {isApproved ? 'Cannot reset approved scenarios' : 'Reset to Baseline'}
+                      {isApproved ? 'Cannot save snapshots for approved scenarios' : 'Save Snapshot'}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              )}
+
+                {onOpenChecklist && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button 
+                          size="sm" 
+                          variant="ghost" 
+                          onClick={onOpenChecklist}
+                          className="h-7 w-7 p-0 hover:bg-muted/60 transition-colors"
+                        >
+                          <Eye className="h-3 w-3" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">Checklist</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+                
+                {onResetToBaseline && (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span>
+                          <Button 
+                            size="sm" 
+                            variant="ghost" 
+                            onClick={onResetToBaseline}
+                            disabled={isApproved}
+                            className="h-7 w-7 p-0 hover:bg-muted/60 transition-colors"
+                          >
+                            <Database className="h-3 w-3" />
+                          </Button>
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom">
+                        {isApproved ? 'Cannot reset approved scenarios' : 'Reset to Baseline'}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                )}
+              </div>
             </div>
-          </div>
         </div>
 
         {/* Filing Cabinet Tabs */}

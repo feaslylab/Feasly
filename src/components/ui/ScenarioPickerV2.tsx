@@ -139,10 +139,10 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
         onValueChange={handleValueChange}
         disabled={disabled || isCalculating}
       >
-        <SelectTrigger className={`w-full min-w-0 ${compact ? 'h-8 text-sm' : ''}`}>
+        <SelectTrigger className={`w-full min-w-0 bg-muted/30 hover:bg-muted/50 border-0 transition-all duration-200 ${compact ? 'h-8 text-sm' : 'h-8'} text-sm font-medium`}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent className="max-w-[400px]">
+        <SelectContent className="max-w-[400px] bg-background/95 backdrop-blur-sm border-border/50 shadow-lg rounded-lg">
           {projectScenarioOptions.length === 0 ? (
             <SelectItem value="no-projects" disabled>
               No projects found
@@ -166,13 +166,14 @@ const ScenarioPickerV2: React.FC<ScenarioPickerV2Props> = ({
       </Select>
       
       <Button
-        variant="outline"
-        size={compact ? 'sm' : 'default'}
+        variant="ghost"
+        size="sm"
         onClick={handleCreateNew}
         disabled={disabled || isCalculating}
+        className="h-8 px-3 bg-muted/30 hover:bg-muted/50 border-0 text-sm font-medium transition-all duration-200"
       >
-        <Plus className="h-4 w-4 mr-1" />
-        New Project
+        <Plus className="h-3 w-3 mr-1.5" />
+        New
       </Button>
     </div>
   );

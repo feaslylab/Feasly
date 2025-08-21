@@ -92,14 +92,17 @@ export function ScenarioSelector({
       {/* Scenario Selector */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className={className}>
-            <span className="text-sm font-medium">
+          <Button 
+            variant="ghost" 
+            className={`h-8 px-3 bg-muted/30 hover:bg-muted/50 border-0 rounded-md transition-all duration-200 ${className}`}
+          >
+            <span className="text-sm font-medium text-foreground/90">
               {currentScenario?.name || 'Select Scenario'}
             </span>
-            <ChevronDown className="ml-2 h-4 w-4" />
+            <ChevronDown className="ml-2 h-3 w-3 opacity-60" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56 bg-background border border-border shadow-lg z-50">
+        <DropdownMenuContent align="end" className="w-56 bg-background/95 backdrop-blur-sm border border-border/50 shadow-lg rounded-lg z-50">
           {scenarios.map((scenario) => (
             <DropdownMenuItem
               key={scenario.id}
