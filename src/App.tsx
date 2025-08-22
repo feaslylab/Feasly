@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import { OrganizationProvider } from "@/contexts/OrganizationContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import RequireAuth from "@/routes/RequireAuth";
 import PrivateLayout from "@/layouts/PrivateLayout";
 import AuthLayout from "@/layouts/AuthLayout";
@@ -29,8 +30,9 @@ const queryClient = new QueryClient();
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <OrganizationProvider>
-        <TooltipProvider>
+      <ThemeProvider>
+        <OrganizationProvider>
+          <TooltipProvider>
           <Toaster />
           <Sonner />
           <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
@@ -66,8 +68,9 @@ const App = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
-        </TooltipProvider>
-      </OrganizationProvider>
+          </TooltipProvider>
+        </OrganizationProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };
