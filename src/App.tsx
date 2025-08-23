@@ -28,6 +28,7 @@ const FeaslyLanding = lazy(() => import("./pages/marketing/FeaslyLanding"));
 const queryClient = new QueryClient();
 
 const App = () => {
+  console.log('App component rendering...');
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
