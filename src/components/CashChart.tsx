@@ -27,17 +27,8 @@ function toRows(cash: number[]) {
 }
 
 export default function CashChart({ data }: { data?: number[] }) {
-  // Add comprehensive error handling and theme safety
-  let actualTheme: 'light' | 'dark' = 'light';
-  let themeError = false;
-  
-  try {
-    const themeContext = useTheme();
-    actualTheme = themeContext?.actualTheme || 'light';
-  } catch (error) {
-    console.warn('Theme context not available, using light theme fallback');
-    themeError = true;
-  }
+  // Use theme hook unconditionally at the top level
+  const { actualTheme } = useTheme();
   
   let rows: CashPoint[] = [];
   
