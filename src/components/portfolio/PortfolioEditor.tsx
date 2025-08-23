@@ -19,7 +19,10 @@ import { useToast } from "@/hooks/use-toast";
 import { AssetScenarioSelector } from "./AssetScenarioSelector";
 import { PortfolioWeightInput } from "./PortfolioWeightInput";
 import { AddAssetDialog } from "./AddAssetDialog";
+import { PortfolioResultsPanel } from "./PortfolioResultsPanel";
+import { PortfolioScenarioComparison } from "./PortfolioScenarioComparison";
 import type { Portfolio } from "@/hooks/usePortfolioManager";
+import type { PortfolioKPIs, PortfolioComparison } from "./PortfolioResultsPanel";
 
 interface PortfolioEditorProps {
   portfolio: Portfolio;
@@ -34,6 +37,8 @@ export const PortfolioEditor = ({ portfolio, onBack, onPortfolioUpdated }: Portf
     (portfolio.portfolio_settings?.weighting_method as "equal" | "equity" | "gfa" | "revenue") || "equal"
   );
   const [showAddAsset, setShowAddAsset] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [portfolioComparison, setPortfolioComparison] = useState<PortfolioComparison | null>(null);
   
   const { updatePortfolio, createPortfolio } = usePortfolioManager();
   const { assets, loading, addAssetToPortfolio, removeAssetFromPortfolio, updateAssetWeight, updateAssetScenario, reload } = usePortfolioAssets(portfolio.id);
@@ -95,6 +100,18 @@ export const PortfolioEditor = ({ portfolio, onBack, onPortfolioUpdated }: Portf
   };
 
   const totalWeight = assets.reduce((sum, asset) => sum + (asset.portfolio_weight || 1), 0);
+
+  // Mock KPIs calculation - in real implementation, this would call the calculation engine
+  const currentKPIs: PortfolioKPIs = {
+    totalNPV: 8500000,
+    weightedIRR: 19.2,
+    weightedROI: 24.7,
+    equityMultiple: 2.3,
+    profitMargin: 21.4,
+    totalRevenue: 15200000,
+    totalCosts: 11800000,
+    paybackMonths: 42
+  };
 
   return (
     <div className="space-y-6">
@@ -181,9 +198,12 @@ export const PortfolioEditor = ({ portfolio, onBack, onPortfolioUpdated }: Portf
                 <Plus className="h-4 w-4 mr-2" />
                 Add Asset
               </Button>
-              <Button variant="outline">
+              <Button 
+                onClick={() => setShowResults(!showResults)}
+                variant={showResults ? "default" : "outline"}
+              >
                 <BarChart3 className="h-4 w-4 mr-2" />
-                View Results
+                {showResults ? "Hide Results" : "View Results"}
               </Button>
             </div>
           </div>
@@ -246,6 +266,23 @@ export const PortfolioEditor = ({ portfolio, onBack, onPortfolioUpdated }: Portf
           )}
         </CardContent>
       </Card>
+
+      {/* Scenario Comparison */}
+      <PortfolioScenarioComparison
+        assets={assets}
+        portfolioId={portfolio.id}
+        onComparisonChange={setPortfolioComparison}
+      />
+
+      {/* Results Panel */}
+      {showResults && (
+        <PortfolioResultsPanel
+          portfolio={portfolio}
+          assets={assets}
+          currentKPIs={currentKPIs}
+          comparison={portfolioComparison}
+        />
+      )}
 
       <AddAssetDialog
         open={showAddAsset}
