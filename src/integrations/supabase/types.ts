@@ -59,6 +59,8 @@ export type Database = {
           occupancy_rate_percent: number | null
           operating_cost_aed: number | null
           owner_id: string | null
+          portfolio_scenario_id: string | null
+          portfolio_weight: number | null
           project_id: string | null
           release_rule_details: string | null
           release_threshold: number | null
@@ -104,6 +106,8 @@ export type Database = {
           occupancy_rate_percent?: number | null
           operating_cost_aed?: number | null
           owner_id?: string | null
+          portfolio_scenario_id?: string | null
+          portfolio_weight?: number | null
           project_id?: string | null
           release_rule_details?: string | null
           release_threshold?: number | null
@@ -149,6 +153,8 @@ export type Database = {
           occupancy_rate_percent?: number | null
           operating_cost_aed?: number | null
           owner_id?: string | null
+          portfolio_scenario_id?: string | null
+          portfolio_weight?: number | null
           project_id?: string | null
           release_rule_details?: string | null
           release_threshold?: number | null
@@ -169,6 +175,13 @@ export type Database = {
           zakat_rate_percent?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "assets_portfolio_scenario_fkey"
+            columns: ["portfolio_scenario_id"]
+            isOneToOne: false
+            referencedRelation: "scenarios"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "assets_project_id_fkey"
             columns: ["project_id"]
@@ -1361,9 +1374,11 @@ export type Database = {
           id: string
           is_demo: boolean | null
           is_pinned: boolean | null
+          is_portfolio: boolean | null
           name: string
           organization_id: string | null
           parent_project_id: string | null
+          portfolio_settings: Json | null
           project_ai_summary: string | null
           project_type: string
           release_rule_details: string | null
@@ -1402,9 +1417,11 @@ export type Database = {
           id?: string
           is_demo?: boolean | null
           is_pinned?: boolean | null
+          is_portfolio?: boolean | null
           name: string
           organization_id?: string | null
           parent_project_id?: string | null
+          portfolio_settings?: Json | null
           project_ai_summary?: string | null
           project_type?: string
           release_rule_details?: string | null
@@ -1443,9 +1460,11 @@ export type Database = {
           id?: string
           is_demo?: boolean | null
           is_pinned?: boolean | null
+          is_portfolio?: boolean | null
           name?: string
           organization_id?: string | null
           parent_project_id?: string | null
+          portfolio_settings?: Json | null
           project_ai_summary?: string | null
           project_type?: string
           release_rule_details?: string | null
