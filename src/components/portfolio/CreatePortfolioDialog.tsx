@@ -27,6 +27,8 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    console.log('Form submitted with:', { name, weightingMethod, description });
+    
     if (!name.trim()) {
       toast({
         title: "Name required",
@@ -39,6 +41,19 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
     setIsLoading(true);
     
     try {
+      console.log('Calling createPortfolio with:', {
+        name: name.trim(),
+        description: description.trim() || undefined,
+        settings: { 
+          weighting_method: weightingMethod,
+          aggregation_rules: {
+            irr: "weighted",
+            npv: "sum",
+            roi: "weighted"
+          }
+        }
+      });
+      
       const portfolio = await createPortfolio(
         name.trim(),
         description.trim() || undefined,
@@ -52,6 +67,8 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
         }
       );
       
+      console.log('Portfolio creation result:', portfolio);
+      
       if (portfolio) {
         onPortfolioCreated(portfolio);
         handleClose();
@@ -59,8 +76,16 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
           title: "Portfolio created",
           description: `"${name}" has been created successfully.`,
         });
+      } else {
+        console.log('Portfolio creation returned null');
+        toast({
+          title: "Error",
+          description: "Portfolio creation returned no result. Please check authentication.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
+      console.error('Portfolio creation error:', error);
       toast({
         title: "Error",
         description: "Failed to create portfolio. Please try again.",
@@ -99,9 +124,15 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
           
           <div className="space-y-2">
             <Label htmlFor="weighting">Weighting Method</Label>
-            <Select value={weightingMethod} onValueChange={(value) => setWeightingMethod(value as typeof weightingMethod)}>
+            <Select 
+              value={weightingMethod} 
+              onValueChange={(value) => {
+                console.log('Weighting method changed to:', value);
+                setWeightingMethod(value as typeof weightingMethod);
+              }}
+            >
               <SelectTrigger className="bg-background">
-                <SelectValue />
+                <SelectValue placeholder="Select weighting method" />
               </SelectTrigger>
               <SelectContent className="bg-popover border border-border z-[var(--z-dropdown)]">
                 <SelectItem value="equal">Equal Weight</SelectItem>

@@ -72,7 +72,17 @@ export function usePortfolioManager() {
     description?: string,
     settings?: Portfolio['portfolio_settings']
   ): Promise<Portfolio | null> => {
-    if (!user) return null;
+    console.log('createPortfolio called with user:', user);
+    
+    if (!user) {
+      console.error('No user found, cannot create portfolio');
+      toast({
+        title: 'Authentication required',
+        description: 'Please log in to create a portfolio',
+        variant: 'destructive',
+      });
+      return null;
+    }
 
     try {
       const portfolioData = {
