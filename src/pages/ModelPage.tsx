@@ -6,6 +6,9 @@ import { useEngine } from "@/lib/engine/EngineContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import FeaslyModel from "@/components/FeaslyModel/FeaslyModel";
+import { useConsolidation } from "@/hooks/useConsolidation";
+import { ConsolidatedResultsPanel } from "@/components/consolidation/ConsolidatedResultsPanel";
+import { ConsolidationSettingsDialog } from "@/components/consolidation/ConsolidationSettingsDialog";
 import { Building2, AlertCircle } from "lucide-react";
 
 interface Project {
@@ -25,9 +28,20 @@ export default function ModelPage() {
   const [project, setProject] = useState<Project | null>(null);
   const [projectLoading, setProjectLoading] = useState(false);
   const [projectError, setProjectError] = useState<string | null>(null);
+  const [settingsDialogOpen, setSettingsDialogOpen] = useState(false);
 
   const projectId = searchParams.get('project');
   const scenarioId = searchParams.get('scenario');
+
+  // Consolidation hook
+  const {
+    isConsolidationProject,
+    consolidatedResult,
+    consolidationSettings,
+    updateConsolidationSettings,
+    isUpdatingSettings,
+    isLoading: consolidationLoading
+  } = useConsolidation({ projectId: projectId || '', enabled: !!projectId });
 
   useEffect(() => {
     if (projectId) {
@@ -81,6 +95,56 @@ export default function ModelPage() {
     }
   };
 
+  // Show loading state
+  if (projectLoading || consolidationLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Building2 className="h-8 w-8 animate-pulse mx-auto text-muted-foreground" />
+          <p className="text-muted-foreground">Loading project...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (projectError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Alert className="max-w-md">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{projectError}</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
+  // Render consolidation interface if this is a consolidation project
+  if (isConsolidationProject && consolidatedResult && consolidationSettings) {
+    return (
+      <div className="min-h-screen">
+        <ConsolidatedResultsPanel
+          result={consolidatedResult}
+          onChildProjectClick={(projectId) => {
+            window.location.href = `/model?project=${projectId}`;
+          }}
+          onSettingsClick={() => setSettingsDialogOpen(true)}
+        />
+        
+        <ConsolidationSettingsDialog
+          open={settingsDialogOpen}
+          onClose={() => setSettingsDialogOpen(false)}
+          settings={consolidationSettings}
+          onSave={(newSettings) => {
+            updateConsolidationSettings(newSettings);
+          }}
+          isLoading={isUpdatingSettings}
+        />
+      </div>
+    );
+  }
+
+  // Otherwise render standard model interface
   return (
     <div className="min-h-screen">
       {/* Main Model Interface - Full Height */}
