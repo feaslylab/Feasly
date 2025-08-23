@@ -11,7 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { PageContainer, PageHeader } from "@/components/ui/page-layout";
 import { useToast } from "@/hooks/use-toast";
 import { useSelectionStore } from "@/state/selectionStore";
-import { useScenarioStore } from "@/hooks/useScenarioStore";
+import { useProjectAssets } from "@/hooks/useProjectAssets";
 import { 
   useConstructionStoreScenario, 
   useSaleStore, 

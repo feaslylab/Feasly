@@ -17,11 +17,14 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import ScenarioPickerV2 from "@/components/ui/ScenarioPickerV2";
 
+import { useProjectAssets } from "@/hooks/useProjectAssets";
+
 export default function Header() {
   const { user } = useAuth();
   const { projects } = useProjectStore();
   const { projectId, setProject, scenarioId, setScenario } = useSelectionStore();
-  const { scenarios, create, rename, remove, setCurrent, reload } = useScenarioStore(projectId);
+  const { primaryAssetId } = useProjectAssets(projectId);
+  const { scenarios, create, rename, remove, setCurrent, reload } = useScenarioStore(primaryAssetId);
   const { unreadCount } = useAlerts();
   const [alertDrawerOpen, setAlertDrawerOpen] = useState(false);
   const [newScenarioOpen, setNewScenarioOpen] = useState(false);
