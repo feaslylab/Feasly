@@ -8,8 +8,18 @@ interface CashFlowChartProps {
   isLoading?: boolean;
 }
 
+// Safe theme hook that provides fallback
+function useSafeTheme() {
+  try {
+    return useTheme();
+  } catch {
+    // Fallback when theme context is not available
+    return { actualTheme: 'light' as const };
+  }
+}
+
 export function CashFlowChart({ cashflow, isLoading }: CashFlowChartProps) {
-  const { actualTheme } = useTheme();
+  const { actualTheme } = useSafeTheme();
   
   if (isLoading) {
     return (
