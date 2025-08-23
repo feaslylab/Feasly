@@ -72,7 +72,10 @@ export function usePortfolioManager() {
     description?: string,
     settings?: Portfolio['portfolio_settings']
   ): Promise<Portfolio | null> => {
+    console.log('=== createPortfolio called ===', { name, user: !!user });
+    
     if (!user) {
+      console.error('No user - authentication required');
       toast({
         title: 'Authentication required',
         description: 'Please log in to create a portfolio',
@@ -82,7 +85,9 @@ export function usePortfolioManager() {
     }
 
     try {
-      // Get the user's organization for RLS compliance
+      console.log('Getting organization for user:', user.id);
+      
+      // Get the user's organization for RLS compliance  
       const { data: orgData, error: orgError } = await supabase
         .from('organization_members')
         .select('organization_id')
@@ -90,8 +95,11 @@ export function usePortfolioManager() {
         .limit(1)
         .single();
 
-      if (orgError) {
-        console.error('Error getting organization:', orgError);
+      console.log('Organization query result:', { orgData, orgError });
+
+      if (orgError && orgError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+        console.error('Organization query error:', orgError);
+        throw orgError;
       }
 
       const portfolioData = {
@@ -110,15 +118,24 @@ export function usePortfolioManager() {
         },
       };
 
+      console.log('Creating portfolio with data:', portfolioData);
+
       const { data, error } = await supabase
         .from('projects')
         .insert(portfolioData)
         .select()
         .single();
 
-      if (error) throw error;
+      console.log('Supabase insert result:', { data, error });
+
+      if (error) {
+        console.error('Insert error:', error);
+        throw error;
+      }
 
       const newPortfolio = data as unknown as Portfolio;
+      console.log('Portfolio created successfully:', newPortfolio);
+      
       setPortfolios(prev => [newPortfolio, ...prev]);
 
       toast({

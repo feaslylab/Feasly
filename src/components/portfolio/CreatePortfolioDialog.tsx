@@ -26,8 +26,10 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('=== Form submitted ===', { name, weightingMethod, description });
     
     if (!name.trim()) {
+      console.log('Name validation failed');
       toast({
         title: "Name required",
         description: "Please enter a portfolio name.",
@@ -36,9 +38,11 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
       return;
     }
 
+    console.log('Setting loading state to true');
     setIsLoading(true);
     
     try {
+      console.log('Calling createPortfolio function...');
       const portfolio = await createPortfolio(
         name.trim(),
         description.trim() || undefined,
@@ -52,7 +56,10 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
         }
       );
       
+      console.log('createPortfolio returned:', portfolio);
+      
       if (portfolio) {
+        console.log('Portfolio created, calling callbacks...');
         onPortfolioCreated(portfolio);
         handleClose();
         toast({
@@ -60,6 +67,7 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
           description: `"${name}" has been created successfully.`,
         });
       } else {
+        console.log('Portfolio creation returned null');
         toast({
           title: "Error",
           description: "Portfolio creation failed. Please try again.",
@@ -69,11 +77,12 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
     } catch (error) {
       console.error('Portfolio creation error:', error);
       toast({
-        title: "Error",
+        title: "Error", 
         description: "Failed to create portfolio. Please try again.",
         variant: "destructive"
       });
     } finally {
+      console.log('Setting loading state to false');
       setIsLoading(false);
     }
   };
