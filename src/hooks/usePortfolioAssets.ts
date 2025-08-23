@@ -53,14 +53,34 @@ export function usePortfolioAssets(portfolioId: string | null) {
 
       if (assetsError) throw assetsError;
 
-      // Load portfolio composition using the database function
+      // Load portfolio composition by querying directly
       const { data: compositionData, error: compositionError } = await supabase
-        .rpc('get_portfolio_composition', { project_uuid: portfolioId });
+        .from('assets')
+        .select(`
+          id,
+          name,
+          project_id,
+          portfolio_weight,
+          portfolio_scenario_id,
+          scenarios!portfolio_scenario_id(id, name, is_base)
+        `)
+        .eq('project_id', portfolioId);
 
       if (compositionError) throw compositionError;
 
+      // Transform the data into the expected format
+      const compositionFormatted: PortfolioComposition[] = (compositionData || []).map(asset => ({
+        asset_id: asset.id,
+        asset_name: asset.name,
+        project_id: asset.project_id,
+        scenario_id: asset.portfolio_scenario_id || '',
+        scenario_name: Array.isArray(asset.scenarios) && asset.scenarios[0]?.name || 'Base Scenario',
+        is_base_scenario: Array.isArray(asset.scenarios) && asset.scenarios[0]?.is_base || true,
+        weight: asset.portfolio_weight || 1.0,
+      }));
+
       setAssets(assetsData as unknown as AssetWithScenarios[] || []);
-      setComposition(compositionData || []);
+      setComposition(compositionFormatted);
     } catch (error) {
       console.error('Error loading portfolio assets:', error);
       toast({

@@ -193,12 +193,28 @@ export function usePortfolioManager() {
     portfolioName?: string
   ): Promise<boolean> => {
     try {
-      const { data, error } = await supabase.rpc('convert_project_to_portfolio', {
-        project_uuid: projectId,
-        portfolio_name: portfolioName,
-      });
+      // Convert project to portfolio by updating the project directly
+      const { error: projectError } = await supabase
+        .from('projects')
+        .update({
+          is_portfolio: true,
+          name: portfolioName || undefined,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', projectId)
+        .eq('user_id', user?.id);
 
-      if (error) throw error;
+      if (projectError) throw projectError;
+
+      // Set default portfolio scenarios for assets (use base scenarios)
+      const { error: assetError } = await supabase
+        .from('assets')
+        .update({
+          portfolio_scenario_id: null, // Will be set to base scenario later
+        })
+        .eq('project_id', projectId);
+
+      if (assetError) throw assetError;
 
       await loadPortfolios(); // Refresh the list
 

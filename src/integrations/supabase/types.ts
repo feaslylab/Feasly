@@ -1880,6 +1880,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: number
       }
+      convert_project_to_portfolio: {
+        Args: { portfolio_name?: string; project_uuid: string }
+        Returns: boolean
+      }
       get_organization_members_safe: {
         Args: { org_id: string }
         Returns: {
@@ -1899,6 +1903,18 @@ export type Database = {
           full_name: string
           updated_at: string
           user_id: string
+        }[]
+      }
+      get_portfolio_composition: {
+        Args: { project_uuid: string }
+        Returns: {
+          asset_id: string
+          asset_name: string
+          is_base_scenario: boolean
+          project_id: string
+          scenario_id: string
+          scenario_name: string
+          weight: number
         }[]
       }
       get_project_team_members: {
