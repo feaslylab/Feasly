@@ -96,7 +96,7 @@ export const PortfolioList = ({ portfolios, onOpenPortfolio }: PortfolioListProp
                     <MoreVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
+                <DropdownMenuContent align="end" className="bg-popover border border-border z-[var(--z-dropdown)]">
                   <DropdownMenuItem onClick={() => onOpenPortfolio(portfolio)}>
                     <Edit className="h-4 w-4 mr-2" />
                     Edit

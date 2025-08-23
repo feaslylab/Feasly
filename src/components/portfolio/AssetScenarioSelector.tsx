@@ -99,7 +99,7 @@ export const AssetScenarioSelector = ({
       <SelectTrigger>
         <SelectValue placeholder="Select scenario" />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="bg-popover border border-border z-[var(--z-dropdown)]">
         {scenarios.map((scenario) => (
           <SelectItem key={scenario.id} value={scenario.id}>
             {getScenarioLabel(scenario)}

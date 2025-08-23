@@ -160,7 +160,7 @@ export const PortfolioEditor = ({ portfolio, onBack, onPortfolioUpdated }: Portf
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-popover border border-border z-[var(--z-dropdown)]">
                   <SelectItem value="equal">Equal Weight</SelectItem>
                   <SelectItem value="equity">Equity Based</SelectItem>
                   <SelectItem value="gfa">GFA Based</SelectItem>

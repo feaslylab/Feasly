@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FolderOpen, Plus } from "lucide-react";
+import { FolderOpen, Plus, ArrowLeft } from "lucide-react";
 import { usePortfolioManager } from "@/hooks/usePortfolioManager";
 import { PortfolioList } from "./PortfolioList";
 import { PortfolioEditor } from "./PortfolioEditor";
+import { CreatePortfolioDialog } from "./CreatePortfolioDialog";
 import type { Portfolio } from "@/hooks/usePortfolioManager";
 
 export const PortfolioManager = () => {
-  const { portfolios, loading, createPortfolio, reload } = usePortfolioManager();
-  const [activeTab, setActiveTab] = useState<"list" | "edit">("list");
+  const { portfolios, loading, reload } = usePortfolioManager();
   const [selectedPortfolio, setSelectedPortfolio] = useState<Portfolio | null>(null);
+  const [showCreateDialog, setShowCreateDialog] = useState(false);
 
   // Load last opened portfolio from localStorage
   useEffect(() => {
@@ -20,7 +20,6 @@ export const PortfolioManager = () => {
       const portfolio = portfolios.find(p => p.id === lastPortfolioId);
       if (portfolio) {
         setSelectedPortfolio(portfolio);
-        setActiveTab("edit");
       }
     }
   }, [portfolios]);
@@ -32,24 +31,18 @@ export const PortfolioManager = () => {
     }
   }, [selectedPortfolio]);
 
-  const handleCreatePortfolio = async () => {
-    const name = `Portfolio ${portfolios.length + 1}`;
-    const newPortfolio = await createPortfolio(name);
-    if (newPortfolio) {
-      setSelectedPortfolio(newPortfolio);
-      setActiveTab("edit");
-    }
-  };
-
   const handleOpenPortfolio = (portfolio: Portfolio) => {
     setSelectedPortfolio(portfolio);
-    setActiveTab("edit");
   };
 
   const handleBackToList = () => {
-    setActiveTab("list");
     setSelectedPortfolio(null);
     reload(); // Refresh the list when returning
+  };
+
+  const handlePortfolioCreated = (portfolio: Portfolio) => {
+    reload();
+    setSelectedPortfolio(portfolio);
   };
 
   if (loading) {
@@ -62,55 +55,54 @@ export const PortfolioManager = () => {
     );
   }
 
+  // If editing a portfolio, show the editor
+  if (selectedPortfolio) {
+    return (
+      <div className="space-y-6">
+        <PortfolioEditor 
+          portfolio={selectedPortfolio}
+          onBack={handleBackToList}
+          onPortfolioUpdated={(updated) => setSelectedPortfolio(updated)}
+        />
+        
+        <CreatePortfolioDialog
+          open={showCreateDialog}
+          onOpenChange={setShowCreateDialog}
+          onPortfolioCreated={handlePortfolioCreated}
+        />
+      </div>
+    );
+  }
+
+  // Otherwise show the portfolio list
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FolderOpen className="h-5 w-5" />
-            Portfolio Manager
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center gap-2">
+              <FolderOpen className="h-5 w-5" />
+              Portfolio Manager
+            </CardTitle>
+            <Button onClick={() => setShowCreateDialog(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              New Portfolio
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
-          <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "list" | "edit")}>
-            <TabsList className="mb-6">
-              <TabsTrigger value="list">Portfolios</TabsTrigger>
-              {selectedPortfolio && (
-                <TabsTrigger value="edit">
-                  Edit: {selectedPortfolio.name}
-                </TabsTrigger>
-              )}
-            </TabsList>
-
-            <TabsContent value="list">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium">Your Portfolios</h3>
-                  <Button onClick={handleCreatePortfolio}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    New Portfolio
-                  </Button>
-                </div>
-
-                <PortfolioList 
-                  portfolios={portfolios}
-                  onOpenPortfolio={handleOpenPortfolio}
-                />
-              </div>
-            </TabsContent>
-
-            {selectedPortfolio && (
-              <TabsContent value="edit">
-                <PortfolioEditor 
-                  portfolio={selectedPortfolio}
-                  onBack={handleBackToList}
-                  onPortfolioUpdated={(updated) => setSelectedPortfolio(updated)}
-                />
-              </TabsContent>
-            )}
-          </Tabs>
+          <PortfolioList 
+            portfolios={portfolios}
+            onOpenPortfolio={handleOpenPortfolio}
+          />
         </CardContent>
       </Card>
+      
+      <CreatePortfolioDialog
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+        onPortfolioCreated={handlePortfolioCreated}
+      />
     </div>
   );
 };

@@ -202,7 +202,7 @@ export const PortfolioScenarioComparison = ({
             <SelectTrigger>
               <SelectValue placeholder="Select comparison mode" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="bg-popover border border-border z-[var(--z-dropdown)]">
               <SelectItem value="none">No Comparison</SelectItem>
               <SelectItem value="base">Compare with Base Scenarios</SelectItem>
               <SelectItem value="full">Full Scenario Analysis</SelectItem>
