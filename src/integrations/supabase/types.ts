@@ -1755,6 +1755,10 @@ export type Database = {
         Args: { org_id: string }
         Returns: boolean
       }
+      can_access_project: {
+        Args: { check_user_id: string; project_id: string }
+        Returns: boolean
+      }
       cleanup_expired_invitations: {
         Args: Record<PropertyKey, never>
         Returns: number
