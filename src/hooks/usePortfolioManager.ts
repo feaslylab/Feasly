@@ -72,10 +72,7 @@ export function usePortfolioManager() {
     description?: string,
     settings?: Portfolio['portfolio_settings']
   ): Promise<Portfolio | null> => {
-    console.log('createPortfolio called with user:', user);
-    
     if (!user) {
-      console.error('No user found, cannot create portfolio');
       toast({
         title: 'Authentication required',
         description: 'Please log in to create a portfolio',
@@ -85,10 +82,23 @@ export function usePortfolioManager() {
     }
 
     try {
+      // Get the user's organization for RLS compliance
+      const { data: orgData, error: orgError } = await supabase
+        .from('organization_members')
+        .select('organization_id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .single();
+
+      if (orgError) {
+        console.error('Error getting organization:', orgError);
+      }
+
       const portfolioData = {
         name,
         description,
         user_id: user.id,
+        organization_id: orgData?.organization_id || null,
         is_portfolio: true,
         portfolio_settings: settings || {
           weighting_method: 'equal' as const,

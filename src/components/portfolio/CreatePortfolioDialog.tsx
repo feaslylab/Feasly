@@ -27,8 +27,6 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log('Form submitted with:', { name, weightingMethod, description });
-    
     if (!name.trim()) {
       toast({
         title: "Name required",
@@ -41,19 +39,6 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
     setIsLoading(true);
     
     try {
-      console.log('Calling createPortfolio with:', {
-        name: name.trim(),
-        description: description.trim() || undefined,
-        settings: { 
-          weighting_method: weightingMethod,
-          aggregation_rules: {
-            irr: "weighted",
-            npv: "sum",
-            roi: "weighted"
-          }
-        }
-      });
-      
       const portfolio = await createPortfolio(
         name.trim(),
         description.trim() || undefined,
@@ -67,8 +52,6 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
         }
       );
       
-      console.log('Portfolio creation result:', portfolio);
-      
       if (portfolio) {
         onPortfolioCreated(portfolio);
         handleClose();
@@ -77,10 +60,9 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
           description: `"${name}" has been created successfully.`,
         });
       } else {
-        console.log('Portfolio creation returned null');
         toast({
           title: "Error",
-          description: "Portfolio creation returned no result. Please check authentication.",
+          description: "Portfolio creation failed. Please try again.",
           variant: "destructive"
         });
       }
@@ -126,10 +108,7 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
             <Label htmlFor="weighting">Weighting Method</Label>
             <Select 
               value={weightingMethod} 
-              onValueChange={(value) => {
-                console.log('Weighting method changed to:', value);
-                setWeightingMethod(value as typeof weightingMethod);
-              }}
+              onValueChange={(value) => setWeightingMethod(value as typeof weightingMethod)}
             >
               <SelectTrigger className="bg-background">
                 <SelectValue placeholder="Select weighting method" />
