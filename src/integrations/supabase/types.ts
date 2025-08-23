@@ -1260,6 +1260,7 @@ export type Database = {
       }
       projects: {
         Row: {
+          consolidation_settings: Json | null
           construction_escalation_percent: number | null
           created_at: string | null
           currency_code: string | null
@@ -1278,7 +1279,9 @@ export type Database = {
           is_pinned: boolean | null
           name: string
           organization_id: string | null
+          parent_project_id: string | null
           project_ai_summary: string | null
+          project_type: string
           release_rule_details: string | null
           release_threshold: number | null
           release_trigger_type: string | null
@@ -1298,6 +1301,7 @@ export type Database = {
           zakat_rate_percent: number | null
         }
         Insert: {
+          consolidation_settings?: Json | null
           construction_escalation_percent?: number | null
           created_at?: string | null
           currency_code?: string | null
@@ -1316,7 +1320,9 @@ export type Database = {
           is_pinned?: boolean | null
           name: string
           organization_id?: string | null
+          parent_project_id?: string | null
           project_ai_summary?: string | null
+          project_type?: string
           release_rule_details?: string | null
           release_threshold?: number | null
           release_trigger_type?: string | null
@@ -1336,6 +1342,7 @@ export type Database = {
           zakat_rate_percent?: number | null
         }
         Update: {
+          consolidation_settings?: Json | null
           construction_escalation_percent?: number | null
           created_at?: string | null
           currency_code?: string | null
@@ -1354,7 +1361,9 @@ export type Database = {
           is_pinned?: boolean | null
           name?: string
           organization_id?: string | null
+          parent_project_id?: string | null
           project_ai_summary?: string | null
+          project_type?: string
           release_rule_details?: string | null
           release_threshold?: number | null
           release_trigger_type?: string | null
@@ -1379,6 +1388,13 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_parent_project_id_fkey"
+            columns: ["parent_project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
         ]
