@@ -13,12 +13,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useOrganization } from "@/contexts/OrganizationContext";
 import { SUPPORTED_CURRENCIES } from "@/lib/currencyConversion";
+import { ProjectType } from "@/types/consolidation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import {
   Form,
   FormControl,
@@ -66,6 +69,7 @@ export const NewProjectForm = () => {
   const { currentOrganization } = useOrganization();
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
+  const [projectType, setProjectType] = useState<ProjectType>('normal');
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -97,6 +101,7 @@ export const NewProjectForm = () => {
           start_date: data.start_date ? format(data.start_date, "yyyy-MM-dd") : null,
           end_date: data.end_date ? format(data.end_date, "yyyy-MM-dd") : null,
           currency_code: data.currency_code,
+          project_type: projectType,
           user_id: user.id,
           organization_id: currentOrganization?.id || null,
         })
@@ -187,6 +192,33 @@ export const NewProjectForm = () => {
                     </FormItem>
                   )}
                 />
+
+                <FormItem>
+                  <FormLabel>Project Type</FormLabel>
+                  <FormControl>
+                    <RadioGroup 
+                      value={projectType} 
+                      onValueChange={(value) => setProjectType(value as ProjectType)}
+                      className="space-y-3"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="normal" id="normal" />
+                        <Label htmlFor="normal" className="text-sm">
+                          Feasibility Project
+                        </Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="consolidation" id="consolidation" />
+                        <Label htmlFor="consolidation" className="text-sm">
+                          Consolidated Portfolio
+                        </Label>
+                      </div>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormDescription>
+                    Choose whether this is a single project analysis or a consolidated portfolio of projects
+                  </FormDescription>
+                </FormItem>
 
                 <FormField
                   control={form.control}
