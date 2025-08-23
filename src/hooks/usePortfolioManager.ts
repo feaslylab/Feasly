@@ -65,17 +65,14 @@ export function usePortfolioManager() {
     } finally {
       setLoading(false);
     }
-  }, [user?.id, toast]);
+  }, [user?.id]);
 
   const createPortfolio = useCallback(async (
     name: string, 
     description?: string,
     settings?: Portfolio['portfolio_settings']
   ): Promise<Portfolio | null> => {
-    console.log('=== createPortfolio called ===', { name, user: !!user });
-    
     if (!user) {
-      console.error('No user - authentication required');
       toast({
         title: 'Authentication required',
         description: 'Please log in to create a portfolio',
@@ -85,8 +82,6 @@ export function usePortfolioManager() {
     }
 
     try {
-      console.log('Getting organization for user:', user.id);
-      
       // Get the user's organization for RLS compliance  
       const { data: orgData, error: orgError } = await supabase
         .from('organization_members')
@@ -95,10 +90,7 @@ export function usePortfolioManager() {
         .limit(1)
         .single();
 
-      console.log('Organization query result:', { orgData, orgError });
-
       if (orgError && orgError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
-        console.error('Organization query error:', orgError);
         throw orgError;
       }
 
@@ -118,24 +110,17 @@ export function usePortfolioManager() {
         },
       };
 
-      console.log('Creating portfolio with data:', portfolioData);
-
       const { data, error } = await supabase
         .from('projects')
         .insert(portfolioData)
         .select()
         .single();
 
-      console.log('Supabase insert result:', { data, error });
-
       if (error) {
-        console.error('Insert error:', error);
         throw error;
       }
 
       const newPortfolio = data as unknown as Portfolio;
-      console.log('Portfolio created successfully:', newPortfolio);
-      
       setPortfolios(prev => [newPortfolio, ...prev]);
 
       toast({
@@ -153,7 +138,7 @@ export function usePortfolioManager() {
       });
       return null;
     }
-  }, [user?.id, toast]);
+  }, [user?.id]);
 
   const updatePortfolio = useCallback(async (
     id: string,
@@ -194,7 +179,7 @@ export function usePortfolioManager() {
       });
       return false;
     }
-  }, [user?.id, toast]);
+  }, [user?.id]);
 
   const deletePortfolio = useCallback(async (id: string): Promise<boolean> => {
     try {
@@ -223,7 +208,7 @@ export function usePortfolioManager() {
       });
       return false;
     }
-  }, [user?.id, toast]);
+  }, [user?.id]);
 
   const convertProjectToPortfolio = useCallback(async (
     projectId: string, 
@@ -270,11 +255,11 @@ export function usePortfolioManager() {
       });
       return false;
     }
-  }, [loadPortfolios, toast]);
+  }, [user?.id]);
 
   useEffect(() => {
     loadPortfolios();
-  }, [loadPortfolios]);
+  }, [user?.id]);
 
   return {
     portfolios,
