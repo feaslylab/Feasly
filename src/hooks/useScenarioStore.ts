@@ -6,20 +6,23 @@ import { nanoid } from 'nanoid';
 
 type Scenario = {
   id: string;
-  project_id: string | null;
+  asset_id: string | null;
+  project_id?: string | null; // Legacy field for migration compatibility
   name: string;
   user_id: string;
+  is_base: boolean;
   created_at: string | null;
   updated_at: string | null;
 };
 
 type ScenarioInsert = {
-  project_id: string;
+  asset_id: string;
   name: string;
   user_id: string;
+  is_base?: boolean;
 };
 
-export function useScenarioStore(projectId: string | null) {
+export function useScenarioStore(assetId: string | null) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
@@ -27,15 +30,14 @@ export function useScenarioStore(projectId: string | null) {
   const [loading, setLoading] = useState(true);
 
   const loadScenarios = useCallback(async () => {
-    if (!user || !projectId) return;
+    if (!user || !assetId) return;
     
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('scenarios' as any)
+        .from('scenarios')
         .select('*')
-        .eq('project_id', projectId)
-        .eq('user_id', user.id)
+        .eq('asset_id', assetId)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -48,7 +50,9 @@ export function useScenarioStore(projectId: string | null) {
         // If current scenario no longer exists, reset to first available
         const currentExists = current && scenarioData.some(s => s.id === current.id);
         if (!currentExists) {
-          setCurrent(scenarioData[0]);
+          // Prefer base scenario, otherwise first available
+          const baseScenario = scenarioData.find(s => s.is_base);
+          setCurrent(baseScenario || scenarioData[0]);
         }
       } else {
         // No scenarios available, clear current
@@ -59,21 +63,21 @@ export function useScenarioStore(projectId: string | null) {
     } finally {
       setLoading(false);
     }
-  }, [projectId ?? '', user?.id ?? '', current?.id ?? '']);
+  }, [assetId ?? '', user?.id ?? '', current?.id ?? '']);
 
   const reload = useCallback(async () => {
     await loadScenarios();
   }, [loadScenarios]);
 
-  const create = useCallback(async (name: string): Promise<Scenario | null> => {
-    if (!projectId || !user) return null;
+  const create = useCallback(async (name: string, isBase: boolean = false): Promise<Scenario | null> => {
+    if (!assetId || !user) return null;
 
     // 1. build row - let database generate the UUID
     const row = {
-      project_id: projectId,
+      asset_id: assetId,
       user_id: user.id,
       name,
-      is_base: false,        // New scenarios are not base scenarios
+      is_base: isBase,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -106,10 +110,10 @@ export function useScenarioStore(projectId: string | null) {
     }
 
     return null;
-  }, [projectId ?? '', user?.id ?? '']);
+  }, [assetId ?? '', user?.id ?? '']);
 
   const rename = useCallback(async (id: string, name: string): Promise<boolean> => {
-    if (!projectId || !user) return false;
+    if (!assetId || !user) return false;
 
     const { error } = await supabase
       .from('scenarios')
@@ -130,10 +134,10 @@ export function useScenarioStore(projectId: string | null) {
 
     setScenarios(prev => prev.map(s => s.id === id ? { ...s, name } : s));
     return true;
-  }, [projectId ?? '', user?.id ?? '']);
+  }, [assetId ?? '', user?.id ?? '']);
 
   const remove = useCallback(async (id: string): Promise<boolean> => {
-    if (!projectId || !user) return false;
+    if (!assetId || !user) return false;
 
     const { error } = await supabase
       .from('scenarios')
@@ -155,12 +159,14 @@ export function useScenarioStore(projectId: string | null) {
     setScenarios(prev => {
       const updated = prev.filter(s => s.id !== id);
       if (current?.id === id) {
-        setCurrent(updated[0] ?? null);
+        // Prefer base scenario, otherwise first available
+        const baseScenario = updated.find(s => s.is_base);
+        setCurrent(baseScenario || updated[0] || null);
       }
       return updated;
     });
     return true;
-  }, [projectId ?? '', user?.id ?? '']);
+  }, [assetId ?? '', user?.id ?? '']);
 
   // ALL hooks must be called before any early returns
   useEffect(() => {
@@ -244,13 +250,15 @@ export function useScenarioStore(projectId: string | null) {
   };
 
   // Early return ONLY after all hooks are called
-  if (!projectId) {
+  if (!assetId) {
     return { 
       scenarios: [], 
       current: null, 
       loading: false,
       setCurrent: () => {}, 
       create: async () => null,
+      rename: async () => false,
+      remove: async () => false,
       reload: () => {}
     };
   }

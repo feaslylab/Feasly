@@ -43,6 +43,8 @@ describe('Header presence', () => {
       loading: false,
       setCurrent: vi.fn(),
       create: vi.fn(),
+      rename: vi.fn(),
+      remove: vi.fn(),
       reload: vi.fn()
     })
 

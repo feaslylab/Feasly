@@ -303,7 +303,7 @@ function ResultsPanelContent({ currency = 'AED' }: { currency?: string }) {
               </p>
               <Button 
                 variant="default" 
-                onClick={generateExecutiveSummaryPDF}
+                onClick={() => generateExecutiveSummaryPDF()}
                 className="flex items-center gap-2"
               >
                 <Download className="w-4 h-4" />

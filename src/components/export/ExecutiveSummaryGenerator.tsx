@@ -441,11 +441,12 @@ export function useExecutiveSummaryGenerator(props?: ExecutiveSummaryProps) {
       } else {
         // Regular warnings for single projects
         const warningsByLocation = effectiveWarnings.reduce((acc, warning) => {
-          const location = warning.location || 'general';
+          // Handle both Warning types - consolidation warnings don't have location
+          const location = ('location' in warning && warning.location) || 'general';
           if (!acc[location]) acc[location] = [];
           acc[location].push(warning);
           return acc;
-        }, {} as Record<string, typeof effectiveWarnings>);
+        }, {} as Record<string, any[]>);
 
         Object.entries(warningsByLocation).forEach(([location, warnings]) => {
           addNewPageIf(30 + warnings.length * 10);
