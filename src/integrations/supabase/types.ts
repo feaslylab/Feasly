@@ -38,51 +38,135 @@ export type Database = {
           annual_revenue_aed: number | null
           cap_rate_percent: number | null
           construction_cost_aed: number | null
+          construction_escalation_percent: number | null
           created_at: string | null
+          currency_code: string | null
           development_timeline_months: number | null
+          enable_escalation: boolean | null
+          end_date: string | null
+          escalation_duration_months: number | null
+          escalation_start_month: number | null
+          escrow_enabled: boolean | null
+          escrow_percent: number | null
+          gfa_office: number | null
+          gfa_residential: number | null
+          gfa_retail: number | null
           gfa_sqm: number | null
           id: string
+          is_demo: boolean | null
+          is_pinned: boolean | null
           name: string
           occupancy_rate_percent: number | null
           operating_cost_aed: number | null
+          owner_id: string | null
           project_id: string | null
+          release_rule_details: string | null
+          release_threshold: number | null
+          release_trigger_type: string | null
+          sale_price_office: number | null
+          sale_price_residential: number | null
+          sale_price_retail: number | null
           stabilization_period_months: number | null
+          start_date: string | null
+          status: string | null
           type: string
+          unit_system: string | null
           updated_at: string | null
+          use_segmented_revenue: boolean | null
+          zakat_applicable: boolean | null
+          zakat_calculation_method: string | null
+          zakat_exclude_losses: boolean | null
+          zakat_rate_percent: number | null
         }
         Insert: {
           annual_operating_cost_aed?: number | null
           annual_revenue_aed?: number | null
           cap_rate_percent?: number | null
           construction_cost_aed?: number | null
+          construction_escalation_percent?: number | null
           created_at?: string | null
+          currency_code?: string | null
           development_timeline_months?: number | null
+          enable_escalation?: boolean | null
+          end_date?: string | null
+          escalation_duration_months?: number | null
+          escalation_start_month?: number | null
+          escrow_enabled?: boolean | null
+          escrow_percent?: number | null
+          gfa_office?: number | null
+          gfa_residential?: number | null
+          gfa_retail?: number | null
           gfa_sqm?: number | null
           id?: string
+          is_demo?: boolean | null
+          is_pinned?: boolean | null
           name: string
           occupancy_rate_percent?: number | null
           operating_cost_aed?: number | null
+          owner_id?: string | null
           project_id?: string | null
+          release_rule_details?: string | null
+          release_threshold?: number | null
+          release_trigger_type?: string | null
+          sale_price_office?: number | null
+          sale_price_residential?: number | null
+          sale_price_retail?: number | null
           stabilization_period_months?: number | null
+          start_date?: string | null
+          status?: string | null
           type: string
+          unit_system?: string | null
           updated_at?: string | null
+          use_segmented_revenue?: boolean | null
+          zakat_applicable?: boolean | null
+          zakat_calculation_method?: string | null
+          zakat_exclude_losses?: boolean | null
+          zakat_rate_percent?: number | null
         }
         Update: {
           annual_operating_cost_aed?: number | null
           annual_revenue_aed?: number | null
           cap_rate_percent?: number | null
           construction_cost_aed?: number | null
+          construction_escalation_percent?: number | null
           created_at?: string | null
+          currency_code?: string | null
           development_timeline_months?: number | null
+          enable_escalation?: boolean | null
+          end_date?: string | null
+          escalation_duration_months?: number | null
+          escalation_start_month?: number | null
+          escrow_enabled?: boolean | null
+          escrow_percent?: number | null
+          gfa_office?: number | null
+          gfa_residential?: number | null
+          gfa_retail?: number | null
           gfa_sqm?: number | null
           id?: string
+          is_demo?: boolean | null
+          is_pinned?: boolean | null
           name?: string
           occupancy_rate_percent?: number | null
           operating_cost_aed?: number | null
+          owner_id?: string | null
           project_id?: string | null
+          release_rule_details?: string | null
+          release_threshold?: number | null
+          release_trigger_type?: string | null
+          sale_price_office?: number | null
+          sale_price_residential?: number | null
+          sale_price_retail?: number | null
           stabilization_period_months?: number | null
+          start_date?: string | null
+          status?: string | null
           type?: string
+          unit_system?: string | null
           updated_at?: string | null
+          use_segmented_revenue?: boolean | null
+          zakat_applicable?: boolean | null
+          zakat_calculation_method?: string | null
+          zakat_exclude_losses?: boolean | null
+          zakat_rate_percent?: number | null
         }
         Relationships: [
           {
@@ -1659,6 +1743,7 @@ export type Database = {
       }
       scenarios: {
         Row: {
+          asset_id: string | null
           created_at: string | null
           description: string | null
           id: string
@@ -1669,6 +1754,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          asset_id?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
@@ -1679,6 +1765,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          asset_id?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
@@ -1689,6 +1776,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "scenarios_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "scenarios_project_id_fkey"
             columns: ["project_id"]
