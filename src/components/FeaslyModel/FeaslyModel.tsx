@@ -18,7 +18,6 @@ import ResultsPanel from '@/components/workspace/ResultsPanel';
 import SnapshotHistoryPanel from '@/components/workspace/SnapshotHistoryPanel';
 import PresetsPanel from '@/components/presets/PresetsPanel';
 import InsightsDashboard from '@/components/workspace/InsightsDashboard';
-import { PortfolioDashboard } from '@/components/portfolio/PortfolioDashboard';
 import TimelinePanel from '@/components/workspace/TimelinePanel';
 import { OnboardingPanel } from '@/components/workspace/OnboardingPanel';
 import { FirstRunOverlay } from '@/components/workspace/FirstRunOverlay';
@@ -297,8 +296,11 @@ export default function FeaslyModel() {
         );
       case 'portfolio':
         return (
-          <ErrorBoundary name="PortfolioDashboard">
-            <PortfolioDashboard />
+          <ErrorBoundary name="PortfolioPlaceholder">
+            <div className="p-8 text-center">
+              <h3 className="text-lg font-medium mb-2">Portfolio Dashboard</h3>
+              <p className="text-muted-foreground">Portfolio functionality is being updated. Please check back soon.</p>
+            </div>
           </ErrorBoundary>
         );
       case 'results':
