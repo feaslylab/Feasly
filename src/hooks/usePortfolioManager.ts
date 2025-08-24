@@ -45,12 +45,27 @@ export function usePortfolioManager() {
     
     setLoading(true);
     try {
-      const { data, error } = await supabase
+      // Get user's organization IDs first
+      const { data: orgMemberships } = await supabase
+        .from('organization_members')
+        .select('organization_id')
+        .eq('user_id', user.id);
+
+      const orgIds = orgMemberships?.map(m => m.organization_id) || [];
+      
+      // Build the query for portfolios owned by user or their organizations
+      let query = supabase
         .from('projects')
         .select('*')
-        .eq('is_portfolio', true)
-        .or(`user_id.eq.${user.id},organization_id.in.(${user.id})`) // Handle both user and org ownership
-        .order('created_at', { ascending: false });
+        .eq('is_portfolio', true);
+
+      if (orgIds.length > 0) {
+        query = query.or(`user_id.eq.${user.id},organization_id.in.(${orgIds.join(',')})`);
+      } else {
+        query = query.eq('user_id', user.id);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
 
