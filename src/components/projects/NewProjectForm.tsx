@@ -87,7 +87,10 @@ export const NewProjectForm = () => {
   const calculatedEndDate = calculateEndDate(watchedStartDate, watchedSpan);
 
   const onSubmit = async (data: FormData) => {
+    console.log('Form submission started', { data, user: user?.id, currentOrganization });
+    
     if (!user) {
+      console.error('No user found - authentication required');
       toast({
         title: "Error",
         description: "You must be logged in to create a project",
@@ -99,25 +102,34 @@ export const NewProjectForm = () => {
     setIsLoading(true);
 
     try {
+      const projectData = {
+        name: data.name,
+        description: data.description || null,
+        start_date: data.start_date ? format(data.start_date, "yyyy-MM-dd") : null,
+        end_date: calculatedEndDate ? format(calculatedEndDate, "yyyy-MM-dd") : null,
+        currency_code: data.currency_code,
+        project_type: projectType,
+        user_id: user.id,
+        organization_id: currentOrganization?.id || null,
+      };
+      
+      console.log('Attempting to create project with data:', projectData);
+      
       const { data: project, error } = await supabase
         .from("projects")
-        .insert({
-          name: data.name,
-          description: data.description || null,
-          start_date: data.start_date ? format(data.start_date, "yyyy-MM-dd") : null,
-          end_date: calculatedEndDate ? format(calculatedEndDate, "yyyy-MM-dd") : null,
-          currency_code: data.currency_code,
-          project_type: projectType,
-          user_id: user.id,
-          organization_id: currentOrganization?.id || null,
-        })
+        .insert(projectData)
         .select()
         .single();
 
+      console.log('Supabase response:', { project, error });
+
       if (error) {
+        console.error('Supabase insert error:', error);
         throw error;
       }
 
+      console.log('Project created successfully:', project);
+      
       toast({
         title: "Success",
         description: "Project created successfully",
@@ -130,10 +142,11 @@ export const NewProjectForm = () => {
       console.error("Error creating project:", error);
       toast({
         title: "Error",
-        description: "Failed to create project. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create project. Please try again.",
         variant: "destructive",
       });
     } finally {
+      console.log('Setting loading to false');
       setIsLoading(false);
     }
   };
@@ -396,6 +409,7 @@ export const NewProjectForm = () => {
                     type="submit" 
                     disabled={isLoading}
                     className="flex-1"
+                    onClick={() => console.log('Submit button clicked', { isLoading, formValid: form.formState.isValid, errors: form.formState.errors })}
                   >
                     {isLoading ? "Creating..." : "Create Project"}
                   </Button>
