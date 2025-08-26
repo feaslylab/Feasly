@@ -39,6 +39,12 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
     setIsLoading(true);
     
     try {
+      console.log('Starting portfolio creation with data:', {
+        name: name.trim(),
+        description: description.trim() || undefined,
+        weightingMethod
+      });
+
       const portfolio = await createPortfolio(
         name.trim(),
         description.trim() || undefined,
@@ -52,7 +58,10 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
         }
       );
       
+      console.log('Portfolio creation result:', portfolio);
+      
       if (portfolio) {
+        console.log('Portfolio created successfully, calling callbacks');
         onPortfolioCreated(portfolio);
         handleClose();
         toast({
@@ -60,9 +69,10 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
           description: `"${name}" has been created successfully.`,
         });
       } else {
+        console.error('Portfolio creation returned null');
         toast({
           title: "Error",
-          description: "Portfolio creation failed. Please try again.",
+          description: "Portfolio creation failed. Please check console for details.",
           variant: "destructive"
         });
       }
@@ -70,7 +80,7 @@ export const CreatePortfolioDialog = ({ open, onOpenChange, onPortfolioCreated }
       console.error('Portfolio creation error:', error);
       toast({
         title: "Error", 
-        description: "Failed to create portfolio. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to create portfolio. Please try again.",
         variant: "destructive"
       });
     } finally {

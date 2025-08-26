@@ -97,6 +97,8 @@ export function usePortfolioManager() {
     }
 
     try {
+      console.log('Creating portfolio with user:', user.id);
+      
       // Get the user's organization for RLS compliance  
       const { data: orgData, error: orgError } = await supabase
         .from('organization_members')
@@ -105,7 +107,10 @@ export function usePortfolioManager() {
         .limit(1)
         .single();
 
+      console.log('Organization query result:', { orgData, orgError });
+
       if (orgError && orgError.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+        console.error('Organization query error:', orgError);
         throw orgError;
       }
 
