@@ -41,6 +41,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (!import.meta.env.PROD) console.log('Auth state change:', event, 'session:', session, 'user:', session?.user);
+      console.log('🔐 Auth state changed:', event, 'User ID:', session?.user?.id || 'none');
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);

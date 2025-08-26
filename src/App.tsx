@@ -10,7 +10,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import RequireAuth from "@/routes/RequireAuth";
 import PrivateLayout from "@/layouts/PrivateLayout";
 import AuthLayout from "@/layouts/AuthLayout";
-import LandingRedirect from "@/routes/LandingRedirect";
+import SmartLanding from "@/routes/SmartLanding";
 import { PATHS } from "@/routes/paths";
 
 const Index = lazy(() => import("./pages/Index"));
@@ -45,12 +45,11 @@ const App = () => {
               </Route>
 
               {/* Marketing routes */}
-              <Route path="/" element={<FeaslyLanding />} />
+              <Route path="/" element={<SmartLanding />} />
               <Route path={PATHS.welcome} element={<Index />} />
               
               {/* Private routes */}
               <Route element={<RequireAuth><PrivateLayout /></RequireAuth>}>
-                <Route index element={<LandingRedirect />} />
                 <Route path={PATHS.dashboard} element={<Dashboard />} />
                 {/* Case-insensitive alias for dashboard */}
                 <Route path="/Dashboard" element={<Navigate to={PATHS.dashboard} replace />} />
