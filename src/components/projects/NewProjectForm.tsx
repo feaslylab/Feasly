@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { format } from "date-fns";
-import { CalendarIcon, ArrowLeft } from "lucide-react";
+import { format, addMonths, addDays } from "date-fns";
+import { CalendarIcon, ArrowLeft, Calendar as CalendarLucide } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 
 import { cn } from "@/lib/utils";
@@ -48,16 +48,9 @@ const formSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   description: z.string().optional(),
   start_date: z.date().optional(),
-  end_date: z.date().optional(),
+  span_months: z.number().min(1, "Span must be at least 1 month").max(600, "Span cannot exceed 50 years").optional(),
+  periodicity: z.enum(["monthly", "quarterly", "annually"]).default("monthly"),
   currency_code: z.string().default("AED"),
-}).refine((data) => {
-  if (data.start_date && data.end_date) {
-    return data.start_date <= data.end_date;
-  }
-  return true;
-}, {
-  message: "End date must be after start date",
-  path: ["end_date"],
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -77,8 +70,21 @@ export const NewProjectForm = () => {
       name: "",
       description: "",
       currency_code: "AED",
+      periodicity: "monthly",
+      span_months: 60,
     },
   });
+
+  // Calculate end date based on start date and span
+  const calculateEndDate = (startDate: Date | undefined, spanMonths: number | undefined) => {
+    if (!startDate || !spanMonths) return undefined;
+    return addDays(addMonths(startDate, spanMonths), -1);
+  };
+
+  // Watch for changes in start date and span to auto-calculate end date
+  const watchedStartDate = form.watch("start_date");
+  const watchedSpan = form.watch("span_months");
+  const calculatedEndDate = calculateEndDate(watchedStartDate, watchedSpan);
 
   const onSubmit = async (data: FormData) => {
     if (!user) {
@@ -99,7 +105,7 @@ export const NewProjectForm = () => {
           name: data.name,
           description: data.description || null,
           start_date: data.start_date ? format(data.start_date, "yyyy-MM-dd") : null,
-          end_date: data.end_date ? format(data.end_date, "yyyy-MM-dd") : null,
+          end_date: calculatedEndDate ? format(calculatedEndDate, "yyyy-MM-dd") : null,
           currency_code: data.currency_code,
           project_type: projectType,
           user_id: user.id,
@@ -248,86 +254,133 @@ export const NewProjectForm = () => {
                   )}
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="start_date"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>Start Date</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal h-11",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Pick a start date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              initialFocus
-                              className={cn("p-3 pointer-events-auto")}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <div className="space-y-6">
+                  {/* Project Timeline Section */}
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <CalendarLucide className="h-4 w-4 text-primary" />
+                      <h3 className="text-sm font-medium text-foreground">Project Timeline</h3>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="start_date"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-col">
+                            <FormLabel>Start Date</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    className={cn(
+                                      "w-full pl-3 text-left font-normal h-11",
+                                      !field.value && "text-muted-foreground"
+                                    )}
+                                  >
+                                    {field.value ? (
+                                      format(field.value, "MMM dd, yyyy")
+                                    ) : (
+                                      <span>Pick start date</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  initialFocus
+                                  className={cn("p-3 pointer-events-auto")}
+                                  disabled={(date) => date < new Date("1900-01-01")}
+                                />
+                              </PopoverContent>
+                            </Popover>
+                            <FormDescription className="text-xs">
+                              When the project begins
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                  <FormField
-                    control={form.control}
-                    name="end_date"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col">
-                        <FormLabel>End Date</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
+                      <FormField
+                        control={form.control}
+                        name="span_months"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Duration (Months)</FormLabel>
                             <FormControl>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  "w-full pl-3 text-left font-normal h-11",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Pick an end date</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
+                              <Input
+                                type="number"
+                                placeholder="60"
+                                min="1"
+                                max="600"
+                                className="h-11"
+                                {...field}
+                                onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                              />
                             </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              initialFocus
-                              className={cn("p-3 pointer-events-auto")}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
+                            <FormDescription className="text-xs">
+                              Project duration in months
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="periodicity"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Cash Flow Frequency</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="h-11">
+                                  <SelectValue placeholder="Select frequency" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="monthly">Monthly</SelectItem>
+                                <SelectItem value="quarterly">Quarterly</SelectItem>
+                                <SelectItem value="annually">Annually</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormDescription className="text-xs">
+                              How often cash flows occur
+                            </FormDescription>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Calculated End Date Display */}
+                    {calculatedEndDate && (
+                      <div className="bg-muted/50 border rounded-lg p-3">
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-muted-foreground">Calculated End Date:</span>
+                          <span className="font-medium text-foreground">
+                            {format(calculatedEndDate, "MMM dd, yyyy")}
+                          </span>
+                        </div>
+                        {watchedSpan && (
+                          <div className="flex items-center justify-between text-xs mt-1">
+                            <span className="text-muted-foreground">Total Periods:</span>
+                            <span className="text-muted-foreground">
+                              {form.watch("periodicity") === "monthly" ? watchedSpan 
+                               : form.watch("periodicity") === "quarterly" ? Math.ceil(watchedSpan / 3)
+                               : Math.ceil(watchedSpan / 12)} periods
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     )}
-                  />
+                  </div>
                 </div>
 
                 <div className="flex gap-4 pt-4">
