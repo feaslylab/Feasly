@@ -158,15 +158,12 @@ export const LoginForm = ({ onToggleMode, onSuccess }: LoginFormProps) => {
           variant: "destructive",
         });
       } else {
-        if (!import.meta.env.PROD) console.log('Login successful, calling onSuccess');
+        if (!import.meta.env.PROD) console.log('Login successful - auth state will trigger redirect');
         toast({
           title: "Welcome back!",
           description: "You have successfully logged in.",
         });
-        // Small delay to ensure auth state is updated
-        setTimeout(() => {
-          onSuccess();
-        }, 100);
+        // Don't call onSuccess here - let the auth state change handle the redirect
       }
     } catch (error) {
       if (!import.meta.env.PROD) console.log('Login caught error:', error);
